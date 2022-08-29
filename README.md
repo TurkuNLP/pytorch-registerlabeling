@@ -4,6 +4,8 @@ This codebase was built with PyTorch 1.11, Transformers 4.18.0 and Hugging Face 
 
 See performance scores [here](https://docs.google.com/spreadsheets/d/1lzmULFhy9DzfQkxqB3hzAmcvplS3sgFLjFgEys4-6lE/edit?usp=sharing).
 
+Existing models: puhti.csc.fi:/scratch/project_2002026/anna/extended_registerlabeling/models and biarc.utu.fi:/mnt/biarc_taltio/pytorch-registerlabeling/models
+
 ## Quickstart
 
 To train a model, run
