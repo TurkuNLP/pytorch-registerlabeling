@@ -3,6 +3,7 @@ import torch
 import sys
 import numpy as np
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+import gzip
 
 torch.set_num_threads(2)
 MODEL_NAME = 'xlm-roberta-base'
@@ -42,20 +43,36 @@ model = torch.load(options.load_model, map_location=torch.device('cpu'))
 #model.to('cpu')
 
 def predict_labels(string):
-    tokenized = tokenizer(string, return_tensors='pt')
+    prlist = []
+    labellist = []
+    #tokenized = tokenizer(string, return_tensors='pt') V
+    tokenized = tokenizer(string, truncation=True, max_length=512, return_tensors='pt')
     pred = model(**tokenized)
     sigmoid = torch.nn.Sigmoid()
     probs = sigmoid(torch.Tensor(pred.logits.detach().numpy()))
+#    print("XXX probs", probs)
+
+    pr = probs.flatten()
     preds = np.zeros(probs.shape)
     preds[np.where(probs >= options.threshold)] = 1
-    return [labels[idx] for idx, label in enumerate(preds.flatten()) if label >= options.threshold]
+    for iix, l in enumerate(pr.tolist()):
+        if l >= options.threshold:
+           prlist.append(l)
+           labellist.append(labels[iix])
+    if len(prlist) == 0:
+        prlist.append("No_labels")
+    if len(labellist) == 0:
+        labellist.append("No_labels")
+    return [labellist,prlist]
 
 # predict labels text at a time
+#outf = open(options.text+'_preds.txt', 'w')
+
 with open(options.text, 'r') as f:
-    if options.file_type is 'tsv':
-        for line in f:
+    for line in f:
             text = line.split('\t')[1]
-            print(f'{" ".join(predict_labels(text))}')
-    else:
-        for line in f:
-            print(f'{" ".join(predict_labels(line))}')
+#            print(" ".join(predict_labels(text)[0]), flush=True)
+            floats = predict_labels(text)[1]
+            strs = [str(x) for x in floats]
+            print(" ".join(predict_labels(text)[0]) + "\t" + " ".join(strs) + "\t" + line.split("\t")[1], flush=True)
+f.close()

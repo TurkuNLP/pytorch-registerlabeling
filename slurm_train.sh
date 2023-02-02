@@ -4,10 +4,10 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32G
 #SBATCH -p gpu
-#SBATCH -t 01:15:00
+#SBATCH -t 05:15:00
 #SBATCH --gres=gpu:v100:1
 #SBATCH --ntasks-per-node=1
-#SBATCH --account=Project_2002026
+#SBATCH --account=Project_2005092
 #SBATCH -o logs/%j.out
 #SBATCH -e logs/%j.err
 
@@ -27,12 +27,12 @@ export TRANSFORMERS_CACHE=cachedir
 #pip3 install transformers
 #pip3 install datasets
 
-MODEL="xlm-roberta-base"
-#MODEL="xlm-roberta-large"
+#MODEL="xlm-roberta-base"
+MODEL="xlm-roberta-large"
 #MODEL="TurkuNLP/bert-base-finnish-cased-v1"
 #MODEL="KB/bert-base-swedish-cased"
 #MODEL="camembert-base"
-MODEL_ALIAS="xlmr-base"
+MODEL_ALIAS="xlmr-large"
 SRC=$1
 TRG=$2
 LR_=$3
@@ -53,6 +53,7 @@ export TEST_DIR=data/$TRG
 export OUTPUT_DIR=output
 
 mkdir -p "$OUTPUT_DIR"
+mkdir -p models
 
 for EPOCHS in $EPOCHS_; do
 for LR in $LR_; do
@@ -60,7 +61,7 @@ for j in $i; do
 #rm -r checkpoints/$MODEL_ALIAS-$SRC-$TRG-$LR/
 echo "Settings: src=$SRC trg=$TRG model=$MODEL lr=$LR epochs=$EPOCHS batch_size=$BS"
 echo "job=$SLURM_JOBID src=$SRC trg=$TRG model=$MODEL lr=$LR epochs=$EPOCHS batch_size=$BS" >> logs/experiments.log
-srun python train.py \
+srun python train-mt.py \
   --model_name $MODEL \
   --train $SRC \
   --dev $SRC \
@@ -70,11 +71,11 @@ srun python train.py \
   --batch_size $BS \
   --checkpoints checkpoints/$MODEL_ALIAS-$SRC-$TRG-$LR \
   --labels full \
-  --class_weights True #\
-#  --save_model models/$MODEL_ALIAS-$SRC.pt
+  --class_weights True \
+  --save_model models/$MODEL_ALIAS-$SRC-$LR-MT.pt
 # --threshold 0.4
 
-rm -r checkpoints/$MODEL_ALIAS-$SRC-$TRG-$LR/
+#rm -r checkpoints/$MODEL_ALIAS-$SRC-$TRG-$LR/
 
 done
 done

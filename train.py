@@ -172,16 +172,19 @@ small_languages = ['ar', 'ca', 'es', 'fa', 'hi', 'id', 'jp', 'no', 'pt', 'tr', '
 
 # choose data with all languages with option 'multi'
 for l in options.train.split('-'):
+    print("L train", l)
     data_files['train'].append(f'data/{l}/train.tsv')
-    if not (l == 'multi' or l in small_languages): 
+    if not (l == 'multi' or l in small_languages):
+        print("dev", l)
         data_files['dev'].append(f'data/{l}/dev.tsv')
 for l in options.test.split('-'):
+    print("L test", l)
     # check if zero-shot for small languages, if yes then test with full data
     if l in small_languages and not (l in options.train.split('-') or 'multi' in options.train.split('-')):
         data_files['test'].append(f'data/{l}/{l}.tsv')
     else:
         data_files['test'].append(f'data/{l}/test.tsv')
-
+print("datafiles", data_files)
 dataset = datasets.load_dataset(
     "csv", 
     data_files=data_files, #{'train':options.train, 'test':options.test, 'dev': options.dev}, 
