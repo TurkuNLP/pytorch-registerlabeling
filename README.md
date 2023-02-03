@@ -21,7 +21,10 @@ With the slurm script, you can launch multiple instances:
 To predict labels for a text file (several texts when separated by linebreak):
     
     python3 predict.py --text text.txt --load_model model.pt
-    
+
+### Note on the labels
+Make sure that the class labels are in alphabetical order in the .py code! 
+
 ## Data
 
 English (full), French and Swedish COREs: https://github.com/TurkuNLP/multilingual-register-data
