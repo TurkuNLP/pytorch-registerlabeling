@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32G
 #SBATCH -p gpu
-#SBATCH -t 05:15:00
+#SBATCH -t 07:05:00
 #SBATCH --gres=gpu:v100:1
 #SBATCH --ntasks-per-node=1
 #SBATCH --account=Project_2005092
@@ -28,11 +28,11 @@ export TRANSFORMERS_CACHE=cachedir
 #pip3 install datasets
 
 #MODEL="xlm-roberta-base"
-MODEL="xlm-roberta-large"
-#MODEL="TurkuNLP/bert-base-finnish-cased-v1"
+#MODEL="xlm-roberta-large"
+MODEL="TurkuNLP/bert-base-finnish-cased-v1"
 #MODEL="KB/bert-base-swedish-cased"
 #MODEL="camembert-base"
-MODEL_ALIAS="xlmr-large"
+MODEL_ALIAS="finbert-base"
 SRC=$1
 TRG=$2
 LR_=$3
@@ -72,7 +72,7 @@ srun python train-mt.py \
   --checkpoints checkpoints/$MODEL_ALIAS-$SRC-$TRG-$LR \
   --labels full \
   --class_weights True \
-  --save_model models/$MODEL_ALIAS-$SRC-$LR-MT.pt
+  --save_model models/$MODEL_ALIAS-$SRC-$LR-MTv2.pt
 # --threshold 0.4
 
 #rm -r checkpoints/$MODEL_ALIAS-$SRC-$TRG-$LR/
