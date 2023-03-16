@@ -79,9 +79,9 @@ data/multi/ contains all of the smaller COREs combined for training and testing 
 
 ### Predicting labels and printing classifier scores
 
-sbatch slurm_predict_gpu_mt.sh --text --model
+    sbatch slurm_predict_gpu_mt.sh --text --model
 
 ### Extracting document embeddings
 
-sbatch data/sl-extract-embeddings.sh
+    sbatch data/sl-extract-embeddings.sh
 
