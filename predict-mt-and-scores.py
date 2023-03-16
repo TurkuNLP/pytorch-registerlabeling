@@ -6,7 +6,7 @@ from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import gzip
 
 torch.set_num_threads(2)
-MODEL_NAME = 'xlm-roberta-base'
+MODEL_NAME = 'xlm-roberta-large'
 
 def argparser():
     ap = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
@@ -17,7 +17,7 @@ def argparser():
     ap.add_argument('--file_type', choices=['tsv', 'txt'], default='txt')
     ap.add_argument('--load_model', default=None, metavar='FILE',
                     help='Load model from file')
-    ap.add_argument('--threshold', default=0.4, metavar='FLOAT', type=float,
+    ap.add_argument('--threshold', default=0.3, metavar='FLOAT', type=float,
                     help='threshold for calculating f-score')
     ap.add_argument('--labels', choices=['full', 'upper'], default='full')
     ap.add_argument('--output', default=None, metavar='FILE', help='Location to save predictions')
@@ -75,5 +75,5 @@ with open(options.text, 'r') as f:
 #            print(" ".join(predict_labels(text)[0]), flush=True)
             floats = predict_labels(text)[1]
             strs = [str(x) for x in floats]
-            print(" ".join(predict_labels(text)[0]) + "\t" + " ".join(strs) + "\t" + line.split("\t")[1], flush=True)
+            print(line.split("\t")[0], " ".join(predict_labels(text)[0]) + "\t" + " ".join(strs) + "\t" + line.split("\t")[1], flush=True)
 f.close()

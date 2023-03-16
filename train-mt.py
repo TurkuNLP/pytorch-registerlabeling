@@ -1,4 +1,5 @@
 import transformers
+from transformers import AutoConfig
 import datasets
 import torch
 import logging
@@ -17,14 +18,14 @@ pprint = PrettyPrinter(compact=True).pprint
 LEARNING_RATE=1e-4
 BATCH_SIZE=8
 TRAIN_EPOCHS=2
-MODEL_NAME = 'xlm-roberta-large'
+MODEL_NAME = 'xlm-roberta-base'
 PATIENCE = 5
 
 # omit av, ed, fi
 #labels_full = ['HI', 'ID', 'IN', 'IP', 'LY', 'NA', 'OP', 'SP', 'ds', 'dtp', 'en', 'it', 'lt', 'nb', 'ne', 'ob', 'ra', 're', 'rs', 'rv', 'sr']
 
-labels_full = ['HI', 'ID', 'IN', 'IP', 'LY', 'NA', 'OP', 'SP', 'av', 'ds', 'dtp', 'ed', 'en', 'fi', 'it', 'lt', 'nb', 'ne', 'ob', 'ra', 're', 'rs', 'rv', 'sr']
-labels_upper = ['HI', 'ID', 'IN', 'IP', 'LY', 'NA', 'OP', 'SP']
+labels_full = ['HI', 'ID', 'IN', 'IP', 'LY', 'MT', 'NA', 'OP', 'SP', 'av', 'ds', 'dtp', 'ed', 'en', 'fi', 'it', 'lt', 'nb', 'ne', 'ob', 'ra', 're', 'rs', 'rv', 'sr']
+labels_upper = ['HI', 'ID', 'IN', 'IP', 'LY', 'MT', 'NA', 'OP', 'SP']
 
 def argparser():
     ap = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
@@ -204,20 +205,36 @@ dataset = dataset.shuffle(seed=42)
 #pprint(dataset['test']['label'][:10])
 dataset = dataset.map(remove_NA)
 # remove examples that have more than four labels
-dataset = dataset.filter(lambda example: len(example['label'].split(','))<=4)
-dataset = dataset.filter(lambda example: 'MT' not in example['label'].split(',') and 'OS' not in example['label'].split(','))
+#dataset = dataset.filter(lambda example: len(example['label'].split(','))<=4) #WE WANNA HAVE THOSE 
+#dataset = dataset.filter(lambda example: 'MT' not in example['label'].split(',') and 'OS' not in example['label'].split(',')) # WE WANNA HAVE THOSE TOO
+print("XXX BEFORE")
+print(dataset['train'][0])
 dataset = dataset.map(label_encoding)
+print("XXX AFTER")
+print(dataset['train'][0])
 
 def compute_class_weights(dataset):
     freqs = [0] * len(labels)
+    print("FREQS", freqs)
     n_examples = len(dataset['train'])
+    print("LEN train dataset", len(dataset['train']))
+    print("LABELS", labels)
+    print("LEN LABELS", len(labels))
     for e in dataset['train']['label']:
+ #       print("EE", e)
         for i in range(len(labels)):
+#            print("E i", e[i])
             if e[i] != 0:
                 freqs[i] += 1
     weights = []
+   # print("FREQS 2", freqs)
     for i in range(len(labels)):#, label in enumerate(labels):
-        weights.append(n_examples/(len(labels)*freqs[i]))
+#        print("III", i)
+        print(freqs[i])
+        try:
+            weights.append(n_examples/(len(labels)*freqs[i]))
+        except:
+            weights.append(0.0)
     print("weights:", weights)
     class_weights = torch.FloatTensor(weights).cuda()
     return class_weights
@@ -225,19 +242,34 @@ def compute_class_weights(dataset):
 #class_weights = compute_class_weights(dataset)
     
 dataset = binarize(dataset)
+print("XXX labels")
+print("XXX sample")
+#print(dataset)
+print(dataset['train'][0])
+print(dataset['train'][1])
+print("text")
+print(dataset['train']['text'][0])
+print("dataset")
+print(dataset)
 #pprint(dataset['test']['label'][:5])
+#pprint(dataset['test']['text'][:5])
 if options.class_weights is True:
     class_weights = compute_class_weights(dataset)
 
+#config=AutoConfig.from_pretrained("XXX", output_hidden_states=True)
+#config = config_class.from_pretrained(options.model_name)
+#config.output_hidden_states = True
+#model = model.from_pretrained(name, config=config)
 model_name = options.model_name #"xlm-roberta-base"
 tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
+print("tokenizer and model ok")
 
 def tokenize(example):
     return tokenizer(
         example["text"],
         truncation=True,
         max_length=512,
-#        padding=True,
+        padding=True,
 #        return_tensors='pt'
     )
 
@@ -273,9 +305,17 @@ if options.load_model is not None:
 
 # Apply the tokenizer to the whole dataset using .map()
 dataset = dataset.map(tokenize)
+print("dataset tokenized")
 
 #set up a separated directory for caching
-model = transformers.AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=num_labels, cache_dir="cachedir/")
+#config=AutoConfig.from_pretrained("TurkuNLP/bert-base-finnish-cased-v1", output_hidden_states=True)
+#config = config.output_hidden_states=True
+#config = config_class.from_pretrained(model_name)
+#config.output_hidden_states = True
+#model = model.from_pretrained(name, config=config)
+
+model = transformers.AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=num_labels, cache_dir="cachedir/")#, config=config)#config.output_hidden_states=True)
+#assert model.config.output_hidden_states == True
 
 class MultilabelTrainer(transformers.Trainer):
     def compute_loss(self, model, inputs, return_outputs=False):
