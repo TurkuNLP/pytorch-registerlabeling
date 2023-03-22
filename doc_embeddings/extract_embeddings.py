@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 import glob
+import gzip
 
 from common import write
 from common import write_l
@@ -44,31 +45,39 @@ counter = 0
 def return_embeddings(dir):
     embeddings = []
     labels_total = []
-    for file in glob.glob(dir+"/*"):
-        fin = open(file, "r")
+    ids = []
+    for file in glob.glob(dir+"/data.txt_predsmt.txt.gz"):
+        print("path", file)
+        fin = gzip.open(file, "rt")
         for line in fin:
-            line=line.split("\t")
-            labels=line[0]
-            text=line[1]
-            ls=labels.split(" ")
-            labels_total.append(labels)
-            inputs = tokenizer(text, return_tensors='pt', truncation=True, max_length=512)
-            #input_enc = tokenizer(text, truncation=True, max_length=512)
-            #print(input_enc)
-            outputs = model(**inputs, output_hidden_states=True)
-            last_hidden_states = outputs.hidden_states[-1]
-#            print(last_hidden_states.shape)
-         #   print(last_hidden_states)
-            last_layer = last_hidden_states[0]
- #           print("last layer shape", last_layer.shape)
-            #print(last_layer)
-            embeddings.append(last_layer[0,:].detach().numpy()) # take the index 0 so CLS
-  #          print("CLS shape", last_layer[0,:].shape)
+            if len(line) < 2:
+                continue
+            else:
+                line=line.split("\t")
+                labels=line[0].split(" ",1)[1]
+                id = line[0].split(" ",1)[0]
+                text=line[2]
+                ls=labels.split(" ")
+                labels_total.append(labels)
+                inputs = tokenizer(text, return_tensors='pt', truncation=True, max_length=512)
+                #input_enc = tokenizer(text, truncation=True, max_length=512)
+                #print(input_enc)
+                outputs = model(**inputs, output_hidden_states=True)
+                last_hidden_states = outputs.hidden_states[-1]
+                #            print(last_hidden_states.shape)
+                #   print(last_hidden_states)
+                last_layer = last_hidden_states[0]
+                #           print("last layer shape", last_layer.shape)
+                #print(last_layer)
+                embeddings.append(last_layer[0,:].detach().numpy()) # take the index 0 so CLS
+                #          print("CLS shape", last_layer[0,:].shape)
     print("Total number of embeddings", len(embeddings), "for", dir)
-    write(embeddings, options.model_name+dir+"embeddings.txt")
-    write_l(labels_total, options.model_name+dir+"labels.txt")
+    write(embeddings, options.data+"/"+options.lang+"_embeddings.txt")
+    write_l(labels_total, options.data+"/"+options.lang+"_labels.txt")
+    write_l(ids, options.data+"/"+options.lang+"_ids.txt")
 
-for di in options.data.split("-"):
-    return_embeddings(di)
+    
+#for di in options.data.split("-"):
+return_embeddings(options.data)
 
     

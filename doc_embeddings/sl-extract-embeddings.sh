@@ -4,7 +4,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=32G
 #SBATCH -p gpu
-#SBATCH -t 10:10:00
+#SBATCH -t 08:10:00
 #SBATCH --gres=gpu:v100:1
 #SBATCH --ntasks-per-node=1
 #SBATCH --account=Project_2005092
@@ -25,9 +25,9 @@ export TRANSFORMERS_CACHE=v_cache
 
 srun python extract_embeddings.py \
      --model_name xlm-roberta-large \
-     --data ../data/en02 \
+     --data ../oscar-data/tr \
      --model ../models/xlmr-large-en02-fin-fr_mt-sv_mt-0.000006-MT.pt \
-     --lang fin
+     --lang tr
 
   
 
