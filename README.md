@@ -10,7 +10,7 @@ Existing models: puhti.csc.fi:/scratch/project_2002026/anna/extended_registerlab
 
 To train a model, run
 
-    python3 train.py --train [TRAIN_LANGUAGE] --dev [TRAIN_LANGUAGE] --test [TEST_LANGUAGE]
+    python3 train-mt.py --train [TRAIN_LANGUAGE] --dev [TRAIN_LANGUAGE] --test [TEST_LANGUAGE]
     
 Use several languages in training or testing by connecting them with a hyphen. E.g., en-fi-sv.
   
