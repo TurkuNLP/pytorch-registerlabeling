@@ -2,5 +2,6 @@ datasets
 scikit-learn
 torch
 transformers
-ray[tune]
+ray[tune]==2.6.3
 accelerate
+wandb
