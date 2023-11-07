@@ -204,12 +204,9 @@ def argparser():
 
 
 options = argparser().parse_args(sys.argv[1:])
-working_dir = f"{options.working_dir}/{options.train}_{options.test}"
+working_dir = f"{options.working_dir}/{options.train}_{options.test}{'_tuning' if options.tune else ''}"
 model_name = options.model_name
-
 labels = labels_full if options.labels == "full" else labels_upper
-num_labels = len(labels)
-print(f"Number of labels: {num_labels}")
 
 
 # Data preprocessing
@@ -270,7 +267,8 @@ dataset = dataset.shuffle(seed=42)
 tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
 dataset = dataset.map(preprocess_data)
 
-print("dataset pre-processed")
+print("dataset preprocessed")
+print(f"predicting {len(labels)} labels")
 
 # Evaluate only
 if options.load_model is not None:
@@ -300,23 +298,20 @@ def compute_class_weights(dataset):
     ]
 
     weights = len(dataset["train"]) / (len(labels) * np.bincount(y))
-
-    class_weights = torch.FloatTensor(weights)
-    print(f"class weights: {class_weights}")
-    return y
+    return torch.FloatTensor(weights)
 
 
 def model_init():
     return transformers.AutoModelForSequenceClassification.from_pretrained(
         model_name,
-        num_labels=num_labels,
+        num_labels=len(labels),
         cache_dir=f"{working_dir}/model_cache",
     )
 
 
-if options.class_weights is True:
-    print("Using class weights")
+if options.class_weights:
     class_weights = compute_class_weights(dataset)
+    print(f"using class weights: {class_weights}")
 
 
 class MultilabelTrainer(transformers.Trainer):
