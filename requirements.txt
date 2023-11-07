@@ -1,0 +1,6 @@
+datasets
+scikit-learn
+torch
+transformers
+ray[tune]
+accelerate

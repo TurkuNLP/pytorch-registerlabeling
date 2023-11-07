@@ -1,0 +1,5 @@
+venv
+data/fi/*.tsv
+data/en/*.tsv
+data/fr/*.tsv
+data/sv/*.tsv
