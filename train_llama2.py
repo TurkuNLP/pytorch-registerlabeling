@@ -14,6 +14,7 @@ from transformers import (
     Trainer,
     TrainingArguments,
     DataCollatorForLanguageModeling,
+    EarlyStoppingCallback,
 )
 
 import bitsandbytes as bnb
@@ -290,6 +291,7 @@ def fine_tune(
             optim=optim,
         ),
         data_collator=DataCollatorForLanguageModeling(tokenizer, mlm=False),
+        # callbacks=[EarlyStoppingCallback(early_stopping_patience=5)],
     )
 
     model.config.use_cache = False
@@ -351,7 +353,7 @@ learning_rate = 2e-4
 optim = "paged_adamw_32bit"
 
 # Number of training steps (overrides num_train_epochs)
-max_steps = 20
+max_steps = 100
 
 # Linear warmup steps from 0 to learning_rate
 warmup_steps = 2
