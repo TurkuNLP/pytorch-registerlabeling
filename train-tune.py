@@ -421,7 +421,7 @@ if options.tune:
 
     tune_config = {
         "learning_rate": tune.grid_search([5e-7, 1e-6, 5e-6, 1e-5, 5e-5, 1e-4]),
-        "per_device_train_batch_size": tune.grid_search([6, 8, 12, 16]),
+        "per_device_train_batch_size": tune.grid_search([6, 8, 12]),
     }
 
     reporter = tune.CLIReporter(
@@ -430,7 +430,12 @@ if options.tune:
             "per_device_train_batch_size": "train_bs/gpu",
             "num_train_epochs": "num_epochs",
         },
-        metric_columns=["eval_f1", "eval_f1_th05", "eval_threshold", "training_iteration"],
+        metric_columns=[
+            "eval_f1",
+            "eval_f1_th05",
+            "eval_threshold",
+            "training_iteration",
+        ],
     )
 
     trainer.hyperparameter_search(
