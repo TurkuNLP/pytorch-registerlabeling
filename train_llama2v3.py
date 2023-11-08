@@ -49,7 +49,7 @@ model = AutoModelForCausalLM.from_pretrained(
     model_name,
     quantization_config=quant_config,
     device_map="auto",
-    max_memory="32000MB",
+    max_memory={0: "32000MB"},
 )
 
 # Load tokenizer
