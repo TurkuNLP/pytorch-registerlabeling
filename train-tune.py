@@ -424,11 +424,23 @@ if options.tune:
         "per_device_train_batch_size": tune.grid_search([6, 8, 12, 16]),
     }
 
+    reporter = tune.CLIReporter(
+        parameter_columns={
+            "learning_rate": "learning_rate",
+            "per_device_train_batch_size": "train_bs/gpu",
+            "num_train_epochs": "num_epochs",
+        },
+        metric_columns=["eval_f1", "eval_f1_th05", "eval_threshold", "training_iteration"],
+    )
+
     trainer.hyperparameter_search(
         hp_space=lambda _: tune_config,
         backend="ray",
         scheduler=asha_scheduler,
+        progress_reporter=reporter,
         direction="maximize",
+        local_dir=f"{working_dir}/ray",
+        log_to_file=True,
     )
 else:
     print("Training...")
