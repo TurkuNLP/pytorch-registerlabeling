@@ -1,3 +1,9 @@
+import os
+
+os.environ["TRANSFORMERS_CACHE"] = ".hf/transformers_cache"
+os.environ["HF_HOME"] = ".hf/hf_home"
+os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
+
 import torch
 from datasets import load_dataset
 from transformers import (
@@ -99,7 +105,7 @@ load_model = AutoModelForCausalLM.from_pretrained(
     low_cpu_mem_usage=True,
     return_dict=True,
     torch_dtype=torch.float16,
-    device_map={"": 0},
+    # device_map={"": 0},
 )
 
 model = PeftModel.from_pretrained(load_model, new_model)
