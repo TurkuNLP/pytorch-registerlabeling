@@ -8,6 +8,7 @@ import numpy as np
 import transformers
 import datasets
 import torch
+from peft import get_peft_model, LoraConfig, TaskType
 
 from sklearn.metrics import (
     classification_report,
@@ -19,6 +20,7 @@ from sklearn.metrics import (
 logging.disable(logging.INFO)
 pprint = PrettyPrinter(compact=True).pprint
 
+MAX_LENGTH = 512
 LEARNING_RATE = 1e-5
 BATCH_SIZE = 8
 TRAIN_EPOCHS = 15
@@ -157,6 +159,13 @@ def argparser():
     ap.add_argument("--train", required=True, help="Path to training data")
     ap.add_argument("--test", required=True, help="Path to test data")
     ap.add_argument(
+        "--max_length",
+        metavar="INT",
+        type=int,
+        default=MAX_LENGTH,
+        help="Max length",
+    )
+    ap.add_argument(
         "--batch_size",
         metavar="INT",
         type=int,
@@ -199,6 +208,9 @@ def argparser():
     ap.add_argument("--class_weights", default=False, type=bool)
     ap.add_argument("--working_dir", default=WORKING_DIR, help="Working directory")
     ap.add_argument("--tune", default=False, type=bool, help="Tune hyperparameters")
+    ap.add_argument(
+        "--set_pad_id", default=False, type=bool, help="Set pad id (for llama2)"
+    )
 
     return ap
 
@@ -212,7 +224,9 @@ labels = labels_full if options.labels == "full" else labels_upper
 # Data preprocessing
 def preprocess_data(example):
     text = example["text"] or ""
-    encoding = tokenizer(text, padding=True, truncation=True, max_length=512)
+    encoding = tokenizer(
+        text, padding=True, truncation=True, max_length=options.max_length
+    )
     mapped_labels = set(
         [
             sub_register_map[l] if l not in labels else l
@@ -265,7 +279,11 @@ dataset = dataset.shuffle(seed=42)
 
 
 tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
+if options.set_pad_id:
+    tokenizer.pad_token = tokenizer.eos_token
+
 dataset = dataset.map(preprocess_data)
+
 
 print("dataset preprocessed")
 print(f"predicting {len(labels)} labels")
@@ -277,7 +295,9 @@ if options.load_model is not None:
     inputs = dataset["test"]["text"]
     pred_labels = []
     for index, i in enumerate(inputs):
-        tok = tokenizer(i, truncation=True, max_length=512, return_tensors="pt")
+        tok = tokenizer(
+            i, truncation=True, max_length=options.max_length, return_tensors="pt"
+        )
         pred = model(**tok)
         sigmoid = torch.nn.Sigmoid()
         probs = sigmoid(torch.Tensor(pred.logits.detach().numpy()))
@@ -302,11 +322,30 @@ def compute_class_weights(dataset):
 
 
 def model_init():
-    return transformers.AutoModelForSequenceClassification.from_pretrained(
+    model = transformers.AutoModelForSequenceClassification.from_pretrained(
         model_name,
         num_labels=len(labels),
         cache_dir=f"{working_dir}/model_cache",
+        trust_remote_code=True,
     )
+
+    if "llama" in options.model_name:
+        model = get_peft_model(
+            model,
+            LoraConfig(
+                task_type=TaskType.SEQ_CLS,
+                r=4,
+                lora_alpha=16,
+                lora_dropout=0.1,
+                bias="none",
+                target_modules=[
+                    "q_proj",
+                    "v_proj",
+                ],
+            ),
+        )
+
+    return model
 
 
 if options.class_weights:
