@@ -286,8 +286,11 @@ dataset = datasets.load_dataset(
 dataset = dataset.shuffle(seed=42)
 
 
-tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
+tokenizer = transformers.AutoTokenizer.from_pretrained(
+    model_name
+)  # maybe add prefix space for llama?
 if options.set_pad_id:
+    tokenizer.pad_token_id = tokenizer.eos_token_id
     tokenizer.pad_token = tokenizer.eos_token
 
 dataset = dataset.map(preprocess_data)
@@ -338,6 +341,7 @@ def model_init():
     )
 
     if "llama" in options.model_name:
+        model.config.pad_token_id = model.config.eos_token_id
         model = get_peft_model(
             model,
             LoraConfig(
@@ -392,6 +396,8 @@ trainer_args = transformers.TrainingArguments(
     per_device_eval_batch_size=32,
     num_train_epochs=options.epochs,
     report_to="wandb" if options.tune else None,
+    gradient_checkpointing=True if "llama" in model_name else False,
+    fp16=True if "llama" in model_name else False,
 )
 
 
@@ -452,6 +458,7 @@ trainer = MultilabelTrainer(
     eval_dataset=dataset["dev"],
     compute_metrics=compute_metrics,
     tokenizer=tokenizer,
+    data_collator=transformers.DataCollatorWithPadding(tokenizer=tokenizer),
     callbacks=[
         transformers.EarlyStoppingCallback(early_stopping_patience=options.patience)
     ],
