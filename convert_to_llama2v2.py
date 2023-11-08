@@ -131,7 +131,6 @@ with open(path + "/train_instruction_inst.tsv", "w", newline="") as tsvfile:
         with open(os.path.join(os.getcwd(), filename), "r") as f_in:
             text = csv.reader(f_in, delimiter="\t")
             for line in text:
-                print(line)
                 mapped_labels, raw_text = preprocess_data(line)
                 out = f"<s>[INST] {inst} ```{raw_text}``` [/INST] {mapped_labels} </s>"
                 writer.writerow([out])
