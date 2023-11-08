@@ -4,8 +4,6 @@ os.environ["TRANSFORMERS_CACHE"] = ".hf/transformers_cache"
 os.environ["HF_HOME"] = ".hf/hf_home"
 os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
 
-from random import randrange
-from functools import partial
 import torch
 from datasets import load_dataset
 from transformers import (
@@ -48,7 +46,10 @@ quant_config = BitsAndBytesConfig(
 
 # Load model
 model = AutoModelForCausalLM.from_pretrained(
-    model_name, quantization_config=quant_config, device_map="auto", max_memory=32000
+    model_name,
+    quantization_config=quant_config,
+    device_map="auto",
+    max_memory="32000MB",
 )
 
 # Load tokenizer
