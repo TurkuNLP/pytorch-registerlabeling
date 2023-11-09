@@ -25,6 +25,8 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
+torch.cuda.empty_cache()
+
 logging.disable(logging.INFO)
 pprint = PrettyPrinter(compact=True).pprint
 
@@ -381,6 +383,8 @@ class MultilabelTrainer(transformers.Trainer):
         return (loss, outputs) if return_outputs else loss
 
 
+print(f"Llama model: {'llama' in model_name}")
+
 trainer_args = transformers.TrainingArguments(
     f"{working_dir}/checkpoints",
     evaluation_strategy="epoch",
@@ -397,6 +401,7 @@ trainer_args = transformers.TrainingArguments(
     num_train_epochs=options.epochs,
     report_to="wandb" if options.tune else None,
     gradient_checkpointing=True if "llama" in model_name else False,
+    gradient_accumulation_steps=4 if "llama" in model_name else 1,
     fp16=True if "llama" in model_name else False,
 )
 
