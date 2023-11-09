@@ -33,6 +33,7 @@ pprint = PrettyPrinter(compact=True).pprint
 MAX_LENGTH = 512
 LEARNING_RATE = 1e-5
 BATCH_SIZE = 8
+EVAL_BATCH_SIZE = 32
 TRAIN_EPOCHS = 15
 EVAL_STEPS = 100
 LOGGING_STEPS = 100
@@ -187,6 +188,13 @@ def argparser():
         help="Batch size for training",
     )
     ap.add_argument(
+        "--eval_batch_size",
+        metavar="INT",
+        type=int,
+        default=EVAL_BATCH_SIZE,
+        help="Batch size for evaluating",
+    )
+    ap.add_argument(
         "--epochs",
         metavar="INT",
         type=int,
@@ -329,7 +337,7 @@ dataset = dataset.shuffle(seed=42)
 
 
 tokenizer = transformers.AutoTokenizer.from_pretrained(
-    model_name
+    model_name,
 )  # maybe add prefix space for llama?
 if options.set_pad_id:
     tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -449,6 +457,7 @@ def model_init():
         cache_dir=f"{working_dir}/model_cache",
         trust_remote_code=True,
         device_map="auto",
+        low_cpu_mem_usage=True,
         quantization_config=transformers.BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
@@ -503,7 +512,7 @@ trainer = MultilabelTrainer(
         metric_for_best_model="eval_f1",
         greater_is_better=True,
         per_device_train_batch_size=options.batch_size,
-        per_device_eval_batch_size=32,
+        per_device_eval_batch_size=options.eval_batch_size,
         num_train_epochs=options.epochs,
         report_to="wandb" if options.tune else None,
         gradient_checkpointing=True if llama else False,
