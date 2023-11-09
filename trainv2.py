@@ -535,7 +535,4 @@ preds[np.where(probs >= threshold)] = 1
 print(classification_report(trues, preds, target_names=labels))
 
 if options.save_model:
-    torch.save(
-        trainer.model,
-        f"{working_dir}/saved_model",
-    )
+    trainer.model.save_pretrained(f"{working_dir}/saved_model")
