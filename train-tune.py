@@ -34,6 +34,8 @@ MAX_LENGTH = 512
 LEARNING_RATE = 1e-5
 BATCH_SIZE = 8
 TRAIN_EPOCHS = 15
+EVAL_STEPS = 100
+LOGGING_STEPS = 100
 MODEL_NAME = "xlm-roberta-base"
 PATIENCE = 5
 WORKING_DIR = "/scratch/project_2005092/register-models"
@@ -203,6 +205,20 @@ def argparser():
         default=PATIENCE,
         help="Early stopping patience",
     )
+    ap.add_argument(
+        "--logging_steps",
+        metavar="INT",
+        type=int,
+        default=LOGGING_STEPS,
+        help="Logging steps",
+    )
+    ap.add_argument(
+        "--eval_steps",
+        metavar="INT",
+        type=int,
+        default=EVAL_STEPS,
+        help="Evaluation steps",
+    )
     ap.add_argument("--save_model", default=True, type=bool, help="Save model to file")
     ap.add_argument(
         "--threshold",
@@ -229,6 +245,7 @@ options = argparser().parse_args(sys.argv[1:])
 working_dir = f"{options.working_dir}/{options.train}_{options.test}{'_tuning' if options.tune else ''}"
 model_name = options.model_name
 labels = labels_full if options.labels == "full" else labels_upper
+llama = "llama" in model_name
 
 
 # Data preprocessing
@@ -348,11 +365,11 @@ def model_init():
             bnb_4bit_use_double_quant=True,
             bnb_4bit_compute_dtype=torch.bfloat16,
         )
-        if "llama" in model_name
+        if llama
         else None,
     )
 
-    if "llama" in model_name:
+    if llama:
         model.gradient_checkpointing_enable()
         model = prepare_model_for_kbit_training(model)
         # model.config.pad_token_id = model.config.eos_token_id
@@ -401,7 +418,7 @@ class MultilabelTrainer(transformers.Trainer):
         return (loss, outputs) if return_outputs else loss
 
 
-print(f"Llama model: {'llama' in model_name}")
+print(f"Llama model: {llama}")
 
 trainer_args = transformers.TrainingArguments(
     f"{working_dir}/checkpoints",
@@ -409,8 +426,8 @@ trainer_args = transformers.TrainingArguments(
     save_strategy="epoch",
     logging_strategy="epoch",
     load_best_model_at_end=True,
-    eval_steps=100,
-    logging_steps=100,
+    eval_steps=options.eval_steps,
+    logging_steps=options.logging_steps,
     learning_rate=options.learning_rate,
     metric_for_best_model="eval_f1",
     greater_is_better=True,
@@ -418,10 +435,10 @@ trainer_args = transformers.TrainingArguments(
     per_device_eval_batch_size=32,
     num_train_epochs=options.epochs,
     report_to="wandb" if options.tune else None,
-    gradient_checkpointing=True if "llama" in model_name else False,
-    gradient_accumulation_steps=4 if "llama" in model_name else 1,
-    fp16=True if "llama" in model_name else False,
-    optim="paged_adamw_32bit" if "llama" in model_name else "adamw_torch",
+    gradient_checkpointing=True if llama else False,
+    gradient_accumulation_steps=4 if llama else 1,
+    fp16=True if llama else False,
+    optim="paged_adamw_32bit" if llama else "adamw_torch",
 )
 
 
