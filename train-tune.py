@@ -404,6 +404,7 @@ trainer_args = transformers.TrainingArguments(
     gradient_checkpointing=True if "llama" in model_name else False,
     gradient_accumulation_steps=4 if "llama" in model_name else 1,
     fp16=True if "llama" in model_name else False,
+    optim="paged_adamw_32bit" if "llama" in model_name else "adamw_torch",
 )
 
 
