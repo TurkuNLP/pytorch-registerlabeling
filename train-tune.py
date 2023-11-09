@@ -275,7 +275,7 @@ print(f"opts: {options}")
 def preprocess_data(example):
     text = example["text"] or ""
     encoding = tokenizer(
-        text, padding=True, truncation=True, max_length=options.max_length
+        text, padding="max_length", truncation=True, max_length=options.max_length
     )
     mapped_labels = set(
         [
