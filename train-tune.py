@@ -36,6 +36,7 @@ BATCH_SIZE = 8
 TRAIN_EPOCHS = 15
 EVAL_STEPS = 100
 LOGGING_STEPS = 100
+ITER_STRATEGY = "epoch"
 MODEL_NAME = "xlm-roberta-base"
 PATIENCE = 5
 WORKING_DIR = "/scratch/project_2005092/register-models"
@@ -219,6 +220,13 @@ def argparser():
         default=EVAL_STEPS,
         help="Evaluation steps",
     )
+    ap.add_argument(
+        "--gradient_steps",
+        metavar="INT",
+        type=int,
+        default=1,
+        help="Gradient accumulation steps",
+    )
     ap.add_argument("--save_model", default=True, type=bool, help="Save model to file")
     ap.add_argument(
         "--threshold",
@@ -226,6 +234,11 @@ def argparser():
         metavar="FLOAT",
         type=float,
         help="threshold for calculating f-score",
+    )
+    ap.add_argument(
+        "--iter_strategy",
+        default=ITER_STRATEGY,
+        help="Iteration strategy (steps or epoch)",
     )
     ap.add_argument("--labels", choices=["full", "upper"], default="full")
     ap.add_argument(
@@ -354,51 +367,6 @@ def compute_class_weights(dataset):
     return torch.FloatTensor(weights)
 
 
-def model_init():
-    model = transformers.AutoModelForSequenceClassification.from_pretrained(
-        model_name,
-        num_labels=len(labels),
-        cache_dir=f"{working_dir}/model_cache",
-        trust_remote_code=True,
-        device_map="auto",
-        quantization_config=transformers.BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_use_double_quant=True,
-            bnb_4bit_compute_dtype=torch.bfloat16,
-        )
-        if llama
-        else None,
-    )
-
-    if llama:
-        model.gradient_checkpointing_enable()
-        model = prepare_model_for_kbit_training(model)
-        # model.config.pad_token_id = model.config.eos_token_id
-        model.config.use_cache = False
-        model = get_peft_model(
-            model,
-            LoraConfig(
-                task_type=TaskType.SEQ_CLS,
-                r=16,
-                lora_alpha=64,
-                lora_dropout=0.1,
-                bias="none",
-                target_modules=[
-                    "v_proj",
-                    "down_proj",
-                    "up_proj",
-                    "q_proj",
-                    "gate_proj",
-                    "k_proj",
-                    "o_proj",
-                ],
-            ),
-        )
-    print(model)
-    return model
-
-
 if options.class_weights:
     class_weights = compute_class_weights(dataset)
     print(f"using class weights: {class_weights}")
@@ -418,9 +386,6 @@ class MultilabelTrainer(transformers.Trainer):
             labels.float().view(-1, self.model.config.num_labels),
         )
         return (loss, outputs) if return_outputs else loss
-
-
-print(f"Llama model: {llama}")
 
 
 # in case a threshold was not given, choose the one that works best with the evaluated data
@@ -469,14 +434,59 @@ def compute_metrics(p):
     return metrics
 
 
+def model_init():
+    model = transformers.AutoModelForSequenceClassification.from_pretrained(
+        model_name,
+        num_labels=len(labels),
+        cache_dir=f"{working_dir}/model_cache",
+        trust_remote_code=True,
+        device_map="auto",
+        quantization_config=transformers.BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_compute_dtype=torch.bfloat16,
+        )
+        if llama
+        else None,
+    )
+
+    if llama:
+        model.gradient_checkpointing_enable()
+        model = prepare_model_for_kbit_training(model)
+        # model.config.pad_token_id = model.config.eos_token_id
+        # model.config.use_cache = False
+        model = get_peft_model(
+            model,
+            LoraConfig(
+                task_type=TaskType.SEQ_CLS,
+                r=16,
+                lora_alpha=64,
+                lora_dropout=0.1,
+                bias="none",
+                target_modules=[
+                    "v_proj",
+                    "down_proj",
+                    "up_proj",
+                    "q_proj",
+                    "gate_proj",
+                    "k_proj",
+                    "o_proj",
+                ],
+            ),
+        )
+    print(model)
+    return model
+
+
 trainer = MultilabelTrainer(
     model=None,
     model_init=model_init,
     args=transformers.TrainingArguments(
         f"{working_dir}/checkpoints",
-        evaluation_strategy="epoch",
-        save_strategy="epoch",
-        logging_strategy="epoch",
+        evaluation_strategy=options.iter_strategy,
+        save_strategy=options.iter_strategy,
+        logging_strategy=options.iter_strategy,
         load_best_model_at_end=True,
         eval_steps=options.eval_steps,
         logging_steps=options.logging_steps,
@@ -488,7 +498,7 @@ trainer = MultilabelTrainer(
         num_train_epochs=options.epochs,
         report_to="wandb" if options.tune else None,
         gradient_checkpointing=True if llama else False,
-        gradient_accumulation_steps=4 if llama else 1,
+        gradient_accumulation_steps=options.gradient_steps,
         fp16=True if llama else False,
         optim="paged_adamw_32bit" if llama else "adamw_torch",
     ),
