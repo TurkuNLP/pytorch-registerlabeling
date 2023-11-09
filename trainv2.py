@@ -40,7 +40,7 @@ parser.add_argument("--iter_strategy", type=str, default="epoch")
 parser.add_argument("--eval_steps", type=int, default=100)
 parser.add_argument("--logging_steps", type=int, default=100)
 parser.add_argument("--save_steps", type=int, default=100)
-parser.add_argument("--save_model", action="store_true")
+parser.add_argument("--save_model", action="store_true", default=True)
 
 parser.add_argument(
     "--data_path",
