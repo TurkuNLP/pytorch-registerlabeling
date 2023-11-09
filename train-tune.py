@@ -340,6 +340,7 @@ def model_init():
         num_labels=len(labels),
         cache_dir=f"{working_dir}/model_cache",
         trust_remote_code=True,
+        torch_dtype=torch.float16 if "llama" in model_name else torch.float32,
     )
 
     if "llama" in options.model_name:
@@ -348,8 +349,8 @@ def model_init():
             model,
             LoraConfig(
                 task_type=TaskType.SEQ_CLS,
-                r=4,
-                lora_alpha=16,
+                r=8,
+                lora_alpha=4,
                 lora_dropout=0.1,
                 bias="none",
                 target_modules=[
