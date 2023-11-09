@@ -24,8 +24,8 @@ from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_int8_tr
 
 # Get CLI options
 
-
 parser = ArgumentParser()
+parser.add_argument("--model_name", type=str, default="xlm-roberta-base")
 parser.add_argument("--train", type=str, required=True)
 parser.add_argument("--test", type=str, required=True)
 parser.add_argument("--lr", type=float, default=1e-5)
@@ -52,11 +52,7 @@ parser.add_argument(
     type=str,
     default="/scratch/project_2005092/register-models",
 )
-parser.add_argument(
-    "--model_name",
-    type=str,
-    default="xlm-roberta-base",
-)
+
 parser.add_argument(
     "--max_length",
     type=int,
@@ -444,7 +440,9 @@ def model_init():
         model.config.use_cache = False
         model = prepare_model_for_int8_training(model)
         model = get_peft_model(model, lora_config)
-        model.print_trainable_parameters()  # see % trainable parameters
+        model.print_trainable_parameters()
+
+    return model
 
 
 trainer = MultilabelTrainer(
@@ -462,7 +460,7 @@ trainer = MultilabelTrainer(
         learning_rate=options.lr,
         metric_for_best_model="eval_f1",
         greater_is_better=True,
-        per_device_train_batch_size=options.batch_size,
+        per_device_train_batch_size=options.train_batch_size,
         per_device_eval_batch_size=options.eval_batch_size,
         num_train_epochs=options.epochs,
         gradient_checkpointing=True,
