@@ -428,7 +428,7 @@ def compute_metrics(p):
     threshold = (
         options.threshold
         if options.threshold
-        else optimize_threshold(preds, p.label_ids)
+        else optimize_threshold(predictions, p.label_ids)
     )
     sigmoid = torch.nn.Sigmoid()
     probs = sigmoid(torch.Tensor(predictions))
