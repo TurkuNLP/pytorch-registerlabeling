@@ -16,7 +16,7 @@ import numpy as np
 import transformers
 import datasets
 import torch
-from peft import get_peft_model, LoraConfig, TaskType
+from peft import get_peft_model, LoraConfig, TaskType, prepare_model_for_int8_training
 
 from sklearn.metrics import (
     classification_report,
@@ -293,7 +293,8 @@ tokenizer = transformers.AutoTokenizer.from_pretrained(
 )  # maybe add prefix space for llama?
 if options.set_pad_id:
     tokenizer.pad_token_id = tokenizer.eos_token_id
-    tokenizer.pad_token = tokenizer.eos_token
+
+    # tokenizer.pad_token = tokenizer.eos_token
 
 dataset = dataset.map(preprocess_data)
 
@@ -340,22 +341,36 @@ def model_init():
         num_labels=len(labels),
         cache_dir=f"{working_dir}/model_cache",
         trust_remote_code=True,
-        torch_dtype=torch.float16 if "llama" in model_name else torch.float32,
+        device_map="auto",
+        quantization_config=transformers.BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True,
+            bnb_4bit_compute_dtype=torch.bfloat16,
+        )
+        if "llama" in model_name
+        else None,
     )
 
-    if "llama" in options.model_name:
-        model.config.pad_token_id = model.config.eos_token_id
+    if "llama" in model_name:
+        # model.config.pad_token_id = model.config.eos_token_id
+        model.config.use_cache = False
         model = get_peft_model(
             model,
             LoraConfig(
                 task_type=TaskType.SEQ_CLS,
-                r=8,
-                lora_alpha=4,
+                r=16,
+                lora_alpha=64,
                 lora_dropout=0.1,
                 bias="none",
                 target_modules=[
-                    "q_proj",
                     "v_proj",
+                    "down_proj",
+                    "up_proj",
+                    "q_proj",
+                    "gate_proj",
+                    "k_proj",
+                    "o_proj",
                 ],
             ),
         )
