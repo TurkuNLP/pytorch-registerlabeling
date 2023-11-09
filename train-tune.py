@@ -16,7 +16,7 @@ import numpy as np
 import transformers
 import datasets
 import torch
-from peft import get_peft_model, LoraConfig, TaskType, prepare_model_for_int8_training
+from peft import get_peft_model, LoraConfig, TaskType, prepare_model_for_kbit_training
 
 from sklearn.metrics import (
     classification_report,
@@ -353,6 +353,8 @@ def model_init():
     )
 
     if "llama" in model_name:
+        model.gradient_checkpointing_enable()
+        model = prepare_model_for_kbit_training(model)
         # model.config.pad_token_id = model.config.eos_token_id
         model.config.use_cache = False
         model = get_peft_model(
@@ -374,7 +376,7 @@ def model_init():
                 ],
             ),
         )
-
+    print(model)
     return model
 
 
