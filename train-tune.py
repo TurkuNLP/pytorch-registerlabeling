@@ -247,6 +247,8 @@ model_name = options.model_name
 labels = labels_full if options.labels == "full" else labels_upper
 llama = "llama" in model_name
 
+print(f"opts: {options}")
+
 
 # Data preprocessing
 def preprocess_data(example):
@@ -420,27 +422,6 @@ class MultilabelTrainer(transformers.Trainer):
 
 print(f"Llama model: {llama}")
 
-trainer_args = transformers.TrainingArguments(
-    f"{working_dir}/checkpoints",
-    evaluation_strategy="epoch",
-    save_strategy="epoch",
-    logging_strategy="epoch",
-    load_best_model_at_end=True,
-    eval_steps=options.eval_steps,
-    logging_steps=options.logging_steps,
-    learning_rate=options.learning_rate,
-    metric_for_best_model="eval_f1",
-    greater_is_better=True,
-    per_device_train_batch_size=options.batch_size,
-    per_device_eval_batch_size=32,
-    num_train_epochs=options.epochs,
-    report_to="wandb" if options.tune else None,
-    gradient_checkpointing=True if llama else False,
-    gradient_accumulation_steps=4 if llama else 1,
-    fp16=True if llama else False,
-    optim="paged_adamw_32bit" if llama else "adamw_torch",
-)
-
 
 # in case a threshold was not given, choose the one that works best with the evaluated data
 def optimize_threshold(predictions, labels):
@@ -459,14 +440,22 @@ def optimize_threshold(predictions, labels):
     return best_f1_threshold
 
 
-def multi_label_metrics(predictions, labels, threshold):
+def compute_metrics(p):
+    predictions = (
+        p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
+    )
+    threshold = (
+        options.threshold
+        if options.threshold
+        else optimize_threshold(preds, p.label_ids)
+    )
     sigmoid = torch.nn.Sigmoid()
     probs = sigmoid(torch.Tensor(predictions))
     y_pred = np.zeros(probs.shape)
     y_pred[np.where(probs >= threshold)] = 1
     y_th05 = np.zeros(probs.shape)
     y_th05[np.where(probs >= 0.5)] = 1
-    y_true = labels
+    y_true = p.label_ids
     f1_micro_average = f1_score(y_true=y_true, y_pred=y_pred, average="micro")
     roc_auc = roc_auc_score(y_true, y_pred, average="micro")
     accuracy = accuracy_score(y_true, y_pred)
@@ -480,21 +469,29 @@ def multi_label_metrics(predictions, labels, threshold):
     return metrics
 
 
-def compute_metrics(p):
-    preds = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
-    if options.threshold == None:
-        best_f1_th = optimize_threshold(preds, p.label_ids)
-        threshold = best_f1_th
-    result = multi_label_metrics(
-        predictions=preds, labels=p.label_ids, threshold=threshold
-    )
-    return result
-
-
 trainer = MultilabelTrainer(
     model=None,
     model_init=model_init,
-    args=trainer_args,
+    args=transformers.TrainingArguments(
+        f"{working_dir}/checkpoints",
+        evaluation_strategy="epoch",
+        save_strategy="epoch",
+        logging_strategy="epoch",
+        load_best_model_at_end=True,
+        eval_steps=options.eval_steps,
+        logging_steps=options.logging_steps,
+        learning_rate=options.learning_rate,
+        metric_for_best_model="eval_f1",
+        greater_is_better=True,
+        per_device_train_batch_size=options.batch_size,
+        per_device_eval_batch_size=32,
+        num_train_epochs=options.epochs,
+        report_to="wandb" if options.tune else None,
+        gradient_checkpointing=True if llama else False,
+        gradient_accumulation_steps=4 if llama else 1,
+        fp16=True if llama else False,
+        optim="paged_adamw_32bit" if llama else "adamw_torch",
+    ),
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
     compute_metrics=compute_metrics,
