@@ -341,8 +341,7 @@ tokenizer = transformers.AutoTokenizer.from_pretrained(
 )  # maybe add prefix space for llama?
 if options.set_pad_id:
     tokenizer.pad_token_id = tokenizer.eos_token_id
-
-    # tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.pad_token = tokenizer.eos_token
 
 dataset = dataset.map(preprocess_data)
 
@@ -471,8 +470,8 @@ def model_init():
     if llama:
         model.gradient_checkpointing_enable()
         model = prepare_model_for_kbit_training(model)
-        # model.config.pad_token_id = model.config.eos_token_id
-        # model.config.use_cache = False
+        model.config.pad_token_id = model.config.eos_token_id
+        model.config.use_cache = False
         model = get_peft_model(
             model,
             LoraConfig(
