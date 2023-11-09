@@ -486,7 +486,7 @@ if not options.evaluate_only:
         )
 
         tune_config = {
-            "learning_rate": tune.grid_search([5e-7, 1e-6, 5e-6, 1e-5, 5e-5, 1e-4]),
+            "learning_rate": tune.grid_search([1e-6, 5e-6, 1e-5, 5e-5, 1e-4, 5e-4]),
             "per_device_train_batch_size": tune.grid_search([6, 8, 12]),
         }
 
