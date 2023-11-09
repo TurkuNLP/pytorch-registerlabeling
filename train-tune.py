@@ -36,6 +36,7 @@ BATCH_SIZE = 8
 TRAIN_EPOCHS = 15
 EVAL_STEPS = 100
 LOGGING_STEPS = 100
+SAVE_STEPS = 100
 ITER_STRATEGY = "epoch"
 MODEL_NAME = "xlm-roberta-base"
 PATIENCE = 5
@@ -219,6 +220,13 @@ def argparser():
         type=int,
         default=EVAL_STEPS,
         help="Evaluation steps",
+    )
+    ap.add_argument(
+        "--save_steps",
+        metavar="INT",
+        type=int,
+        default=SAVE_STEPS,
+        help="Saving steps",
     )
     ap.add_argument(
         "--gradient_steps",
@@ -490,6 +498,7 @@ trainer = MultilabelTrainer(
         load_best_model_at_end=True,
         eval_steps=options.eval_steps,
         logging_steps=options.logging_steps,
+        save_steps=options.save_steps,
         learning_rate=options.learning_rate,
         metric_for_best_model="eval_f1",
         greater_is_better=True,
