@@ -42,6 +42,7 @@ parser.add_argument("--eval_steps", type=int, default=100)
 parser.add_argument("--logging_steps", type=int, default=100)
 parser.add_argument("--save_steps", type=int, default=100)
 parser.add_argument("--save_model", action="store_true", default=True)
+parser.add_argument("--overwrite", action="store_true", default=True)
 
 parser.add_argument(
     "--data_path",
@@ -451,6 +452,7 @@ trainer = MultilabelTrainer(
     model_init=model_init,
     args=transformers.TrainingArguments(
         f"{working_dir}/checkpoints",
+        overwrite_output_dir=True if options.overwrite else False,
         evaluation_strategy=options.iter_strategy,
         save_strategy=options.iter_strategy,
         logging_strategy=options.iter_strategy,
