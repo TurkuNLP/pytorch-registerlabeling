@@ -309,6 +309,8 @@ def get_data():
     return data_files
 
 
+print("Getting data...")
+
 data_files = get_data()
 
 print("data files", data_files)
@@ -336,6 +338,8 @@ tokenizer = AutoTokenizer.from_pretrained(
 if options.set_pad_id:
     tokenizer.pad_token_id = tokenizer.eos_token_id
     tokenizer.pad_token = tokenizer.eos_token
+
+print("Preprocessing...")
 
 dataset = dataset.map(preprocess_data)
 
