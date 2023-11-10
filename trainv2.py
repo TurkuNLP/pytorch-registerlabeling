@@ -516,9 +516,10 @@ if not options.evaluate_only:
         print("Best model according to Ray:")
         print(best_model)
 
+print("Evaluating with dev set...")
+print(trainer.evaluate(dataset["dev"]))
 
 print("Evaluating with test set...")
-
 print(trainer.evaluate(dataset["test"]))
 
 test_pred = trainer.predict(dataset["test"])
@@ -533,6 +534,5 @@ preds = np.zeros(probs.shape)
 preds[np.where(probs >= threshold)] = 1
 
 print(classification_report(trues, preds, target_names=labels))
-
-if options.save_model:
+if not options.evaluate_only and options.save_model:
     trainer.model.save_pretrained(f"{working_dir}/saved_model")
