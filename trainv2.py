@@ -51,6 +51,7 @@ parser.add_argument("--logging_steps", type=int, default=100)
 parser.add_argument("--save_steps", type=int, default=100)
 parser.add_argument("--save_model", action="store_true", default=True)
 parser.add_argument("--overwrite", action="store_true")
+parser.add_argument("--report_to", type=str, default=None)
 
 parser.add_argument(
     "--data_path",
@@ -253,6 +254,10 @@ labels = labels_full if options.labels == "full" else labels_upper
 model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_tuning' if options.hp_search else ''}/{model_name.replace('/', '_')}"
 
+if options.report_to == "wandb":
+    os.environ[
+        "WANDB_PROJECT"
+    ] = f"register-labeling_{options.train}_{options.test}{'_tuning' if options.hp_search else ''}_{model_name.replace('/', '_')}"
 
 # Data preprocessing
 
@@ -476,6 +481,7 @@ trainer = MultilabelTrainer(
         num_train_epochs=options.epochs,
         gradient_checkpointing=True,
         gradient_accumulation_steps=options.gradient_steps,
+        report_to=options.report_to,
     ),
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
