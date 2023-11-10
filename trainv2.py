@@ -3,6 +3,7 @@ import os
 os.environ["TRANSFORMERS_CACHE"] = ".hf/transformers_cache"
 os.environ["HF_HOME"] = ".hf/hf_home"
 os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
+from dotenv import load_dotenv
 
 from argparse import ArgumentParser
 import re
@@ -44,7 +45,7 @@ parser.add_argument("--num_epochs", type=int, default=15)
 parser.add_argument("--weight_decay", type=float, default=0)
 parser.add_argument("--patience", type=int, default=5)
 parser.add_argument("--gradient_steps", type=int, default=1)
-parser.add_argument("--epochs", type=int, default=15)
+parser.add_argument("--epochs", type=int, default=20)
 parser.add_argument("--iter_strategy", type=str, default="epoch")
 parser.add_argument("--eval_steps", type=int, default=100)
 parser.add_argument("--logging_steps", type=int, default=100)
@@ -254,10 +255,17 @@ labels = labels_full if options.labels == "full" else labels_upper
 model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_tuning' if options.hp_search else ''}/{model_name.replace('/', '_')}"
 
+
+# Wandb setup
+
 if options.report_to == "wandb":
     os.environ[
         "WANDB_PROJECT"
     ] = f"register-labeling_{options.train}_{options.test}{'_tuning' if options.hp_search else ''}_{model_name.replace('/', '_')}"
+
+    load_dotenv()
+    os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY")
+
 
 # Data preprocessing
 
