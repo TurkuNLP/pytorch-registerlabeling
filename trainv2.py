@@ -26,6 +26,7 @@ from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_int8_tr
 
 parser = ArgumentParser()
 parser.add_argument("--model_name", type=str, default="xlm-roberta-base")
+parser.add_argument("--custom_tokenizer", type=str, default=None)
 parser.add_argument("--train", type=str, required=True)
 parser.add_argument("--test", type=str, required=True)
 parser.add_argument("--lr", type=float, default=1e-5)
@@ -304,7 +305,7 @@ dataset = dataset.shuffle(seed=options.seed)
 
 
 tokenizer = transformers.AutoTokenizer.from_pretrained(
-    model_name,
+    model_name if not options.custom_tokenizer else options.custom_tokenizer
 )
 
 if options.set_pad_id:
