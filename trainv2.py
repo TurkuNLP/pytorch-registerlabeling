@@ -6,12 +6,20 @@ os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
 
 from argparse import ArgumentParser
 import re
-
-from ray import tune
+from ray.tune.schedulers import ASHAScheduler
+from ray.tune import grid_search, CLIReporter
 import numpy as np
-import transformers
-import datasets
-import torch
+from transformers import (
+    AutoTokenizer,
+    Trainer,
+    AutoModelForSequenceClassification,
+    BitsAndBytesConfig,
+    TrainingArguments,
+    EarlyStoppingCallback,
+)
+from datasets import load_dataset, Features, Value
+from torch.nn import BCEWithLogitsLoss, Sigmoid
+from torch import Tensor, FloatTensor, bfloat16
 
 from sklearn.metrics import (
     classification_report,
@@ -289,15 +297,15 @@ data_files = get_data()
 
 print("data files", data_files)
 
-dataset = datasets.load_dataset(
+dataset = load_dataset(
     "csv",
     data_files=data_files,
     delimiter="\t",
     column_names=cols.get(options.train, ["label", "text"]),
-    features=datasets.Features(
+    features=Features(
         {
-            "text": datasets.Value("string"),
-            "label": datasets.Value("string"),
+            "text": Value("string"),
+            "label": Value("string"),
         }
     ),
     cache_dir=f"{working_dir}/dataset_cache",
@@ -305,7 +313,7 @@ dataset = datasets.load_dataset(
 dataset = dataset.shuffle(seed=options.seed)
 
 
-tokenizer = transformers.AutoTokenizer.from_pretrained(
+tokenizer = AutoTokenizer.from_pretrained(
     model_name if not options.custom_tokenizer else options.custom_tokenizer
 )
 
@@ -329,20 +337,20 @@ if options.class_weights:
     ]
 
     weights = len(dataset["train"]) / (len(labels) * np.bincount(y))
-    class_weights = torch.FloatTensor(weights)
+    class_weights = FloatTensor(weights)
 
     print(f"using class weights: {class_weights}")
 
 
-class MultilabelTrainer(transformers.Trainer):
+class MultilabelTrainer(Trainer):
     def compute_loss(self, model, inputs, return_outputs=False):
         labels = inputs.pop("labels")
         outputs = model(**inputs)
         logits = outputs.logits
         if options.class_weights:
-            loss_fct = torch.nn.BCEWithLogitsLoss(pos_weight=class_weights)
+            loss_fct = BCEWithLogitsLoss(pos_weight=class_weights)
         else:
-            loss_fct = torch.nn.BCEWithLogitsLoss()
+            loss_fct = BCEWithLogitsLoss()
         loss = loss_fct(
             logits.view(-1, self.model.config.num_labels),
             labels.float().view(-1, self.model.config.num_labels),
@@ -351,8 +359,8 @@ class MultilabelTrainer(transformers.Trainer):
 
 
 def optimize_threshold(predictions, labels):
-    sigmoid = torch.nn.Sigmoid()
-    probs = sigmoid(torch.Tensor(predictions))
+    sigmoid = Sigmoid()
+    probs = sigmoid(Tensor(predictions))
     best_f1 = 0
     best_f1_threshold = 0.5
     y_true = labels
@@ -376,8 +384,8 @@ def compute_metrics(p):
         if options.threshold
         else optimize_threshold(predictions, labels)
     )
-    sigmoid = torch.nn.Sigmoid()
-    probs = sigmoid(torch.Tensor(predictions))
+    sigmoid = Sigmoid()
+    probs = sigmoid(Tensor(predictions))
     y_pred = np.zeros(probs.shape)
     y_pred[np.where(probs >= threshold)] = 1
     y_th05 = np.zeros(probs.shape)
@@ -395,18 +403,18 @@ def compute_metrics(p):
 
 
 def model_init():
-    model = transformers.AutoModelForSequenceClassification.from_pretrained(
+    model = AutoModelForSequenceClassification.from_pretrained(
         model_name,
         num_labels=len(labels),
         cache_dir=f"{working_dir}/model_cache",
         trust_remote_code=True,
         device_map="auto",
         low_cpu_mem_usage=True,
-        quantization_config=transformers.BitsAndBytesConfig(
+        quantization_config=BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
             bnb_4bit_use_double_quant=True,
-            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_compute_dtype=bfloat16,
         )
         if options.quantize
         else None,
@@ -450,7 +458,7 @@ def model_init():
 trainer = MultilabelTrainer(
     model=None,
     model_init=model_init,
-    args=transformers.TrainingArguments(
+    args=TrainingArguments(
         f"{working_dir}/checkpoints",
         overwrite_output_dir=True if options.overwrite else False,
         evaluation_strategy=options.iter_strategy,
@@ -472,9 +480,7 @@ trainer = MultilabelTrainer(
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
     compute_metrics=compute_metrics,
-    callbacks=[
-        transformers.EarlyStoppingCallback(early_stopping_patience=options.patience)
-    ],
+    callbacks=[EarlyStoppingCallback(early_stopping_patience=options.patience)],
 )
 
 if not options.evaluate_only:
@@ -483,17 +489,17 @@ if not options.evaluate_only:
         trainer.train()
 
     else:
-        asha_scheduler = tune.schedulers.ASHAScheduler(
+        asha_scheduler = ASHAScheduler(
             metric="eval_f1",
             mode="max",
         )
 
         tune_config = {
-            "learning_rate": tune.grid_search([1e-6, 5e-6, 1e-5, 5e-5, 1e-4, 5e-4]),
-            "per_device_train_batch_size": tune.grid_search([6, 8, 12]),
+            "learning_rate": grid_search([1e-6, 5e-6, 1e-5, 5e-5, 1e-4, 5e-4]),
+            "per_device_train_batch_size": grid_search([6, 8, 12]),
         }
 
-        reporter = tune.CLIReporter(
+        reporter = CLIReporter(
             parameter_columns={
                 "learning_rate": "learning_rate",
                 "per_device_train_batch_size": "train_bs/gpu",
@@ -531,11 +537,12 @@ predictions = test_pred.predictions
 threshold = (
     options.threshold if options.threshold else optimize_threshold(predictions, trues)
 )
-sigmoid = torch.nn.Sigmoid()
-probs = sigmoid(torch.Tensor(predictions))
+sigmoid = Sigmoid()
+probs = sigmoid(Tensor(predictions))
 preds = np.zeros(probs.shape)
 preds[np.where(probs >= threshold)] = 1
 
 print(classification_report(trues, preds, target_names=labels))
+
 if not options.evaluate_only and options.save_model:
     trainer.model.save_pretrained(f"{working_dir}/saved_model")
