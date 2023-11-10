@@ -31,6 +31,8 @@ from sklearn.metrics import (
 
 from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_int8_training
 
+import wandb
+
 # Get CLI options
 
 parser = ArgumentParser()
@@ -265,6 +267,7 @@ if options.report_to == "wandb":
 
     load_dotenv()
     os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY")
+    wandb.login()
 
 
 # Data preprocessing
