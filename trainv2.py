@@ -9,6 +9,9 @@ from argparse import ArgumentParser
 import re
 from ray.tune.schedulers import ASHAScheduler
 from ray.tune import grid_search, CLIReporter
+import ray
+
+ray.init(ignore_reinit_error=True, num_cpus=1)
 import numpy as np
 from transformers import (
     AutoTokenizer,
@@ -54,7 +57,7 @@ parser.add_argument("--logging_steps", type=int, default=100)
 parser.add_argument("--save_steps", type=int, default=100)
 parser.add_argument("--save_model", action="store_true", default=True)
 parser.add_argument("--overwrite", action="store_true")
-parser.add_argument("--report_to", type=str, default=None)
+parser.add_argument("--report_to", type=str, default="wandb")
 
 parser.add_argument(
     "--data_path",
