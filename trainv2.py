@@ -49,6 +49,7 @@ parser.add_argument("--train_batch_size", type=int, default=8)
 parser.add_argument("--eval_batch_size", type=int, default=8)
 parser.add_argument("--num_epochs", type=int, default=15)
 parser.add_argument("--weight_decay", type=float, default=0)
+parser.add_argument("--warmup_steps", type=float, default=0)
 parser.add_argument("--patience", type=int, default=5)
 parser.add_argument("--gradient_steps", type=int, default=1)
 parser.add_argument("--epochs", type=int, default=20)
@@ -492,6 +493,8 @@ trainer = MultilabelTrainer(
         eval_steps=options.eval_steps,
         logging_steps=options.logging_steps,
         save_steps=options.save_steps,
+        weight_decay=options.weight_decay,
+        warmup_steps=options.warmup_steps,
         learning_rate=options.lr,
         metric_for_best_model="eval_f1",
         greater_is_better=True,
