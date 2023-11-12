@@ -516,7 +516,7 @@ trainer = MultilabelTrainer(
         gradient_checkpointing=True,
         gradient_accumulation_steps=options.gradient_steps,
         report_to=options.report_to,
-        optim=options.optim,
+        optim=options.optimizer,
     ),
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
