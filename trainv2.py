@@ -270,7 +270,7 @@ cols = {
 labels = labels_full if options.labels == "full" else labels_upper
 model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_tuning' if options.hp_search else ''}/{model_name.replace('/', '_')}"
-peft_modules = ",".split(options.peft_modules) if options.peft_modules else None
+peft_modules = options.peft_modules.split(",") if options.peft_modules else None
 
 # Wandb setup
 
