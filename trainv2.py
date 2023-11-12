@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 from argparse import ArgumentParser
 import re
 from ray.tune.schedulers import ASHAScheduler
-from ray.tune import grid_search, CLIReporter
+from ray.tune import grid_search, CLIReporter, loguniform, choice
+from ray.tune.search.hyperopt import HyperOptSearch
 import ray
 
 ray.init(ignore_reinit_error=True, num_cpus=1)
@@ -519,8 +520,11 @@ if not options.evaluate_only:
         )
 
         tune_config = {
-            "learning_rate": grid_search([1e-6, 5e-6, 1e-5, 5e-5, 1e-4, 5e-4]),
-            "per_device_train_batch_size": grid_search([6, 8, 12]),
+            # "learning_rate": grid_search([1e-6, 5e-6, 1e-5, 5e-5, 1e-4, 5e-4]),
+            # "per_device_train_batch_size": grid_search([6, 8, 12]),
+            "learning_rate": loguniform(1e-6, 1e-3),
+            "learning_rate": choice([6, 8, 12, 16]),
+            # "per_device_train_batch_size": grid_search([6, 8, 12]),
         }
 
         reporter = CLIReporter(
@@ -540,7 +544,9 @@ if not options.evaluate_only:
         best_model = trainer.hyperparameter_search(
             hp_space=lambda _: tune_config,
             backend="ray",
-            scheduler=asha_scheduler,
+            # scheduler=asha_scheduler,
+            scheduler=ASHAScheduler(metric="eval_f1", mode="max"),
+            search_alg=HyperOptSearch(metric="eval_f1", mode="max"),
             progress_reporter=reporter,
             direction="maximize",
             local_dir=f"{working_dir}/ray",
