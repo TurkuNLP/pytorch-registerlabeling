@@ -508,6 +508,7 @@ trainer = MultilabelTrainer(
         weight_decay=options.weight_decay,
         warmup_steps=options.warmup_steps,
         learning_rate=options.lr,
+        lr_scheduler_type=options.lr_scheduler_type,
         metric_for_best_model="eval_f1",
         greater_is_better=True,
         per_device_train_batch_size=options.train_batch_size,
