@@ -5,6 +5,7 @@ os.environ["HF_HOME"] = ".hf/hf_home"
 os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
 from dotenv import load_dotenv
 
+from pydoc import locate
 from argparse import ArgumentParser
 import re
 from ray.tune.schedulers import ASHAScheduler
@@ -18,6 +19,8 @@ from transformers import (
     AutoTokenizer,
     Trainer,
     AutoModelForSequenceClassification,
+    MistralForSequenceClassification,
+    LlamaForSequenceClassification,
     BitsAndBytesConfig,
     TrainingArguments,
     EarlyStoppingCallback,
@@ -58,8 +61,14 @@ parser.add_argument("--eval_steps", type=int, default=100)
 parser.add_argument("--logging_steps", type=int, default=100)
 parser.add_argument("--save_steps", type=int, default=100)
 parser.add_argument("--save_model", action="store_true", default=True)
+parser.add_argument("--optimizer", type="str", default="adamw_torch")
+parser.add_argument("--peft_modules", type="str", default=None)
+parser.add_argument("--lr_scheduler_type", type="str", default="linear")
 parser.add_argument("--overwrite", action="store_true")
 parser.add_argument("--report_to", type=str, default="wandb")
+parser.add_argument(
+    "--transformer_model", type=str, default="AutoModelForSequenceClassification"
+)
 
 parser.add_argument(
     "--data_path",
@@ -261,7 +270,7 @@ cols = {
 labels = labels_full if options.labels == "full" else labels_upper
 model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_tuning' if options.hp_search else ''}/{model_name.replace('/', '_')}"
-
+peft_modules = ",".split(options.peft_modules) if options.peft_modules else None
 
 # Wandb setup
 
@@ -428,7 +437,8 @@ def compute_metrics(p):
 
 
 def model_init():
-    model = AutoModelForSequenceClassification.from_pretrained(
+    model_type = locate(f"transformers.{options.transformer_model}")
+    model = model_type.from_pretrained(
         model_name,
         num_labels=len(labels),
         cache_dir=f"{working_dir}/model_cache",
@@ -448,6 +458,8 @@ def model_init():
     if options.peft:
         # Get module names
 
+        model.config.pretraining_tp = 1  # Set max linear layers
+
         model_modules = str(model.modules)
         pattern = r"\((\w+)\): Linear"
         linear_layer_names = re.findall(pattern, model_modules)
@@ -462,7 +474,7 @@ def model_init():
         lora_config = LoraConfig(
             r=options.lora_rank,
             lora_alpha=options.lora_alpha,
-            target_modules=target_modules,
+            target_modules=target_modules if not peft_modules else peft_modules,
             lora_dropout=options.lora_dropout,
             bias=options.lora_bias,
             task_type=TaskType.SEQ_CLS,
@@ -504,6 +516,7 @@ trainer = MultilabelTrainer(
         gradient_checkpointing=True,
         gradient_accumulation_steps=options.gradient_steps,
         report_to=options.report_to,
+        optim=options.optim,
     ),
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
