@@ -352,7 +352,6 @@ dataset = dataset.shuffle(seed=options.seed)
 tokenizer = AutoTokenizer.from_pretrained(
     model_name if not options.custom_tokenizer else options.custom_tokenizer,
     add_prefix_space=options.add_prefix_space,
-    use_flash_attention_2=options.use_flash_attention_2,
 )
 
 if options.set_pad_id:
@@ -453,6 +452,7 @@ def model_init():
         trust_remote_code=True,
         device_map="auto",
         low_cpu_mem_usage=True,
+        use_flash_attention_2=options.use_flash_attention_2,
         quantization_config=BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
