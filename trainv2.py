@@ -346,7 +346,8 @@ dataset = dataset.shuffle(seed=options.seed)
 
 
 tokenizer = AutoTokenizer.from_pretrained(
-    model_name if not options.custom_tokenizer else options.custom_tokenizer
+    model_name if not options.custom_tokenizer else options.custom_tokenizer,
+    add_prefix_space=True,
 )
 
 if options.set_pad_id:
@@ -443,7 +444,7 @@ def model_init():
         num_labels=len(labels),
         cache_dir=f"{working_dir}/model_cache",
         trust_remote_code=True,
-        device_map="auto",
+        # device_map="auto",
         low_cpu_mem_usage=True,
         quantization_config=BitsAndBytesConfig(
             load_in_4bit=True,
