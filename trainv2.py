@@ -21,6 +21,7 @@ from transformers import (
     AutoModelForSequenceClassification,
     MistralForSequenceClassification,
     LlamaForSequenceClassification,
+    MistralForCausalLLM,
     BitsAndBytesConfig,
     TrainingArguments,
     EarlyStoppingCallback,
@@ -66,6 +67,7 @@ parser.add_argument("--peft_modules", type=str, default=None)
 parser.add_argument("--lr_scheduler_type", type=str, default="linear")
 parser.add_argument("--overwrite", action="store_true")
 parser.add_argument("--add_prefix_space", action="store_true")
+parser.add_argument("--use_flash_attention_2", action="store_true")
 parser.add_argument("--report_to", type=str, default="wandb")
 parser.add_argument(
     "--transformer_model", type=str, default="AutoModelForSequenceClassification"
@@ -123,8 +125,8 @@ parser.add_argument(
     type=float,
     default=None,
 )
-parser.add_argument("--lora_rank", type=int, default=16)
-parser.add_argument("--lora_alpha", type=float, default=8)
+parser.add_argument("--lora_rank", type=int, default=128)
+parser.add_argument("--lora_alpha", type=float, default=128)
 parser.add_argument(
     "--lora_dropout",
     type=float,
@@ -276,6 +278,7 @@ peft_modules = options.peft_modules.split(",") if options.peft_modules else None
 # Wandb setup
 
 if options.report_to == "wandb":
+    print("Using wandb")
     os.environ[
         "WANDB_PROJECT"
     ] = f"register-labeling_{options.train}_{options.test}{'_tuning' if options.hp_search else ''}_{model_name.replace('/', '_')}"
@@ -349,6 +352,7 @@ dataset = dataset.shuffle(seed=options.seed)
 tokenizer = AutoTokenizer.from_pretrained(
     model_name if not options.custom_tokenizer else options.custom_tokenizer,
     add_prefix_space=options.add_prefix_space,
+    use_flash_attention_2=options.use_flash_attention_2,
 )
 
 if options.set_pad_id:
@@ -483,7 +487,7 @@ def model_init():
             lora_dropout=options.lora_dropout,
             bias=options.lora_bias,
             task_type=TaskType.SEQ_CLS,
-            inference_mode=True,
+            # inference_mode=True,
         )
 
         # add LoRA adaptor
