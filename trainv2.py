@@ -13,6 +13,8 @@ from ray.tune import grid_search, CLIReporter, loguniform, choice
 from ray.tune.search.hyperopt import HyperOptSearch
 import ray
 
+from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
+
 ray.init(ignore_reinit_error=True, num_cpus=1)
 import numpy as np
 from transformers import (
