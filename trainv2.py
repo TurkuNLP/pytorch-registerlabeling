@@ -439,6 +439,8 @@ def compute_metrics(p):
 
 
 def model_init():
+    if options.quantize:
+        print("Using quantization")
     model_type = locate(f"transformers.{options.transformer_model}")
     model = model_type.from_pretrained(
         model_name,
@@ -458,6 +460,7 @@ def model_init():
     )
 
     if options.peft:
+        print("Using PEFT")
         # Get module names
 
         model.config.pretraining_tp = 1  # Set max linear layers
