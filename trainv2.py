@@ -501,7 +501,7 @@ def model_init():
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
 
-    if model.add_classification_head:
+    if add_classification_head:
         # Add a classification head on top of the model
         model.resize_token_embeddings(len(tokenizer))
         model.classifier = Linear(model.config.hidden_size, len(labels))
