@@ -21,7 +21,7 @@ from transformers import (
     AutoModelForSequenceClassification,
     MistralForSequenceClassification,
     LlamaForSequenceClassification,
-    MistralForCausalLLM,
+    MistralForCausalLM,
     BitsAndBytesConfig,
     TrainingArguments,
     EarlyStoppingCallback,
