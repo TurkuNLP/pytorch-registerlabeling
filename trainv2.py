@@ -27,7 +27,7 @@ from transformers import (
     EarlyStoppingCallback,
 )
 from datasets import load_dataset, Features, Value
-from torch.nn import BCEWithLogitsLoss, Sigmoid
+from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, FloatTensor, bfloat16
 
 from sklearn.metrics import (
@@ -68,6 +68,7 @@ parser.add_argument("--lr_scheduler_type", type=str, default="linear")
 parser.add_argument("--overwrite", action="store_true")
 parser.add_argument("--add_prefix_space", action="store_true")
 parser.add_argument("--use_flash_attention_2", action="store_true")
+parser.add_argument("--add_classification_head", action="store_true")
 parser.add_argument("--report_to", type=str, default="wandb")
 parser.add_argument(
     "--transformer_model", type=str, default="AutoModelForSequenceClassification"
@@ -497,6 +498,11 @@ def model_init():
         model = prepare_model_for_int8_training(model)
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
+
+    if model.add_classification_head:
+        # Add a classification head on top of the model
+        model.resize_token_embeddings(len(tokenizer))
+        model.classifier = Linear(model.config.hidden_size, len(labels))
 
     return model
 
