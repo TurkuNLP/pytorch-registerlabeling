@@ -65,6 +65,7 @@ parser.add_argument("--optimizer", type=str, default="adamw_torch")
 parser.add_argument("--peft_modules", type=str, default=None)
 parser.add_argument("--lr_scheduler_type", type=str, default="linear")
 parser.add_argument("--overwrite", action="store_true")
+parser.add_argument("--add_prefix_space", action="store_true")
 parser.add_argument("--report_to", type=str, default="wandb")
 parser.add_argument(
     "--transformer_model", type=str, default="AutoModelForSequenceClassification"
@@ -347,7 +348,7 @@ dataset = dataset.shuffle(seed=options.seed)
 
 tokenizer = AutoTokenizer.from_pretrained(
     model_name if not options.custom_tokenizer else options.custom_tokenizer,
-    add_prefix_space=True,
+    add_prefix_space=options.add_prefix_space,
 )
 
 if options.set_pad_id:
