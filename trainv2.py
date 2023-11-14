@@ -33,6 +33,7 @@ from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, FloatTensor, bfloat16
 
 # from accelerate import Accelerator
+from accelerate import infer_auto_device_map
 
 # accelerator = Accelerator()
 
@@ -450,6 +451,7 @@ def model_init():
         cache_dir=f"{working_dir}/model_cache",
         trust_remote_code=True,
         device_map="auto",
+        max_memory={0: "8GB", 1: "8GB", 2: "8GB", 3: "8GB"},
         # low_cpu_mem_usage=True,
         use_flash_attention_2=options.use_flash_attention_2,
         quantization_config=BitsAndBytesConfig(
