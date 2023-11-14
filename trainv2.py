@@ -452,7 +452,7 @@ def model_init():
         trust_remote_code=True,
         device_map="auto",
         offload_folder="offload",
-        max_memory={0: "8GB", 1: "8GB", 2: "8GB", 3: "8GB"},
+        # max_memory={0: "8GB", 1: "8GB", 2: "8GB", 3: "8GB"},
         # low_cpu_mem_usage=True,
         use_flash_attention_2=options.use_flash_attention_2,
         quantization_config=BitsAndBytesConfig(
