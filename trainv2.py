@@ -321,8 +321,7 @@ dataset = load_dataset(
 if options.data_fraction < 1:
     print(f"Using {options.data_fraction*100}% of data")
     for x in ["train", "test", "dev"]:
-        print(options.data_fraction * len(dataset[x]))
-        dataset[x] = dataset[x][: (options.data_fraction * len(dataset[x]))]
+        dataset[x] = dataset[x][: int(options.data_fraction * len(dataset[x]))]
 
 dataset = dataset.shuffle(seed=options.seed)
 
