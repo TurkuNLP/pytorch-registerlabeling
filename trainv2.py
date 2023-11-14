@@ -375,7 +375,7 @@ if options.class_weights:
     ]
 
     weights = len(dataset["train"]) / (len(labels) * np.bincount(y))
-    class_weights = FloatTensor(weights)
+    class_weights = FloatTensor(weights).to("cuda")
 
     print(f"Using class weights: {class_weights}")
 
