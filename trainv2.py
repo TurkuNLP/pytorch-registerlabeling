@@ -128,8 +128,8 @@ parser.add_argument(
     type=float,
     default=None,
 )
-parser.add_argument("--lora_rank", type=int, default=128)
-parser.add_argument("--lora_alpha", type=float, default=128)
+parser.add_argument("--lora_rank", type=int, default=16)
+parser.add_argument("--lora_alpha", type=float, default=1)
 parser.add_argument(
     "--lora_dropout",
     type=float,
@@ -466,6 +466,9 @@ def model_init():
         else None,
     )
 
+    if options.set_pad_id:
+        model.config.pad_token_id = model.config.eos_token_id
+
     if options.peft:
         print("Using PEFT")
         # Get module names
@@ -495,7 +498,6 @@ def model_init():
 
         # add LoRA adaptor
         model.gradient_checkpointing_enable()
-        model.config.pad_token_id = model.config.eos_token_id
         model.config.use_cache = False
         model = prepare_model_for_int8_training(model)
         model = get_peft_model(model, lora_config)
