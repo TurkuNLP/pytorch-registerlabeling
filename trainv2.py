@@ -96,10 +96,10 @@ parser.add_argument("--report_to", type=str, default="wandb")
 parser.add_argument("--class_weights", action="store_true")
 parser.add_argument("--threshold", type=float, default=None)
 parser.add_argument("--local_rank", type=int, default=None)
-parser.add_argument("--local-rank=0", action="store_true")
-parser.add_argument("--local-rank=1", action="store_true")
-parser.add_argument("--local-rank=2", action="store_true")
-parser.add_argument("--local-rank=3", action="store_true")
+parser.add_argument("--local-rank=0", dest="lr0", action="store_true")
+parser.add_argument("--local-rank=1", dest="lr1", action="store_true")
+parser.add_argument("--local-rank=2", dest="lr2", action="store_true")
+parser.add_argument("--local-rank=3", dest="lr3", action="store_true")
 
 # (Q)lora / peft related options
 
@@ -117,16 +117,18 @@ parser.add_argument("--lora_bias", type=str, default="none")
 
 options = parser.parse_args()
 
+if options.lr0:
+    options.local_rank = 0
+elif options.lr1:
+    options.local_rank = 1
+elif options.lr2:
+    options.local_rank = 2
+elif options.lr3:
+    options.local_rank = 3
+
 print(f"Settings: {options}")
 
-if options["local_rank=0"]:
-    print("a")
-if options["local_rank=1"]:
-    print("ab")
-if options["local_rank=2"]:
-    print("abc")
-if options["local_rank=3"]:
-    print("abcd")
+
 # Register config
 
 
