@@ -96,6 +96,10 @@ parser.add_argument("--report_to", type=str, default="wandb")
 parser.add_argument("--class_weights", action="store_true")
 parser.add_argument("--threshold", type=float, default=None)
 parser.add_argument("--local_rank", type=int, default=None)
+parser.add_argument("--local-rank=0", action="store_true")
+parser.add_argument("--local-rank=1", action="store_true")
+parser.add_argument("--local-rank=2", action="store_true")
+parser.add_argument("--local-rank=3", action="store_true")
 
 # (Q)lora / peft related options
 
@@ -115,7 +119,14 @@ options = parser.parse_args()
 
 print(f"Settings: {options}")
 
-
+if options["local_rank=0"]:
+    print("a")
+if options["local_rank=1"]:
+    print("ab")
+if options["local_rank=2"]:
+    print("abc")
+if options["local_rank=3"]:
+    print("abcd")
 # Register config
 
 
