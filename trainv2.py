@@ -42,7 +42,6 @@ from sklearn.metrics import (
 from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_int8_training
 
 
-
 # Get CLI options
 
 parser = ArgumentParser()
@@ -75,7 +74,7 @@ parser.add_argument("--num_epochs", type=int, default=15)
 parser.add_argument("--weight_decay", type=float, default=0)
 parser.add_argument("--warmup_steps", type=int, default=0)
 parser.add_argument("--warmup_ratio", type=float, default=0)
-parser.add_argument("--metric_for_best_model", type=str, default="loss")
+parser.add_argument("--metric_for_best_model", type=str, default="eval_loss")
 parser.add_argument("--patience", type=int, default=5)
 parser.add_argument("--gradient_steps", type=int, default=1)
 parser.add_argument("--epochs", type=int, default=20)
@@ -255,6 +254,7 @@ if options.report_to == "wandb":
     load_dotenv()
     os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY")
     import wandb
+
     wandb.login()
 
 
