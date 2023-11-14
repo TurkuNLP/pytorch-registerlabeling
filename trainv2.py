@@ -32,6 +32,10 @@ from datasets import load_dataset, Features, Value
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, FloatTensor, bfloat16
 
+from accelerate import Accelerator
+
+accelerator = Accelerator()
+
 from sklearn.metrics import (
     classification_report,
     accuracy_score,
@@ -318,6 +322,8 @@ dataset = load_dataset(
     ),
     cache_dir=f"{working_dir}/dataset_cache",
 )
+
+# Get a fraction of data for testing
 if options.data_fraction < 1:
     print(f"Using {options.data_fraction*100}% of data")
     for x in ["train", "test", "dev"]:
@@ -338,7 +344,7 @@ if options.set_pad_id:
 
 print("Preprocessing...")
 
-dataset = dataset.map(preprocess_data)
+dataset = dataset.map(preprocess_data, num_proc=accelerator.num_processes)
 
 print("Got preprocessed dataset and tokenizer")
 
@@ -356,7 +362,7 @@ if options.class_weights:
     weights = len(dataset["train"]) / (len(labels) * np.bincount(y))
     class_weights = FloatTensor(weights)
 
-    print(f"using class weights: {class_weights}")
+    print(f"Using class weights: {class_weights}")
 
 
 class MultilabelTrainer(Trainer):
@@ -483,6 +489,8 @@ def model_init():
         model.resize_token_embeddings(len(tokenizer))
         model.classifier = Linear(model.config.hidden_size, len(labels))
 
+    model.to(accelerator.device)
+
     return model
 
 
@@ -514,6 +522,7 @@ trainer = MultilabelTrainer(
         gradient_accumulation_steps=options.gradient_steps,
         report_to=options.report_to,
         optim=options.optim,
+        dataloader_num_workers=accelerator.num_processes,
     ),
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
