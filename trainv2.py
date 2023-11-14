@@ -436,7 +436,7 @@ def model_init():
         num_labels=len(labels),
         cache_dir=f"{working_dir}/model_cache",
         trust_remote_code=True,
-        device_map="auto",
+        # device_map="auto",
         low_cpu_mem_usage=True,
         use_flash_attention_2=options.use_flash_attention_2,
         quantization_config=BitsAndBytesConfig(
