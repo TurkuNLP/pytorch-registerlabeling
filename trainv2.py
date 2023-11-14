@@ -13,7 +13,7 @@ from ray.tune import grid_search, CLIReporter, loguniform, choice
 from ray.tune.search.hyperopt import HyperOptSearch
 import ray
 
-#from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
+# from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
 
 ray.init(ignore_reinit_error=True, num_cpus=1)
 import numpy as np
@@ -451,6 +451,7 @@ def model_init():
         cache_dir=f"{working_dir}/model_cache",
         trust_remote_code=True,
         device_map="auto",
+        offload_folder="offload",
         max_memory={0: "8GB", 1: "8GB", 2: "8GB", 3: "8GB"},
         # low_cpu_mem_usage=True,
         use_flash_attention_2=options.use_flash_attention_2,
