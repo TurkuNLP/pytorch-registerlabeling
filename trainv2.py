@@ -32,9 +32,9 @@ from datasets import load_dataset, Features, Value
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, FloatTensor, bfloat16
 
-from accelerate import Accelerator
+# from accelerate import Accelerator
 
-accelerator = Accelerator()
+# accelerator = Accelerator()
 
 from sklearn.metrics import (
     classification_report,
@@ -344,7 +344,8 @@ if options.set_pad_id:
 
 print("Preprocessing...")
 
-dataset = dataset.map(preprocess_data, num_proc=accelerator.num_processes)
+# dataset = dataset.map(preprocess_data, num_proc=accelerator.num_processes)
+dataset = dataset.map(preprocess_data)
 
 print("Got preprocessed dataset and tokenizer")
 
@@ -522,7 +523,7 @@ trainer = MultilabelTrainer(
         gradient_accumulation_steps=options.gradient_steps,
         report_to=options.report_to,
         optim=options.optim,
-        dataloader_num_workers=accelerator.num_processes,
+        # dataloader_num_workers=accelerator.num_processes,
     ),
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
