@@ -43,7 +43,7 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
-from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_int8_training
+from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
 
 
 # Get CLI options
@@ -481,7 +481,7 @@ def model_init():
         # add LoRA adaptor
         model.gradient_checkpointing_enable()
         model.config.use_cache = False
-        model = prepare_model_for_int8_training(model)
+        model = prepare_model_for_kbit_training(model)
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
 
