@@ -515,8 +515,9 @@ def model_init():
 
 
 trainer = MultilabelTrainer(
-    model=None,
-    model_init=model_init,
+    model=model_init(),
+    # model=None,
+    # model_init=model_init,
     args=TrainingArguments(
         f"{working_dir}/checkpoints",
         overwrite_output_dir=True if options.overwrite else False,
