@@ -489,7 +489,7 @@ def model_init():
         model.resize_token_embeddings(len(tokenizer))
         model.classifier = Linear(model.config.hidden_size, len(labels))
 
-    model.to(accelerator.device)
+    # model.to(accelerator.device)
 
     return model
 
