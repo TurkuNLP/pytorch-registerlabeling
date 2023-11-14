@@ -46,17 +46,36 @@ import wandb
 # Get CLI options
 
 parser = ArgumentParser()
+
+# Model and data
+
 parser.add_argument("--model_name", type=str, default="xlm-roberta-base")
+parser.add_argument("--labels", choices=["full", "upper"], default="full")
 parser.add_argument("--custom_tokenizer", type=str, default=None)
 parser.add_argument("--train", type=str, required=True)
 parser.add_argument("--test", type=str, required=True)
+parser.add_argument("--max_length", type=int, default=512)
+parser.add_argument("--data_path", type=str, default="data")
+parser.add_argument(
+    "--output_path", type=str, default="/scratch/project_2005092/register-models"
+)
+parser.add_argument(
+    "--transformer_model", type=str, default="AutoModelForSequenceClassification"
+)
+parser.add_argument("--seed", type=str, default=42)
+parser.add_argument("--hp_search", action="store_true")
+parser.add_argument("--evaluate_only", action="store_true")
+
+# Training arguments
+
 parser.add_argument("--lr", type=float, default=1e-5)
 parser.add_argument("--train_batch_size", type=int, default=8)
 parser.add_argument("--eval_batch_size", type=int, default=8)
 parser.add_argument("--num_epochs", type=int, default=15)
 parser.add_argument("--weight_decay", type=float, default=0)
-parser.add_argument("--warmup_steps", type=float, default=0)
+parser.add_argument("--warmup_steps", type=int, default=0)
 parser.add_argument("--warmup_ratio", type=float, default=0)
+parser.add_argument("--metric_for_best_model", type=str, default="loss")
 parser.add_argument("--patience", type=int, default=5)
 parser.add_argument("--gradient_steps", type=int, default=1)
 parser.add_argument("--epochs", type=int, default=20)
@@ -66,79 +85,25 @@ parser.add_argument("--logging_steps", type=int, default=100)
 parser.add_argument("--save_steps", type=int, default=100)
 parser.add_argument("--save_model", action="store_true")
 parser.add_argument("--optimizer", type=str, default="adamw_torch")
-parser.add_argument("--peft_modules", type=str, default=None)
 parser.add_argument("--lr_scheduler_type", type=str, default="linear")
 parser.add_argument("--overwrite", action="store_true")
+parser.add_argument("--report_to", type=str, default="wandb")
+parser.add_argument("--class_weights", action="store_true")
+parser.add_argument("--threshold", type=float, default=None)
+
+# (Q)lora / peft related options
+
 parser.add_argument("--add_prefix_space", action="store_true")
 parser.add_argument("--use_flash_attention_2", action="store_true")
 parser.add_argument("--add_classification_head", action="store_true")
-parser.add_argument("--report_to", type=str, default="wandb")
-parser.add_argument(
-    "--transformer_model", type=str, default="AutoModelForSequenceClassification"
-)
-
-parser.add_argument(
-    "--data_path",
-    type=str,
-    default="data",
-)
-parser.add_argument(
-    "--output_path",
-    type=str,
-    default="/scratch/project_2005092/register-models",
-)
-
-parser.add_argument(
-    "--max_length",
-    type=int,
-    default=512,
-)
-parser.add_argument(
-    "--set_pad_id",
-    action="store_true",
-    help="Set the id for the padding token, needed by models such as Mistral-7B",
-)
-
-parser.add_argument(
-    "--hp_search",
-    action="store_true",
-    help="Hyperparameter search",
-)
-parser.add_argument(
-    "--evaluate_only",
-    action="store_true",
-    help="Only evaluate the model using test set",
-)
-parser.add_argument(
-    "--quantize",
-    action="store_true",
-    help="Use quantization",
-)
-parser.add_argument(
-    "--peft",
-    action="store_true",
-    help="Do Parameter Efficient Fine-Tuning",
-)
-parser.add_argument(
-    "--class_weights",
-    action="store_true",
-    help="Use class weights",
-)
-parser.add_argument(
-    "--threshold",
-    type=float,
-    default=None,
-)
+parser.add_argument("--quantize", action="store_true")
+parser.add_argument("--peft", action="store_true")
+parser.add_argument("--peft_modules", type=str, default=None)
+parser.add_argument("--set_pad_id", action="store_true")
 parser.add_argument("--lora_rank", type=int, default=16)
 parser.add_argument("--lora_alpha", type=float, default=1)
-parser.add_argument(
-    "--lora_dropout",
-    type=float,
-    default=0.05,
-)
+parser.add_argument("--lora_dropout", type=float, default=0.05)
 parser.add_argument("--lora_bias", type=str, default="none")
-parser.add_argument("--seed", type=str, default=42)
-parser.add_argument("--labels", choices=["full", "upper"], default="full")
 
 options = parser.parse_args()
 
@@ -530,8 +495,8 @@ trainer = MultilabelTrainer(
         warmup_ratio=options.warmup_ratio,
         learning_rate=options.lr,
         lr_scheduler_type=options.lr_scheduler_type,
-        metric_for_best_model="eval_f1",
-        greater_is_better=True,
+        metric_for_best_model=options.metric_for_best_model,
+        greater_is_better=False if "loss" in options.metric_for_best_model else True,
         per_device_train_batch_size=options.train_batch_size,
         per_device_eval_batch_size=options.eval_batch_size,
         num_train_epochs=options.epochs,
