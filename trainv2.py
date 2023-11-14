@@ -95,6 +95,7 @@ parser.add_argument("--max_grad_norm", type=float, default=1)
 parser.add_argument("--report_to", type=str, default="wandb")
 parser.add_argument("--class_weights", action="store_true")
 parser.add_argument("--threshold", type=float, default=None)
+parser.add_argument("--local_rank", type=int, default=None)
 
 # (Q)lora / peft related options
 
@@ -523,6 +524,7 @@ trainer = MultilabelTrainer(
         gradient_accumulation_steps=options.gradient_steps,
         report_to=options.report_to,
         optim=options.optim,
+        local_rank=options.local_rank,
         # dataloader_num_workers=accelerator.num_processes,
     ),
     train_dataset=dataset["train"],
