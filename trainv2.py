@@ -509,6 +509,8 @@ def model_init():
 
     # model.to(accelerator.device)
 
+    print("Model initialized")
+
     return model
 
 
