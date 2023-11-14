@@ -64,6 +64,7 @@ parser.add_argument(
 parser.add_argument("--seed", type=str, default=42)
 parser.add_argument("--hp_search", action="store_true")
 parser.add_argument("--evaluate_only", action="store_true")
+parser.add_argument("--data_fraction", type=float, default=1)
 
 # Training arguments
 
@@ -86,6 +87,7 @@ parser.add_argument("--save_model", action="store_true")
 parser.add_argument("--optimizer", type=str, default="adamw_torch")
 parser.add_argument("--lr_scheduler_type", type=str, default="linear")
 parser.add_argument("--overwrite", action="store_true")
+parser.add_argument("--max_grad_norm", type=float, default=1)
 parser.add_argument("--report_to", type=str, default="wandb")
 parser.add_argument("--class_weights", action="store_true")
 parser.add_argument("--threshold", type=float, default=None)
@@ -316,6 +318,11 @@ dataset = load_dataset(
     ),
     cache_dir=f"{working_dir}/dataset_cache",
 )
+if options.data_fraction < 1:
+    print(f"Using {options.data_fraction*100}% of data")
+    for x in ["train", "test", "dev"]:
+        dataset[x] = dataset[x][: options.data_fraction * len(dataset[x])]
+
 dataset = dataset.shuffle(seed=options.seed)
 
 
@@ -495,6 +502,7 @@ trainer = MultilabelTrainer(
         warmup_steps=options.warmup_steps,
         warmup_ratio=options.warmup_ratio,
         learning_rate=options.lr,
+        max_grad_norm=options.max_grad_norm,
         lr_scheduler_type=options.lr_scheduler_type,
         metric_for_best_model=options.metric_for_best_model,
         greater_is_better=False if "loss" in options.metric_for_best_model else True,
@@ -504,7 +512,7 @@ trainer = MultilabelTrainer(
         gradient_checkpointing=True,
         gradient_accumulation_steps=options.gradient_steps,
         report_to=options.report_to,
-        optim=options.optimizer,
+        optim=options.optim,
     ),
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
