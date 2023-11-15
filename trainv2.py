@@ -289,7 +289,7 @@ def preprocess_data(example):
     mapped_labels = set(
         [
             sub_register_map[l] if l not in labels else l
-            for l in (example["label"] or "NA").split()
+            for l in (example["label"] or "").split()
         ]
     )
     encoding["label"] = [1 if l in mapped_labels else 0 for l in labels]
@@ -491,7 +491,6 @@ def model_init():
             lora_dropout=options.lora_dropout,
             bias=options.lora_bias,
             task_type=TaskType.SEQ_CLS,
-            # inference_mode=True,
         )
 
         # add LoRA adaptor
