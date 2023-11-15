@@ -13,9 +13,8 @@ from ray.tune import grid_search, CLIReporter, loguniform, choice
 from ray.tune.search.hyperopt import HyperOptSearch
 import ray
 
-# from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
+from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
 
-# ray.init(ignore_reinit_error=True, num_cpus=1)
 import numpy as np
 from transformers import (
     AutoTokenizer,
@@ -515,9 +514,8 @@ def model_init():
 
 
 trainer = MultilabelTrainer(
-    model=model_init(),
-    # model=None,
-    # model_init=model_init,
+    model=None,
+    model_init=model_init,
     args=TrainingArguments(
         f"{working_dir}/checkpoints",
         overwrite_output_dir=True if options.overwrite else False,
@@ -558,6 +556,7 @@ if not options.evaluate_only:
         trainer.train()
 
     else:
+        ray.init(ignore_reinit_error=True, num_cpus=1)
         asha_scheduler = ASHAScheduler(
             metric="eval_f1",
             mode="max",
