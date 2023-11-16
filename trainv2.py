@@ -408,7 +408,7 @@ def model_init():
 
 trainer = MultilabelTrainer(
     model=None if options.hp_search else model_init(),
-    model_init=model_init if options.hp_search else model_init,
+    model_init=model_init if options.hp_search else None,
     args=TrainingArguments(
         f"{working_dir}/checkpoints",
         overwrite_output_dir=True if options.overwrite else False,
