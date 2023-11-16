@@ -45,7 +45,7 @@ parser.add_argument("--train", type=str, required=True)
 parser.add_argument("--test", type=str, default=None)
 parser.add_argument("--max_length", type=int, default=512)
 parser.add_argument("--data_path", type=str, default="data")
-parser.add_argument("--output_path", type=str, default="/output")
+parser.add_argument("--output_path", type=str, default="output")
 parser.add_argument(
     "--transformer_model", type=str, default="AutoModelForSequenceClassification"
 )
