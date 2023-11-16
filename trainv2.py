@@ -79,6 +79,7 @@ parser.add_argument("--max_grad_norm", type=float, default=1)
 parser.add_argument("--report_to", type=str, default="none")
 parser.add_argument("--class_weights", action="store_true")
 parser.add_argument("--threshold", type=float, default=None)
+parser.add_argument("--device_map", type=str, default=None)
 
 # (Q)lora / peft related options
 
@@ -332,7 +333,7 @@ def model_init():
         num_labels=len(labels),
         cache_dir=f"{working_dir}/model_cache",
         trust_remote_code=True,
-        device_map="auto",
+        device_map=options.device_map,
         offload_folder="offload",
         low_cpu_mem_usage=True,
         use_flash_attention_2=options.use_flash_attention_2,
