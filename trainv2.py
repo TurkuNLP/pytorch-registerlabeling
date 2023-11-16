@@ -8,8 +8,6 @@ from argparse import ArgumentParser
 from pydoc import locate
 import re
 
-from dotenv import load_dotenv
-
 import numpy as np
 
 from sklearn.metrics import (
@@ -27,17 +25,11 @@ from transformers import (
     EarlyStoppingCallback,
 )
 
-from ray.tune.schedulers import ASHAScheduler
-from ray.tune import grid_search, CLIReporter, loguniform, choice
-from ray.tune.search.hyperopt import HyperOptSearch
-from ray import init as ray_init
-
 from datasets import load_dataset, Features, Value
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, FloatTensor, bfloat16, cuda
 
 from accelerate import Accelerator
-from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
 
 from labels import binarize_labels, labels
 
@@ -138,8 +130,24 @@ model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_tuning' if options.hp_search else ''}/{model_name.replace('/', '_')}"
 peft_modules = options.peft_modules.split(",") if options.peft_modules else None
 accelerator = Accelerator()
+
+# Imports based on options
 if options.use_flash_attention_2:
     from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
+
+if options.hp_search:
+    from ray.tune.schedulers import ASHAScheduler
+    from ray.tune import grid_search, CLIReporter, loguniform, choice
+    from ray.tune.search.hyperopt import HyperOptSearch
+    from ray import init as ray_init
+
+if options.peft:
+    from peft import (
+        LoraConfig,
+        get_peft_model,
+        TaskType,
+        prepare_model_for_kbit_training,
+    )
 
 
 def log_gpu_memory():
@@ -154,6 +162,8 @@ def log_gpu_memory():
 # Wandb setup
 
 if options.report_to == "wandb":
+    from dotenv import load_dotenv
+
     print("Using wandb")
     os.environ[
         "WANDB_PROJECT"
