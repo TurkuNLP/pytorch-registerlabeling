@@ -242,7 +242,6 @@ if options.set_pad_id:
 
 print("Preprocessing...")
 
-# dataset = dataset.map(preprocess_data, num_proc=accelerator.num_processes)
 dataset = dataset.map(preprocess_data)
 
 print("Got preprocessed dataset and tokenizer")
@@ -335,7 +334,6 @@ def model_init():
         trust_remote_code=True,
         device_map="auto",
         offload_folder="offload",
-        # max_memory={0: "8GB", 1: "8GB", 2: "8GB", 3: "8GB"},
         low_cpu_mem_usage=True,
         use_flash_attention_2=options.use_flash_attention_2,
         quantization_config=BitsAndBytesConfig(
@@ -353,7 +351,6 @@ def model_init():
 
     if options.peft:
         print("Using PEFT")
-        # Get module names
 
         model.config.pretraining_tp = 1  # Set max linear layers
 
@@ -389,16 +386,14 @@ def model_init():
         model.resize_token_embeddings(len(tokenizer))
         model.classifier = Linear(model.config.hidden_size, len(labels))
 
-    # model.to(accelerator.device)
-
     print("Model initialized")
 
     return model
 
 
 trainer = MultilabelTrainer(
-    model=None,
-    model_init=model_init,
+    model=None if options.hp_search else model_init(),
+    model_init=model_init if options.hp_search else model_init,
     args=TrainingArguments(
         f"{working_dir}/checkpoints",
         overwrite_output_dir=True if options.overwrite else False,
@@ -424,8 +419,6 @@ trainer = MultilabelTrainer(
         gradient_accumulation_steps=options.gradient_steps,
         report_to=options.report_to,
         optim=options.optim,
-        # local_rank=options.local_rank,
-        # dataloader_num_workers=accelerator.num_processes,
     ),
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
