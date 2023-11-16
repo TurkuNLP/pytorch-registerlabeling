@@ -115,12 +115,6 @@ small_languages = [
 
 # Data column structures in the .tsv files
 
-cols = {
-    "fr": ["a", "b", "label", "text", "c"],
-    "fi": ["label", "text", "a", "b", "c"],
-    "sv": ["a", "b", "label", "text", "c"],
-}
-
 # Common variables
 
 options.test = options.train if not options.test else options.test
@@ -209,7 +203,7 @@ dataset = load_dataset(
     "csv",
     data_files=data_files,
     delimiter="\t",
-    column_names=cols.get(options.train, ["label", "text"]),
+    column_names=["label", "text"],
     features=Features(
         {
             "text": Value("string"),
