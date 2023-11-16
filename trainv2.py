@@ -130,6 +130,7 @@ peft_modules = options.peft_modules.split(",") if options.peft_modules else None
 accelerator = Accelerator()
 
 # Imports based on options
+
 if options.use_flash_attention_2:
     from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
 
@@ -146,16 +147,6 @@ if options.peft:
         TaskType,
         prepare_model_for_kbit_training,
     )
-
-
-def log_gpu_memory():
-    for gpu in range(cuda.device_count()):
-        allocated_memory = cuda.memory_allocated(gpu) / (1024**3)  # Convert to GB
-        max_allocated_memory = cuda.max_memory_allocated(gpu) / (1024**3)
-        print(
-            f"GPU {gpu}: Current Memory Allocated: {allocated_memory:.2f} GB, Max Memory Allocated: {max_allocated_memory:.2f} GB"
-        )
-
 
 # Wandb setup
 
