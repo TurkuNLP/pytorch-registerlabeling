@@ -37,7 +37,6 @@ from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, FloatTensor, bfloat16, cuda
 
 from accelerate import Accelerator
-from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
 from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
 
 from labels import binarize_labels, labels
@@ -139,6 +138,8 @@ model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_tuning' if options.hp_search else ''}/{model_name.replace('/', '_')}"
 peft_modules = options.peft_modules.split(",") if options.peft_modules else None
 accelerator = Accelerator()
+if options.use_flash_attention_2:
+    from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
 
 
 def log_gpu_memory():
