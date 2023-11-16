@@ -52,7 +52,7 @@ parser = ArgumentParser()
 parser.add_argument("--model_name", type=str, default="xlm-roberta-base")
 parser.add_argument("--custom_tokenizer", type=str, default=None)
 parser.add_argument("--train", type=str, required=True)
-parser.add_argument("--test", type=str, required=True)
+parser.add_argument("--test", type=str, default=None)
 parser.add_argument("--max_length", type=int, default=512)
 parser.add_argument("--data_path", type=str, default="data")
 parser.add_argument(
@@ -135,6 +135,7 @@ cols = {
 
 # Common variables
 
+options.test = options.train if not options.test else options.test
 model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_tuning' if options.hp_search else ''}/{model_name.replace('/', '_')}"
 peft_modules = options.peft_modules.split(",") if options.peft_modules else None
