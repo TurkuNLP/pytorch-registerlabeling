@@ -1,0 +1,117 @@
+labels = [
+    "HI",
+    "ID",
+    "IN",
+    "IP",
+    "LY",
+    "MT",
+    "NA",
+    "OP",
+    "SP",
+    "av",
+    "ds",
+    "dtp",
+    "ed",
+    "en",
+    "fi",
+    "it",
+    "lt",
+    "nb",
+    "ne",
+    "ob",
+    "ra",
+    "re",
+    "rs",
+    "rv",
+    "sr",
+]
+
+sub_register_map = {
+    "NA": "NA",
+    "NE": "ne",
+    "SR": "sr",
+    "PB": "nb",
+    "HA": "NA",
+    "FC": "NA",
+    "TB": "nb",
+    "CB": "nb",
+    "OA": "NA",
+    "OP": "OP",
+    "OB": "ob",
+    "RV": "rv",
+    "RS": "rs",
+    "AV": "av",
+    "IN": "IN",
+    "JD": "IN",
+    "FA": "fi",
+    "DT": "dtp",
+    "IB": "IN",
+    "DP": "dtp",
+    "RA": "ra",
+    "LT": "lt",
+    "CM": "IN",
+    "EN": "en",
+    "RP": "IN",
+    "ID": "ID",
+    "DF": "ID",
+    "QA": "ID",
+    "HI": "HI",
+    "RE": "re",
+    "IP": "IP",
+    "DS": "ds",
+    "EB": "ed",
+    "ED": "ed",
+    "LY": "LY",
+    "PO": "LY",
+    "SO": "LY",
+    "SP": "SP",
+    "IT": "it",
+    "FS": "SP",
+    "TV": "SP",
+    "OS": "OS",
+    "IG": "IP",
+    "MT": "MT",
+    "HT": "HI",
+    "FI": "fi",
+    "OI": "IN",
+    "TR": "IN",
+    "AD": "OP",
+    "LE": "OP",
+    "OO": "OP",
+    "MA": "NA",
+    "ON": "NA",
+    "SS": "NA",
+    "OE": "IP",
+    "PA": "IP",
+    "OF": "ID",
+    "RR": "ID",
+    "FH": "HI",
+    "OH": "HI",
+    "TS": "HI",
+    "OL": "LY",
+    "PR": "LY",
+    "SL": "LY",
+    "TA": "SP",
+    "OTHER": "OS",
+    "NB": "nb",
+    "na": "NA",
+    "sp": "SP",
+    "": "",
+}
+
+
+def normalize_labels(label):
+    return sorted(
+        list(
+            set(
+                [
+                    sub_register_map[l] if l not in labels else l
+                    for l in (label or "").split()
+                ]
+            )
+        )
+    )
+
+
+def binarize_labels(label):
+    return [1 if l in normalize_labels(label) else 0 for l in labels]

@@ -6,3 +6,5 @@ data/fr/*.tsv
 data/sv/*.tsv
 .test
 .hf
+__pycache*
+*.jsonl

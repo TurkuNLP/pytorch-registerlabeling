@@ -13,28 +13,25 @@ from ray.tune import grid_search, CLIReporter, loguniform, choice
 from ray.tune.search.hyperopt import HyperOptSearch
 import ray
 
+from labels import binarize_labels, labels
+
 from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
 
 import numpy as np
 from transformers import (
     AutoTokenizer,
     Trainer,
-    AutoModelForSequenceClassification,
-    MistralForSequenceClassification,
-    LlamaForSequenceClassification,
-    MistralForCausalLM,
     BitsAndBytesConfig,
     TrainingArguments,
     EarlyStoppingCallback,
 )
 from datasets import load_dataset, Features, Value
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
-from torch import Tensor, FloatTensor, bfloat16
+from torch import Tensor, FloatTensor, bfloat16, cuda
 
-# from accelerate import Accelerator
-from accelerate import infer_auto_device_map
+from accelerate import Accelerator, infer_auto_device_map
 
-# accelerator = Accelerator()
+accelerator = Accelerator()
 
 from sklearn.metrics import (
     classification_report,
@@ -53,7 +50,6 @@ parser = ArgumentParser()
 # Model and data
 
 parser.add_argument("--model_name", type=str, default="xlm-roberta-base")
-parser.add_argument("--labels", choices=["full", "upper"], default="full")
 parser.add_argument("--custom_tokenizer", type=str, default=None)
 parser.add_argument("--train", type=str, required=True)
 parser.add_argument("--test", type=str, required=True)
@@ -95,11 +91,6 @@ parser.add_argument("--max_grad_norm", type=float, default=1)
 parser.add_argument("--report_to", type=str, default="wandb")
 parser.add_argument("--class_weights", action="store_true")
 parser.add_argument("--threshold", type=float, default=None)
-parser.add_argument("--local_rank", type=int, default=None)
-parser.add_argument("--local-rank=0", dest="lr0", action="store_true")
-parser.add_argument("--local-rank=1", dest="lr1", action="store_true")
-parser.add_argument("--local-rank=2", dest="lr2", action="store_true")
-parser.add_argument("--local-rank=3", dest="lr3", action="store_true")
 
 # (Q)lora / peft related options
 
@@ -117,120 +108,7 @@ parser.add_argument("--lora_bias", type=str, default="none")
 
 options = parser.parse_args()
 
-if options.lr0:
-    options.local_rank = 0
-elif options.lr1:
-    options.local_rank = 1
-elif options.lr2:
-    options.local_rank = 2
-elif options.lr3:
-    options.local_rank = 3
-
 print(f"Settings: {options}")
-
-
-# Register config
-
-
-labels_full = [
-    "HI",
-    "ID",
-    "IN",
-    "IP",
-    "LY",
-    "MT",
-    "NA",
-    "OP",
-    "SP",
-    "av",
-    "ds",
-    "dtp",
-    "ed",
-    "en",
-    "fi",
-    "it",
-    "lt",
-    "nb",
-    "ne",
-    "ob",
-    "ra",
-    "re",
-    "rs",
-    "rv",
-    "sr",
-]
-
-labels_upper = ["HI", "ID", "IN", "IP", "LY", "MT", "NA", "OP", "SP"]
-
-sub_register_map = {
-    "NA": "NA",
-    "NE": "ne",
-    "SR": "sr",
-    "PB": "nb",
-    "HA": "NA",
-    "FC": "NA",
-    "TB": "nb",
-    "CB": "nb",
-    "OA": "NA",
-    "OP": "OP",
-    "OB": "ob",
-    "RV": "rv",
-    "RS": "rs",
-    "AV": "av",
-    "IN": "IN",
-    "JD": "IN",
-    "FA": "fi",
-    "DT": "dtp",
-    "IB": "IN",
-    "DP": "dtp",
-    "RA": "ra",
-    "LT": "lt",
-    "CM": "IN",
-    "EN": "en",
-    "RP": "IN",
-    "ID": "ID",
-    "DF": "ID",
-    "QA": "ID",
-    "HI": "HI",
-    "RE": "re",
-    "IP": "IP",
-    "DS": "ds",
-    "EB": "ed",
-    "ED": "ed",
-    "LY": "LY",
-    "PO": "LY",
-    "SO": "LY",
-    "SP": "SP",
-    "IT": "it",
-    "FS": "SP",
-    "TV": "SP",
-    "OS": "OS",
-    "IG": "IP",
-    "MT": "MT",
-    "HT": "HI",
-    "FI": "fi",
-    "OI": "IN",
-    "TR": "IN",
-    "AD": "OP",
-    "LE": "OP",
-    "OO": "OP",
-    "MA": "NA",
-    "ON": "NA",
-    "SS": "NA",
-    "OE": "IP",
-    "PA": "IP",
-    "OF": "ID",
-    "RR": "ID",
-    "FH": "HI",
-    "OH": "HI",
-    "TS": "HI",
-    "OL": "LY",
-    "PR": "LY",
-    "SL": "LY",
-    "TA": "SP",
-    "OTHER": "OS",
-    "": "",
-}
 
 small_languages = [
     "ar",
@@ -247,7 +125,6 @@ small_languages = [
     "zh",
 ]
 
-
 # Data column structures
 
 cols = {
@@ -258,10 +135,19 @@ cols = {
 
 # Common variables
 
-labels = labels_full if options.labels == "full" else labels_upper
 model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_tuning' if options.hp_search else ''}/{model_name.replace('/', '_')}"
 peft_modules = options.peft_modules.split(",") if options.peft_modules else None
+
+
+def log_gpu_memory():
+    for gpu in range(cuda.device_count()):
+        allocated_memory = cuda.memory_allocated(gpu) / (1024**3)  # Convert to GB
+        max_allocated_memory = cuda.max_memory_allocated(gpu) / (1024**3)
+        print(
+            f"GPU {gpu}: Current Memory Allocated: {allocated_memory:.2f} GB, Max Memory Allocated: {max_allocated_memory:.2f} GB"
+        )
+
 
 # Wandb setup
 
@@ -286,13 +172,8 @@ def preprocess_data(example):
     encoding = tokenizer(
         text, padding="max_length", truncation=True, max_length=options.max_length
     )
-    mapped_labels = set(
-        [
-            sub_register_map[l] if l not in labels else l
-            for l in (example["label"] or "").split()
-        ]
-    )
-    encoding["label"] = [1 if l in mapped_labels else 0 for l in labels]
+
+    encoding["label"] = binarize_labels(example["label"])
     return encoding
 
 
@@ -338,6 +219,7 @@ dataset = load_dataset(
 )
 
 # Get a fraction of data for testing
+
 if options.data_fraction < 1:
     print(f"Using {options.data_fraction*100}% of data")
     for x in ["train", "test", "dev"]:
@@ -350,6 +232,7 @@ dataset = dataset.shuffle(seed=options.seed)
 tokenizer = AutoTokenizer.from_pretrained(
     model_name if not options.custom_tokenizer else options.custom_tokenizer,
     add_prefix_space=options.add_prefix_space,
+    cache_dir=f"{working_dir}/tokenizer_cache",
 )
 
 if options.set_pad_id:
@@ -548,6 +431,8 @@ trainer = MultilabelTrainer(
     compute_metrics=compute_metrics,
     callbacks=[EarlyStoppingCallback(early_stopping_patience=options.patience)],
 )
+
+trainer = accelerator.prepare(trainer)
 
 if not options.evaluate_only:
     if not options.hp_search:
