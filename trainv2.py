@@ -76,7 +76,7 @@ parser.add_argument("--optim", type=str, default="adamw_torch")
 parser.add_argument("--lr_scheduler_type", type=str, default="linear")
 parser.add_argument("--overwrite", action="store_true")
 parser.add_argument("--max_grad_norm", type=float, default=1)
-parser.add_argument("--report_to", type=str, default="wandb")
+parser.add_argument("--report_to", type=str, default=None)
 parser.add_argument("--class_weights", action="store_true")
 parser.add_argument("--threshold", type=float, default=None)
 
