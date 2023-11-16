@@ -3,35 +3,14 @@ import os
 os.environ["TRANSFORMERS_CACHE"] = ".hf/transformers_cache"
 os.environ["HF_HOME"] = ".hf/hf_home"
 os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
+
+from argparse import ArgumentParser
+from pydoc import locate
+import re
+
 from dotenv import load_dotenv
 
-from pydoc import locate
-from argparse import ArgumentParser
-import re
-from ray.tune.schedulers import ASHAScheduler
-from ray.tune import grid_search, CLIReporter, loguniform, choice
-from ray.tune.search.hyperopt import HyperOptSearch
-import ray
-
-from labels import binarize_labels, labels
-
-from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
-
 import numpy as np
-from transformers import (
-    AutoTokenizer,
-    Trainer,
-    BitsAndBytesConfig,
-    TrainingArguments,
-    EarlyStoppingCallback,
-)
-from datasets import load_dataset, Features, Value
-from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
-from torch import Tensor, FloatTensor, bfloat16, cuda
-
-from accelerate import Accelerator, infer_auto_device_map
-
-accelerator = Accelerator()
 
 from sklearn.metrics import (
     classification_report,
@@ -40,8 +19,28 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
+from transformers import (
+    AutoTokenizer,
+    Trainer,
+    BitsAndBytesConfig,
+    TrainingArguments,
+    EarlyStoppingCallback,
+)
+
+from ray.tune.schedulers import ASHAScheduler
+from ray.tune import grid_search, CLIReporter, loguniform, choice
+from ray.tune.search.hyperopt import HyperOptSearch
+from ray import init as ray_init
+
+from datasets import load_dataset, Features, Value
+from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
+from torch import Tensor, FloatTensor, bfloat16, cuda
+
+from accelerate import Accelerator
+from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
 from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
 
+from labels import binarize_labels, labels
 
 # Get CLI options
 
@@ -125,7 +124,7 @@ small_languages = [
     "zh",
 ]
 
-# Data column structures
+# Data column structures in the .tsv files
 
 cols = {
     "fr": ["a", "b", "label", "text", "c"],
@@ -139,6 +138,7 @@ options.test = options.train if not options.test else options.test
 model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_tuning' if options.hp_search else ''}/{model_name.replace('/', '_')}"
 peft_modules = options.peft_modules.split(",") if options.peft_modules else None
+accelerator = Accelerator()
 
 
 def log_gpu_memory():
@@ -227,14 +227,20 @@ if options.data_fraction < 1:
         partition = int(options.data_fraction * len(dataset[x]))
         dataset[x] = dataset[x].select(range(partition))
 
+
+# Shuffle data
+
 dataset = dataset.shuffle(seed=options.seed)
 
+# Init tokenizer
 
 tokenizer = AutoTokenizer.from_pretrained(
     model_name if not options.custom_tokenizer else options.custom_tokenizer,
     add_prefix_space=options.add_prefix_space,
     cache_dir=f"{working_dir}/tokenizer_cache",
 )
+
+# Some LLM's require a pad id
 
 if options.set_pad_id:
     tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -323,9 +329,9 @@ def compute_metrics(p):
     return metrics
 
 
+# Model initialization, used by trainer
 def model_init():
-    if options.quantize:
-        print("Using quantization")
+    # Load transformer model using pydoc's locate
     model_type = locate(f"transformers.{options.transformer_model}")
     model = model_type.from_pretrained(
         model_name,
@@ -434,7 +440,7 @@ if not options.evaluate_only:
         trainer.train()
 
     else:
-        ray.init(ignore_reinit_error=True, num_cpus=1)
+        ray_init(ignore_reinit_error=True, num_cpus=1)
         asha_scheduler = ASHAScheduler(
             metric="eval_f1",
             mode="max",
