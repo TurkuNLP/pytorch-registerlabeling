@@ -8,3 +8,4 @@ data/sv/*.tsv
 .hf
 __pycache*
 *.jsonl
+output*
