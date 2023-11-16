@@ -424,7 +424,7 @@ trainer = MultilabelTrainer(
         gradient_accumulation_steps=options.gradient_steps,
         report_to=options.report_to,
         optim=options.optim,
-        local_rank=options.local_rank,
+        # local_rank=options.local_rank,
         # dataloader_num_workers=accelerator.num_processes,
     ),
     train_dataset=dataset["train"],
