@@ -50,7 +50,6 @@ parser.add_argument(
     "--transformer_model", type=str, default="AutoModelForSequenceClassification"
 )
 parser.add_argument("--seed", type=str, default=42)
-parser.add_argument("--hp_search", action="store_true")
 parser.add_argument("--evaluate_only", action="store_true")
 parser.add_argument("--data_fraction", type=float, default=1)
 parser.add_argument("--low_cpu_mem_usage", type=bool, default=False)
@@ -77,10 +76,15 @@ parser.add_argument("--optim", type=str, default="adamw_torch")
 parser.add_argument("--lr_scheduler_type", type=str, default="linear")
 parser.add_argument("--overwrite", action="store_true")
 parser.add_argument("--max_grad_norm", type=float, default=1)
-parser.add_argument("--report_to", type=str, default="none")
 parser.add_argument("--class_weights", action="store_true")
 parser.add_argument("--threshold", type=float, default=None)
-parser.add_argument("--device_map", type=str, default=None)
+parser.add_argument("--device_map", type=str, default="auto")
+
+# Hyperparameter search related options
+
+parser.add_argument("--hp_search", type=str, default=None)
+parser.add_argument("--report_to", type=str, default="none")
+
 
 # (Q)lora / peft related options
 
@@ -139,10 +143,11 @@ if options.use_flash_attention_2:
     from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
 
 if options.hp_search:
-    from ray.tune.schedulers import ASHAScheduler
-    from ray.tune import grid_search, CLIReporter, loguniform, choice
-    from ray.tune.search.hyperopt import HyperOptSearch
-    from ray import init as ray_init
+    if options.hp_search == "ray":
+        from ray.tune.schedulers import ASHAScheduler
+        from ray.tune import grid_search, CLIReporter, loguniform, choice
+        from ray.tune.search.hyperopt import HyperOptSearch
+        from ray import init as ray_init
 
 if options.peft:
     from peft import (
@@ -365,7 +370,7 @@ def model_init():
     if options.peft:
         print("Using PEFT")
 
-        model.config.pretraining_tp = 1  # Set max linear layers
+        model.config.pretraining_tp = 1  # Set max linear layers (llama2)
 
         model_modules = str(model.modules)
         pattern = r"\((\w+)\): Linear"
@@ -448,47 +453,42 @@ if not options.evaluate_only:
         trainer.train()
 
     else:
-        ray_init(ignore_reinit_error=True, num_cpus=1)
-        asha_scheduler = ASHAScheduler(
-            metric="eval_f1",
-            mode="max",
-        )
-
-        tune_config = {
-            # "learning_rate": grid_search([1e-6, 5e-6, 1e-5, 5e-5, 1e-4, 5e-4]),
-            # "per_device_train_batch_size": grid_search([6, 8, 12]),
-            "learning_rate": loguniform(1e-6, 1e-3),
-            "learning_rate": choice([6, 8, 12, 16]),
-            # "per_device_train_batch_size": grid_search([6, 8, 12]),
+        hp_config = {
+            "direction": "maximize",
+            "backend": {options.hp_search},
+            "local_dir": f"{working_dir}/{options.hp_search}",
+            "hp_space": {},
         }
 
-        reporter = CLIReporter(
-            parameter_columns={
-                "learning_rate": "learning_rate",
-                "per_device_train_batch_size": "train_bs/gpu",
-                "num_train_epochs": "num_epochs",
-            },
-            metric_columns=[
-                "eval_f1",
-                "eval_f1_th05",
-                "eval_threshold",
-                "training_iteration",
-            ],
-        )
+        if options.hp_search == "ray":
+            ray_init(ignore_reinit_error=True, num_cpus=1)
+            hp_config["scheduler"] = ASHAScheduler(metric="eval_f1", mode="max")
+            hp_config["search_alg"] = HyperOptSearch(metric="eval_f1", mode="max")
+            hp_config["hp_space"] = {
+                "learning_rate": loguniform(1e-6, 1e-3),
+                "per_device_train_batch_size": choice([6, 8, 12, 16]),
+            }
 
-        best_model = trainer.hyperparameter_search(
-            hp_space=lambda _: tune_config,
-            backend="ray",
-            # scheduler=asha_scheduler,
-            scheduler=ASHAScheduler(metric="eval_f1", mode="max"),
-            search_alg=HyperOptSearch(metric="eval_f1", mode="max"),
-            progress_reporter=reporter,
-            direction="maximize",
-            local_dir=f"{working_dir}/ray",
-            log_to_file=True,
-        )
-        print("Best model according to Ray:")
+        elif options.hp_search == "wandb":
+            hp_config["hp_space"] = {
+                "method": "bayes",
+                "name": "sweep",
+                "metric": {"goal": "maximize", "name": "eval_f1"},
+                "parameters": {
+                    "per_device_train_batch_size": {"values": [6, 8, 12, 16]},
+                    "learning_rate": {
+                        "distribution": "loguniform",
+                        "min": 1e-6,
+                        "max": 1e-4,
+                    },
+                },
+            }
+
+        best_model = trainer.hyperparameter_search(**hp_config)
+
+        print(f"Best model according to {options.hp_search}:")
         print(best_model)
+        exit()
 
 print("Evaluating with dev set...")
 print(trainer.evaluate(dataset["dev"]))
