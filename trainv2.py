@@ -53,6 +53,7 @@ parser.add_argument("--seed", type=str, default=42)
 parser.add_argument("--hp_search", action="store_true")
 parser.add_argument("--evaluate_only", action="store_true")
 parser.add_argument("--data_fraction", type=float, default=1)
+parser.add_argument("--low_cpu_mem_usage", type=bool, default=False)
 
 # Training arguments
 
@@ -240,6 +241,7 @@ dataset = dataset.shuffle(seed=options.seed)
 tokenizer = AutoTokenizer.from_pretrained(
     model_name if not options.custom_tokenizer else options.custom_tokenizer,
     add_prefix_space=options.add_prefix_space,
+    low_cpu_mem_usage=options.low_cpu_mem_usage,
     cache_dir=f"{working_dir}/tokenizer_cache",
 )
 
