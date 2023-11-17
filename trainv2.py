@@ -241,7 +241,7 @@ dataset = dataset.shuffle(seed=options.seed)
 tokenizer = AutoTokenizer.from_pretrained(
     model_name if not options.custom_tokenizer else options.custom_tokenizer,
     add_prefix_space=options.add_prefix_space,
-    low_cpu_mem_usage=options.low_cpu_mem_usage,
+    # low_cpu_mem_usage=options.low_cpu_mem_usage,
     cache_dir=f"{working_dir}/tokenizer_cache",
 )
 
