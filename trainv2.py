@@ -114,8 +114,6 @@ small_languages = [
     "zh",
 ]
 
-# Data column structures in the .tsv files
-
 # Common variables
 
 options.test = options.train if not options.test else options.test
@@ -123,6 +121,16 @@ model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_tuning' if options.hp_search else ''}/{model_name.replace('/', '_')}"
 peft_modules = options.peft_modules.split(",") if options.peft_modules else None
 accelerator = Accelerator()
+
+
+def log_gpu_memory():
+    for gpu in range(cuda.device_count()):
+        allocated_memory = cuda.memory_allocated(gpu) / (1024**3)  # Convert to GB
+        max_allocated_memory = cuda.max_memory_allocated(gpu) / (1024**3)
+        print(
+            f"GPU {gpu}: Current Memory Allocated: {allocated_memory:.2f} GB, Max Memory Allocated: {max_allocated_memory:.2f} GB"
+        )
+
 
 # Imports based on options
 
@@ -246,6 +254,8 @@ print("Preprocessing...")
 dataset = dataset.map(preprocess_data)
 
 print("Got preprocessed dataset and tokenizer")
+
+log_gpu_memory()
 
 
 # Start modeling
@@ -432,6 +442,7 @@ trainer = accelerator.prepare(trainer)
 if not options.evaluate_only:
     if not options.hp_search:
         print("Training...")
+        log_gpu_memory()
         trainer.train()
 
     else:
