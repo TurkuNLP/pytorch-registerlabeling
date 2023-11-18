@@ -455,7 +455,7 @@ if not options.evaluate_only:
     else:
         hp_config = {
             "direction": "maximize",
-            "backend": {options.hp_search},
+            "backend": options.hp_search,
             "local_dir": f"{working_dir}/{options.hp_search}",
             "hp_space": {},
         }
