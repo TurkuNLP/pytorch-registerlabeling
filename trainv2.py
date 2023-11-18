@@ -470,7 +470,7 @@ if not options.evaluate_only:
             }
 
         elif options.hp_search == "wandb":
-            hp_config["hp_space"] = {
+            hp_config["hp_space"] = lambda _: {
                 "method": "bayes",
                 "name": "sweep",
                 "metric": {"goal": "maximize", "name": "eval_f1"},
