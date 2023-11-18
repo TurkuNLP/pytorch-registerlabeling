@@ -475,12 +475,8 @@ if not options.evaluate_only:
                 "name": "sweep",
                 "metric": {"goal": "maximize", "name": "eval_f1"},
                 "parameters": {
-                    "per_device_train_batch_size": {"values": [6, 8, 12, 16]},
-                    "learning_rate": {
-                        "distribution": "loguniform",
-                        "min": 1e-6,
-                        "max": 1e-4,
-                    },
+                    "per_device_train_batch_size": {"values": [8, 10, 12]},
+                    "learning_rate": {"values": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4]},
                 },
             }
 
