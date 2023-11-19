@@ -72,6 +72,7 @@ parser.add_argument("--eval_steps", type=int, default=100)
 parser.add_argument("--logging_steps", type=int, default=100)
 parser.add_argument("--save_steps", type=int, default=100)
 parser.add_argument("--save_model", action="store_true")
+parser.add_argument("--save_total_limit", type=int, default=2)
 parser.add_argument("--optim", type=str, default="adamw_torch")
 parser.add_argument("--lr_scheduler_type", type=str, default="linear")
 parser.add_argument("--overwrite", action="store_true")
@@ -422,6 +423,7 @@ trainer = MultilabelTrainer(
         eval_steps=options.eval_steps,
         logging_steps=options.logging_steps,
         save_steps=options.save_steps,
+        save_total_limit=options.save_total_limit,
         weight_decay=options.weight_decay,
         warmup_steps=options.warmup_steps,
         warmup_ratio=options.warmup_ratio,
