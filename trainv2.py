@@ -1,3 +1,7 @@
+from datetime import datetime
+
+print(f"{datetime.now()}: script started")
+
 import os
 
 os.environ["TRANSFORMERS_CACHE"] = ".hf/transformers_cache"
