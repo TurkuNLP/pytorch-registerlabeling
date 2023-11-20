@@ -66,6 +66,7 @@ parser.add_argument("--class_weights", action="store_true")
 parser.add_argument("--threshold", type=float, default=None)
 parser.add_argument("--device_map", type=str, default="auto")
 parser.add_argument("--fp16", action="store_true")
+parser.add_argument("--bf16", action="store_true")
 
 # Hyperparameter search related options
 
@@ -467,6 +468,7 @@ trainer = MultilabelTrainer(
         report_to=options.report_to,
         optim=options.optim,
         fp16=options.fp16,
+        bf16=options.bf16,
     ),
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
