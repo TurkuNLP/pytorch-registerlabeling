@@ -37,8 +37,8 @@ parser.add_argument("--seed", type=str, default=42)
 parser.add_argument("--evaluate_only", action="store_true")
 parser.add_argument("--data_fraction", type=float, default=1)
 parser.add_argument("--low_cpu_mem_usage", type=bool, default=False)
-parser.add_argument("--slurm_test", type=bool, default=False)
-parser.add_argument("--log_to_file", type=str, default=None)
+parser.add_argument("--slurm_test", action="store_true")
+parser.add_argument("--log_to_file", action="store_true")
 
 # Training arguments
 
