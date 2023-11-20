@@ -1,41 +1,21 @@
 from datetime import datetime
 
-print(f"{datetime.now()}: script started")
+
+# Print with current date
+def printd(s):
+    return f"{datetime.now()}: {s}"
+
+
+printd("Script started")
 
 import os
+import sys
 
 os.environ["TRANSFORMERS_CACHE"] = ".hf/transformers_cache"
 os.environ["HF_HOME"] = ".hf/hf_home"
 os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
 
 from argparse import ArgumentParser
-from pydoc import locate
-import re
-
-import numpy as np
-
-from sklearn.metrics import (
-    classification_report,
-    accuracy_score,
-    f1_score,
-    roc_auc_score,
-)
-
-from transformers import (
-    AutoTokenizer,
-    Trainer,
-    BitsAndBytesConfig,
-    TrainingArguments,
-    EarlyStoppingCallback,
-)
-
-from datasets import load_dataset, Features, Value
-from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
-from torch import Tensor, FloatTensor, bfloat16, cuda
-
-from accelerate import Accelerator
-
-from labels import binarize_labels, labels
 
 # Get CLI options
 
@@ -58,7 +38,7 @@ parser.add_argument("--evaluate_only", action="store_true")
 parser.add_argument("--data_fraction", type=float, default=1)
 parser.add_argument("--low_cpu_mem_usage", type=bool, default=False)
 parser.add_argument("--slurm_test", type=bool, default=False)
-parser.add_argument("--log_to_file", type=bool, default=False)
+parser.add_argument("--log_to_file", type=str, default=None)
 
 # Training arguments
 
@@ -92,7 +72,6 @@ parser.add_argument("--fp16", type=bool, default=False)
 parser.add_argument("--hp_search", type=str, default=None)
 parser.add_argument("--report_to", type=str, default="none")
 
-
 # (Q)lora / peft related options
 
 parser.add_argument("--add_prefix_space", action="store_true")
@@ -109,7 +88,42 @@ parser.add_argument("--lora_bias", type=str, default="none")
 
 options = parser.parse_args()
 
-print(f"Settings: {options}")
+if options.log_to_file:
+    log = open(
+        f"logs/{datetime.now()}-{options.train}_{options.test}_{options.model_name.replace('/', '_')}_{options.lr}_batch-{options.train_batch_size}{'_'+options.hp_search if options.hp_search else ''}",
+        "w",
+    )
+    sys.stdout = log
+
+printd(f"Settings: {options}")
+
+from pydoc import locate
+import re
+
+import numpy as np
+
+from sklearn.metrics import (
+    classification_report,
+    accuracy_score,
+    f1_score,
+    roc_auc_score,
+)
+
+from transformers import (
+    AutoTokenizer,
+    Trainer,
+    BitsAndBytesConfig,
+    TrainingArguments,
+    EarlyStoppingCallback,
+)
+
+from datasets import load_dataset, Features, Value
+from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
+from torch import Tensor, FloatTensor, bfloat16, cuda
+
+from accelerate import Accelerator
+
+from labels import binarize_labels, labels
 
 small_languages = [
     "ar",
@@ -186,6 +200,7 @@ if options.slurm_test:
     print("Slurm test completed.")
     exit()
 
+printd(f"Imports finished")
 
 # Data preprocessing
 
