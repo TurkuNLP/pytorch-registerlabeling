@@ -91,7 +91,7 @@ options = parser.parse_args()
 if options.log_to_file:
     log = open(
         f"logs/{datetime.now()}-{options.train}_{options.test}_{options.model_name.replace('/', '_')}_{options.lr}_batch-{options.train_batch_size}{'_'+options.hp_search if options.hp_search else ''}",
-        "w",
+        "a",
     )
     sys.stdout = log
 
