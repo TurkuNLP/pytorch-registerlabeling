@@ -1,12 +1,12 @@
 from datetime import datetime
 
-
-# Print with current date
-def printd(s):
-    return f"{datetime.now()}: {s}"
+_print = print
 
 
-printd("Script started")
+# Print with datetime
+def print(*args, **kw):
+    _print("[%s]" % (datetime.now()), *args, **kw)
+
 
 import os
 import sys
@@ -95,7 +95,7 @@ if options.log_to_file:
     )
     sys.stdout = log
 
-printd(f"Settings: {options}")
+print(f"Settings: {options}")
 
 from pydoc import locate
 import re
@@ -200,7 +200,7 @@ if options.slurm_test:
     print("Slurm test completed.")
     exit()
 
-printd(f"Imports finished")
+print(f"Imports finished")
 
 # Data preprocessing
 
