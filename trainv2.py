@@ -106,7 +106,7 @@ if options.log_to_file:
         "a",
     )
     sys.stdout = log
-
+print(f"Args: {' '.join(sys.argv)}")
 print(f"Settings: {options}")
 
 from pydoc import locate
