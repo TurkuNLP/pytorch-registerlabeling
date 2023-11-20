@@ -9,7 +9,6 @@ def print(*args, **kw):
 
 
 import os
-import sys
 
 os.environ["TRANSFORMERS_CACHE"] = ".hf/transformers_cache"
 os.environ["HF_HOME"] = ".hf/hf_home"
@@ -89,9 +88,21 @@ parser.add_argument("--lora_bias", type=str, default="none")
 
 options = parser.parse_args()
 
+import sys
+
 if options.log_to_file:
+    file_name_opts = [
+        datetime.now(),
+        options.train,
+        options.test,
+        options.model_name.replace("/", "_"),
+        options.lr,
+        options.train_batch_size,
+        options.hp_search,
+    ]
+    file_name = "_".join(map(str, filter(None, file_name_opts)))
     log = open(
-        f"logs/{datetime.now()}-{options.train}_{options.test}_{options.model_name.replace('/', '_')}_{options.lr}_batch-{options.train_batch_size}{'_'+options.hp_search if options.hp_search else ''}",
+        f"logs/{file_name}",
         "a",
     )
     sys.stdout = log
@@ -379,7 +390,7 @@ def model_init():
         num_labels=len(labels),
         cache_dir=f"{working_dir}/model_cache",
         trust_remote_code=True,
-        device_map=options.device_map,
+        device_map=options.device_map or None,
         offload_folder="offload",
         low_cpu_mem_usage=True,
         use_flash_attention_2=options.use_flash_attention_2,
