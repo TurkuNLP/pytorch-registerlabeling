@@ -54,6 +54,7 @@ parser.add_argument("--evaluate_only", action="store_true")
 parser.add_argument("--data_fraction", type=float, default=1)
 parser.add_argument("--low_cpu_mem_usage", type=bool, default=False)
 parser.add_argument("--slurm_test", type=bool, default=False)
+parser.add_argument("--log_to_file", type=bool, default=False)
 
 # Training arguments
 
@@ -80,6 +81,7 @@ parser.add_argument("--max_grad_norm", type=float, default=1)
 parser.add_argument("--class_weights", action="store_true")
 parser.add_argument("--threshold", type=float, default=None)
 parser.add_argument("--device_map", type=str, default="auto")
+parser.add_argument("--fp16", type=bool, default=False)
 
 # Hyperparameter search related options
 
@@ -445,6 +447,7 @@ trainer = MultilabelTrainer(
         gradient_accumulation_steps=options.gradient_steps,
         report_to=options.report_to,
         optim=options.optim,
+        fp16=options.fp16,
     ),
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
