@@ -36,6 +36,7 @@ parser.add_argument("--seed", type=str, default=42)
 parser.add_argument("--evaluate_only", action="store_true")
 parser.add_argument("--data_fraction", type=float, default=1)
 parser.add_argument("--low_cpu_mem_usage", action="store_true")
+parser.add_argument("--torch_dtype", type=str, default=None)
 parser.add_argument("--slurm_test", action="store_true")
 parser.add_argument("--log_to_file", action="store_true")
 
@@ -131,7 +132,7 @@ from transformers import (
 
 from datasets import load_dataset, Features, Value
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
-from torch import Tensor, FloatTensor, bfloat16, cuda
+from torch import Tensor, FloatTensor, cuda, float16, float32, bfloat16
 
 from accelerate import Accelerator
 
@@ -159,6 +160,16 @@ model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_'+options.hp_search if options.hp_search else ''}/{model_name.replace('/', '_')}"
 peft_modules = options.peft_modules.split(",") if options.peft_modules else None
 accelerator = Accelerator()
+
+torch_dtype_map = {
+    None: None,
+    "torch.float16": float16,
+    "torch.float32": float32,
+    "torch.bfloat16": bfloat16,
+    "auto": "auto",
+}
+
+torch_dtype = torch_dtype_map[options.torch_dtype]
 
 
 def log_gpu_memory():
@@ -287,6 +298,7 @@ tokenizer = AutoTokenizer.from_pretrained(
     model_name if not options.custom_tokenizer else options.custom_tokenizer,
     add_prefix_space=options.add_prefix_space,
     low_cpu_mem_usage=options.low_cpu_mem_usage,
+    torch_dtype=torch_dtype,
     cache_dir=f"{working_dir}/tokenizer_cache",
 )
 
