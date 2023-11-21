@@ -51,6 +51,7 @@ parser.add_argument("--warmup_ratio", type=float, default=0)
 parser.add_argument("--metric_for_best_model", type=str, default="eval_loss")
 parser.add_argument("--patience", type=int, default=5)
 parser.add_argument("--gradient_steps", type=int, default=1)
+parser.add_argument("--gradient_checkpointing", action="store_true")
 parser.add_argument("--epochs", type=int, default=30)
 parser.add_argument("--iter_strategy", type=str, default="epoch")
 parser.add_argument("--eval_steps", type=int, default=100)
@@ -487,7 +488,7 @@ trainer = MultilabelTrainer(
         per_device_train_batch_size=options.train_batch_size,
         per_device_eval_batch_size=options.eval_batch_size,
         num_train_epochs=options.epochs,
-        gradient_checkpointing=True,
+        gradient_checkpointing=options.gradient_checkpointing,
         gradient_accumulation_steps=options.gradient_steps,
         report_to=options.report_to,
         optim=options.optim,
