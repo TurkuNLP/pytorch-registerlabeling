@@ -406,6 +406,7 @@ def model_init():
         offload_folder="offload",
         low_cpu_mem_usage=True,
         use_flash_attention_2=options.use_flash_attention_2,
+        torch_dtype=torch_dtype,
         quantization_config=BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
