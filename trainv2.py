@@ -72,7 +72,7 @@ parser.add_argument("--bf16", action="store_true")
 # Hyperparameter search related options
 
 parser.add_argument("--hp_search", type=str, default=None)
-parser.add_argument("--report_to", type=str, default="none")
+parser.add_argument("--report_to", type=str, default="all")
 
 # (Q)lora / peft related options
 
@@ -190,7 +190,8 @@ if options.use_flash_attention_2:
 if options.hp_search:
     if options.hp_search == "ray":
         from ray.tune.schedulers import ASHAScheduler
-        from ray.tune import grid_search, CLIReporter, loguniform, choice
+        from ray.tune.schedulers import PopulationBasedTraining
+        from ray.tune import grid_search, CLIReporter, loguniform, choice, uniform
         from ray.tune.search.hyperopt import HyperOptSearch
         from ray import init as ray_init
 
@@ -519,12 +520,24 @@ if not options.evaluate_only:
 
         if options.hp_search == "ray":
             ray_init(ignore_reinit_error=True, num_cpus=1)
+            """
             hp_config["scheduler"] = ASHAScheduler(metric="eval_f1", mode="max")
             hp_config["search_alg"] = HyperOptSearch(metric="eval_f1", mode="max")
             hp_config["hp_space"] = {
                 "learning_rate": loguniform(1e-6, 1e-3),
                 "per_device_train_batch_size": choice([6, 8, 12, 16]),
             }
+            """
+            hp_config["scheduler"] = PopulationBasedTraining(
+                metric="eval_f1",
+                mode="max",
+                perturbation_interval=1,
+                hyperparam_mutations={
+                    "learning_rate": uniform(1e-5, 5e-5),
+                    "per_device_train_batch_size": [6, 8, 10],
+                },
+            )
+            hp_config["hp_space"] = lambda _: {}
 
         elif options.hp_search == "wandb":
             hp_config["hp_space"] = lambda _: {
