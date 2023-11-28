@@ -20,6 +20,33 @@ class SelfAdjDiceLoss(torch.nn.Module):
         return dice
 
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        preds = torch.sigmoid(logits)
+        num_labels = preds.shape[1]
+
+        # Calculate label weights inversely proportional to label frequency
+        label_volumes = (
+            targets.sum(dim=0) + 1e-6
+        )  # Add small constant to avoid division by zero
+        label_weights = 1.0 / label_volumes
+
+        weighted_preds = preds * label_weights
+        weighted_targets = targets * label_weights
+
+        # Flatten label and prediction tensors
+        probs = weighted_preds.view(-1)
+        targets = weighted_targets.view(-1)
+
+        intersection = (probs * targets).sum()
+        dice = (2.0 * intersection + self.gamma) / (
+            probs.sum() + targets.sum() + self.gamma
+        )
+
+        # Calculate average Dice coefficient
+        average_dice = dice / num_labels
+
+        # Return negative average Dice for loss
+        return -average_dice
+
         # Apply sigmoid to the predictions
         predictions = torch.sigmoid(logits)
 
