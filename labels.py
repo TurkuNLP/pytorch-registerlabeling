@@ -1,4 +1,19 @@
-labels = [
+labels_xgenre = [
+    "Information/Explanation",
+    "Instruction",
+    "Legal",
+    "Forum",
+    "News",
+    "Opinion/Argumentation",
+    "Promotion",
+    "Prose/Lyrical",
+    "Other",
+]
+
+labels_upper = ["HI", "ID", "IN", "IP", "LY", "MT", "NA", "OP", "SP"]
+
+
+labels_all = [
     "HI",
     "ID",
     "IN",
@@ -26,8 +41,36 @@ labels = [
     "sr",
 ]
 
-sub_register_map = {
+map_normalize = {
+    # Our categories, upper
+    "MT": "MT",
+    "HI": "HI",
+    "ID": "ID",
+    "IN": "IN",
+    "IP": "IP",
+    "LY": "LY",
+    "MT": "MT",
     "NA": "NA",
+    "OP": "OP",
+    "SP": "SP",
+    # Our categories, lower
+    "av": "av",
+    "ds": "ds",
+    "dtp": "dtp",
+    "ed": "ed",
+    "en": "en",
+    "fi": "fi",
+    "it": "it",
+    "lt": "lt",
+    "nb": "nb",
+    "ne": "ne",
+    "ob": "ob",
+    "ra": "ra",
+    "re": "re",
+    "rs": "rs",
+    "rv": "rv",
+    "sr": "sr",
+    # Converted categories
     "NE": "ne",
     "SR": "sr",
     "PB": "nb",
@@ -36,12 +79,10 @@ sub_register_map = {
     "TB": "nb",
     "CB": "nb",
     "OA": "NA",
-    "OP": "OP",
     "OB": "ob",
     "RV": "rv",
     "RS": "rs",
     "AV": "av",
-    "IN": "IN",
     "JD": "IN",
     "FA": "fi",
     "DT": "dtp",
@@ -52,25 +93,19 @@ sub_register_map = {
     "CM": "IN",
     "EN": "en",
     "RP": "IN",
-    "ID": "ID",
     "DF": "ID",
     "QA": "ID",
-    "HI": "HI",
     "RE": "re",
-    "IP": "IP",
     "DS": "ds",
     "EB": "ed",
     "ED": "ed",
-    "LY": "LY",
     "PO": "LY",
     "SO": "LY",
-    "SP": "SP",
     "IT": "it",
     "FS": "SP",
     "TV": "SP",
     "OS": "OS",
     "IG": "IP",
-    "MT": "MT",
     "HT": "HI",
     "FI": "fi",
     "OI": "IN",
@@ -92,26 +127,137 @@ sub_register_map = {
     "PR": "LY",
     "SL": "LY",
     "TA": "SP",
-    "OTHER": "OS",
+    "OTHER": "",
     "NB": "nb",
     "na": "NA",
     "sp": "SP",
     "": "",
 }
 
+map_optional = {
+    "av": "OP",
+    "ed": "IP",
+    "fi": "IN",
+}
 
-def normalize_labels(label):
-    return sorted(
-        list(
-            set(
-                [
-                    sub_register_map[l] if l not in labels else l
-                    for l in (label or "").split()
-                ]
-            )
-        )
-    )
+map_upper = {
+    "HI": "HI",
+    "ID": "ID",
+    "IN": "IN",
+    "IP": "IP",
+    "LY": "LY",
+    "MT": "MT",
+    "NA": "NA",
+    "OP": "OP",
+    "SP": "SP",
+    "av": "OP",
+    "ds": "IP",
+    "dtp": "IN",
+    "ed": "IP",
+    "en": "IN",
+    "fi": "IN",
+    "it": "SP",
+    "lt": "IN",
+    "nb": "NA",
+    "ne": "NA",
+    "ob": "OP",
+    "ra": "IN",
+    "re": "HI",
+    "rs": "OP",
+    "rv": "OP",
+    "sr": "NA",
+    "": "",
+}
+
+map_xgenre = {
+    ### 2. MACHINE TRANSLATED
+    "MT": "",
+    ### 2. LYRICAL
+    "LY": "Prose/Lyrical",
+    ### 3. SPOKEN
+    "SP": "Other",
+    # Interview
+    "it": "Other",
+    ### 4. INTERACTIVE DISCUSSION
+    "ID": "Forum",
+    ### 5. NARRATIVE
+    "NA": "Prose/Lyrical",  # Or Opinion/Argumentation
+    # News report
+    "ne": "News",
+    # Sports report
+    "sr": "News",
+    # Narrative blog
+    "nb": "Opinion/Argumentation",
+    ### 6. HOW-TO or INSTRUCTIONS
+    "HI": "Instruction",
+    # Recipe
+    "re": "Instruction",
+    ### 7. INFORMATIONAL DESCRIPTION
+    "IN": "Information/Explanation",
+    # Encyclopedia article
+    "en": "Information/Explanation",
+    # Research article
+    "ra": "Information/Explanation",
+    # Description of a thing or person
+    "dtp": "Information/Explanation",
+    # Faq
+    "fi": "Instruction",  # ???
+    # Legal terms and conditions
+    "lt": "Legal",
+    ### 8. OPINION
+    "OP": "Opinion/Argumentation",
+    # Review
+    "rv": "Opinion/Argumentation",
+    # Opinion blog
+    "ob": "Opinion/Argumentation",
+    # Denominational religious blog / sermon
+    "rs": "Prose/Lyrical",  # ???
+    # Advice
+    "av": "Opinion/Argumentation",  # ??? Or Instruction?
+    ### 9. INFORMATIONAL PERSUASION
+    "IP": "Promotion",
+    # Description with intent to sell
+    "ds": "Promotion",
+    # News & opinion blog or editorial
+    "ed": "Opinion/Argumentation",  # ???
+    "": "",
+}
 
 
-def binarize_labels(label):
-    return [1 if l in normalize_labels(label) else 0 for l in labels]
+def get_label_scheme(label_list):
+    if label_list in ["all", "all_2"]:
+        return labels_all
+    elif label_list == "upper":
+        return labels_upper
+    elif label_list == "xgenre":
+        return labels_xgenre
+
+
+def normalize_labels(labels, label_config):
+    label_scheme = get_label_scheme(label_config)
+
+    # Normalizer-mapping
+    mapping = map_normalize
+
+    # Optionally add some combining to upper categories
+    if label_config == "all_2":
+        mapping = mapping.update(map_optional)
+
+    # Split labels to a list and map
+    labels = (labels or "").split()
+    mapped = [mapping[label] for label in labels]
+
+    # Further map to XGENRE
+    if label_scheme == "xgenre":
+        mapped = [map_xgenre[label] for label in mapped]
+
+    # Further map to upper
+    elif label_scheme == "upper":
+        mapped = [map_upper[label] for label in mapped]
+
+    return sorted(list(set(filter(None, mapped))))
+
+
+def binarize_labels(labels, label_config):
+    label_scheme = get_label_scheme(label_config)
+    return [1 if label in labels else 0 for label in label_scheme]

@@ -39,6 +39,14 @@ parser.add_argument("--low_cpu_mem_usage", action="store_true")
 parser.add_argument("--torch_dtype", type=str, default=None)
 parser.add_argument("--slurm_test", action="store_true")
 parser.add_argument("--log_to_file", action="store_true")
+parser.add_argument("--extract_embeddings", action="store_true")
+parser.add_argument("--extract_keywords", action="store_true")
+
+parser.add_argument("--labels", type=str, default="all")
+
+# Tokenizer
+
+parser.add_argument("--return_tensors", type=str, default=None)
 
 # Training arguments
 
@@ -90,7 +98,10 @@ parser.add_argument("--lora_bias", type=str, default="none")
 
 options = parser.parse_args()
 
+import csv
 import sys
+
+csv.field_size_limit(sys.maxsize)
 
 if options.log_to_file:
     file_name_opts = [
@@ -114,6 +125,8 @@ print(f"Settings: {options}")
 from pydoc import locate
 import re
 
+from tqdm import tqdm
+
 import numpy as np
 
 from sklearn.metrics import (
@@ -131,13 +144,17 @@ from transformers import (
     EarlyStoppingCallback,
 )
 
-from datasets import load_dataset, Features, Value
+from datasets import Dataset, DatasetDict
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, FloatTensor, cuda, float16, float32, bfloat16
 
 from accelerate import Accelerator
 
-from labels import binarize_labels, labels
+from labels import (
+    binarize_labels,
+    normalize_labels,
+    get_label_scheme,
+)
 
 small_languages = [
     "ar",
@@ -161,6 +178,11 @@ model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_'+options.hp_search if options.hp_search else ''}/{model_name.replace('/', '_')}"
 peft_modules = options.peft_modules.split(",") if options.peft_modules else None
 accelerator = Accelerator()
+
+# Labels
+label_scheme = get_label_scheme(options.labels)
+
+# Torch dtypes
 
 torch_dtype_map = {
     None: None,
@@ -233,53 +255,53 @@ print(f"Imports finished")
 def preprocess_data(example):
     text = example["text"] or ""
     encoding = tokenizer(
-        text, padding="max_length", truncation=True, max_length=options.max_length
+        text,
+        padding="max_length",
+        truncation=True,
+        max_length=options.max_length,
+        return_tensors=options.return_tensors,
     )
 
-    encoding["label"] = binarize_labels(example["label"])
+    normalized_labels = normalize_labels(example["label"], options.labels)
+
+    encoding["label"] = binarize_labels(normalized_labels, options.labels)
+    encoding["label_text"] = " ".join(normalized_labels)
+
     return encoding
 
 
-def get_data():
-    data_files = {"train": [], "dev": [], "test": []}
-
-    for l in options.train.split("-"):
-        data_files["train"].append(f"data/{l}/train.tsv")
-        if not (l in small_languages):
-            data_files["dev"].append(f"data/{l}/dev.tsv")
-        else:
-            # Small languages use test as dev
-            data_files["dev"].append(f"data/{l}/test.tsv")
-
-    for l in options.test.split("-"):
-        # check if zero-shot for small languages, if yes then test with full data
+def data_gen(ls, split):
+    for l in ls.split("-"):
+        use_split = split
         if l in small_languages and not (l in options.train.split("-")):
-            data_files["test"].append(f"data/{l}/{l}.tsv")
-        else:
-            data_files["test"].append(f"data/{l}/test.tsv")
+            use_split = l
 
-    return data_files
+        elif split == "dev" and l in small_languages:
+            use_split = "test"
+
+        with open(f"data/{l}/{use_split}.tsv", "r") as c:
+            re = csv.reader(c, delimiter="\t")
+            for ro in re:
+                yield {"label": ro[0], "text": ro[1], "language": l}
 
 
-print("Getting data...")
-
-data_files = get_data()
-
-print("data files", data_files)
-
-dataset = load_dataset(
-    "csv",
-    data_files=data_files,
-    delimiter="\t",
-    column_names=["label", "text"],
-    features=Features(
-        {
-            "text": Value("string"),
-            "label": Value("string"),
-        }
-    ),
-    cache_dir=f"{working_dir}/dataset_cache",
+dataset = DatasetDict(
+    {
+        "train": Dataset.from_generator(
+            data_gen, gen_kwargs={"ls": options.train, "split": "train"}
+        ),
+        "dev": Dataset.from_generator(
+            data_gen, gen_kwargs={"ls": options.train, "split": "dev"}
+        ),
+        "test": Dataset.from_generator(
+            data_gen, gen_kwargs={"ls": options.test, "split": "test"}
+        ),
+    }
 )
+
+# Shuffle data
+
+dataset = dataset.shuffle(seed=options.seed)
 
 # Get a fraction of data for testing
 
@@ -289,10 +311,6 @@ if options.data_fraction < 1:
         partition = int(options.data_fraction * len(dataset[x]))
         dataset[x] = dataset[x].select(range(partition))
 
-
-# Shuffle data
-
-dataset = dataset.shuffle(seed=options.seed)
 
 # Init tokenizer
 
@@ -319,7 +337,7 @@ print("Got preprocessed dataset and tokenizer")
 log_gpu_memory()
 
 
-# Start modeling
+# Model
 
 if options.class_weights:
     y = [
@@ -329,7 +347,7 @@ if options.class_weights:
         if val
     ]
 
-    weights = len(dataset["train"]) / (len(labels) * np.bincount(y))
+    weights = len(dataset["train"]) / (len(label_scheme) * np.bincount(y))
     class_weights = FloatTensor(weights).to("cuda")
 
     print(f"Using class weights: {class_weights}")
@@ -401,7 +419,7 @@ def model_init():
     model_type = locate(f"transformers.{options.transformer_model}")
     model = model_type.from_pretrained(
         model_name,
-        num_labels=len(labels),
+        num_labels=len(label_scheme),
         cache_dir=f"{working_dir}/model_cache",
         trust_remote_code=True,
         device_map=options.device_map or None,
@@ -437,6 +455,8 @@ def model_init():
             names.append(name)
         target_modules = list(set(names))
 
+        print(f"Linear layers:\n {target_modules}")
+
         # Define LoRA Config
         lora_config = LoraConfig(
             r=options.lora_rank,
@@ -457,7 +477,7 @@ def model_init():
     if options.add_classification_head:
         # Add a classification head on top of the model
         model.resize_token_embeddings(len(tokenizer))
-        model.classifier = Linear(model.config.hidden_size, len(labels))
+        model.classifier = Linear(model.config.hidden_size, len(label_scheme))
 
     print("Model initialized")
 
@@ -504,6 +524,159 @@ trainer = MultilabelTrainer(
 
 trainer = accelerator.prepare(trainer)
 
+# Start an analysis, if opted
+
+if options.extract_embeddings:
+    model = model_init()
+    print("Extracting document embeddings...")
+    dataset.set_format(type="torch")
+    model = model.to("cpu")
+
+    with open(f"{working_dir}/doc_embeddings2.tsv", "w", newline="") as tsvfile:
+        writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
+        for d in tqdm(dataset["train"]):
+            label_text = d.pop("label_text")
+            d.pop("label")
+            d.pop("text")
+            language = d.pop("language")
+
+            outputs = model(**d, output_hidden_states=True)
+            last_hidden_states = outputs.hidden_states[-1]
+            # embeddings = last_hidden_states[0, 0, :]
+            doc_embeddings = last_hidden_states[0][0, :].detach().numpy()
+
+            writer.writerow(
+                [
+                    language,
+                    label_text,
+                    " ".join([str(x) for x in doc_embeddings.tolist()]),
+                ]
+            )
+
+
+def pool_embeddings_for_words(token_embeddings, tokens):
+    # Initialize a dictionary to hold the pooled embeddings for each full word
+    word_embeddings = {}
+    current_word_embeddings = []
+    current_word = ""
+
+    for idx, token in enumerate(tokens):
+        # Skip special tokens like <s>, </s>, etc.
+        if token in tokenizer.all_special_tokens:
+            continue
+        # New word starts with _
+        if token.startswith("▁"):
+            if current_word_embeddings:
+                # Pool the embeddings for the previous word and add to the dictionary
+                pooled_embedding = np.mean(current_word_embeddings, axis=0).tolist()
+                word_embeddings[current_word] = pooled_embedding
+                current_word_embeddings = []
+
+            # Remove the underscore from the token to get the word
+            current_word = token[1:]
+        else:
+            # For tokens that are not the start of a new word, append them to the current word
+            current_word += token
+
+        # Add the current subword embedding
+        current_word_embeddings.append(token_embeddings[idx])
+
+    # Pool and add the last word
+    if current_word_embeddings:
+        pooled_embedding = np.mean(current_word_embeddings, axis=0).tolist()
+        word_embeddings[current_word] = pooled_embedding
+
+    return word_embeddings
+
+
+def compute_cosine_similarity(doc_embedding, word_embeddings):
+    # Convert the document embedding to a 2D array
+    doc_embedding_2d = np.array(doc_embedding).reshape(1, -1)
+
+    # Initialize a dictionary to hold cosine similarities
+    cosine_similarities = {}
+
+    for word, word_embedding in word_embeddings.items():
+        # Convert the word embedding to a 2D array
+        word_embedding_2d = np.array(word_embedding).reshape(1, -1)
+
+        # Compute the cosine similarity
+        similarity = cosine_similarity(doc_embedding_2d, word_embedding_2d)[0][0]
+
+        # Store the similarity
+        cosine_similarities[word] = similarity
+
+    # Sort the dictionary by similarity in descending order
+    sorted_cosine_similarities = dict(
+        sorted(cosine_similarities.items(), key=lambda item: item[1], reverse=True)
+    )
+
+    return sorted_cosine_similarities
+
+
+if options.extract_keywords:
+    from sklearn.metrics.pairwise import cosine_similarity
+
+    model = model_init()
+    print("Extracting keywords...")
+    dataset.set_format(type="torch")
+    model = model.to("cpu")
+
+    category_doc_word_similarities = {}
+    import json
+    from numpy import dot
+    from numpy.linalg import norm
+
+    cos_sim = lambda a, b: dot(a, b) / (norm(a) * norm(b))
+
+    with open(f"{working_dir}/keywords2.tsv", "w", newline="") as tsvfile:
+        writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
+        for d in tqdm(dataset["train"]):
+            word_ids = d["input_ids"].tolist()[0]
+            tokens = tokenizer.convert_ids_to_tokens(word_ids)
+            label_text = d.pop("label_text")
+            label_one_hot = d.pop("label")
+            text = d.pop("text")
+            language = d.pop("language")
+
+            outputs = model(**d, output_hidden_states=True)
+
+            text_embedding = outputs.hidden_states[-1][0][0, :].detach().numpy()
+            token_embeddings = outputs.hidden_states[-1][0].detach().numpy()
+
+            word_embeddings = pool_embeddings_for_words(token_embeddings, tokens)
+
+            cosine_similarities = compute_cosine_similarity(
+                text_embedding,
+                word_embeddings,
+            )
+
+            writer.writerow(
+                [
+                    language,
+                    label_text,
+                    " ".join([str(x) for x in text_embedding.tolist()]),
+                    # json.dumps(str(cosine_similarities)),
+                    json.dumps(str(word_embeddings)),
+                ]
+            )
+
+            continue
+
+            if label_text not in category_doc_word_similarities:
+                category_doc_word_similarities[label_text] = {}
+
+            for k, v in cosine_similarities.items():
+                if k not in category_doc_word_similarities[label_text]:
+                    category_doc_word_similarities[label_text][k] = []
+                category_doc_word_similarities[label_text][k].append(v)
+
+        # for k, v in category_doc_word_similarities.items():
+        #    print(f"CATEGORY {k}")
+        #    print(v)
+        #    exit()
+
+
 if not options.evaluate_only:
     if not options.hp_search:
         print("Training...")
@@ -533,8 +706,9 @@ if not options.evaluate_only:
                 mode="max",
                 perturbation_interval=1,
                 hyperparam_mutations={
-                    "learning_rate": uniform(1e-5, 5e-5),
-                    "per_device_train_batch_size": [6, 8, 10],
+                    # "learning_rate": uniform(1e-5, 5e-5),
+                    "learning_rate": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4],
+                    # "per_device_train_batch_size": [6, 8, 10],
                 },
             )
             hp_config["hp_space"] = lambda _: {}
@@ -573,7 +747,7 @@ probs = sigmoid(Tensor(predictions))
 preds = np.zeros(probs.shape)
 preds[np.where(probs >= threshold)] = 1
 
-print(classification_report(trues, preds, target_names=labels))
+print(classification_report(trues, preds, target_names=label_scheme))
 
 if not options.evaluate_only and options.save_model:
     trainer.model.save_pretrained(f"{working_dir}/saved_model")
