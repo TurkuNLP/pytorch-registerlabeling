@@ -27,7 +27,31 @@ class SelfAdjDiceLoss(torch.nn.Module):
         self.gamma = gamma
         self.reduction = reduction
 
+    def dice_coeff(self, y_true, y_pred):
+        y_true_f = torch.flatten(y_true)
+        y_pred_f = torch.flatten(y_pred)
+        intersection = torch.sum(y_true_f * y_pred_f)
+        dice = (2.0 * intersection + self.gamma) / (
+            torch.sum(y_true_f) + torch.sum(y_pred_f) + self.gamma
+        )
+        return dice
+
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        preds = torch.sigmoid(logits)
+
+        num_cols = preds.shape[1]
+        dice = 0
+        for i in range(num_cols):
+            pred_col = preds[:, i]
+            target_col = targets[:, i]
+            dice += self.dice_coeff(pred_col, target_col)
+
+        average_dice = dice / num_cols
+
+        return -average_dice
+
+        print(dice)
+
         probs = torch.sigmoid(logits)
 
         # Flatten label and prediction tensors
@@ -47,5 +71,8 @@ class SelfAdjDiceLoss(torch.nn.Module):
         # )
 
         loss = 1 - dice
+
+        print(loss)
+        exit()
         # return loss
         return loss.mean()
