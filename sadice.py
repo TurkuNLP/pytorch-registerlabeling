@@ -2,23 +2,6 @@ import torch
 
 
 class SelfAdjDiceLoss(torch.nn.Module):
-    r"""
-    Creates a criterion that optimizes a multi-class Self-adjusting Dice Loss
-    ("Dice Loss for Data-imbalanced NLP Tasks" paper)
-
-    Args:
-        alpha (float): a factor to push down the weight of easy examples
-        gamma (float): a factor added to both the nominator and the denominator for smoothing purposes
-        reduction (string): Specifies the reduction to apply to the output:
-            ``'none'`` | ``'mean'`` | ``'sum'``. ``'none'``: no reduction will be applied,
-            ``'mean'``: the sum of the output will be divided by the number of
-            elements in the output, ``'sum'``: the output will be summed.
-
-    Shape:
-        - logits: `(N, C)` where `N` is the batch size and `C` is the number of classes.
-        - targets: `(N)` where each value is in [0, C - 1]
-    """
-
     def __init__(
         self, alpha: float = 1.0, gamma: float = 1.0, reduction: str = "mean"
     ) -> None:
@@ -37,6 +20,33 @@ class SelfAdjDiceLoss(torch.nn.Module):
         return dice
 
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        preds = torch.sigmoid(logits)
+        num_labels = preds.shape[1]
+
+        # Calculate label weights inversely proportional to label frequency
+        label_volumes = (
+            targets.sum(dim=0) + 1e-6
+        )  # Add small constant to avoid division by zero
+        label_weights = 1.0 / label_volumes
+
+        weighted_preds = preds * label_weights
+        weighted_targets = targets * label_weights
+
+        # Flatten label and prediction tensors
+        probs = weighted_preds.view(-1)
+        targets = weighted_targets.view(-1)
+
+        intersection = (probs * targets).sum()
+        dice = (2.0 * intersection + self.gamma) / (
+            probs.sum() + targets.sum() + self.gamma
+        )
+
+        # Calculate average Dice coefficient
+        average_dice = dice / num_labels
+
+        # Return negative average Dice for loss
+        return -average_dice
+
         """
         preds = torch.sigmoid(logits)
 
