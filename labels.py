@@ -233,8 +233,6 @@ def get_label_scheme(label_list):
 
 
 def normalize_labels(labels, label_config):
-    label_scheme = get_label_scheme(label_config)
-
     # Normalizer-mapping
     mapping = map_normalize
 
@@ -243,7 +241,8 @@ def normalize_labels(labels, label_config):
         mapping = mapping.update(map_optional)
 
     # Split labels to a list and map
-    labels = (labels or "").split()
+    if type(labels) == str:
+        labels = (labels or "").split()
     mapped = [mapping[label] for label in labels]
 
     # Further map to XGENRE
