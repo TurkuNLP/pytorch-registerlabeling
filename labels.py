@@ -49,7 +49,6 @@ map_normalize = {
     "IN": "IN",
     "IP": "IP",
     "LY": "LY",
-    "MT": "MT",
     "NA": "NA",
     "OP": "OP",
     "SP": "SP",

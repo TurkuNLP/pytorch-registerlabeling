@@ -253,7 +253,7 @@ print(f"Imports finished")
 
 
 def preprocess_data(example):
-    text = example["text"] or ""
+    text = example["text"]
     encoding = tokenizer(
         text,
         padding="max_length",
@@ -261,11 +261,8 @@ def preprocess_data(example):
         max_length=options.max_length,
         return_tensors=options.return_tensors,
     )
-
-    normalized_labels = normalize_labels(example["label"], options.labels)
-
-    encoding["label"] = binarize_labels(normalized_labels, options.labels)
-    encoding["label_text"] = " ".join(normalized_labels)
+    for key in example.keys():
+        encoding[key] = example[key]
 
     return encoding
 
@@ -282,7 +279,17 @@ def data_gen(ls, split):
         with open(f"data/{l}/{use_split}.tsv", "r") as c:
             re = csv.reader(c, delimiter="\t")
             for ro in re:
-                yield {"label": ro[0], "text": ro[1], "language": l}
+                if ro[1]:
+                    normalized_labels = normalize_labels(ro[0], options.labels)
+                    text = ro[1]
+                    label = binarize_labels(normalized_labels, options.labels)
+                    label_text = " ".join(normalized_labels)
+                    yield {
+                        "label": label,
+                        "label_text": label_text,
+                        "language": l,
+                        "text": text,
+                    }
 
 
 dataset = DatasetDict(
@@ -401,7 +408,10 @@ def compute_metrics(p):
     y_pred[np.where(probs >= threshold)] = 1
     y_th05 = np.zeros(probs.shape)
     y_th05[np.where(probs >= 0.5)] = 1
-    roc_auc = roc_auc_score(labels, y_pred, average="micro")
+    try:
+        roc_auc = roc_auc_score(labels, y_pred, average="micro")
+    except:
+        roc_auc = 0
     accuracy = accuracy_score(labels, y_pred)
     metrics = {
         "f1": f1_score(y_true=labels, y_pred=y_pred, average="micro"),
