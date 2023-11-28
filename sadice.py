@@ -48,7 +48,7 @@ class SelfAdjDiceLoss(torch.nn.Module):
 
         average_dice = dice / num_cols
 
-        return average_dice
+        return 1 - average_dice
 
         print(dice)
 
