@@ -284,7 +284,6 @@ def data_gen(ls, split):
                     text = ro[1]
                     label = binarize_labels(normalized_labels, options.labels)
                     label_text = " ".join(normalized_labels)
-                    print(label_text)
                     yield {
                         "label": label,
                         "label_text": label_text,
