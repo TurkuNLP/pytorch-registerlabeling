@@ -247,11 +247,11 @@ def normalize_labels(labels, label_config):
     mapped = [mapping[label] for label in labels]
 
     # Further map to XGENRE
-    if label_scheme == "xgenre":
+    if label_config == "xgenre":
         mapped = [map_xgenre[label] for label in mapped]
 
     # Further map to upper
-    elif label_scheme == "upper":
+    elif label_config == "upper":
         mapped = [map_upper[label] for label in mapped]
 
     return sorted(list(set(filter(None, mapped))))
@@ -259,4 +259,4 @@ def normalize_labels(labels, label_config):
 
 def binarize_labels(labels, label_config):
     label_scheme = get_label_scheme(label_config)
-    return [1 if label in labels else 0 for label in label_scheme]
+    return [1 if scheme_label in labels else 0 for scheme_label in label_scheme]
