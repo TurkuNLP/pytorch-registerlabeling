@@ -47,5 +47,5 @@ class SelfAdjDiceLoss(torch.nn.Module):
         # )
 
         loss = 1 - dice
-        return loss
+        # return loss
         return loss.mean()
