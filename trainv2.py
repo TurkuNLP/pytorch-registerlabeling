@@ -341,6 +341,8 @@ dataset = dataset.map(preprocess_data)
 
 print("Got preprocessed dataset and tokenizer")
 
+print(dataset["train"][0])
+
 log_gpu_memory()
 
 
