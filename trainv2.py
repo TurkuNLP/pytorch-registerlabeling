@@ -43,6 +43,7 @@ parser.add_argument("--extract_embeddings", action="store_true")
 parser.add_argument("--extract_keywords", action="store_true")
 
 parser.add_argument("--labels", type=str, default="all")
+parser.add_argument("--sadice", action="store_true")
 
 # Tokenizer
 
@@ -241,6 +242,9 @@ if options.report_to == "wandb":
 
     wandb.login()
 
+if options.sadice:
+    from sadice import SelfAdjDiceLoss
+
 # Exit now if testing
 
 if options.slurm_test:
@@ -375,6 +379,14 @@ class MultilabelTrainer(Trainer):
             logits.view(-1, self.model.config.num_labels),
             labels.float().view(-1, self.model.config.num_labels),
         )
+
+        if options.sadice:
+            criterion = SelfAdjDiceLoss()
+            loss = criterion(
+                logits.view(-1, self.model.config.num_labels),
+                labels.float().view(-1, self.model.config.num_labels),
+            )
+
         return (loss, outputs) if return_outputs else loss
 
 
