@@ -20,6 +20,25 @@ class SelfAdjDiceLoss(torch.nn.Module):
         return dice
 
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        # Apply sigmoid to the predictions
+        predictions = torch.sigmoid(predictions)
+
+        # Calculate per-class weights
+        class_weights = 1.0 / (targets.sum(dim=0) ** 2 + 1e-6)  # Avoid division by zero
+        class_weights /= class_weights.sum()  # Normalize weights
+
+        # Calculate intersection and union
+        intersection = (predictions * targets).sum(dim=0)
+        union = (predictions + targets).sum(dim=0)
+
+        # Calculate weighted Dice coefficient
+        dice = (
+            2.0 * (intersection * class_weights) / (union * class_weights + self.smooth)
+        )
+        dice_loss = 1 - dice.sum() / len(dice)  # Average over classes
+
+        return dice_loss
+
         preds = torch.sigmoid(logits)
         num_labels = preds.shape[1]
 
