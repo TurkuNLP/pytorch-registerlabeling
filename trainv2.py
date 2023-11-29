@@ -5,7 +5,8 @@ _print = print
 
 # Print with datetime
 def print(*args, **kw):
-    _print("[%s]" % (datetime.now()), *args, **kw)
+    formatted_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    _print(f"[{formatted_now}]", *args, **kw)
 
 
 import os
@@ -41,8 +42,8 @@ parser.add_argument("--slurm_test", action="store_true")
 parser.add_argument("--log_to_file", action="store_true")
 parser.add_argument("--extract_embeddings", action="store_true")
 parser.add_argument("--extract_keywords", action="store_true")
-
 parser.add_argument("--labels", type=str, default="all")
+parser.add_argument("--hp_search", type=str, default=None)
 
 # Loss
 
@@ -82,11 +83,6 @@ parser.add_argument("--threshold", type=float, default=None)
 parser.add_argument("--device_map", type=str, default="auto")
 parser.add_argument("--fp16", action="store_true")
 parser.add_argument("--bf16", action="store_true")
-
-# Hyperparameter search related options
-
-parser.add_argument("--hp_search", type=str, default=None)
-parser.add_argument("--report_to", type=str, default="all")
 
 # (Q)lora / peft related options
 
@@ -233,20 +229,21 @@ if options.peft:
 
 # Wandb setup
 
-if options.report_to == "wandb":
+try:
     from dotenv import load_dotenv
 
     print("Using wandb")
     os.environ[
         "WANDB_PROJECT"
-    ] = f"register-labeling_{options.train}_{options.test}{'_tuning' if options.hp_search else ''}_{model_name.replace('/', '_')}"
+    ] = f"{options.train}_{options.test}{'_tuning' if options.hp_search else ''}_{model_name.replace('/', '_')}"
 
     load_dotenv()
     os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY")
     import wandb
 
     wandb.login()
-
+except:
+    pass
 
 # Exit now if testing
 
@@ -446,7 +443,7 @@ def model_init():
     model = model_type.from_pretrained(
         model_name,
         num_labels=len(label_scheme),
-        cache_dir=f"{working_dir}/model_cache",
+        cache_dir=f"{options.output_path}/model_cache",
         trust_remote_code=True,
         device_map=options.device_map or None,
         offload_folder="offload",
@@ -537,7 +534,6 @@ trainer = MultilabelTrainer(
         num_train_epochs=options.epochs,
         gradient_checkpointing=options.gradient_checkpointing,
         gradient_accumulation_steps=options.gradient_steps,
-        report_to=options.report_to,
         optim=options.optim,
         fp16=options.fp16,
         bf16=options.bf16,
