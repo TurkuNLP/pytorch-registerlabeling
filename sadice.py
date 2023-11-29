@@ -37,4 +37,4 @@ class SelfAdjustingMultiLabelDiceLoss(torch.nn.Module):
         average_dice = total_dice / num_labels
 
         # Return negative average Dice for loss
-        return -average_dice
+        return 1 - average_dice
