@@ -17,18 +17,29 @@ class SelfAdjustingMultiLabelDiceLoss(torch.nn.Module):
         return dice
 
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        # Use logsigmoid to ensure numerical stability
+        logsigmoid = torch.nn.LogSigmoid()
+
+        # Calculate the positive and negative parts of the loss
+        loss_positive = -targets * logsigmoid(logits)
+        loss_negative = -(1 - targets) * logsigmoid(-logits)
+
+        # Combine the positive and negative parts
+        loss = loss_positive + loss_negative
+
+        return loss.mean()
+
         preds = torch.sigmoid(logits)
         num_labels = preds.shape[1]
+        print(num_labels)
 
         total_dice = 0
         for i in range(num_labels):
             pred_col = preds[:, i]
             target_col = targets[:, i]
-
             # Apply the alpha factor
             error = (1 - pred_col) ** self.alpha
             weighted_pred_col = error * pred_col
-
             # Compute dice coefficient for this label
             dice = self.dice_coeff(target_col, weighted_pred_col)
             total_dice += dice
