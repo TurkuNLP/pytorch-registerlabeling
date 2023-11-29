@@ -10,11 +10,8 @@ class BCEFocalLoss(torch.nn.Module):
         self.reduction = reduction
 
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-        probs = torch.sigmoid(logits)
         BCE_loss = F.binary_cross_entropy_with_logits(logits, targets, reduction="none")
-
         pt = torch.exp(-BCE_loss)
-
         loss = self.alpha * (1 - pt) ** self.gamma * BCE_loss
 
         # Class balancing

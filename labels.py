@@ -103,7 +103,7 @@ map_normalize = {
     "IT": "it",
     "FS": "SP",
     "TV": "SP",
-    "OS": "OS",
+    "OS": "SP",
     "IG": "IP",
     "HT": "HI",
     "FI": "fi",
@@ -222,6 +222,40 @@ map_xgenre = {
     "": "",
 }
 
+map_upper_lower = {
+    "SP": ["it", "os"],
+    "NA": ["ne", "sr", "nb", "on"],
+    "HI": ["re", "oh"],
+    "IN": ["en", "ra", "dtp", "fi", "lt", "oi"],
+    "OP": ["rv", "ob", "rs", "av", "oo"],
+    "IP": ["ds", "ed", "oe"],
+}
+
+map_lower_upper = {
+    "it": "SP",
+    "os": "SP",
+    "ne": "NA",
+    "sr": "NA",
+    "nb": "NA",
+    "on": "NA",
+    "re": "HI",
+    "oh": "HI",
+    "en": "IN",
+    "ra": "IN",
+    "dtp": "IN",
+    "fi": "IN",
+    "lt": "IN",
+    "oi": "IN",
+    "rv": "OP",
+    "ob": "OP",
+    "rs": "OP",
+    "av": "OP",
+    "oo": "OP",
+    "ds": "IP",
+    "ed": "IP",
+    "oe": "IP",
+}
+
 
 def get_label_scheme(label_list):
     if label_list in ["all", "all_2"]:
@@ -243,7 +277,20 @@ def normalize_labels(labels, label_config):
     # Split labels to a list and map
     if type(labels) == str:
         labels = (labels or "").split()
+
+    if "OS" in labels:
+        print(labels)
     mapped = [mapping[label] for label in labels]
+
+    # Remove upper category if lower present
+    mapped_simple = []
+    for label in mapped:
+        if not (
+            label in map_upper_lower
+            # Check if any of the subcategories of the current label are in the list
+            and any(element in mapped for element in map_upper_lower[label])
+        ):
+            mapped_simple.append(label)
 
     # Further map to XGENRE
     if label_config == "xgenre":
