@@ -1,11 +1,13 @@
 import torch
+import torch.nn.functional as F
 
 
 class SelfAdjustingMultiLabelDiceLoss(torch.nn.Module):
-    def __init__(self, gamma=1.0, alpha=1.0):
+    def __init__(self, gamma=1.0, alpha=1.0, reduction="mean"):
         super(SelfAdjustingMultiLabelDiceLoss, self).__init__()
         self.gamma = gamma
         self.alpha = alpha
+        self.reduction = reduction
 
     def dice_coeff(self, y_true, y_pred):
         y_true_f = torch.flatten(y_true)
@@ -17,17 +19,25 @@ class SelfAdjustingMultiLabelDiceLoss(torch.nn.Module):
         return dice
 
     def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-        # Use logsigmoid to ensure numerical stability
-        logsigmoid = torch.nn.LogSigmoid()
+        # Calculate probabilities
+        probs = torch.sigmoid(logits)
+        pt = probs * targets + (1 - probs) * (1 - targets)
 
-        # Calculate the positive and negative parts of the loss
-        loss_positive = -targets * logsigmoid(logits)
-        loss_negative = -(1 - targets) * logsigmoid(-logits)
+        # Calculate the focal loss component
+        focal_weight = (1 - pt).pow(self.gamma)
 
-        # Combine the positive and negative parts
-        loss = loss_positive + loss_negative
+        # Compute BCE loss
+        bce_loss = F.binary_cross_entropy_with_logits(logits, targets, reduction="none")
 
-        return loss.mean()
+        # Apply focal loss weighting
+        loss = self.alpha * focal_weight * bce_loss
+
+        if self.reduction == "mean":
+            return loss.mean()
+        elif self.reduction == "sum":
+            return loss.sum()
+        else:
+            return loss
 
         preds = torch.sigmoid(logits)
         num_labels = preds.shape[1]
