@@ -25,7 +25,7 @@ class SelfAdjustingMultiLabelDiceLoss(torch.nn.Module):
         pt = torch.exp(-BCE_loss)
 
         loss = self.alpha * (1 - pt) ** self.gamma * BCE_loss
-        loss = loss * (targets * self.alpha + (1 - targets) * (1 - self.alpha))
+        # loss = loss * (targets * self.alpha + (1 - targets) * (1 - self.alpha))
 
         return loss.mean()
         print(loss)
