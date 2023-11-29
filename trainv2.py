@@ -243,7 +243,7 @@ if options.report_to == "wandb":
     wandb.login()
 
 if options.sadice:
-    from sadice import SelfAdjDiceLoss
+    from sadice import SelfAdjustingMultiLabelDiceLoss
 
 # Exit now if testing
 
@@ -381,7 +381,7 @@ class MultilabelTrainer(Trainer):
         )
 
         if options.sadice:
-            criterion = SelfAdjDiceLoss()
+            criterion = SelfAdjustingMultiLabelDiceLoss(alpha=2)
             loss = criterion(
                 logits.view(-1, self.model.config.num_labels),
                 labels.float().view(-1, self.model.config.num_labels),
