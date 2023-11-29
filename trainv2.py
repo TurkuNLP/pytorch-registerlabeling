@@ -239,10 +239,12 @@ try:
 
     load_dotenv()
     os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY")
+    os.environ["WANDB_WATCH"] = "all"
     import wandb
 
     wandb.login()
 except:
+    print("No wandb!")
     pass
 
 # Exit now if testing
