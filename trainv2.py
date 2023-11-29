@@ -43,7 +43,12 @@ parser.add_argument("--extract_embeddings", action="store_true")
 parser.add_argument("--extract_keywords", action="store_true")
 
 parser.add_argument("--labels", type=str, default="all")
-parser.add_argument("--sadice", action="store_true")
+
+# Loss
+
+parser.add_argument("--loss", type=str, default=None)
+parser.add_argument("--loss_alpha", type=float, default=1.0)
+parser.add_argument("--loss_gamma", type=float, default=1.0)
 
 # Tokenizer
 
@@ -242,8 +247,6 @@ if options.report_to == "wandb":
 
     wandb.login()
 
-if options.sadice:
-    from sadice import SelfAdjustingMultiLabelDiceLoss
 
 # Exit now if testing
 
@@ -371,21 +374,20 @@ class MultilabelTrainer(Trainer):
         labels = inputs.pop("labels")
         outputs = model(**inputs)
         logits = outputs.logits
-        if options.class_weights:
-            loss_fct = BCEWithLogitsLoss(pos_weight=class_weights)
+
+        if options.loss:
+            loss_cls = locate(f"loss.{options.loss}")
+
+            loss_fct = loss_cls(alpha=options.loss_alpha, gamma=options.loss_gamma)
         else:
-            loss_fct = BCEWithLogitsLoss()
+            loss_fct = BCEWithLogitsLoss(
+                pos_weight=class_weights if options.class_weights else None
+            )
+
         loss = loss_fct(
             logits.view(-1, self.model.config.num_labels),
             labels.float().view(-1, self.model.config.num_labels),
         )
-
-        if options.sadice:
-            criterion = SelfAdjustingMultiLabelDiceLoss(alpha=2)
-            loss = criterion(
-                logits.view(-1, self.model.config.num_labels),
-                labels.float().view(-1, self.model.config.num_labels),
-            )
 
         return (loss, outputs) if return_outputs else loss
 
