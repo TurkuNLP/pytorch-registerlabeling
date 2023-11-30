@@ -85,11 +85,11 @@ def get_dataset(train, test, downsample, label_config):
         row_id = 0
         for l in ls.split("-"):
             use_split = split
-            if l in small_languages and not (l in train.split("-")):
-                use_split = l
-
-            elif split == "dev" and l in small_languages:
-                use_split = "test"
+            if l in small_languages:
+                if split == "dev":
+                    use_split = "test"
+                elif not (l in train.split("-")):
+                    use_split = l
 
             with open(f"data/{l}/{use_split}.tsv", "r") as c:
                 re = csv.reader(c, delimiter="\t")

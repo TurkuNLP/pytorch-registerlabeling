@@ -84,6 +84,7 @@ parser.add_argument("--threshold", type=float, default=None)
 parser.add_argument("--device_map", type=str, default="auto")
 parser.add_argument("--fp16", action="store_true")
 parser.add_argument("--bf16", action="store_true")
+parser.add_argument("--resume", action="store_true")
 
 # (Q)lora / peft related options
 
@@ -473,6 +474,7 @@ trainer = MultilabelTrainer(
         optim=options.optim,
         fp16=options.fp16,
         bf16=options.bf16,
+        resume_from_checkpoint=True if options.resume else None,
     ),
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
