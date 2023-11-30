@@ -199,16 +199,23 @@ map_upper = {
 map_xgenre = {
     ### 2. MACHINE TRANSLATED
     "MT": "",
+    "mt": "",
     ### 2. LYRICAL
     "LY": "Prose/Lyrical",
+    "ly": "Prose/Lyrical",
     ### 3. SPOKEN
     "SP": "Other",
+    "sp": "Other",
+    "os": "Other",
     # Interview
     "it": "Other",
     ### 4. INTERACTIVE DISCUSSION
     "ID": "Forum",
+    "id": "Forum",
     ### 5. NARRATIVE
     "NA": "Prose/Lyrical",  # Or Opinion/Argumentation
+    "na": "Prose/Lyrical",  # Or Opinion/Argumentation
+    "on": "Prose/Lyrical",  # Or Opinion/Argumentation
     # News report
     "ne": "News",
     # Sports report
@@ -217,10 +224,14 @@ map_xgenre = {
     "nb": "Opinion/Argumentation",
     ### 6. HOW-TO or INSTRUCTIONS
     "HI": "Instruction",
+    "hi": "Instruction",
+    "oh": "Instruction",
     # Recipe
     "re": "Instruction",
     ### 7. INFORMATIONAL DESCRIPTION
     "IN": "Information/Explanation",
+    "id": "Information/Explanation",
+    "oi": "Information/Explanation",
     # Encyclopedia article
     "en": "Information/Explanation",
     # Research article
@@ -233,6 +244,8 @@ map_xgenre = {
     "lt": "Legal",
     ### 8. OPINION
     "OP": "Opinion/Argumentation",
+    "op": "Opinion/Argumentation",
+    "oo": "Opinion/Argumentation",
     # Review
     "rv": "Opinion/Argumentation",
     # Opinion blog
@@ -243,6 +256,8 @@ map_xgenre = {
     "av": "Opinion/Argumentation",  # ??? Or Instruction?
     ### 9. INFORMATIONAL PERSUASION
     "IP": "Promotion",
+    "ip": "Promotion",
+    "oe": "Promotion",
     # Description with intent to sell
     "ds": "Promotion",
     # News & opinion blog or editorial
@@ -291,6 +306,7 @@ map_flat = {
     "ds": "ds",
     "ed": "ed",
     "oe": "oe",
+    "": "",
 }
 
 
