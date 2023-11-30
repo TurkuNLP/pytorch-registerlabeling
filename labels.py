@@ -41,6 +41,34 @@ labels_all = [
     "sr",
 ]
 
+labels_all_flat = [
+    "mt",
+    "ly",
+    "it",
+    "os",
+    "id",
+    "ne",
+    "sr",
+    "nb",
+    "on",
+    "re",
+    "oh",
+    "en",
+    "ra",
+    "dtp",
+    "fi",
+    "lt",
+    "oi",
+    "rv",
+    "ob",
+    "rs",
+    "av",
+    "oo",
+    "ds",
+    "ed",
+    "oe",
+]
+
 map_normalize = {
     # Our categories, upper
     "MT": "MT",
@@ -219,7 +247,7 @@ map_xgenre = {
     "ds": "Promotion",
     # News & opinion blog or editorial
     "ed": "Opinion/Argumentation",  # ???
-    "": "",
+    "": "Other",
 }
 
 map_upper_lower = {
@@ -231,35 +259,46 @@ map_upper_lower = {
     "IP": ["ds", "ed", "oe"],
 }
 
-map_lower_upper = {
-    "it": "SP",
-    "os": "SP",
-    "ne": "NA",
-    "sr": "NA",
-    "nb": "NA",
-    "on": "NA",
-    "re": "HI",
-    "oh": "HI",
-    "en": "IN",
-    "ra": "IN",
-    "dtp": "IN",
-    "fi": "IN",
-    "lt": "IN",
-    "oi": "IN",
-    "rv": "OP",
-    "ob": "OP",
-    "rs": "OP",
-    "av": "OP",
-    "oo": "OP",
-    "ds": "IP",
-    "ed": "IP",
-    "oe": "IP",
+map_flat = {
+    "MT": "mt",
+    "LY": "ly",
+    "SP": "os",
+    "it": "it",
+    "os": "os",
+    "ID": "id",
+    "NA": "on",
+    "ne": "ne",
+    "sr": "sr",
+    "nb": "nb",
+    "on": "on",
+    "HI": "oh",
+    "re": "re",
+    "oh": "oh",
+    "IN": "oi",
+    "en": "en",
+    "ra": "ra",
+    "dtp": "dtp",
+    "fi": "fi",
+    "lt": "lt",
+    "oi": "oi",
+    "OP": "oo",
+    "rv": "rv",
+    "ob": "ob",
+    "rs": "rs",
+    "av": "av",
+    "oo": "oo",
+    "IP": "oe",
+    "ds": "ds",
+    "ed": "ed",
+    "oe": "oe",
 }
 
 
 def get_label_scheme(label_list):
     if label_list in ["all", "all_2"]:
         return labels_all
+    elif label_list == "all_flat":
+        return labels_all_flat
     elif label_list == "upper":
         return labels_upper
     elif label_list == "xgenre":
@@ -280,17 +319,21 @@ def normalize_labels(labels, label_config):
 
     mapped = [mapping[label] for label in labels]
 
-    # Remove upper category if lower present
-    mapped_simple = []
-    for label in mapped:
-        if not (
-            label in map_upper_lower
-            # Check if any of the subcategories of the current label are in the list
-            and any(element in mapped for element in map_upper_lower[label])
-        ):
-            mapped_simple.append(label)
+    if label_config in ["all_flat", "xgenre"]:
+        # Remove upper category if lower present
+        mapped_simple = []
+        for label in mapped:
+            if not (
+                label in map_upper_lower
+                # Check if any of the subcategories of the current label are in the list
+                and any(element in mapped for element in map_upper_lower[label])
+            ):
+                mapped_simple.append(label)
 
-    mapped = mapped_simple
+        mapped = mapped_simple
+
+        # flatten
+        mapped = [map_flat[label] for label in mapped]
 
     # Further map to XGENRE
     if label_config == "xgenre":
