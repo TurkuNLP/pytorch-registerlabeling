@@ -278,8 +278,6 @@ def normalize_labels(labels, label_config):
     if type(labels) == str:
         labels = (labels or "").split()
 
-    if "OS" in labels:
-        print(labels)
     mapped = [mapping[label] for label in labels]
 
     # Remove upper category if lower present
@@ -291,6 +289,8 @@ def normalize_labels(labels, label_config):
             and any(element in mapped for element in map_upper_lower[label])
         ):
             mapped_simple.append(label)
+
+    mapped = mapped_simple
 
     # Further map to XGENRE
     if label_config == "xgenre":
