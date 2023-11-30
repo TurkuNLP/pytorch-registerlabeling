@@ -44,6 +44,7 @@ parser.add_argument("--extract_embeddings", action="store_true")
 parser.add_argument("--extract_keywords", action="store_true")
 parser.add_argument("--labels", type=str, default="all")
 parser.add_argument("--hp_search", type=str, default=None)
+parser.add_argument("--downsample", action="store_true")
 
 # Loss
 
@@ -152,26 +153,9 @@ from torch import Tensor, FloatTensor, cuda, float16, float32, bfloat16
 
 from accelerate import Accelerator
 
-from labels import (
-    binarize_labels,
-    normalize_labels,
-    get_label_scheme,
-)
+from labels import get_label_scheme
+from resources import get_dataset
 
-small_languages = [
-    "ar",
-    "ca",
-    "es",
-    "fa",
-    "hi",
-    "id",
-    "jp",
-    "no",
-    "pt",
-    "tr",
-    "ur",
-    "zh",
-]
 
 # Common variables
 
@@ -255,10 +239,25 @@ if options.slurm_test:
 
 print(f"Imports finished")
 
-# Data preprocessing
+# Data processing
+
+# Init tokenizer
+
+tokenizer = AutoTokenizer.from_pretrained(
+    model_name if not options.custom_tokenizer else options.custom_tokenizer,
+    add_prefix_space=options.add_prefix_space,
+    low_cpu_mem_usage=options.low_cpu_mem_usage,
+    torch_dtype=torch_dtype,
+    cache_dir=f"{working_dir}/tokenizer_cache",
+)
+
+# Some LLM's require a pad id
+if options.set_pad_id:
+    tokenizer.pad_token_id = tokenizer.eos_token_id
+    tokenizer.pad_token = tokenizer.eos_token
 
 
-def preprocess_data(example):
+def encode_data(example):
     text = example["text"]
     encoding = tokenizer(
         text,
@@ -273,83 +272,18 @@ def preprocess_data(example):
     return encoding
 
 
-def data_gen(ls, split):
-    for l in ls.split("-"):
-        use_split = split
-        if l in small_languages and not (l in options.train.split("-")):
-            use_split = l
+# Get data
 
-        elif split == "dev" and l in small_languages:
-            use_split = "test"
+dataset = get_dataset(options.train, options.test, options.downsample, options.labels)
 
-        with open(f"data/{l}/{use_split}.tsv", "r") as c:
-            re = csv.reader(c, delimiter="\t")
-            for ro in re:
-                if ro[1]:
-                    normalized_labels = normalize_labels(ro[0], options.labels)
-                    text = ro[1]
-                    label = binarize_labels(normalized_labels, options.labels)
-                    label_text = " ".join(normalized_labels)
-                    yield {
-                        "label": label,
-                        "label_text": label_text,
-                        "language": l,
-                        "text": text,
-                    }
-
-
-dataset = DatasetDict(
-    {
-        "train": Dataset.from_generator(
-            data_gen, gen_kwargs={"ls": options.train, "split": "train"}
-        ),
-        "dev": Dataset.from_generator(
-            data_gen, gen_kwargs={"ls": options.train, "split": "dev"}
-        ),
-        "test": Dataset.from_generator(
-            data_gen, gen_kwargs={"ls": options.test, "split": "test"}
-        ),
-    }
-)
-
-# Shuffle data
+# Shuffle data and tokenize
 
 dataset = dataset.shuffle(seed=options.seed)
+dataset = dataset.map(encode_data)
 
-# Get a fraction of data for testing
+print(dataset)
 
-if options.data_fraction < 1:
-    print(f"Using {options.data_fraction*100}% of data")
-    for x in ["train", "test", "dev"]:
-        partition = int(options.data_fraction * len(dataset[x]))
-        dataset[x] = dataset[x].select(range(partition))
-
-
-# Init tokenizer
-
-tokenizer = AutoTokenizer.from_pretrained(
-    model_name if not options.custom_tokenizer else options.custom_tokenizer,
-    add_prefix_space=options.add_prefix_space,
-    low_cpu_mem_usage=options.low_cpu_mem_usage,
-    torch_dtype=torch_dtype,
-    cache_dir=f"{working_dir}/tokenizer_cache",
-)
-
-# Some LLM's require a pad id
-
-if options.set_pad_id:
-    tokenizer.pad_token_id = tokenizer.eos_token_id
-    tokenizer.pad_token = tokenizer.eos_token
-
-print("Preprocessing...")
-
-dataset = dataset.map(preprocess_data)
-
-print("Got preprocessed dataset and tokenizer")
-
-print(dataset["train"][0])
-
-log_gpu_memory()
+print("Data tokenized!")
 
 
 # Model
