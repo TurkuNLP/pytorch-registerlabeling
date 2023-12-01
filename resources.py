@@ -65,7 +65,7 @@ def downsample_most_frequent_language(df):
             adjusted_df = pd.concat([adjusted_df, df[df["label_text"] == label]])
 
     merged_df = (
-        df.groupby("id")
+        adjusted_df.groupby("id")
         .agg(
             {
                 "text": "first",
