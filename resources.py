@@ -77,7 +77,7 @@ def downsample_most_frequent_language(df):
         .reset_index()
     )
 
-    return adjusted_df
+    return merged_df
 
 
 def get_dataset(train, test, downsample, label_config):
