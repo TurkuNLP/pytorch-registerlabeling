@@ -484,9 +484,9 @@ trainer = accelerator.prepare(trainer)
 
 print("Trainer prepared!")
 
-# Start an analysis, if opted
+# Start mode
 
-if options.extract_embeddings:
+if options.mode == "extract_embeddings":
     model = model_init()
     print("Extracting document embeddings...")
     dataset.set_format(type="torch")
@@ -574,7 +574,7 @@ def compute_cosine_similarity(doc_embedding, word_embeddings):
     return sorted_cosine_similarities
 
 
-if options.extract_keywords:
+if options.mode == "extract_keywords":
     from sklearn.metrics.pairwise import cosine_similarity
 
     model = model_init()
@@ -637,57 +637,58 @@ if options.extract_keywords:
         #    exit()
 
 
-if options.mode == "train" and not options.hp_search:
-    print("Training...")
-    log_gpu_memory()
-    trainer.train()
+if options.mode == "train":
+    if not options.hp_search:
+        print("Training...")
+        log_gpu_memory()
+        trainer.train()
 
-elif options.mode == "train" and options.hp_search:
-    hp_config = {
-        "direction": "maximize",
-        "backend": options.hp_search,
-        "local_dir": f"{working_dir}/{options.hp_search}",
-        "hp_space": {},
-    }
-
-    if options.hp_search == "ray":
-        ray_init(ignore_reinit_error=True, num_cpus=1)
-        """
-        hp_config["scheduler"] = ASHAScheduler(metric="eval_f1", mode="max")
-        hp_config["search_alg"] = HyperOptSearch(metric="eval_f1", mode="max")
-        hp_config["hp_space"] = {
-            "learning_rate": loguniform(1e-6, 1e-3),
-            "per_device_train_batch_size": choice([6, 8, 12, 16]),
-        }
-        """
-        hp_config["scheduler"] = PopulationBasedTraining(
-            metric="eval_f1",
-            mode="max",
-            perturbation_interval=1,
-            hyperparam_mutations={
-                # "learning_rate": uniform(1e-5, 5e-5),
-                "learning_rate": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4],
-                # "per_device_train_batch_size": [6, 8, 10],
-            },
-        )
-        hp_config["hp_space"] = lambda _: {}
-
-    elif options.hp_search == "wandb":
-        hp_config["hp_space"] = lambda _: {
-            "method": "bayes",
-            "name": "sweep",
-            "metric": {"goal": "maximize", "name": "eval_f1"},
-            "parameters": {
-                "per_device_train_batch_size": {"values": [8, 10, 12]},
-                "learning_rate": {"values": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4]},
-            },
+    else:
+        hp_config = {
+            "direction": "maximize",
+            "backend": options.hp_search,
+            "local_dir": f"{working_dir}/{options.hp_search}",
+            "hp_space": {},
         }
 
-    best_model = trainer.hyperparameter_search(**hp_config)
+        if options.hp_search == "ray":
+            ray_init(ignore_reinit_error=True, num_cpus=1)
+            """
+            hp_config["scheduler"] = ASHAScheduler(metric="eval_f1", mode="max")
+            hp_config["search_alg"] = HyperOptSearch(metric="eval_f1", mode="max")
+            hp_config["hp_space"] = {
+                "learning_rate": loguniform(1e-6, 1e-3),
+                "per_device_train_batch_size": choice([6, 8, 12, 16]),
+            }
+            """
+            hp_config["scheduler"] = PopulationBasedTraining(
+                metric="eval_f1",
+                mode="max",
+                perturbation_interval=1,
+                hyperparam_mutations={
+                    # "learning_rate": uniform(1e-5, 5e-5),
+                    "learning_rate": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4],
+                    # "per_device_train_batch_size": [6, 8, 10],
+                },
+            )
+            hp_config["hp_space"] = lambda _: {}
 
-    print(f"Best model according to {options.hp_search}:")
-    print(best_model)
-    exit()
+        elif options.hp_search == "wandb":
+            hp_config["hp_space"] = lambda _: {
+                "method": "bayes",
+                "name": "sweep",
+                "metric": {"goal": "maximize", "name": "eval_f1"},
+                "parameters": {
+                    "per_device_train_batch_size": {"values": [8, 10, 12]},
+                    "learning_rate": {"values": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4]},
+                },
+            }
+
+        best_model = trainer.hyperparameter_search(**hp_config)
+
+        print(f"Best model according to {options.hp_search}:")
+        print(best_model)
+        exit()
 
 print("Evaluating with dev set...")
 print(trainer.evaluate(dataset["dev"]))
