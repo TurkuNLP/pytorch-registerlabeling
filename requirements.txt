@@ -1,7 +1,14 @@
 datasets
 scikit-learn
 torch
-transformers
+transformers==4.34.0
 ray[tune]==2.6.3
 accelerate
 wandb
+peft
+bitsandbytes
+sentencepiece
+python-dotenv
+wheel
+setuptools
+# FLASH_ATTENTION_SKIP_CUDA_BUILD=TRUE pip install flash-attn --no-build-isolation
