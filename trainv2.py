@@ -21,40 +21,41 @@ from argparse import ArgumentParser
 
 parser = ArgumentParser()
 
+# Mode of operation
+
+parser.add_argument(
+    "--mode",
+    choices=["train", "evaluate", "extract_docembeddings", "stats"],
+    default="train",
+)
+
 # Model and data
 
-parser.add_argument("--model_name", type=str, default="xlm-roberta-base")
-parser.add_argument("--custom_tokenizer", type=str, default=None)
-parser.add_argument("--train", type=str, required=True)
-parser.add_argument("--test", type=str, default=None)
+parser.add_argument("--train", required=True)
+parser.add_argument("--test")
+parser.add_argument("--model_name", default="xlm-roberta-base")
+parser.add_argument("--custom_tokenizer")
 parser.add_argument("--max_length", type=int, default=512)
-parser.add_argument("--data_path", type=str, default="data")
-parser.add_argument("--output_path", type=str, default="output")
-parser.add_argument(
-    "--transformer_model", type=str, default="AutoModelForSequenceClassification"
-)
-parser.add_argument("--seed", type=str, default=42)
-parser.add_argument("--evaluate_only", action="store_true")
-parser.add_argument("--data_fraction", type=float, default=1)
+parser.add_argument("--data_path", default="data")
+parser.add_argument("--output_path", default="output")
+parser.add_argument("--transformer_model", default="AutoModelForSequenceClassification")
+parser.add_argument("--seed", type=int, default=42)
 parser.add_argument("--low_cpu_mem_usage", action="store_true")
-parser.add_argument("--torch_dtype", type=str, default=None)
-parser.add_argument("--slurm_test", action="store_true")
+parser.add_argument("--torch_dtype")
 parser.add_argument("--log_to_file", action="store_true")
-parser.add_argument("--extract_embeddings", action="store_true")
-parser.add_argument("--extract_keywords", action="store_true")
-parser.add_argument("--labels", type=str, default="all")
-parser.add_argument("--hp_search", type=str, default=None)
+parser.add_argument("--labels", default="all")
 parser.add_argument("--downsample", action="store_true")
+parser.add_argument("--hp_search")
 
 # Loss
 
-parser.add_argument("--loss", type=str, default=None)
+parser.add_argument("--loss")
 parser.add_argument("--loss_alpha", type=float, default=1.0)
 parser.add_argument("--loss_gamma", type=float, default=1.0)
 
 # Tokenizer
 
-parser.add_argument("--return_tensors", type=str, default=None)
+parser.add_argument("--return_tensors")
 
 # Training arguments
 
@@ -75,13 +76,13 @@ parser.add_argument("--logging_steps", type=int, default=100)
 parser.add_argument("--save_steps", type=int, default=100)
 parser.add_argument("--save_model", action="store_true")
 parser.add_argument("--save_total_limit", type=int, default=2)
-parser.add_argument("--optim", type=str, default="adamw_torch")
-parser.add_argument("--lr_scheduler_type", type=str, default="linear")
+parser.add_argument("--optim", default="adamw_torch")
+parser.add_argument("--lr_scheduler_type", default="linear")
 parser.add_argument("--overwrite", action="store_true")
 parser.add_argument("--max_grad_norm", type=float, default=1)
 parser.add_argument("--class_weights", action="store_true")
 parser.add_argument("--threshold", type=float, default=None)
-parser.add_argument("--device_map", type=str, default="auto")
+parser.add_argument("--device_map", default="auto")
 parser.add_argument("--fp16", action="store_true")
 parser.add_argument("--bf16", action="store_true")
 parser.add_argument("--resume", action="store_true")
@@ -93,19 +94,17 @@ parser.add_argument("--use_flash_attention_2", action="store_true")
 parser.add_argument("--add_classification_head", action="store_true")
 parser.add_argument("--quantize", action="store_true")
 parser.add_argument("--peft", action="store_true")
-parser.add_argument("--peft_modules", type=str, default=None)
+parser.add_argument("--peft_modules")
 parser.add_argument("--set_pad_id", action="store_true")
 parser.add_argument("--lora_rank", type=int, default=16)
 parser.add_argument("--lora_alpha", type=float, default=1)
 parser.add_argument("--lora_dropout", type=float, default=0.05)
-parser.add_argument("--lora_bias", type=str, default="none")
+parser.add_argument("--lora_bias", default="none")
 
 options = parser.parse_args()
 
 import csv
 import sys
-
-csv.field_size_limit(sys.maxsize)
 
 if options.log_to_file:
     file_name_opts = [
@@ -123,6 +122,7 @@ if options.log_to_file:
         "a",
     )
     sys.stdout = log
+
 print(f"Args: {' '.join(sys.argv)}")
 print(f"Settings: {options}")
 
@@ -142,21 +142,19 @@ from sklearn.metrics import (
 
 from transformers import (
     AutoTokenizer,
+    DataCollatorWithPadding,
     Trainer,
     BitsAndBytesConfig,
     TrainingArguments,
     EarlyStoppingCallback,
 )
 
-from datasets import Dataset, DatasetDict
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, FloatTensor, cuda, float16, float32, bfloat16
-
 from accelerate import Accelerator
 
 from labels import get_label_scheme
-from resources import get_dataset
-
+from resources import get_dataset, get_statistics
 
 # Common variables
 
@@ -217,26 +215,20 @@ if options.peft:
 try:
     from dotenv import load_dotenv
 
-    print("Using wandb")
     os.environ[
         "WANDB_PROJECT"
     ] = f"{options.train}_{options.test}{'_tuning' if options.hp_search else ''}_{model_name.replace('/', '_')}"
 
     load_dotenv()
-    os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY")
+    os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY", "")
     os.environ["WANDB_WATCH"] = "all"
     import wandb
 
     wandb.login()
+    print("Using wandb")
 except:
     print("No wandb!")
     pass
-
-# Exit now if testing
-
-if options.slurm_test:
-    print("Slurm test completed.")
-    exit()
 
 print(f"Imports finished")
 
@@ -262,7 +254,6 @@ def encode_data(example):
     text = example["text"]
     encoding = tokenizer(
         text,
-        padding="max_length",
         truncation=True,
         max_length=options.max_length,
         return_tensors=options.return_tensors,
@@ -276,6 +267,12 @@ def encode_data(example):
 # Get data
 
 dataset = get_dataset(options.train, options.test, options.downsample, options.labels)
+
+# If stats mode, stop here
+
+if options.mode == "stats":
+    get_statistics(dataset)
+    exit()
 
 # Shuffle data and tokenize
 
@@ -375,7 +372,6 @@ def compute_metrics(p):
 
 # Model initialization, used by trainer
 def model_init():
-    # Load transformer model using pydoc's locate
     model_type = locate(f"transformers.{options.transformer_model}")
     model = model_type.from_pretrained(
         model_name,
@@ -403,7 +399,7 @@ def model_init():
     if options.peft:
         print("Using PEFT")
 
-        model.config.pretraining_tp = 1  # Set max linear layers (llama2)
+        # model.config.pretraining_tp = 1  # Set max linear layers (llama2)
 
         model_modules = str(model.modules)
         pattern = r"\((\w+)\): Linear"
@@ -474,15 +470,19 @@ trainer = MultilabelTrainer(
         optim=options.optim,
         fp16=options.fp16,
         bf16=options.bf16,
+        group_by_length=True,
         resume_from_checkpoint=True if options.resume else None,
     ),
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
     compute_metrics=compute_metrics,
+    data_collator=DataCollatorWithPadding(tokenizer=tokenizer),
     callbacks=[EarlyStoppingCallback(early_stopping_patience=options.patience)],
 )
 
 trainer = accelerator.prepare(trainer)
+
+print("Trainer prepared!")
 
 # Start an analysis, if opted
 
@@ -637,58 +637,57 @@ if options.extract_keywords:
         #    exit()
 
 
-if not options.evaluate_only:
-    if not options.hp_search:
-        print("Training...")
-        log_gpu_memory()
-        trainer.train()
+if options.mode == "train" and not options.hp_search:
+    print("Training...")
+    log_gpu_memory()
+    trainer.train()
 
-    else:
-        hp_config = {
-            "direction": "maximize",
-            "backend": options.hp_search,
-            "local_dir": f"{working_dir}/{options.hp_search}",
-            "hp_space": {},
+elif options.mode == "train" and options.hp_search:
+    hp_config = {
+        "direction": "maximize",
+        "backend": options.hp_search,
+        "local_dir": f"{working_dir}/{options.hp_search}",
+        "hp_space": {},
+    }
+
+    if options.hp_search == "ray":
+        ray_init(ignore_reinit_error=True, num_cpus=1)
+        """
+        hp_config["scheduler"] = ASHAScheduler(metric="eval_f1", mode="max")
+        hp_config["search_alg"] = HyperOptSearch(metric="eval_f1", mode="max")
+        hp_config["hp_space"] = {
+            "learning_rate": loguniform(1e-6, 1e-3),
+            "per_device_train_batch_size": choice([6, 8, 12, 16]),
+        }
+        """
+        hp_config["scheduler"] = PopulationBasedTraining(
+            metric="eval_f1",
+            mode="max",
+            perturbation_interval=1,
+            hyperparam_mutations={
+                # "learning_rate": uniform(1e-5, 5e-5),
+                "learning_rate": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4],
+                # "per_device_train_batch_size": [6, 8, 10],
+            },
+        )
+        hp_config["hp_space"] = lambda _: {}
+
+    elif options.hp_search == "wandb":
+        hp_config["hp_space"] = lambda _: {
+            "method": "bayes",
+            "name": "sweep",
+            "metric": {"goal": "maximize", "name": "eval_f1"},
+            "parameters": {
+                "per_device_train_batch_size": {"values": [8, 10, 12]},
+                "learning_rate": {"values": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4]},
+            },
         }
 
-        if options.hp_search == "ray":
-            ray_init(ignore_reinit_error=True, num_cpus=1)
-            """
-            hp_config["scheduler"] = ASHAScheduler(metric="eval_f1", mode="max")
-            hp_config["search_alg"] = HyperOptSearch(metric="eval_f1", mode="max")
-            hp_config["hp_space"] = {
-                "learning_rate": loguniform(1e-6, 1e-3),
-                "per_device_train_batch_size": choice([6, 8, 12, 16]),
-            }
-            """
-            hp_config["scheduler"] = PopulationBasedTraining(
-                metric="eval_f1",
-                mode="max",
-                perturbation_interval=1,
-                hyperparam_mutations={
-                    # "learning_rate": uniform(1e-5, 5e-5),
-                    "learning_rate": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4],
-                    # "per_device_train_batch_size": [6, 8, 10],
-                },
-            )
-            hp_config["hp_space"] = lambda _: {}
+    best_model = trainer.hyperparameter_search(**hp_config)
 
-        elif options.hp_search == "wandb":
-            hp_config["hp_space"] = lambda _: {
-                "method": "bayes",
-                "name": "sweep",
-                "metric": {"goal": "maximize", "name": "eval_f1"},
-                "parameters": {
-                    "per_device_train_batch_size": {"values": [8, 10, 12]},
-                    "learning_rate": {"values": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4]},
-                },
-            }
-
-        best_model = trainer.hyperparameter_search(**hp_config)
-
-        print(f"Best model according to {options.hp_search}:")
-        print(best_model)
-        exit()
+    print(f"Best model according to {options.hp_search}:")
+    print(best_model)
+    exit()
 
 print("Evaluating with dev set...")
 print(trainer.evaluate(dataset["dev"]))
@@ -708,6 +707,7 @@ preds = np.zeros(probs.shape)
 preds[np.where(probs >= threshold)] = 1
 
 print(classification_report(trues, preds, target_names=label_scheme))
+print(f"Test eval threshold: {threshold}")
 
-if not options.evaluate_only and options.save_model:
+if options.save_model:
     trainer.model.save_pretrained(f"{working_dir}/saved_model")

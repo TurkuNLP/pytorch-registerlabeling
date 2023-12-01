@@ -137,3 +137,7 @@ def get_dataset(train, test, downsample, label_config):
             )
 
     return dataset
+
+
+def get_statistics(dataset):
+    print("Stats!")

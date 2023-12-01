@@ -274,6 +274,31 @@ map_upper_lower = {
     "IP": ["ds", "ed", "oe"],
 }
 
+map_lower_upper = {
+    "it": "SP",
+    "os": "SP",
+    "ne": "NA",
+    "sr": "NA",
+    "nb": "NA",
+    "on": "NA",
+    "re": "HI",
+    "oh": "HI",
+    "en": "IN",
+    "ra": "IN",
+    "dtp": "IN",
+    "fi": "IN",
+    "lt": "IN",
+    "oi": "IN",
+    "rv": "OP",
+    "ob": "OP",
+    "rs": "OP",
+    "av": "OP",
+    "oo": "OP",
+    "ds": "IP",
+    "ed": "IP",
+    "oe": "IP",
+}
+
 map_flat = {
     "MT": "mt",
     "LY": "ly",
@@ -335,8 +360,13 @@ def normalize_labels(labels, label_config):
 
     mapped = [mapping[label] for label in labels]
 
+    # Make sure that if subcategory is labeled, hypercategory is, too
+    for label in mapped:
+        if label in map_lower_upper and map_lower_upper[label] not in mapped:
+            mapped.append(map_lower_upper[label])
+
     if label_config in ["all_flat", "xgenre"]:
-        # Remove upper category if lower present
+        # Remove upper category if lower present (needed for XGENRE mapping)
         mapped_simple = []
         for label in mapped:
             if not (
