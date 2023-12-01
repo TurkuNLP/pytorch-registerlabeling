@@ -6,6 +6,7 @@ import pandas as pd
 csv.field_size_limit(sys.maxsize)
 
 from datasets import Dataset, DatasetDict
+import matplotlib.pyplot as plt
 
 from labels import (
     binarize_labels,
@@ -48,6 +49,7 @@ def downsample_most_frequent_language(df):
 
             # Downsample the most frequent language
             most_freq_lang = top_languages.iloc[0]["language"]
+
             most_freq_lang_rows = df[
                 (df["label_text"] == label) & (df["language"] == most_freq_lang)
             ]
@@ -71,6 +73,8 @@ def downsample_most_frequent_language(df):
                 "text": "first",
                 "label": "first",
                 "language": "first",
+                "length": "first",
+                "split": "first",
                 "label_text": " ".join,
             }
         )
@@ -94,19 +98,22 @@ def get_dataset(train, test, downsample, label_config):
             with open(f"data/{l}/{use_split}.tsv", "r") as c:
                 re = csv.reader(c, delimiter="\t")
                 for ro in re:
-                    if ro[1]:
+                    if ro[0] and ro[1]:
                         normalized_labels = normalize_labels(ro[0], label_config)
                         text = ro[1]
                         label = binarize_labels(normalized_labels, label_config)
                         label_text = " ".join(normalized_labels)
-                        yield {
-                            "label": label,
-                            "label_text": label_text,
-                            "language": l,
-                            "text": text,
-                            "id": str(row_id),
-                        }
-                        row_id += 1
+                        if label_text:
+                            yield {
+                                "label": label,
+                                "label_text": label_text,
+                                "language": l,
+                                "text": text,
+                                "id": str(row_id),
+                                "split": split,
+                                "length": len(text),
+                            }
+                            row_id += 1
 
     dataset = DatasetDict(
         {
@@ -140,4 +147,53 @@ def get_dataset(train, test, downsample, label_config):
 
 
 def get_statistics(dataset):
-    print("Stats!")
+    df = pd.concat(
+        [pd.DataFrame(dataset[split]) for split in dataset], ignore_index=True
+    )[["label_text", "language", "length"]]
+
+    print(df.head(5))
+    df["label_text"] = df["label_text"].str.split(" ")
+    df = df.explode("label_text")
+
+    print(df[df["label_text"] == "oe"])
+
+    parent_categories = ["SP", "NA", "HI", "IN", "OP", "IP"]
+    custom_order = [
+        "MT",
+        "LY",
+        "it",
+        "os",
+        "ID",
+        "ne",
+        "sr",
+        "nb",
+        "on",
+        "re",
+        "oh",
+        "en",
+        "ra",
+        "dtp",
+        "fi",
+        "lt",
+        "oi",
+        "rv",
+        "ob",
+        "rs",
+        "av",
+        "oo",
+        "ds",
+        "ed",
+        "oe",
+    ]
+    df = df[~df["label_text"].isin(parent_categories)]
+
+    plot_data = df.groupby(["label_text", "language"]).size().unstack(fill_value=0)
+    plot_data = plot_data.reindex(custom_order)
+    print(plot_data)
+    # Plot
+    plot_data.plot(kind="bar", stacked=True)
+    plt.xlabel("Label Text")
+    plt.ylabel("Count")
+    plt.xticks(rotation=25)
+    plt.title("Histogram of Label Texts by Language")
+    plt.show()

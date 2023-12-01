@@ -39,6 +39,12 @@ labels_all = [
     "rs",
     "rv",
     "sr",
+    "os",
+    "on",
+    "oh",
+    "oi",
+    "oo",
+    "oe",
 ]
 
 labels_all_flat = [
@@ -364,6 +370,13 @@ def normalize_labels(labels, label_config):
     for label in mapped:
         if label in map_lower_upper and map_lower_upper[label] not in mapped:
             mapped.append(map_lower_upper[label])
+
+    # Make sure that if just hypercategory is labeled, we have "other" label
+    for label in mapped:
+        if label in map_upper_lower and not any(
+            element in mapped for element in map_upper_lower[label]
+        ):
+            mapped.append(map_upper_lower[label][-1])
 
     if label_config in ["all_flat", "xgenre"]:
         # Remove upper category if lower present (needed for XGENRE mapping)
