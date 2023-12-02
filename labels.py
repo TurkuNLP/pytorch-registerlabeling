@@ -42,96 +42,6 @@ labels_all = [
     "sr",
 ]
 
-labels_all_bin = {
-    "HI": 0,
-    "ID": 1,
-    "IN": 2,
-    "IP": 3,
-    "LY": 4,
-    "MT": 5,
-    "NA": 6,
-    "OP": 7,
-    "SP": 8,
-    "av": "",
-    "ds": "",
-    "dtp": "",
-    "ed": "",
-    "en": "",
-    "fi": "",
-    "it": "",
-    "lt": "",
-    "nb": "",
-    "ne": "",
-    "ob": "",
-    "ra": "",
-    "re": 9,
-    "rs": "",
-    "rv": "",
-    "sr": "",
-}
-
-# Binary upper (9)
-binary_upper = [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-]
-
-binary_lower = [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-]
-
-
 labels_all_other = [
     "HI",
     "ID",
@@ -463,7 +373,7 @@ map_flat = {
 def get_label_scheme(label_list):
     if label_list in ["all", "all_2"]:
         return labels_all
-    if label_list in ["all_other"]:
+    elif label_list in ["all_other"]:
         return labels_all_other
     elif label_list == "all_flat":
         return labels_all_flat
