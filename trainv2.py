@@ -255,7 +255,6 @@ def encode_data(example):
     encoding = tokenizer(
         text,
         truncation=True,
-        max_length=options.max_length,
         return_tensors=options.return_tensors,
     )
     for key in example.keys():
@@ -314,7 +313,6 @@ class MultilabelTrainer(Trainer):
             loss_fct = BCEWithLogitsLoss(
                 pos_weight=class_weights if options.class_weights else None
             )
-
         loss = loss_fct(
             logits.view(-1, self.model.config.num_labels),
             labels.float().view(-1, self.model.config.num_labels),
@@ -476,7 +474,9 @@ trainer = MultilabelTrainer(
     train_dataset=dataset["train"],
     eval_dataset=dataset["dev"],
     compute_metrics=compute_metrics,
-    data_collator=DataCollatorWithPadding(tokenizer=tokenizer),
+    data_collator=DataCollatorWithPadding(
+        tokenizer=tokenizer, padding="longest", max_length=options.max_length
+    ),
     callbacks=[EarlyStoppingCallback(early_stopping_patience=options.patience)],
 )
 
