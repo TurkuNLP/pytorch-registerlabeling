@@ -10,10 +10,129 @@ labels_xgenre = [
     "Other",
 ]
 
+
 labels_upper = ["HI", "ID", "IN", "IP", "LY", "MT", "NA", "OP", "SP"]
 
 
 labels_all = [
+    "HI",
+    "ID",
+    "IN",
+    "IP",
+    "LY",
+    "MT",
+    "NA",
+    "OP",
+    "SP",
+    "av",
+    "ds",
+    "dtp",
+    "ed",
+    "en",
+    "fi",
+    "it",
+    "lt",
+    "nb",
+    "ne",
+    "ob",
+    "ra",
+    "re",
+    "rs",
+    "rv",
+    "sr",
+]
+
+labels_all_bin = {
+    "HI": 0,
+    "ID": 1,
+    "IN": 2,
+    "IP": 3,
+    "LY": 4,
+    "MT": 5,
+    "NA": 6,
+    "OP": 7,
+    "SP": 8,
+    "av": "",
+    "ds": "",
+    "dtp": "",
+    "ed": "",
+    "en": "",
+    "fi": "",
+    "it": "",
+    "lt": "",
+    "nb": "",
+    "ne": "",
+    "ob": "",
+    "ra": "",
+    "re": 9,
+    "rs": "",
+    "rv": "",
+    "sr": "",
+}
+
+# Binary upper (9)
+binary_upper = [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+]
+
+binary_lower = [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+]
+
+
+labels_all_other = [
     "HI",
     "ID",
     "IN",
@@ -344,6 +463,8 @@ map_flat = {
 def get_label_scheme(label_list):
     if label_list in ["all", "all_2"]:
         return labels_all
+    if label_list in ["all_other"]:
+        return labels_all_other
     elif label_list == "all_flat":
         return labels_all_flat
     elif label_list == "upper":
@@ -372,11 +493,12 @@ def normalize_labels(labels, label_config):
             mapped.append(map_lower_upper[label])
 
     # Make sure that if just hypercategory is labeled, we have "other" label
-    for label in mapped:
-        if label in map_upper_lower and not any(
-            element in mapped for element in map_upper_lower[label]
-        ):
-            mapped.append(map_upper_lower[label][-1])
+    if label_config in ["all_other"]:
+        for label in mapped:
+            if label in map_upper_lower and not any(
+                element in mapped for element in map_upper_lower[label]
+            ):
+                mapped.append(map_upper_lower[label][-1])
 
     if label_config in ["all_flat", "xgenre"]:
         # Remove upper category if lower present (needed for XGENRE mapping)
@@ -407,4 +529,5 @@ def normalize_labels(labels, label_config):
 
 def binarize_labels(labels, label_config):
     label_scheme = get_label_scheme(label_config)
+
     return [1 if scheme_label in labels else 0 for scheme_label in label_scheme]

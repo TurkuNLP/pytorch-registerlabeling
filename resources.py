@@ -1,6 +1,8 @@
 import csv
 import sys
 
+import numpy as np
+
 import pandas as pd
 
 csv.field_size_limit(sys.maxsize)
@@ -155,45 +157,158 @@ def get_statistics(dataset):
     df["label_text"] = df["label_text"].str.split(" ")
     df = df.explode("label_text")
 
-    print(df[df["label_text"] == "oe"])
+    # Parent and label mappings
+    parent_categories = {
+        "SP": ["it", "os"],
+        "NA": ["ne", "sr", "nb", "on"],
+        "HI": ["re", "oh"],
+        "IN": ["en", "ra", "dtp", "fi", "lt", "oi"],
+        "OP": ["rv", "ob", "rs", "av", "oo"],
+        "IP": ["ds", "ed", "oe"],
+    }
+    label_mapping = {
+        "MT": "Machine tr.",
+        "LY": "Lyrical",
+        "it": "Interview",
+        "os": "Other",
+        "ID": "Discussion",
+        "ne": "News report",
+        "sr": "Sports report",
+        "nb": "Narrative blog",
+        "on": "Other",
+        "re": "Recipe",
+        "oh": "Other",
+        "en": "Encyclopedia article",
+        "ra": "Research article",
+        "dtp": "Description",
+        "fi": "FAQ",
+        "lt": "Legal",
+        "oi": "Other",
+        "rv": "Review",
+        "ob": "Opinion blog",
+        "rs": "Religious",
+        "av": "Advice",
+        "oo": "Other",
+        "ds": "Sales promotion",
+        "ed": "Informed persuasion",
+        "oe": "Other",
+    }
 
-    parent_categories = ["SP", "NA", "HI", "IN", "OP", "IP"]
-    custom_order = [
-        "MT",
-        "LY",
-        "it",
-        "os",
-        "ID",
-        "ne",
-        "sr",
-        "nb",
-        "on",
-        "re",
-        "oh",
-        "en",
-        "ra",
-        "dtp",
-        "fi",
-        "lt",
-        "oi",
-        "rv",
-        "ob",
-        "rs",
-        "av",
-        "oo",
-        "ds",
-        "ed",
-        "oe",
-    ]
-    df = df[~df["label_text"].isin(parent_categories)]
+    # Function to apply the mapping
+    def map_label(label):
+        return label_mapping[label]
 
+    # Sample DataFrame
+    # df = ...
+
+    # Filter out parent categories
+    df = df[~df["label_text"].isin(parent_categories.keys())]
+
+    # Group and plot data
     plot_data = df.groupby(["label_text", "language"]).size().unstack(fill_value=0)
-    plot_data = plot_data.reindex(custom_order)
-    print(plot_data)
-    # Plot
-    plot_data.plot(kind="bar", stacked=True)
+    plot_data = plot_data.reindex(label_mapping.keys())
+
+    # Plot and get the axes object
+    ax = plot_data.plot(kind="bar", stacked=True)
+
+    # Set custom x-tick labels
+    ax.set_xticklabels(
+        [map_label(label.get_text()) for label in ax.get_xticklabels()],
+        rotation=25,
+        ha="right",
+    )
+
+    # Function to calculate middle index of each parent category group
+    def calculate_mid_index(categories):
+        indices = [plot_data.index.get_loc(cat) for cat in categories]
+        return np.mean(indices)
+
+    plt.subplots_adjust(bottom=2)
+
+    # Annotate plot with parent categories
+    for parent, children in parent_categories.items():
+        mid_index = calculate_mid_index(children)
+        # Place parent category label at the bottom of the plot
+        plt.text(
+            mid_index, -20, parent, ha="center", va="bottom", transform=ax.transData
+        )
+
+        # Draw a horizontal line to group children categories (optional)
+        start = plot_data.index.get_loc(children[0])
+        end = plot_data.index.get_loc(children[-1]) + 1
+        plt.hlines(
+            -20,
+            start - 0.5,
+            end - 0.5,
+            colors="gray",
+            linestyles="dashed",
+            transform=ax.transData,
+        )
+
     plt.xlabel("Label Text")
     plt.ylabel("Count")
-    plt.xticks(rotation=25)
-    plt.title("Histogram of Label Texts by Language")
+    plt.title("Register labels")
+    plt.show()
+
+    exit()
+
+    parent_categories = {
+        "SP": ["it", "os"],
+        "NA": ["ne", "sr", "nb", "on"],
+        "HI": ["re", "oh"],
+        "IN": ["en", "ra", "dtp", "fi", "lt", "oi"],
+        "OP": ["rv", "ob", "rs", "av", "oo"],
+        "IP": ["ds", "ed", "oe"],
+    }
+    label_mapping = {
+        "MT": "Machine tr.",
+        "LY": "Lyrical",
+        "it": "Interview",
+        "os": "Other",
+        "ID": "Discussion",
+        "ne": "News report",
+        "sr": "Sports report",
+        "nb": "Narrative blog",
+        "on": "Other",
+        "re": "Recipe",
+        "oh": "Other",
+        "en": "Encyclopedia article",
+        "ra": "Research article",
+        "dtp": "Description",
+        "fi": "FAQ",
+        "lt": "Legal",
+        "oi": "Other",
+        "rv": "Review",
+        "ob": "Opinion blog",
+        "rs": "Religious",
+        "av": "Advice",
+        "oo": "Other",
+        "ds": "Sales promotion",
+        "ed": "Informed persuasion",
+        "oe": "Other",
+    }
+
+    # Function to apply the mapping
+    def map_label(label):
+        return label_mapping[label]
+
+    df = df[~df["label_text"].isin(parent_categories.keys())]
+
+    plot_data = df.groupby(["label_text", "language"]).size().unstack(fill_value=0)
+    plot_data = plot_data.reindex(label_mapping.keys())
+    print(plot_data)
+
+    # Plot and get the axes object
+    ax = plot_data.plot(kind="bar", stacked=True)
+
+    plt.xlabel("Label Text")
+    plt.ylabel("Count")
+    plt.title("Register labels")
+
+    # Apply the mapping to x-tick labels
+    ax.set_xticklabels(
+        [map_label(label.get_text()) for label in ax.get_xticklabels()],
+        rotation=25,
+        ha="right",
+    )
     plt.show()
