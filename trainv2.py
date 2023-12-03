@@ -167,6 +167,8 @@ accelerator = Accelerator()
 # Labels
 label_scheme = get_label_scheme(options.labels)
 
+print(f"Predicting {len(label_scheme)} labels")
+
 # Torch dtypes
 
 torch_dtype_map = {
@@ -251,16 +253,11 @@ if options.set_pad_id:
 
 
 def encode_data(example):
-    text = example["text"]
-    encoding = tokenizer(
-        text,
+    return tokenizer(
+        example["text"],
         truncation=True,
         return_tensors=options.return_tensors,
     )
-    for key in example.keys():
-        encoding[key] = example[key]
-
-    return encoding
 
 
 # Get data
@@ -276,7 +273,7 @@ if options.mode == "stats":
 # Shuffle data and tokenize
 
 dataset = dataset.shuffle(seed=options.seed)
-dataset = dataset.map(encode_data)
+dataset = dataset.map(encode_data, batched=True)
 
 print(dataset)
 

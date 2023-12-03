@@ -31,59 +31,45 @@ small_languages = [
 ]
 
 
-def downsample_most_frequent_language(df):
-    # Group by label_text and language and count the occurrences
-    counts = df.groupby(["label_text", "language"]).size().reset_index(name="count")
-
-    # Initialize an empty DataFrame to store the adjusted data
+def balance_languages(df):
     adjusted_df = pd.DataFrame()
 
     for label in df["label_text"].unique():
-        # Filter counts for the current label
-        label_counts = counts[counts["label_text"] == label]
+        label_df = df[df["label_text"] == label]
 
-        # Sort by count and get the top 2 languages
-        top_languages = label_counts.sort_values(by="count", ascending=False).head(2)
+        # Count the occurrences for each language for the current label
+        lang_counts = label_df["language"].value_counts()
 
-        if len(top_languages) > 1:
-            # Get the count for the second most frequent language
-            second_most_count = top_languages.iloc[1]["count"]
+        # Skip if there's only one language for this label
+        if len(lang_counts) <= 1:
+            adjusted_df = pd.concat([adjusted_df, label_df])
+            continue
 
-            # Downsample the most frequent language
-            most_freq_lang = top_languages.iloc[0]["language"]
+        # Find the most frequent language and its count
+        most_freq_lang = lang_counts.idxmax()
+        most_freq_count = lang_counts.max()
 
-            most_freq_lang_rows = df[
-                (df["label_text"] == label) & (df["language"] == most_freq_lang)
-            ]
+        # Calculate the mean count excluding the most frequent language
+        mean_count_excluding_most = lang_counts[lang_counts != most_freq_count].mean()
+
+        # Downsample the most frequent language if it exceeds 1.5 times the mean
+        if most_freq_count > 2 * mean_count_excluding_most:
+            downsample_count = int(2 * mean_count_excluding_most)
+            most_freq_lang_rows = label_df[label_df["language"] == most_freq_lang]
             downsampled_rows = most_freq_lang_rows.sample(
-                n=second_most_count, random_state=0
+                n=downsample_count, random_state=0
             )
-
-            # Add the downsampled rows and all other rows for the label to the adjusted DataFrame
-            other_rows = df[
-                (df["label_text"] == label) & (df["language"] != most_freq_lang)
-            ]
-            adjusted_df = pd.concat([adjusted_df, downsampled_rows, other_rows])
+            adjusted_df = pd.concat(
+                [
+                    adjusted_df,
+                    downsampled_rows,
+                    label_df[label_df["language"] != most_freq_lang],
+                ]
+            )
         else:
-            # If there's only one language for the label, just add it to the adjusted DataFrame
-            adjusted_df = pd.concat([adjusted_df, df[df["label_text"] == label]])
+            adjusted_df = pd.concat([adjusted_df, label_df])
 
-    merged_df = (
-        adjusted_df.groupby("id")
-        .agg(
-            {
-                "text": "first",
-                "label": "first",
-                "language": "first",
-                "length": "first",
-                "split": "first",
-                "label_text": " ".join,
-            }
-        )
-        .reset_index()
-    )
-
-    return merged_df
+    return adjusted_df
 
 
 def get_dataset(train, test, downsample, label_config):
@@ -105,6 +91,7 @@ def get_dataset(train, test, downsample, label_config):
                         text = ro[1]
                         label = binarize_labels(normalized_labels, label_config)
                         label_text = " ".join(normalized_labels)
+
                         if label_text:
                             yield {
                                 "label": label,
@@ -131,13 +118,15 @@ def get_dataset(train, test, downsample, label_config):
         }
     )
 
+    print(len(dataset["train"][0]["label"]))
+
     if downsample:
         print("Downsampling...")
         for split in ["train", "dev", "test"]:
             len_before = len(dataset[split])
 
             dataset[split] = Dataset.from_pandas(
-                downsample_most_frequent_language(pd.DataFrame(dataset[split]))
+                balance_languages(pd.DataFrame(dataset[split]))
             )
             len_after = len(dataset[split])
 
@@ -223,21 +212,19 @@ def get_statistics(dataset):
         indices = [plot_data.index.get_loc(cat) for cat in categories]
         return np.mean(indices)
 
-    plt.subplots_adjust(bottom=2)
+    plt.subplots_adjust(bottom=0.2)
 
     # Annotate plot with parent categories
     for parent, children in parent_categories.items():
         mid_index = calculate_mid_index(children)
         # Place parent category label at the bottom of the plot
-        plt.text(
-            mid_index, -20, parent, ha="center", va="bottom", transform=ax.transData
-        )
+        plt.text(mid_index, 0, parent, ha="center", va="bottom", transform=ax.transData)
 
         # Draw a horizontal line to group children categories (optional)
         start = plot_data.index.get_loc(children[0])
         end = plot_data.index.get_loc(children[-1]) + 1
         plt.hlines(
-            -20,
+            0,
             start - 0.5,
             end - 0.5,
             colors="gray",
