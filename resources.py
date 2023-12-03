@@ -118,8 +118,6 @@ def get_dataset(train, test, downsample, label_config):
         }
     )
 
-    print(len(dataset["train"][0]["label"]))
-
     if downsample:
         print("Downsampling...")
         for split in ["train", "dev", "test"]:
