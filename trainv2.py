@@ -45,7 +45,7 @@ parser.add_argument("--torch_dtype")
 parser.add_argument("--log_to_file", action="store_true")
 parser.add_argument("--labels", default="all")
 parser.add_argument("--downsample", action="store_true")
-parser.add_argument("--hp_search")
+parser.add_argument("--hp_search", default="wandb")
 
 # Loss
 
@@ -196,13 +196,12 @@ def log_gpu_memory():
 if options.use_flash_attention_2:
     from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
 
-if options.hp_search:
-    if options.hp_search == "ray":
-        from ray.tune.schedulers import ASHAScheduler
-        from ray.tune.schedulers import PopulationBasedTraining
-        from ray.tune import grid_search, CLIReporter, loguniform, choice, uniform
-        from ray.tune.search.hyperopt import HyperOptSearch
-        from ray import init as ray_init
+if options.hp_search == "ray":
+    from ray.tune.schedulers import ASHAScheduler
+    from ray.tune.schedulers import PopulationBasedTraining
+    from ray.tune import grid_search, CLIReporter, loguniform, choice, uniform
+    from ray.tune.search.hyperopt import HyperOptSearch
+    from ray import init as ray_init
 
 if options.peft:
     from peft import (
