@@ -684,7 +684,8 @@ if options.mode == "train":
                     "per_device_train_batch_size": {"values": [6, 8, 12, 16]},
                 },
             }
-
+        print(hp_config)
+        exit()
         best_model = trainer.hyperparameter_search(**hp_config)
 
         print(f"Best model according to {options.hp_search}:")
