@@ -671,16 +671,12 @@ if options.mode == "train":
             hp_config["hp_space"] = lambda _: {}
 
         elif options.hp_search == "wandb":
-            batch_size_options = (
-                (np.array([8, 10, 12, 16]) / num_gpus).astype(int).tolist()
-            )
-            print(f"Testing batch sizes of {batch_size_options}")
             hp_config["hp_space"] = lambda _: {
                 "method": "bayes",
                 "name": wandb_project_name,
                 "metric": {"goal": "maximize", "name": "eval_f1"},
                 "parameters": {
-                    "per_device_train_batch_size": {"values": batch_size_options},
+                    "per_device_train_batch_size": [6, 8, 12, 16],
                     "learning_rate": {"values": [5e-6, 1e-5, 5e-5, 1e-4]},
                 },
             }
