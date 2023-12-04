@@ -247,8 +247,6 @@ tokenizer = AutoTokenizer.from_pretrained(
     low_cpu_mem_usage=options.low_cpu_mem_usage,
     torch_dtype=torch_dtype,
     cache_dir=f"{working_dir}/tokenizer_cache",
-    return_overflowing_tokens=options.overflow,
-    stride=options.stride,
 )
 
 # Some LLM's require a pad id
@@ -258,15 +256,36 @@ if options.set_pad_id:
 
 
 def encode_data(example):
-    return tokenizer(
+    tokenized_input = tokenizer(
         example["text"],
         truncation=True,
         max_length=options.max_length,
-        return_tensors=options.return_tensors,
+        return_overflowing_tokens=options.overflow,
+        stride=options.stride,
     )
+
+    if options.overflow:
+        # Process each chunk into a separate example
+        processed_examples = []
+        for i in range(len(tokenized_input["input_ids"])):
+            # Only include full chunks
+            if i == 0 or (
+                i > 0 and len(tokenized_input["input_ids"][i]) >= options.max_length
+            ):
+                chunk = {key: value[i] for key, value in tokenized_input.items()}
+                chunk["language"] = example["language"]
+                chunk["labels"] = example["label"]
+                processed_examples.append(chunk)
+        return processed_examples
+    else:
+        tokenized_input["language"] = example["language"]
+        tokenized_input["labels"] = example["label"]
+        return [tokenized_input]
 
 
 # Get data
+
+from datasets import Dataset, DatasetDict
 
 dataset = get_dataset(options.train, options.test, options.downsample, options.labels)
 
@@ -279,7 +298,24 @@ if options.mode == "stats":
 # Shuffle data and tokenize
 
 dataset = dataset.shuffle(seed=options.seed)
-dataset = dataset.map(encode_data, batched=True)
+
+
+def process_split(split):
+    processed_data = []
+    for example in tqdm(split):
+        processed_data.extend(encode_data(example))
+    return Dataset.from_dict(
+        {key: [ex[key] for ex in processed_data] for key in processed_data[0]}
+    )
+
+
+# Process each split individually
+processed_splits = {
+    split_name: process_split(split) for split_name, split in dataset.items()
+}
+
+# Combine processed splits into a single dataset with the original structure
+dataset = DatasetDict(processed_splits)
 
 print(dataset)
 
