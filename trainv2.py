@@ -46,7 +46,7 @@ parser.add_argument("--log_to_file", action="store_true")
 parser.add_argument("--labels", default="all")
 parser.add_argument("--downsample", action="store_true")
 parser.add_argument("--balance", action="store_true")
-parser.add_argument("--overflow")
+parser.add_argument("--overflow", default="")
 parser.add_argument("--stride", type=int, default=0)
 parser.add_argument("--hp_search")
 
@@ -277,24 +277,22 @@ def encode_data(example):
         stride=options.stride,
         return_tensors=options.return_tensors,
     )
+    processed_examples = []
 
     if use_overflow:
-        # Process each chunk into a separate example
-        processed_examples = []
         for i in range(len(tokenized_input["input_ids"])):
             # Only include full chunks
             if i == 0 or (
                 i > 0 and len(tokenized_input["input_ids"][i]) >= options.max_length
             ):
                 chunk = {key: value[i] for key, value in tokenized_input.items()}
-                chunk["language"] = example["language"]
-                chunk["labels"] = example["label"]
+                chunk.update(example)
                 processed_examples.append(chunk)
-        return processed_examples
     else:
-        tokenized_input["language"] = example["language"]
-        tokenized_input["labels"] = example["label"]
-        return [tokenized_input]
+        tokenized_input.update(example)
+        processed_examples.append(tokenized_input)
+
+    return processed_examples
 
 
 # Shuffle data and tokenize
