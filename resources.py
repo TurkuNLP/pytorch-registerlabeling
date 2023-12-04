@@ -308,17 +308,18 @@ class CustomBalancedLanguageSampler(Sampler):
     def __init__(self, dataset, batch_size, language_info):
         self.dataset = dataset
         self.batch_size = batch_size
-        self.language_info = language_info  # language of each sample
+        self.language_info = language_info
         self.indices_per_language = self._create_indices_per_language()
+        self.num_languages = len(self.indices_per_language)
+        # Calculate B1 as the number of mini-batches in the smallest dataset
         self.smallest_set_size = (
             min(len(indices) for indices in self.indices_per_language.values())
-            // batch_size
+            // self.batch_size
         )
-        self.num_languages = len(self.indices_per_language)
+        # Total number of batches per epoch is N * B1
         self.total_batches = self.smallest_set_size * self.num_languages
 
     def _create_indices_per_language(self):
-        # Map each language to the indices of samples in that language.
         indices_per_language = {}
         for idx, language in enumerate(self.language_info):
             if language not in indices_per_language:
@@ -326,31 +327,32 @@ class CustomBalancedLanguageSampler(Sampler):
             indices_per_language[language].append(idx)
         return indices_per_language
 
+    def __iter__(self):
+        for _ in range(self.total_batches):
+            # Randomly select a language for each batch
+            language = np.random.choice(list(self.indices_per_language.keys()))
+            # Calculate the number of samples to pick for the current language
+            num_samples = min(len(self.indices_per_language[language]), self.batch_size)
 
-def __iter__(self):
-    language_order = list(self.indices_per_language.keys())
-
-    for _ in range(self.smallest_set_size):
-        np.random.shuffle(language_order)
-        for language in language_order:
-            batch_size_for_language = min(
-                len(self.indices_per_language[language]), self.batch_size
-            )
-
-            if batch_size_for_language > 0:
+            if num_samples > 0:
                 language_indices = np.random.choice(
-                    self.indices_per_language[language],
-                    size=batch_size_for_language,
-                    replace=False,
+                    self.indices_per_language[language], size=num_samples, replace=False
                 )
                 yield language_indices
 
-            # Reshuffle and replenish if necessary
-            if len(self.indices_per_language[language]) < self.batch_size:
-                self.indices_per_language[
-                    language
-                ] = self._create_indices_per_language()[language]
-                np.random.shuffle(self.indices_per_language[language])
+                # Update the indices list for the chosen language
+                self.indices_per_language[language] = [
+                    idx
+                    for idx in self.indices_per_language[language]
+                    if idx not in language_indices
+                ]
+
+                # Reshuffle and replenish if necessary
+                if len(self.indices_per_language[language]) < self.batch_size:
+                    self.indices_per_language[
+                        language
+                    ] = self._create_indices_per_language()[language]
+                    np.random.shuffle(self.indices_per_language[language])
 
     def __len__(self):
         return self.total_batches
