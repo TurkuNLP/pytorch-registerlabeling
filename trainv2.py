@@ -256,6 +256,7 @@ def encode_data(example):
     return tokenizer(
         example["text"],
         truncation=True,
+        max_length=options.max_length,
         return_tensors=options.return_tensors,
     )
 
