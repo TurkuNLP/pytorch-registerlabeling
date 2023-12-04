@@ -46,7 +46,7 @@ parser.add_argument("--log_to_file", action="store_true")
 parser.add_argument("--labels", default="all")
 parser.add_argument("--downsample", action="store_true")
 parser.add_argument("--balance", action="store_true")
-parser.add_argument("--overflow", action="store_true")
+parser.add_argument("--overflow")
 parser.add_argument("--stride", type=int, default=0)
 parser.add_argument("--hp_search")
 
@@ -142,6 +142,8 @@ from sklearn.metrics import (
     f1_score,
     roc_auc_score,
 )
+
+from datasets import Dataset, DatasetDict
 
 from transformers import (
     AutoTokenizer,
@@ -254,6 +256,16 @@ if options.set_pad_id:
     tokenizer.pad_token_id = tokenizer.eos_token_id
     tokenizer.pad_token = tokenizer.eos_token
 
+# Get data
+
+dataset = get_dataset(options.train, options.test, options.downsample, options.labels)
+
+# If stats mode, stop here
+
+if options.mode == "stats":
+    get_statistics(dataset)
+    exit()
+
 
 def encode_data(example):
     tokenized_input = tokenizer(
@@ -262,9 +274,10 @@ def encode_data(example):
         max_length=options.max_length,
         return_overflowing_tokens=options.overflow,
         stride=options.stride,
+        return_tensors=options.return_tensors,
     )
 
-    if options.overflow:
+    if options.overflow == "all" or example["split"] in options.overflow:
         # Process each chunk into a separate example
         processed_examples = []
         for i in range(len(tokenized_input["input_ids"])):
@@ -283,18 +296,6 @@ def encode_data(example):
         return [tokenized_input]
 
 
-# Get data
-
-from datasets import Dataset, DatasetDict
-
-dataset = get_dataset(options.train, options.test, options.downsample, options.labels)
-
-# If stats mode, stop here
-
-if options.mode == "stats":
-    get_statistics(dataset)
-    exit()
-
 # Shuffle data and tokenize
 
 dataset = dataset.shuffle(seed=options.seed)
@@ -309,13 +310,10 @@ def process_split(split):
     )
 
 
-# Process each split individually
-processed_splits = {
-    split_name: process_split(split) for split_name, split in dataset.items()
-}
-
-# Combine processed splits into a single dataset with the original structure
-dataset = DatasetDict(processed_splits)
+# Process splits
+dataset = DatasetDict(
+    {split_name: process_split(split) for split_name, split in dataset.items()}
+)
 
 print(dataset)
 
