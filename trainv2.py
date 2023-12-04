@@ -676,7 +676,11 @@ if options.mode == "train":
                 "name": wandb_project_name,
                 "metric": {"goal": "maximize", "name": "eval_f1"},
                 "parameters": {
-                    "per_device_train_batch_size": {"values": [8, 10, 12, 16]},
+                    "learning_rate": {
+                        "distribution": "uniform",
+                        "min": 1e-6,
+                        "max": 1e-4,
+                    },
                     "learning_rate": {"values": [5e-6, 1e-5, 5e-5, 1e-4]},
                 },
             }
