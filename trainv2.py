@@ -684,8 +684,23 @@ if options.mode == "train":
                     "per_device_train_batch_size": {"values": [6, 8, 12, 16]},
                 },
             }
-        print(hp_config)
-        exit()
+
+            def wandb_hp_space(trial):
+                return {
+                    "method": "random",
+                    "metric": {"name": "objective", "goal": "minimize"},
+                    "parameters": {
+                        "learning_rate": {
+                            "distribution": "uniform",
+                            "min": 1e-6,
+                            "max": 1e-4,
+                        },
+                        "per_device_train_batch_size": {"values": [16, 32, 64, 128]},
+                    },
+                }
+
+            hp_config["hp_space"] = wandb_hp_space
+
         best_model = trainer.hyperparameter_search(**hp_config)
 
         print(f"Best model according to {options.hp_search}:")
