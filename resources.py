@@ -310,13 +310,12 @@ class CustomBalancedLanguageSampler(Sampler):
         self.batch_size = batch_size
         self.language_info = language_info  # language of each sample
         self.indices_per_language = self._create_indices_per_language()
-        self.smallest_set_size = min(
-            len(indices) for indices in self.indices_per_language.values()
+        self.smallest_set_size = (
+            min(len(indices) for indices in self.indices_per_language.values())
+            // batch_size
         )
         self.num_languages = len(self.indices_per_language)
-        self.total_samples = (
-            self.smallest_set_size * self.num_languages * self.batch_size
-        )
+        self.total_batches = self.smallest_set_size * self.num_languages
 
     def _create_indices_per_language(self):
         # Map each language to the indices of samples in that language.
@@ -329,30 +328,43 @@ class CustomBalancedLanguageSampler(Sampler):
 
     def __iter__(self):
         language_order = list(self.indices_per_language.keys())
+        batch_indices = []  # Accumulate indices for a batch here
+        languages_in_batch = len(language_order)
+
         for _ in range(self.smallest_set_size):
             np.random.shuffle(language_order)
             for language in language_order:
+                # Randomly select indices for the current language
                 language_indices = np.random.choice(
                     self.indices_per_language[language],
-                    size=self.batch_size,
+                    size=self.batch_size // languages_in_batch,
                     replace=False,
                 )
-                for idx in language_indices:
-                    yield idx
+
+                # Add the selected indices to the batch
+                batch_indices.extend(language_indices)
+
                 # Remove the selected indices
                 self.indices_per_language[language] = [
                     idx
                     for idx in self.indices_per_language[language]
                     if idx not in language_indices
                 ]
+
                 # Reshuffle and repeat if all indices have been sampled
-                if len(self.indices_per_language[language]) < self.batch_size:
+                if len(self.indices_per_language[language]) < (
+                    self.batch_size // languages_in_batch
+                ):
                     self.indices_per_language[
                         language
                     ] = self._create_indices_per_language()[language]
 
+            # Yield a full batch and reset
+            yield from batch_indices
+            batch_indices = []
+
     def __len__(self):
-        return self.total_samples
+        return self.total_batches
 
 
 def custom_train_dataloader(self) -> DataLoader:
