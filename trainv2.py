@@ -671,7 +671,7 @@ if options.mode == "train":
             hp_config["hp_space"] = lambda _: {}
 
         elif options.hp_search == "wandb":
-            hp_config["hp_space"] = lambda _: {
+            hp_config["hp_space"] = {
                 "method": "bayes",
                 "name": wandb_project_name,
                 "metric": {"goal": "maximize", "name": "eval_f1"},
