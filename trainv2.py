@@ -457,8 +457,8 @@ trainer = MultilabelTrainer(
         lr_scheduler_type=options.lr_scheduler_type,
         metric_for_best_model=options.metric_for_best_model,
         greater_is_better=False if "loss" in options.metric_for_best_model else True,
-        per_device_train_batch_size=options.train_batch_size / num_gpus,
-        per_device_eval_batch_size=options.eval_batch_size / num_gpus,
+        per_device_train_batch_size=int(options.train_batch_size / num_gpus),
+        per_device_eval_batch_size=int(options.eval_batch_size / num_gpus),
         num_train_epochs=options.epochs,
         gradient_checkpointing=options.gradient_checkpointing,
         gradient_accumulation_steps=options.gradient_steps,
@@ -684,22 +684,6 @@ if options.mode == "train":
                     "per_device_train_batch_size": {"values": [6, 8, 12, 16]},
                 },
             }
-
-            def wandb_hp_space(trial):
-                return {
-                    "method": "random",
-                    "metric": {"name": "objective", "goal": "minimize"},
-                    "parameters": {
-                        "learning_rate": {
-                            "distribution": "uniform",
-                            "min": 1e-6,
-                            "max": 1e-4,
-                        },
-                        "per_device_train_batch_size": {"values": [16, 32, 64, 128]},
-                    },
-                }
-
-            hp_config["hp_space"] = wandb_hp_space
 
         best_model = trainer.hyperparameter_search(**hp_config)
 
