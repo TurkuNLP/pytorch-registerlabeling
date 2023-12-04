@@ -326,42 +326,31 @@ class CustomBalancedLanguageSampler(Sampler):
             indices_per_language[language].append(idx)
         return indices_per_language
 
-    def __iter__(self):
-        language_order = list(self.indices_per_language.keys())
-        batch_indices = []  # Accumulate indices for a batch here
-        languages_in_batch = len(language_order)
 
-        for _ in range(self.smallest_set_size):
-            np.random.shuffle(language_order)
-            for language in language_order:
-                # Randomly select indices for the current language
+def __iter__(self):
+    language_order = list(self.indices_per_language.keys())
+
+    for _ in range(self.smallest_set_size):
+        np.random.shuffle(language_order)
+        for language in language_order:
+            batch_size_for_language = min(
+                len(self.indices_per_language[language]), self.batch_size
+            )
+
+            if batch_size_for_language > 0:
                 language_indices = np.random.choice(
                     self.indices_per_language[language],
-                    size=self.batch_size // languages_in_batch,
+                    size=batch_size_for_language,
                     replace=False,
                 )
+                yield language_indices
 
-                # Add the selected indices to the batch
-                batch_indices.extend(language_indices)
-
-                # Remove the selected indices
-                self.indices_per_language[language] = [
-                    idx
-                    for idx in self.indices_per_language[language]
-                    if idx not in language_indices
-                ]
-
-                # Reshuffle and repeat if all indices have been sampled
-                if len(self.indices_per_language[language]) < (
-                    self.batch_size // languages_in_batch
-                ):
-                    self.indices_per_language[
-                        language
-                    ] = self._create_indices_per_language()[language]
-
-            # Yield a full batch and reset
-            yield batch_indices
-            batch_indices = []
+            # Reshuffle and replenish if necessary
+            if len(self.indices_per_language[language]) < self.batch_size:
+                self.indices_per_language[
+                    language
+                ] = self._create_indices_per_language()[language]
+                np.random.shuffle(self.indices_per_language[language])
 
     def __len__(self):
         return self.total_batches
