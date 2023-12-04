@@ -436,8 +436,8 @@ def model_init():
 
 
 trainer = MultilabelTrainer(
-    model=None if options.hp_search else model_init(),
-    model_init=model_init if options.hp_search else None,
+    model=None if options.hp_search == "ray" else model_init(),
+    model_init=model_init if options.hp_search == "ray" else None,
     args=TrainingArguments(
         f"{working_dir}/checkpoints",
         overwrite_output_dir=True if options.overwrite else False,
@@ -671,7 +671,7 @@ if options.mode == "train":
             hp_config["hp_space"] = lambda _: {}
 
         elif options.hp_search == "wandb":
-            hp_config["hp_space"] = {
+            hp_config["hp_space"] = lambda _: {
                 "method": "bayes",
                 "name": wandb_project_name,
                 "metric": {"goal": "maximize", "name": "eval_f1"},
