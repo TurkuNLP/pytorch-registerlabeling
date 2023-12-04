@@ -163,11 +163,12 @@ model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_'+options.hp_search if options.hp_search else ''}/{model_name.replace('/', '_')}"
 peft_modules = options.peft_modules.split(",") if options.peft_modules else None
 accelerator = Accelerator()
+num_gpus = cuda.device_count()
 
 # Labels
 label_scheme = get_label_scheme(options.labels)
 
-print(f"Predicting {len(label_scheme)} labels")
+print(f"Predicting {len(label_scheme)} labels with {num_gpus} GPUs")
 
 # Torch dtypes
 
@@ -456,8 +457,8 @@ trainer = MultilabelTrainer(
         lr_scheduler_type=options.lr_scheduler_type,
         metric_for_best_model=options.metric_for_best_model,
         greater_is_better=False if "loss" in options.metric_for_best_model else True,
-        per_device_train_batch_size=options.train_batch_size,
-        per_device_eval_batch_size=options.eval_batch_size,
+        per_device_train_batch_size=options.train_batch_size / num_gpus,
+        per_device_eval_batch_size=options.eval_batch_size / num_gpus,
         num_train_epochs=options.epochs,
         gradient_checkpointing=options.gradient_checkpointing,
         gradient_accumulation_steps=options.gradient_steps,
@@ -675,7 +676,9 @@ if options.mode == "train":
                 "name": wandb_project_name,
                 "metric": {"goal": "maximize", "name": "eval_f1"},
                 "parameters": {
-                    "per_device_train_batch_size": {"values": [8, 10, 12]},
+                    "per_device_train_batch_size": {
+                        "values": np.array([8, 10, 12, 16]) / num_gpus
+                    },
                     "learning_rate": {"values": [5e-6, 1e-5, 5e-5, 1e-4]},
                 },
             }
