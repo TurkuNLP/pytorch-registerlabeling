@@ -45,6 +45,9 @@ parser.add_argument("--torch_dtype")
 parser.add_argument("--log_to_file", action="store_true")
 parser.add_argument("--labels", default="all")
 parser.add_argument("--downsample", action="store_true")
+parser.add_argument("--balance", action="store_true")
+parser.add_argument("--overflow", action="store_true")
+parser.add_argument("--stride", type=int, default=0)
 parser.add_argument("--hp_search")
 
 # Loss
@@ -154,7 +157,7 @@ from torch import Tensor, FloatTensor, cuda, float16, float32, bfloat16
 from accelerate import Accelerator
 
 from labels import get_label_scheme
-from resources import get_dataset, get_statistics
+from resources import get_dataset, get_statistics, custom_train_dataloader
 
 # Common variables
 
@@ -163,7 +166,7 @@ model_name = options.model_name
 working_dir = f"{options.output_path}/{options.train}_{options.test}{'_'+options.hp_search if options.hp_search else ''}/{model_name.replace('/', '_')}"
 peft_modules = options.peft_modules.split(",") if options.peft_modules else None
 accelerator = Accelerator()
-num_gpus = cuda.device_count()
+num_gpus = cuda.device_count() or 1
 
 # Labels
 label_scheme = get_label_scheme(options.labels)
@@ -244,6 +247,8 @@ tokenizer = AutoTokenizer.from_pretrained(
     low_cpu_mem_usage=options.low_cpu_mem_usage,
     torch_dtype=torch_dtype,
     cache_dir=f"{working_dir}/tokenizer_cache",
+    return_overflowing_tokens=options.overflow,
+    stride=options.stride,
 )
 
 # Some LLM's require a pad id
@@ -298,6 +303,11 @@ if options.class_weights:
 
 
 class MultilabelTrainer(Trainer):
+    if options.balance:
+
+        def get_train_dataloader(self):
+            return custom_train_dataloader(self)
+
     def compute_loss(self, model, inputs, return_outputs=False):
         labels = inputs.pop("labels")
         outputs = model(**inputs)

@@ -297,3 +297,81 @@ def get_statistics(dataset):
         ha="right",
     )
     plt.show()
+
+
+from transformers.trainer_utils import seed_worker
+from torch.utils.data import DataLoader
+from torch.utils.data import Sampler
+
+
+class CustomBalancedLanguageSampler(Sampler):
+    def __init__(self, dataset, batch_size, language_info):
+        self.dataset = dataset
+        self.batch_size = batch_size
+        self.language_info = language_info  # language of each sample
+        self.indices_per_language = self._create_indices_per_language()
+        self.smallest_set_size = min(
+            len(indices) for indices in self.indices_per_language.values()
+        )
+        self.num_languages = len(self.indices_per_language)
+        self.total_samples = (
+            self.smallest_set_size * self.num_languages * self.batch_size
+        )
+
+    def _create_indices_per_language(self):
+        # Map each language to the indices of samples in that language.
+        indices_per_language = {}
+        for idx, language in enumerate(self.language_info):
+            if language not in indices_per_language:
+                indices_per_language[language] = []
+            indices_per_language[language].append(idx)
+        return indices_per_language
+
+    def __iter__(self):
+        language_order = list(self.indices_per_language.keys())
+        for _ in range(self.smallest_set_size):
+            np.random.shuffle(language_order)
+            for language in language_order:
+                language_indices = np.random.choice(
+                    self.indices_per_language[language],
+                    size=self.batch_size,
+                    replace=False,
+                )
+                for idx in language_indices:
+                    yield idx
+                # Remove the selected indices
+                self.indices_per_language[language] = [
+                    idx
+                    for idx in self.indices_per_language[language]
+                    if idx not in language_indices
+                ]
+                # Reshuffle and repeat if all indices have been sampled
+                if len(self.indices_per_language[language]) < self.batch_size:
+                    self.indices_per_language[
+                        language
+                    ] = self._create_indices_per_language()[language]
+
+    def __len__(self):
+        return self.total_samples
+
+
+def custom_train_dataloader(self) -> DataLoader:
+    language_info = [sample["language"] for sample in self.train_dataset]
+    train_dataset = self._remove_unused_columns(
+        self.train_dataset, description="training"
+    )
+
+    batch_size = self._train_batch_size
+    dataloader_params = {
+        "batch_size": batch_size,
+        "collate_fn": self.data_collator,
+        "num_workers": self.args.dataloader_num_workers,
+        "pin_memory": self.args.dataloader_pin_memory,
+        "sampler": CustomBalancedLanguageSampler(
+            train_dataset, batch_size, language_info
+        ),
+        "drop_last": self.args.dataloader_drop_last,
+        "worker_init_fn": seed_worker,
+    }
+
+    return self.accelerator.prepare(DataLoader(train_dataset, **dataloader_params))
