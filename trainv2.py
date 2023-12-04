@@ -45,7 +45,7 @@ parser.add_argument("--torch_dtype")
 parser.add_argument("--log_to_file", action="store_true")
 parser.add_argument("--labels", default="all")
 parser.add_argument("--downsample", action="store_true")
-parser.add_argument("--hp_search", default="wandb")
+parser.add_argument("--hp_search")
 
 # Loss
 
