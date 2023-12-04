@@ -268,16 +268,17 @@ if options.mode == "stats":
 
 
 def encode_data(example):
+    use_overflow = options.overflow == "all" or example["split"] in options.overflow
     tokenized_input = tokenizer(
         example["text"],
         truncation=True,
         max_length=options.max_length,
-        return_overflowing_tokens=options.overflow,
+        return_overflowing_tokens=use_overflow,
         stride=options.stride,
         return_tensors=options.return_tensors,
     )
 
-    if options.overflow == "all" or example["split"] in options.overflow:
+    if use_overflow:
         # Process each chunk into a separate example
         processed_examples = []
         for i in range(len(tokenized_input["input_ids"])):
