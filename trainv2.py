@@ -681,7 +681,7 @@ if options.mode == "train":
                         "min": 1e-6,
                         "max": 1e-4,
                     },
-                    "learning_rate": {"values": [5e-6, 1e-5, 5e-5, 1e-4]},
+                    "per_device_train_batch_size": {"values": [6, 8, 12, 16]},
                 },
             }
 
