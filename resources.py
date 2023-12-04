@@ -360,7 +360,7 @@ class CustomBalancedLanguageSampler(Sampler):
                     ] = self._create_indices_per_language()[language]
 
             # Yield a full batch and reset
-            yield from batch_indices
+            yield batch_indices
             batch_indices = []
 
     def __len__(self):
