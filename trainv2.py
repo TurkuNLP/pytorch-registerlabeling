@@ -217,13 +217,13 @@ if options.peft:
 try:
     from dotenv import load_dotenv
 
-    os.environ[
-        "WANDB_PROJECT"
-    ] = f"{options.train}_{options.test}{'_tuning' if options.hp_search else ''}_{model_name.replace('/', '_')}"
-
     load_dotenv()
+    wandb_project_name = f"{options.train}_{options.test}{'_tuning' if options.hp_search else ''}_{model_name.replace('/', '_')}"
+
+    os.environ["WANDB_PROJECT"] = wandb_project_name
     os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY", "")
     os.environ["WANDB_WATCH"] = "all"
+
     import wandb
 
     wandb.login()
@@ -673,11 +673,11 @@ if options.mode == "train":
         elif options.hp_search == "wandb":
             hp_config["hp_space"] = lambda _: {
                 "method": "bayes",
-                "name": "sweep",
+                "name": wandb_project_name,
                 "metric": {"goal": "maximize", "name": "eval_f1"},
                 "parameters": {
                     "per_device_train_batch_size": {"values": [8, 10, 12]},
-                    "learning_rate": {"values": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4]},
+                    "learning_rate": {"values": [5e-6, 1e-5, 5e-5, 1e-4]},
                 },
             }
 
