@@ -308,6 +308,12 @@ class CustomBalancedLanguageSampler(Sampler):
     def __init__(self, language_data):
         self.language_data = language_data
         self.indices_per_language = self._create_indices_per_language()
+        self.num_languages = len(self.indices_per_language)
+        self.smallest_dataset_size = min(
+            len(indices) for indices in self.indices_per_language.values()
+        )
+        # Define the epoch size as the size of the smallest dataset times the number of languages
+        self.epoch_size = self.num_languages * self.smallest_dataset_size
 
     def _create_indices_per_language(self):
         indices_per_language = {}
@@ -319,26 +325,27 @@ class CustomBalancedLanguageSampler(Sampler):
 
     def __len__(self):
         # The total number of samples per epoch is the size of the smallest dataset times the number of languages
-        return len(self.indices_per_language) * min(
-            len(indices) for indices in self.indices_per_language.values()
-        )
+        return self.epoch_size
 
     def __iter__(self):
-        # Randomly select a language
-        language = np.random.choice(list(self.indices_per_language.keys()))
+        for _ in range(self.epoch_size):
+            # Randomly select a language
+            language = np.random.choice(list(self.indices_per_language.keys()))
 
-        # Replenish the indices for the language if necessary
-        if not self.indices_per_language[language]:
-            self.indices_per_language[language] = [
-                idx for idx, lang in enumerate(self.language_data) if lang == language
-            ]
+            # Replenish the indices for the language if necessary
+            if not self.indices_per_language[language]:
+                self.indices_per_language[language] = [
+                    idx
+                    for idx, lang in enumerate(self.language_data)
+                    if lang == language
+                ]
 
-        # Randomly select one index from the language's indices
-        idx = np.random.choice(self.indices_per_language[language], replace=False)
-        yield idx
+            # Randomly select one index from the language's indices
+            idx = np.random.choice(self.indices_per_language[language], replace=False)
+            yield idx
 
-        # Remove the selected index
-        self.indices_per_language[language].remove(idx)
+            # Remove the selected index
+            self.indices_per_language[language].remove(idx)
 
 
 def custom_train_dataloader(self) -> DataLoader:
