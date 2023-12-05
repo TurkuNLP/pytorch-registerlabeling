@@ -305,19 +305,13 @@ from torch.utils.data import Sampler
 
 
 class CustomBalancedLanguageSampler(Sampler):
-    def __init__(self, dataset, language_info, batch_size):
-        self.dataset = dataset
-        self.language_info = language_info
-        self.batch_size = batch_size
+    def __init__(self, language_data):
+        self.language_data = language_data
         self.indices_per_language = self._create_indices_per_language()
-        self.num_languages = len(self.indices_per_language)
-        self.smallest_dataset_size = min(
-            len(indices) for indices in self.indices_per_language.values()
-        )
 
     def _create_indices_per_language(self):
         indices_per_language = {}
-        for idx, language in enumerate(self.language_info):
+        for idx, language in enumerate(self.language_data):
             if language not in indices_per_language:
                 indices_per_language[language] = []
             indices_per_language[language].append(idx)
@@ -325,33 +319,30 @@ class CustomBalancedLanguageSampler(Sampler):
 
     def __len__(self):
         # The total number of samples per epoch is the size of the smallest dataset times the number of languages
-        return self.num_languages * self.smallest_dataset_size
+        return len(self.indices_per_language) * min(
+            len(indices) for indices in self.indices_per_language.values()
+        )
 
     def __iter__(self):
-        language_keys = list(self.indices_per_language.keys())
-        for _ in range(self.smallest_dataset_size):
-            np.random.shuffle(language_keys)
-            for language in language_keys:
-                # Check if the language indices list is empty and replenish if necessary
-                if not self.indices_per_language[language]:
-                    self.indices_per_language[language] = [
-                        idx
-                        for idx, lang in enumerate(self.language_info)
-                        if lang == language
-                    ]
+        # Randomly select a language
+        language = np.random.choice(list(self.indices_per_language.keys()))
 
-                # Now it's safe to assume that there are indices to sample from
-                idx = np.random.choice(
-                    self.indices_per_language[language], replace=False
-                )
-                yield idx
+        # Replenish the indices for the language if necessary
+        if not self.indices_per_language[language]:
+            self.indices_per_language[language] = [
+                idx for idx, lang in enumerate(self.language_data) if lang == language
+            ]
 
-                # Remove the selected index
-                self.indices_per_language[language].remove(idx)
+        # Randomly select one index from the language's indices
+        idx = np.random.choice(self.indices_per_language[language], replace=False)
+        yield idx
+
+        # Remove the selected index
+        self.indices_per_language[language].remove(idx)
 
 
 def custom_train_dataloader(self) -> DataLoader:
-    language_info = [sample["language"] for sample in self.train_dataset]
+    language_data = [sample["language"] for sample in self.train_dataset]
     train_dataset = self._remove_unused_columns(
         self.train_dataset, description="training"
     )
@@ -362,9 +353,7 @@ def custom_train_dataloader(self) -> DataLoader:
         "collate_fn": self.data_collator,
         "num_workers": self.args.dataloader_num_workers,
         "pin_memory": self.args.dataloader_pin_memory,
-        "sampler": CustomBalancedLanguageSampler(
-            train_dataset, language_info, batch_size
-        ),
+        "sampler": CustomBalancedLanguageSampler(language_data),
         "drop_last": self.args.dataloader_drop_last,
         "worker_init_fn": seed_worker,
     }
