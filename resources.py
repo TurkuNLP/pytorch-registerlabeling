@@ -332,23 +332,22 @@ class CustomBalancedLanguageSampler(Sampler):
         for _ in range(self.smallest_dataset_size):
             np.random.shuffle(language_keys)
             for language in language_keys:
-                if self.indices_per_language[language]:
-                    idx = np.random.choice(
-                        self.indices_per_language[language], replace=False
-                    )
-                    yield idx
+                # Check if the language indices list is empty and replenish if necessary
+                if not self.indices_per_language[language]:
+                    self.indices_per_language[language] = [
+                        idx
+                        for idx, lang in enumerate(self.language_info)
+                        if lang == language
+                    ]
 
-                    # Remove the selected index
-                    self.indices_per_language[language].remove(idx)
+                # Now it's safe to assume that there are indices to sample from
+                idx = np.random.choice(
+                    self.indices_per_language[language], replace=False
+                )
+                yield idx
 
-                    # Reshuffle and replenish if all indices have been sampled
-                    if not self.indices_per_language[language]:
-                        # Replenish only for the exhausted language
-                        self.indices_per_language[language] = [
-                            idx
-                            for idx, lang in enumerate(self.language_info)
-                            if lang == language
-                        ]
+                # Remove the selected index
+                self.indices_per_language[language].remove(idx)
 
 
 def custom_train_dataloader(self) -> DataLoader:
