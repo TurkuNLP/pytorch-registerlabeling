@@ -305,19 +305,15 @@ from torch.utils.data import Sampler
 
 
 class CustomBalancedLanguageSampler(Sampler):
-    def __init__(self, dataset, batch_size, language_info):
+    def __init__(self, dataset, language_info, batch_size):
         self.dataset = dataset
-        self.batch_size = batch_size
         self.language_info = language_info
+        self.batch_size = batch_size
         self.indices_per_language = self._create_indices_per_language()
         self.num_languages = len(self.indices_per_language)
-        # Calculate B1 as the number of mini-batches in the smallest dataset
-        self.smallest_set_size = (
-            min(len(indices) for indices in self.indices_per_language.values())
-            // self.batch_size
+        self.smallest_dataset_size = min(
+            len(indices) for indices in self.indices_per_language.values()
         )
-        # Total number of batches per epoch is N * B1
-        self.total_batches = self.smallest_set_size * self.num_languages
 
     def _create_indices_per_language(self):
         indices_per_language = {}
@@ -327,35 +323,32 @@ class CustomBalancedLanguageSampler(Sampler):
             indices_per_language[language].append(idx)
         return indices_per_language
 
-    def __iter__(self):
-        for _ in range(self.total_batches):
-            # Randomly select a language for each batch
-            language = np.random.choice(list(self.indices_per_language.keys()))
-            # Calculate the number of samples to pick for the current language
-            num_samples = min(len(self.indices_per_language[language]), self.batch_size)
-
-            if num_samples > 0:
-                language_indices = np.random.choice(
-                    self.indices_per_language[language], size=num_samples, replace=False
-                )
-                yield language_indices
-
-                # Update the indices list for the chosen language
-                self.indices_per_language[language] = [
-                    idx
-                    for idx in self.indices_per_language[language]
-                    if idx not in language_indices
-                ]
-
-                # Reshuffle and replenish if necessary
-                if len(self.indices_per_language[language]) < self.batch_size:
-                    self.indices_per_language[
-                        language
-                    ] = self._create_indices_per_language()[language]
-                    np.random.shuffle(self.indices_per_language[language])
-
     def __len__(self):
-        return self.total_batches
+        # The total number of samples per epoch is the size of the smallest dataset times the number of languages
+        return self.num_languages * self.smallest_dataset_size
+
+    def __iter__(self):
+        language_keys = list(self.indices_per_language.keys())
+        for _ in range(self.smallest_dataset_size):
+            np.random.shuffle(language_keys)
+            for language in language_keys:
+                if self.indices_per_language[language]:
+                    idx = np.random.choice(
+                        self.indices_per_language[language], replace=False
+                    )
+                    yield idx
+
+                    # Remove the selected index
+                    self.indices_per_language[language].remove(idx)
+
+                    # Reshuffle and replenish if all indices have been sampled
+                    if not self.indices_per_language[language]:
+                        # Replenish only for the exhausted language
+                        self.indices_per_language[language] = [
+                            idx
+                            for idx, lang in enumerate(self.language_info)
+                            if lang == language
+                        ]
 
 
 def custom_train_dataloader(self) -> DataLoader:
@@ -371,7 +364,7 @@ def custom_train_dataloader(self) -> DataLoader:
         "num_workers": self.args.dataloader_num_workers,
         "pin_memory": self.args.dataloader_pin_memory,
         "sampler": CustomBalancedLanguageSampler(
-            train_dataset, batch_size, language_info
+            train_dataset, language_info, batch_size
         ),
         "drop_last": self.args.dataloader_drop_last,
         "worker_init_fn": seed_worker,
