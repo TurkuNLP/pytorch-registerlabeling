@@ -372,7 +372,7 @@ class BalancedFocusedLanguageSampler(Sampler):
         return self.epoch_size
 
     def __iter__(self):
-        for _ in self.smallest_dataset_size:
+        for _ in range(self.smallest_dataset_size):
             for language in self.indices_per_language.keys():
                 # Replenish the indices for the language if necessary
                 if not self.indices_per_language[language]:
