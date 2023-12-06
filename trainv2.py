@@ -175,7 +175,6 @@ num_gpus = cuda.device_count() or 1
 label_scheme = get_label_scheme(options.labels)
 
 print(f"Predicting {len(label_scheme)} labels with {num_gpus} GPUs")
-
 print(f"Accelerator: {accelerator.num_processes} - {accelerator.distributed_type}")
 
 # Torch dtypes
@@ -273,6 +272,9 @@ if options.mode == "stats":
     get_statistics(dataset)
     exit()
 
+""" 
+
+# THIS IS OLD CODE
 
 def encode_data(example):
     use_overflow = options.overflow == "all" or example["split"] in options.overflow
@@ -322,6 +324,21 @@ dataset = DatasetDict(
 )
 
 print(dataset)
+"""
+
+
+def encode_data(example):
+    return tokenizer(
+        example["text"],
+        truncation=True,
+        max_length=options.max_length,
+        return_tensors=options.return_tensors,
+    )
+
+
+dataset = dataset.shuffle(seed=options.seed)
+dataset = dataset.map(encode_data, batched=True)
+
 
 print("Data tokenized!")
 
@@ -531,8 +548,6 @@ trainer = MultilabelTrainer(
 trainer = accelerator.prepare(trainer)
 
 print(f"Trainer prepared! Using {trainer.args._n_gpu} GPUs.")
-
-exit()
 
 # Start mode
 
