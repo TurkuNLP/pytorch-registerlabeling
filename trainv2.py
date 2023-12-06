@@ -45,7 +45,7 @@ parser.add_argument("--torch_dtype")
 parser.add_argument("--log_to_file", action="store_true")
 parser.add_argument("--labels", default="all")
 parser.add_argument("--downsample", action="store_true")
-parser.add_argument("--balance", action="store_true")
+parser.add_argument("--balance", default="")
 parser.add_argument("--overflow", default="")
 parser.add_argument("--stride", type=int, default=0)
 parser.add_argument("--hp_search")
@@ -339,7 +339,7 @@ class MultilabelTrainer(Trainer):
     if options.balance:
 
         def get_train_dataloader(self):
-            return custom_train_dataloader(self)
+            return custom_train_dataloader(self, options.balance)
 
     def compute_loss(self, model, inputs, return_outputs=False):
         labels = inputs.pop("labels")
