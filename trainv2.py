@@ -530,7 +530,7 @@ trainer = MultilabelTrainer(
 
 trainer = accelerator.prepare(trainer)
 
-print("Trainer prepared!")
+print(f"Trainer prepared! Using {trainer.args._n_gpu} GPUs.")
 
 # Start mode
 
