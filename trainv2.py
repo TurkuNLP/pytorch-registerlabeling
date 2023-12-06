@@ -176,9 +176,7 @@ label_scheme = get_label_scheme(options.labels)
 
 print(f"Predicting {len(label_scheme)} labels with {num_gpus} GPUs")
 
-print(
-    f"Accelerator: {list(Accelerator.num_processes)} - {list(Accelerator.distributed_type)}"
-)
+print(f"Accelerator: {accelerator.num_processes} - {accelerator.distributed_type}")
 
 # Torch dtypes
 
