@@ -532,6 +532,8 @@ trainer = accelerator.prepare(trainer)
 
 print(f"Trainer prepared! Using {trainer.args._n_gpu} GPUs.")
 
+exit()
+
 # Start mode
 
 if options.mode == "extract_embeddings":
