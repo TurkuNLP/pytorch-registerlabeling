@@ -49,6 +49,7 @@ parser.add_argument("--balance", default="")
 parser.add_argument("--overflow", default="")
 parser.add_argument("--stride", type=int, default=0)
 parser.add_argument("--hp_search")
+parser.add_argument("--q", action="store_true")
 
 # Loss
 
@@ -240,6 +241,10 @@ except:
     pass
 
 print(f"Imports finished")
+
+if options.q:
+    print(f"Quitting.")
+    exit()
 
 # Data processing
 
