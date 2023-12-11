@@ -10,10 +10,6 @@ labels_xgenre = [
     "Other",
 ]
 
-
-labels_upper = ["HI", "ID", "IN", "IP", "LY", "MT", "NA", "OP", "SP"]
-
-
 labels_all = [
     "HI",
     "ID",
@@ -41,6 +37,8 @@ labels_all = [
     "rv",
     "sr",
 ]
+
+labels_upper = [x for x in labels_all if x.isupper()]
 
 labels_all_other = [
     "HI",
@@ -103,6 +101,52 @@ labels_all_flat = [
     "ed",
     "oe",
 ]
+
+labels_all_hierarchy = {
+    "MT": ["MT"],
+    "LY": ["LY"],
+    "SP": ["it", "os"],
+    "ID": ["ID"],
+    "NA": ["ne", "sr", "nb", "on"],
+    "HI": ["re", "oh"],
+    "IN": ["en", "ra", "dtp", "fi", "lt", "oi"],
+    "OP": ["rv", "ob", "rs", "av", "oo"],
+    "IP": ["ds", "ed", "oe"],
+}
+
+map_full_names = {
+    "MT": "Machine translated",
+    "LY": "Lyrical",
+    "SP": "Spoken",
+    "it": "Interview",
+    "os": "Other spoken",
+    "ID": "Interactive discussion",
+    "NA": "Narrative",
+    "ne": "News report",
+    "sr": "Sports report",
+    "nb": "Narrative blog",
+    "on": "Other narrative",
+    "HI": "How-to or instructions",
+    "re": "Recipe",
+    "oh": "Other how-to",
+    "IN": "Informational description",
+    "en": "Encyclopedia article",
+    "ra": "Research article",
+    "dtp": "Description of a thing or person",
+    "fi": "FAQ",
+    "lt": "Legal",
+    "oi": "Other informational description",
+    "OP": "Opinion",
+    "rv": "Review",
+    "ob": "Opinion blog",
+    "rs": "Denominational religious blog / sermon",
+    "av": "Advice",
+    "oo": "Other opinion",
+    "IP": "Informational persuasion",
+    "ds": "Description with intent to sell",
+    "ed": "News & opinion blog or editorial",
+    "oe": "Other informational persuasion",
+}
 
 map_normalize = {
     # Our categories, upper
@@ -233,8 +277,8 @@ map_upper = {
 
 map_xgenre = {
     ### 2. MACHINE TRANSLATED
-    "MT": "",
-    "mt": "",
+    "MT": "Other",
+    "mt": "Other",
     ### 2. LYRICAL
     "LY": "Prose/Lyrical",
     "ly": "Prose/Lyrical",
