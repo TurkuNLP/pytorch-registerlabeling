@@ -38,9 +38,7 @@ def run():
         bnb_4bit_quant_type="nf4",
         bnb_4bit_compute_dtype=torch.bfloat16,
     )
-    model = AutoModelForCausalLM.from_pretrained(
-        base_model_id, quantization_config=bnb_config, cache_dir="cache"
-    )
+    model = AutoModelForCausalLM.from_pretrained(base_model_id, cache_dir="cache")
 
     tokenizer = AutoTokenizer.from_pretrained(
         base_model_id,
