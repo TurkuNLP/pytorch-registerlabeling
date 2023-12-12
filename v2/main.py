@@ -316,7 +316,7 @@ def run(options):
         model_init=model_init if options.mode == "hp_search" else None,
         args=TrainingArguments(
             f"{working_dir}/checkpoints",
-            overwrite_output_dir=True if options.overwrite else False,
+            overwrite_output_dir=True if not options.resume else False,
             evaluation_strategy=options.iter_strategy,
             save_strategy=options.iter_strategy,
             logging_strategy=options.iter_strategy,
