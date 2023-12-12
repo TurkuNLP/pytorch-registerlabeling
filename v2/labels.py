@@ -441,12 +441,12 @@ def normalize_labels(labels, label_config):
 
     mapped = [mapping[label] for label in labels]
 
-    # Make sure that if subcategory is labeled, hypercategory is, too
+    # Make sure that sublabels have corresponding upper labels
     for label in mapped:
         if label in map_lower_upper and map_lower_upper[label] not in mapped:
             mapped.append(map_lower_upper[label])
 
-    # Make sure that if just hypercategory is labeled, we have "other" label
+    # In the "all_other" scheme, we add the "other" labels
     if label_config in ["all_other"]:
         for label in mapped:
             if label in map_upper_lower and not any(
