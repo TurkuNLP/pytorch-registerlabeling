@@ -162,7 +162,7 @@ def run():
 
     base_model = AutoModelForCausalLM.from_pretrained(
         base_model_id,  # Mistral, same as before
-        quantization_config=bnb_config,  # Same quantization config as before
+        #quantization_config=bnb_config,  # Same quantization config as before
         device_map="auto",
         trust_remote_code=True,
         use_auth_token=True,
