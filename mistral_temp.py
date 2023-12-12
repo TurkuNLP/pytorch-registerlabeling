@@ -1,3 +1,3 @@
-from v2 import mistral_prompt
+from v2 import prompts
 
-mistral_prompt.run()
+prompts.run()
