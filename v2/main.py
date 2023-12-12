@@ -30,7 +30,6 @@ from .dataloader import custom_train_dataloader
 from .modes.extract_embeddings import extract_doc_embeddings
 from .modes.extract_keywords import extract_doc_keywords
 from .utils import log_gpu_memory
-from .modes import visualizations
 
 
 def run(options):
@@ -116,6 +115,8 @@ def run(options):
     # If plotting, stop here
 
     if options.mode == "plot":
+        from .modes import visualizations
+
         func = getattr(visualizations, options.plot)
         func(dataset)
         return
