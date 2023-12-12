@@ -1,3 +1,6 @@
+from torch import cuda
+
+
 def log_gpu_memory():
     for gpu in range(cuda.device_count()):
         allocated_memory = cuda.memory_allocated(gpu) / (1024**3)  # Convert to GB
