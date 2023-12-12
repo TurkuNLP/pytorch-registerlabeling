@@ -6,21 +6,44 @@ import plotly.io as pio
 
 pio.kaleido.scope.mathjax = None  # a fix for .pdf files
 import plotly.graph_objects as go
-import plotly.express as px
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
+from itertools import combinations
+from collections import Counter
+
+import seaborn as sns
 
 from ..labels import map_xgenre, map_full_names, labels_all_hierarchy
 
 template = "plotly_white"
 
 
-def get_ordered_data(dataset, reverse=True):
-    # Combine splits and extract label, language and text
-
+def get_all_data(dataset):
     df = pd.concat(
         [pd.DataFrame(dataset[split]) for split in dataset], ignore_index=True
     )[["label_text", "language", "text"]]
 
     df["label_text"] = df["label_text"].str.split(" ")
+
+    redundant_parents = [
+        x for x in labels_all_hierarchy.keys() if len(labels_all_hierarchy[x]) > 1
+    ]
+
+    # Filtering out redundant parents
+    df["label_text"] = df["label_text"].apply(
+        lambda labels: [label for label in labels if label not in redundant_parents]
+    )
+
+    return df
+
+
+def get_ordered_data(dataset, reverse=True):
+    # Combine splits and extract label, language and text
+
+    df = get_all_data(dataset)
+
     df = df.explode("label_text")
 
     # Parent and label mappings
@@ -129,8 +152,8 @@ def stacked_bars(dataset):
                 "xref": "paper",
                 # "yref": "y",
                 "line": {
-                    "color": "#555555",
-                    "width": 1,
+                    "color": "#aaaaaa",
+                    "width": 0.5,
                 },
             }
         )
@@ -146,7 +169,9 @@ def stacked_bars(dataset):
                 y=subcategories,
                 x=counts,
                 orientation="h",
-                marker_color=px.colors.qualitative.D3[color_i],
+                marker_color=sns.cubehelix_palette(rot=-0.2, n_colors=5).as_hex()[
+                    color_i
+                ],
             )
         )
         color_i += 1
@@ -203,8 +228,8 @@ def sankey_plot(dataset):
     x_pos = []
     y_pos = []
 
-    palette = px.colors.sequential.Reds
-    palette2 = px.colors.sequential.Blues
+    palette = sns.cubehelix_palette(rot=-0.2, n_colors=20).as_hex()[1:]
+    palette2 = sns.cubehelix_palette(rot=-0.3, n_colors=20).as_hex()[1:]
 
     # Define a color scheme for main categories
     # Define a color scheme for main categories and rightmost column nodes
@@ -265,7 +290,7 @@ def sankey_plot(dataset):
             source.append(label.index(main_source))
             target.append(label.index(xgenre))
             value.append(sub_data["subcategories"][main_source]["val"])
-            link_colors.append(main_category_colors[main_source])
+            link_colors.append(rightmost_node_colors[xgenre])
         else:
             for sub_source, sub_details in sub_data["subcategories"].items():
                 current_y_sub = assign_positions(
@@ -294,7 +319,12 @@ def sankey_plot(dataset):
             go.Sankey(
                 arrangement="snap",
                 node=dict(
-                    label=label,
+                    label=[
+                        '<span style="paint-order:stroke;stroke-width:0px;stroke:white;">'
+                        + map_full_names.get(x, x)
+                        + "</span>"
+                        for x in label
+                    ],
                     x=x_pos,
                     y=y_pos,
                     thickness=1,
@@ -306,12 +336,162 @@ def sankey_plot(dataset):
             )
         ]
     )
+    width = 1000
+    height = width / 1.618
 
     # Set the layout
     fig.update_layout(
         template=template,
-        margin=go.layout.Margin(l=5, r=5, b=5, t=5, pad=4),
+        width=width,
+        height=height,
+        margin=go.layout.Margin(l=5, r=5, b=15, t=5),
+        # paper_bgcolor="rgba(0,0,0,0)",
+        # plot_bgcolor="rgba(0,0,0,0)",
     )
 
     # Show the figure
     fig.show()
+    fig.write_image("output/sankey.pdf")
+
+
+import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
+
+
+def sankey_co_occurrences(dataset):
+    df = get_all_data(dataset)
+    # Converting each list in 'label_text' to a set to remove duplicates
+    df["label_text"] = df["label_text"].apply(set)
+
+    # Filtering out rows with only one value in 'label_text'
+    filtered_data = df[df["label_text"].apply(lambda x: len(x) > 1)]
+
+    label_data = list(
+        filtered_data["label_text"].apply(
+            lambda x: [list(x) for x in list(combinations(x, 2))]
+        )
+    )
+
+    connections = [list(sorted(item)) for sublist in label_data for item in sublist]
+
+    # Initialize a defaultdict to store the connections and counts
+    connections_dict = {}
+
+    # Counting the connections
+    for source, target in connections:
+        source = f"s_{source}"
+        target = f"t_{target}"
+        if source not in connections_dict:
+            connections_dict[source] = {}
+        if target not in connections_dict[source]:
+            connections_dict[source][target] = 0
+        connections_dict[source][target] += 1
+
+    # Sorting the dictionary based on total number of connections, descending
+    sorted_connections = dict(
+        sorted(
+            connections_dict.items(),
+            key=lambda x: sum(k for k in x[1].values()),
+            reverse=True,
+        )
+    )
+
+    pprint(sorted_connections)
+    print()
+    total_values = {}
+    for subdict in sorted_connections.values():
+        for key, value in subdict.items():
+            if key in total_values:
+                total_values[key] += value
+            else:
+                total_values[key] = value
+
+    # Sorting total_values dictionary by value in descending order
+    sorted_keys = sorted(total_values, key=total_values.get, reverse=True)
+
+    print(sorted_keys)
+
+    # Sorting each subdict according to the sorted_keys
+    sorted_data = {}
+    for main_key, subdict in sorted_connections.items():
+        sorted_data[main_key] = {k: subdict.get(k, 0) for k in sorted_keys}
+
+    print(sorted_data)
+
+    # Extracting source, target, and value for Sankey plot
+    source = []
+    target = []
+    value = []
+
+    # Mapping keys to indices for sources and targets
+    source_indices = {k: i for i, k in enumerate(sorted_data.keys())}
+    target_indices = {}
+    target_count = len(source_indices)
+
+    for main_key, subdict in sorted_data.items():
+        for sub_key, val in subdict.items():
+            if sub_key not in target_indices:
+                target_indices[sub_key] = target_count
+                target_count += 1
+
+            source.append(source_indices[main_key])
+            target.append(target_indices[sub_key])
+            value.append(val)
+
+    label = [
+        map_full_names.get(x[2:], x)
+        for x in list(source_indices.keys()) + list(target_indices.keys())
+    ]
+    y = [
+        ((i + 0.01) / max(0.99, len(source_indices) - len(source_indices) * 0.01))
+        for i in range(len(source_indices))
+    ] + [
+        ((i + 0.01) / max(0.99, len(target_indices) - len(target_indices) * 0.01))
+        for i in range(len(target_indices))
+    ]
+
+    max_value = max(value)
+
+    def get_color(value):
+        shade = round(value / max_value, 2)
+        return f"rgba(164, 0, 0, {shade})"
+
+    # Creating Sankey plot
+    fig = go.Figure(
+        data=[
+            go.Sankey(
+                arrangement="snap",
+                node=dict(
+                    pad=15,
+                    thickness=20,
+                    line=dict(color="black", width=0.5),
+                    label=label,
+                    x=[0.01] * len(source_indices) + [0.99] * len(target_indices),
+                    y=y,
+                    color="blue",
+                ),
+                link=dict(
+                    source=source,
+                    target=target,
+                    value=value,
+                    color=[get_color(x) for x in value],
+                ),
+            )
+        ]
+    )
+
+    # Updating layout
+    width = 1000
+    height = width / 1.618
+
+    # Set the layout
+    fig.update_layout(
+        template=template,
+        width=width,
+        height=height,
+        margin=go.layout.Margin(l=5, r=5, b=15, t=5),
+    )
+
+    # Show the figure
+    fig.show()
+    fig.write_image("output/sankey.pdf")

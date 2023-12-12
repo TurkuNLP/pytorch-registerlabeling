@@ -21,16 +21,16 @@ from transformers import (
 )
 
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
-from torch import Tensor, cuda
+from torch import Tensor, cuda, bfloat16
 from accelerate import Accelerator
 
 from .labels import get_label_scheme
 from .data import get_dataset
 from .dataloader import custom_train_dataloader
-from .modes.visualizations import sankey_plot, stacked_bars
 from .modes.extract_embeddings import extract_doc_embeddings
 from .modes.extract_keywords import extract_doc_keywords
 from .utils import log_gpu_memory
+from .modes import visualizations
 
 
 def run(options):
@@ -116,11 +116,8 @@ def run(options):
     # If plotting, stop here
 
     if options.mode == "plot":
-        if options.plot == "sankey":
-            sankey_plot(dataset)
-        elif options.plot == "stacked":
-            stacked_bars(dataset)
-
+        func = getattr(visualizations, options.plot)
+        func(dataset)
         return
 
     # Shuffle and tokenize
