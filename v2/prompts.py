@@ -68,7 +68,7 @@ def run():
 
     print(tokenized_train_dataset)
 
-    model_input = tokenizer(prompt(dataset["train"][0]), return_tensors="pt").to("cuda")
+    model_input = tokenizer(prompt(dataset["train"][0]), return_tensors="pt")
     model.eval()
     with torch.no_grad():
         print(
@@ -178,7 +178,7 @@ def run():
 
     ft_model.eval()
 
-    model_input = tokenizer(prompt(dataset["test"][0]), return_tensors="pt").to("cuda")
+    model_input = tokenizer(prompt(dataset["test"][0]), return_tensors="pt")
 
     with torch.no_grad():
         print(
