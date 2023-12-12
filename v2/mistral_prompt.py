@@ -76,5 +76,5 @@ def prompt(data_point):
 
 
         ### Labels
-        {data_point["labels"]}
+        {data_point["label_text"]}
     """
