@@ -150,7 +150,7 @@ def run(options):
             logits = outputs.logits
 
             if options.loss:
-                loss_cls = locate(f".loss.{options.loss}")
+                loss_cls = locate(f"v2.loss.{options.loss}")
                 loss_fct = loss_cls(alpha=options.loss_alpha, gamma=options.loss_gamma)
             else:
                 loss_fct = BCEWithLogitsLoss()
