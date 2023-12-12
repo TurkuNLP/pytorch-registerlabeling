@@ -153,8 +153,8 @@ def run():
             max_steps=1000,
             learning_rate=2.5e-5,  # Want about 10x smaller than the Mistral learning rate
             logging_steps=50,
-            bf16=True,
-            optim="paged_adamw_8bit",
+            #bf16=True,
+            #optim="paged_adamw_8bit",
             logging_dir="./logs",  # Directory for storing logs
             save_strategy="steps",  # Save the model checkpoint every logging step
             save_steps=50,  # Save checkpoints every 50 steps
