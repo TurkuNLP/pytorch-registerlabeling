@@ -11,29 +11,17 @@ def hyperparameter_search(trainer, hp_search_lib, working_dir, wandb_project_nam
         "backend": hp_search_lib,
         "local_dir": f"{working_dir}/{hp_search_lib}",
         "hp_space": {},
+        "n_trials": 1,
     }
 
     if hp_search_lib == "ray":
         ray_init(ignore_reinit_error=True, num_cpus=1)
-        """
         hp_config["scheduler"] = ASHAScheduler(metric="eval_f1", mode="max")
         hp_config["search_alg"] = HyperOptSearch(metric="eval_f1", mode="max")
         hp_config["hp_space"] = {
-            "learning_rate": loguniform(1e-6, 1e-3),
-            "per_device_train_batch_size": choice([6, 8, 12, 16]),
+            "learning_rate": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4],
+            "per_device_train_batch_size": [6, 8, 12],
         }
-        """
-        hp_config["scheduler"] = PopulationBasedTraining(
-            metric="eval_f1",
-            mode="max",
-            perturbation_interval=1,
-            hyperparam_mutations={
-                # "learning_rate": uniform(1e-5, 5e-5),
-                "learning_rate": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4],
-                "per_device_train_batch_size": [6, 8, 10],
-            },
-        )
-        hp_config["hp_space"] = lambda _: {}
 
     elif hp_search_lib == "wandb":
         hp_config["hp_space"] = lambda _: {
