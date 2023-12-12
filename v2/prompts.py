@@ -25,6 +25,8 @@ fsdp_plugin = FullyShardedDataParallelPlugin(
 )
 accelerator = Accelerator(fsdp_plugin=fsdp_plugin)
 
+max_length = 2048
+
 
 def run():
     dataset = get_dataset("en-fi-fr-sv", "en-fi-fr-sv", "all")
@@ -41,7 +43,10 @@ def run():
     )
 
     tokenizer = AutoTokenizer.from_pretrained(
-        base_model_id, model_max_length=512, padding_side="left", add_eos_token=True
+        base_model_id,
+        model_max_length=max_length,
+        padding_side="left",
+        add_eos_token=True,
     )
     tokenizer.pad_token = tokenizer.eos_token
 
@@ -49,7 +54,7 @@ def run():
         result = tokenizer(
             prompt,
             truncation=True,
-            max_length=1024,
+            max_length=max_length,
             padding="max_length",
         )
         result["labels"] = result["input_ids"].copy()
