@@ -56,16 +56,26 @@ def run():
             padding="max_length",
         )
         result["labels"] = result["input_ids"].copy()
-        print(result)
-        exit()
 
         return result
 
     def generate_and_tokenize_prompt(data_point):
         return tokenize(prompt(data_point))
 
-    tokenized_train_dataset = dataset["train"].map(generate_and_tokenize_prompt)
-    tokenized_val_dataset = dataset["test"].map(generate_and_tokenize_prompt)
+    tokenized_train_dataset = (
+        dataset["train"]
+        .map(generate_and_tokenize_prompt)
+        .remove_columns(
+            ["label", "label_text", "language", "text", "id", "split", "length"]
+        )
+    )
+    tokenized_val_dataset = (
+        dataset["test"]
+        .map(generate_and_tokenize_prompt)
+        .remove_columns(
+            ["label", "label_text", "language", "text", "id", "split", "length"]
+        )
+    )
 
     print(tokenized_train_dataset)
 
