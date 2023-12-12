@@ -28,7 +28,7 @@ def run():
         result = tokenizer(
             prompt,
             truncation=True,
-            max_length=512,
+            max_length=1024,
             padding="max_length",
         )
         result["labels"] = result["input_ids"].copy()
@@ -41,3 +41,13 @@ def run():
     tokenized_val_dataset = dataset["test"].map(generate_and_tokenize_prompt)
 
     print(tokenized_train_dataset)
+
+    model_input = tokenizer(prompt(data_point), return_tensors="pt").to("cuda")
+    model.eval()
+    with torch.no_grad():
+        print(
+            tokenizer.decode(
+                model.generate(**model_input, max_new_tokens=256, pad_token_id=2)[0],
+                skip_special_tokens=True,
+            )
+        )

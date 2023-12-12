@@ -72,7 +72,7 @@ def prompt(data_point):
         Your task is classify the below text (given after ### Target text) to one or more labels. The correct labels are given  If you classify a text into a lower level label, its corresponding upper level label should always also be included. Your output should consist of space-separated label names, alphabetically sorted. 
 
         ### Target text
-        {data_point["target"]}
+        {data_point["text"][:5000]}
 
 
         ### Labels
