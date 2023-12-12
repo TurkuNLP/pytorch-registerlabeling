@@ -89,9 +89,9 @@ parser.add_argument("--resume", action="store_true")
 
 parser.add_argument("--balance")
 
-# Loss function
+# Loss function, uses BCEFocalLoss by default
 
-parser.add_argument("--loss")  # BCEFocalLoss
+parser.add_argument("--loss", default="BCEFocalLoss")
 parser.add_argument("--loss_alpha", type=float, default=0.85)
 parser.add_argument("--loss_gamma", type=float, default=3.00)
 
