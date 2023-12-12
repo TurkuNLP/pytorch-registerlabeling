@@ -88,7 +88,7 @@ parser.add_argument("--resume", action="store_true")
 # Balanced sampling
 
 parser.add_argument("--balance", action="store_true")
-parser.add_argument("--sampler", action="mixed")
+parser.add_argument("--sampler", default="mixed")
 
 # Loss function, uses BCEFocalLoss by default
 
