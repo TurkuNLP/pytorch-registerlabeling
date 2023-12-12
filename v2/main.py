@@ -100,7 +100,7 @@ def run(options):
         add_prefix_space=options.add_prefix_space,
         low_cpu_mem_usage=options.low_cpu_mem_usage,
         torch_dtype=torch_dtype,
-        cache_dir=f"{working_dir}/tokenizer_cache",
+        cache_dir=f"{options.output_path}/tokenizer_cache",
     )
 
     # Some LLM's require a pad id
@@ -150,7 +150,7 @@ def run(options):
             logits = outputs.logits
 
             if options.loss:
-                loss_cls = locate(f"loss.{options.loss}")
+                loss_cls = locate(f".loss.{options.loss}")
                 loss_fct = loss_cls(alpha=options.loss_alpha, gamma=options.loss_gamma)
             else:
                 loss_fct = BCEWithLogitsLoss()
