@@ -19,8 +19,8 @@ def hyperparameter_search(trainer, hp_search_lib, working_dir, wandb_project_nam
         hp_config["scheduler"] = ASHAScheduler(metric="eval_f1", mode="max")
         # hp_config["search_alg"] = HyperOptSearch(metric="eval_f1", mode="max")
         hp_config["hp_space"] = lambda _: {
-            "learning_rate": [1e-6, 5e-6, 1e-5, 5e-5, 1e-4],
-            "per_device_train_batch_size": [6, 8, 12],
+            "learning_rate": grid_search([1e-6, 5e-6, 1e-5, 5e-5, 1e-4]),
+            "per_device_train_batch_size": grid_search([6, 8, 12]),
         }
 
     elif hp_search_lib == "wandb":
