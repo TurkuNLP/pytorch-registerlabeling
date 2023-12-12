@@ -56,6 +56,14 @@ def run():
             padding="max_length",
         )
         result["labels"] = result["input_ids"].copy()
+        result.pop("label")
+        result.pop("label_text")
+        result.pop("language")
+        result.pop("text")
+        result.pop("id")
+        result.pop("split")
+        result.pop("length")
+
         return result
 
     def generate_and_tokenize_prompt(data_point):
@@ -162,7 +170,7 @@ def run():
 
     base_model = AutoModelForCausalLM.from_pretrained(
         base_model_id,  # Mistral, same as before
-        #quantization_config=bnb_config,  # Same quantization config as before
+        # quantization_config=bnb_config,  # Same quantization config as before
         device_map="auto",
         trust_remote_code=True,
         use_auth_token=True,
