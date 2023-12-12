@@ -56,13 +56,8 @@ def run():
             padding="max_length",
         )
         result["labels"] = result["input_ids"].copy()
-        result.pop("label")
-        result.pop("label_text")
-        result.pop("language")
-        result.pop("text")
-        result.pop("id")
-        result.pop("split")
-        result.pop("length")
+        print(result)
+        exit()
 
         return result
 
