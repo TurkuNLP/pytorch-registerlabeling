@@ -142,7 +142,7 @@ def run(options):
         if options.balance:
 
             def get_train_dataloader(self):
-                return custom_train_dataloader(self, options.balance)
+                return custom_train_dataloader(self, options.sampler)
 
         def compute_loss(self, model, inputs, return_outputs=False):
             labels = inputs.pop("labels")
