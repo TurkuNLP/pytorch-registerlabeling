@@ -18,7 +18,10 @@ def run():
     )
 
     model = AutoModelForCausalLM.from_pretrained(
-        base_model_id, quantization_config=bnb_config
+        base_model_id,
+        quantization_config=bnb_config,
+        device_map="auto",
+        cache_dir="cache",
     )
 
     tokenizer = AutoTokenizer.from_pretrained(
