@@ -153,12 +153,16 @@ def run(options):
             logits = outputs.logits
 
             if options.loss:
+                loss_params = {
+                    "gamma": options.gamma,
+                    "alpha": options.alpha,
+                }
+                if options.loss == "HierarchicalBCEFocalLoss":
+                    loss_params["threshold"] = current_optimal_threshold
+                    loss_params["hierarchy_penalty_weight"] = options.loss_penalty
+
                 loss_cls = locate(f"v2.loss.{options.loss}")
-                loss_fct = loss_cls(
-                    alpha=options.loss_alpha,
-                    gamma=options.loss_gamma,
-                    threshold=current_optimal_threshold,
-                )
+                loss_fct = loss_cls(**loss_params)
             else:
                 loss_fct = BCEWithLogitsLoss()
 
