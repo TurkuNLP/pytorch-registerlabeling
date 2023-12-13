@@ -65,26 +65,6 @@ def run():
     plot_data_lengths(tokenized_train_dataset, tokenized_val_dataset)
     """
 
-    eval_prompt = prompt(dataset["train"][0], labels=False)
-
-    tokenizer = AutoTokenizer.from_pretrained(
-        base_model_id,
-        add_bos_token=True,
-    )
-
-    model_input = tokenizer(eval_prompt, return_tensors="pt").to("cuda")
-
-    model.eval()
-    with torch.no_grad():
-        print(
-            tokenizer.decode(
-                model.generate(
-                    **model_input, max_new_tokens=256, repetition_penalty=1.15
-                )[0],
-                skip_special_tokens=True,
-            )
-        )
-
     from peft import prepare_model_for_kbit_training
 
     model.gradient_checkpointing_enable()
