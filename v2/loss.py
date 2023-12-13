@@ -7,7 +7,6 @@ from .labels import label_hierarchy
 class HierarchicalBCEFocalLoss(torch.nn.Module):
     def __init__(
         self,
-        label_hierarchy,
         gamma=1.0,
         alpha=1.0,
         hierarchy_penalty_weight=1.0,
