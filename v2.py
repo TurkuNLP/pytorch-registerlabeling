@@ -54,7 +54,7 @@ parser.add_argument("--plot")
 
 # Hyperparameter search
 
-parser.add_argument("--hp_search_lib")
+parser.add_argument("--hp_search_lib", default="ray")
 
 # Training arguments
 
