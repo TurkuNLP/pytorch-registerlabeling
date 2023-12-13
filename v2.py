@@ -83,6 +83,7 @@ parser.add_argument("--device_map", default="auto")
 parser.add_argument("--fp16", action="store_true")
 parser.add_argument("--bf16", action="store_true")
 parser.add_argument("--resume", action="store_true")
+parser.add_argument("--num_gpus", "-g", type=int)
 
 # Balanced sampling
 
@@ -112,5 +113,8 @@ options = parser.parse_args()
 
 print(f"Args: {' '.join(sys.argv)}")
 print(f"Settings: {options}")
+
+if options.num_gpus:
+    os.environ["CUDA_VISIBLE_DEVICES"] = f"{options.num_gpus}"
 
 main.run(options)
