@@ -92,8 +92,8 @@ parser.add_argument("--sampler", default="mixed")
 # Loss function, uses BCEFocalLoss by default
 
 parser.add_argument("--loss", "-l", default="BCEFocalLoss")
-parser.add_argument("--loss_alpha", type=float, default=0.75)
-parser.add_argument("--loss_gamma", type=float, default=2.00)
+parser.add_argument("--loss_alpha", type=float, default=0.85)
+parser.add_argument("--loss_gamma", type=float, default=3.00)
 parser.add_argument("--loss_penalty", type=float, default=10.00)
 
 # (Q)lora / peft
