@@ -5,13 +5,18 @@ from ray.tune.search.hyperopt import HyperOptSearch
 from ray import init as ray_init
 
 
-def hyperparameter_search(trainer, hp_search_lib, working_dir, wandb_project_name):
+def hyperparameter_search(
+    trainer, hp_search_lib, working_dir, wandb_project_name, num_gpus
+):
     hp_config = {
         "direction": "maximize",
         "backend": hp_search_lib,
         "local_dir": f"{working_dir}/{hp_search_lib}",
         "hp_space": {},
         "n_trials": 1,
+        "resources_per_trial": {
+            "gpu": num_gpus,
+        },
     }
 
     if hp_search_lib == "ray":
@@ -34,7 +39,7 @@ def hyperparameter_search(trainer, hp_search_lib, working_dir, wandb_project_nam
                     "min": 1e-6,
                     "max": 1e-4,
                 },
-                "per_device_train_batch_size": {"values": [6, 8, 12, 16]},
+                "per_device_train_batch_size": {"values": [6, 8, 12]},
             },
         }
 

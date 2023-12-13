@@ -13,6 +13,7 @@ from torch.distributed.fsdp.fully_sharded_data_parallel import (
     FullOptimStateDictConfig,
     FullStateDictConfig,
 )
+from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
 
 import transformers
 from datetime import datetime
@@ -38,7 +39,13 @@ def run():
         bnb_4bit_quant_type="nf4",
         bnb_4bit_compute_dtype=torch.bfloat16,
     )
-    model = AutoModelForCausalLM.from_pretrained(base_model_id, cache_dir="cache")
+    model = AutoModelForCausalLM.from_pretrained(
+        base_model_id,
+        device_map="auto",
+        cache_dir="cache",
+        torch_dtype=torch.float16,
+        use_flash_attention_2=True,
+    )
 
     tokenizer = AutoTokenizer.from_pretrained(
         base_model_id,
@@ -152,8 +159,10 @@ def run():
             per_device_eval_batch_size=2,
             gradient_accumulation_steps=4,
             max_steps=1000,
-            learning_rate=2.5e-5,  # Want about 10x smaller than the Mistral learning rate
+            max_grad_norm=0.3,
+            learning_rate=1e-5,  # Want about 10x smaller than the Mistral learning rate
             logging_steps=50,
+            fp16=True
             # bf16=True,
             # optim="paged_adamw_8bit",
             logging_dir="./logs",  # Directory for storing logs
