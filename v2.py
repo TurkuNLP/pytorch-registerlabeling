@@ -113,7 +113,6 @@ print(f"Args: {' '.join(sys.argv)}")
 print(f"Settings: {options}")
 
 if options.num_gpus:
-    print(f"Chose to use ")
     os.environ["CUDA_VISIBLE_DEVICES"] = f"{options.num_gpus}"
 
 from v2 import main
