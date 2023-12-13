@@ -59,7 +59,7 @@ parser.add_argument("--hp_search_lib", default="ray")
 # Training arguments
 
 parser.add_argument("--lr", type=float, default=1e-5)
-parser.add_argument("--train_batch_size", type=int, default=8)
+parser.add_argument("--train_batch_size", "-b", type=int, default=8)
 parser.add_argument("--eval_batch_size", type=int, default=8)
 parser.add_argument("--weight_decay", type=float, default=0)
 parser.add_argument("--warmup_steps", type=int, default=0)
