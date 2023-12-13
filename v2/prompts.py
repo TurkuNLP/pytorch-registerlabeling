@@ -162,7 +162,7 @@ def run():
             max_grad_norm=0.3,
             learning_rate=1e-5,  # Want about 10x smaller than the Mistral learning rate
             logging_steps=50,
-            fp16=True
+            fp16=True,
             # bf16=True,
             # optim="paged_adamw_8bit",
             logging_dir="./logs",  # Directory for storing logs
