@@ -24,7 +24,7 @@ def hyperparameter_search(
         hp_config["search_alg"] = HyperOptSearch(metric="eval_f1", mode="max")
         hp_config["hp_space"] = lambda _: {
             "learning_rate": loguniform(1e-6, 1e-4),
-            "per_device_train_batch_size": choice([x / num_gpus for x in [4, 8, 16]]),
+            "per_device_train_batch_size": choice([x / num_gpus for x in [6, 8, 12]]),
         }
 
     elif hp_search_lib == "wandb":

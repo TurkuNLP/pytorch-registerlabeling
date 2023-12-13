@@ -78,7 +78,11 @@ def run(options):
         from dotenv import load_dotenv
 
         load_dotenv()
-        wandb_project_name = f"{options.train}_{options.test}{'_tuning' if options.mode == 'hp_search' else ''}_{model_name.replace('/', '_')}"
+        wandb_project_name = (
+            f"{options.train}_{options.test}{'_tuning' if options.mode == 'hp_search' else ''}_{model_name.replace('/', '_')}"
+            if not options.wandb_project
+            else options.wandb_project
+        )
 
         os.environ["WANDB_PROJECT"] = wandb_project_name
         os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY", "")
