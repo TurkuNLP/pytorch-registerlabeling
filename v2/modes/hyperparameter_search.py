@@ -13,7 +13,6 @@ def hyperparameter_search(
         "backend": hp_search_lib,
         "local_dir": f"{working_dir}/{hp_search_lib}",
         "hp_space": {},
-        "n_trials": 1,
         "resources_per_trial": {
             "gpu": num_gpus,
         },
