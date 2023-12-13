@@ -3,8 +3,6 @@ from datetime import datetime
 import os
 import sys
 
-from v2 import main
-
 
 _print = print
 
@@ -115,6 +113,9 @@ print(f"Args: {' '.join(sys.argv)}")
 print(f"Settings: {options}")
 
 if options.num_gpus:
+    print(f"Chose to use ")
     os.environ["CUDA_VISIBLE_DEVICES"] = f"{options.num_gpus}"
+
+from v2 import main
 
 main.run(options)
