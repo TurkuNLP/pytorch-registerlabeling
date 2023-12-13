@@ -1,6 +1,58 @@
 import torch
 import torch.nn.functional as F
 
+from .labels import label_hierarchy
+
+
+class HierarchicalBCEFocalLoss(torch.nn.Module):
+    def __init__(
+        self,
+        label_hierarchy,
+        gamma=1.0,
+        alpha=1.0,
+        hierarchy_penalty_weight=1.0,
+        reduction="mean",
+        threshold=0.5,
+    ):
+        super(HierarchicalBCEFocalLoss, self).__init__()
+        self.gamma = gamma
+        self.alpha = alpha
+        self.reduction = reduction
+        self.hierarchy_penalty_weight = hierarchy_penalty_weight
+        self.label_hierarchy = (
+            label_hierarchy  # A mapping of child labels to parent labels
+        )
+        self.threshold = threshold  # Dynamic threshold for predictions
+
+    def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        # Compute standard BCE Focal Loss
+        BCE_loss = F.binary_cross_entropy_with_logits(logits, targets, reduction="none")
+        pt = torch.exp(-BCE_loss)
+        focal_loss = self.alpha * (1 - pt) ** self.gamma * BCE_loss
+
+        # Compute Hierarchical Penalty
+        hierarchy_penalty = torch.zeros_like(focal_loss)
+        for child, parent in self.label_hierarchy.items():
+            child_pred = logits[:, child]
+            parent_target = targets[:, parent]
+            # Apply penalty when child is predicted but parent is not, using dynamic threshold
+            penalty_condition = (child_pred > self.threshold) & (
+                parent_target < self.threshold
+            )
+            hierarchy_penalty[:, child] += penalty_condition * focal_loss[:, child]
+
+        # Combine losses
+        combined_loss = focal_loss + self.hierarchy_penalty_weight * hierarchy_penalty
+
+        # Class balancing
+        combined_loss = combined_loss * (
+            targets * self.alpha + (1 - targets) * (1 - self.alpha)
+        )
+
+        if self.reduction == "mean":
+            return combined_loss.mean()
+        return combined_loss
+
 
 class BCEFocalLoss(torch.nn.Module):
     def __init__(self, gamma=1.0, alpha=1.0, reduction="mean"):

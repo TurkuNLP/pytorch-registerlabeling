@@ -18,6 +18,7 @@ from transformers import (
     BitsAndBytesConfig,
     TrainingArguments,
     EarlyStoppingCallback,
+    TrainerCallback,
 )
 
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
@@ -30,6 +31,8 @@ from .dataloader import custom_train_dataloader
 from .modes.extract_embeddings import extract_doc_embeddings
 from .modes.extract_keywords import extract_doc_keywords
 from .utils import log_gpu_memory
+
+current_optimal_threshold = 0.5
 
 
 def run(options):
@@ -177,6 +180,10 @@ def run(options):
             if f1 > best_f1:
                 best_f1 = f1
                 best_f1_threshold = th
+
+        # This is used by the loss function, so we need it global
+        global current_optimal_threshold
+        current_optimal_threshold = best_f1_threshold
         return best_f1_threshold
 
     # Calculate metrics
@@ -309,7 +316,22 @@ def run(options):
 
         return model
 
+    # Custom Callback to update the loss function's threshold
+    class UpdateThresholdCallback(TrainerCallback):
+        def __init__(self, loss_function):
+            self.loss_function = loss_function
+
+        def on_evaluate(self, args, state, control, **kwargs):
+            # Update the threshold of the loss function
+            global current_optimal_threshold
+            self.loss_function.threshold = current_optimal_threshold
+
     # Init trainer
+
+    callbacks = [EarlyStoppingCallback(early_stopping_patience=options.patience)]
+
+    if options.loss == "HierarchicalBCEFocalLoss":
+        callbacks.append(UpdateThresholdCallback(locate(f"v2.loss.{options.loss}")))
 
     trainer = MultilabelTrainer(
         model=None if options.mode == "hp_search" else model_init(),
@@ -352,7 +374,7 @@ def run(options):
         data_collator=DataCollatorWithPadding(
             tokenizer=tokenizer, padding="longest", max_length=options.max_length
         ),
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=options.patience)],
+        callbacks=callbacks,
     )
 
     # Prepare with Accelerate

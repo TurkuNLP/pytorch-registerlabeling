@@ -38,6 +38,25 @@ labels_all = [
     "sr",
 ]
 
+labels_all_structure = {
+    "SP": ["it"],
+    "NA": ["ne", "sr", "nb"],
+    "HI": ["re"],
+    "IN": ["en", "ra", "dtp", "fi", "lt"],
+    "OP": ["rv", "ob", "rs", "av"],
+    "IP": ["ds", "ed"],
+}
+
+label_to_index = {label: idx for idx, label in enumerate(labels_all)}
+label_hierarchy = {}
+
+for parent, children in labels_all_structure.items():
+    parent_index = label_to_index[parent]
+    for child in children:
+        child_index = label_to_index[child]
+        label_hierarchy[child_index] = parent_index
+
+
 labels_upper = [x for x in labels_all if x.isupper()]
 
 labels_all_other = [
