@@ -148,13 +148,13 @@ def run():
         args=transformers.TrainingArguments(
             output_dir=output_dir,
             warmup_steps=5,
-            per_device_train_batch_size=2,
+            per_device_train_batch_size=1,
             gradient_accumulation_steps=4,
             max_steps=1000,
             learning_rate=2.5e-5,  # Want about 10x smaller than the Mistral learning rate
             logging_steps=50,
-            #bf16=True,
-            #optim="paged_adamw_8bit",
+            # bf16=True,
+            # optim="paged_adamw_8bit",
             logging_dir="./logs",  # Directory for storing logs
             save_strategy="steps",  # Save the model checkpoint every logging step
             save_steps=50,  # Save checkpoints every 50 steps
