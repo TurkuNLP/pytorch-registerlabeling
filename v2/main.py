@@ -9,6 +9,9 @@ from sklearn.metrics import (
     accuracy_score,
     f1_score,
     roc_auc_score,
+    precision_score,
+    recall_score,
+    average_precision_score,
 )
 
 from transformers import (
@@ -216,10 +219,23 @@ def run(options):
             roc_auc = roc_auc_score(labels, y_pred, average="micro")
         except:
             roc_auc = 0
+
+        # Compute precision and recall
+        precision = precision_score(labels, y_pred, average="micro")
+        recall = recall_score(labels, y_pred, average="micro")
+
+        # Compute PR AUC
+        try:
+            pr_auc = average_precision_score(labels, probs, average="micro")
+        except:
+            pr_auc = 0
         accuracy = accuracy_score(labels, y_pred)
         metrics = {
             "f1": f1_score(y_true=labels, y_pred=y_pred, average="micro"),
             "f1_th05": f1_score(y_true=labels, y_pred=y_th05, average="micro"),
+            "precision": precision,
+            "recall": recall,
+            "pr_auc": pr_auc,
             "roc_auc": roc_auc,
             "accuracy": accuracy,
             "threshold": threshold,
