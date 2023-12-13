@@ -1,4 +1,4 @@
-def prompt(data_point):
+def prompt(data_point, labels=True):
     return f"""
         You are a hierarchical multilabel text classifier tool. There are the following 9 upper level labels ([upper_label]: [abbreviation]):
 
@@ -38,5 +38,5 @@ def prompt(data_point):
 
 
         ### Labels
-        {data_point["label_text"]}
+        {data_point["label_text"] if labels else ""}
     """

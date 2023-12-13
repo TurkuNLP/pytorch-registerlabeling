@@ -165,7 +165,7 @@ def run():
             logging_steps=50,
             fp16=True,
             # bf16=True,
-            # optim="paged_adamw_8bit",
+            optim="paged_adamw_8bit",
             logging_dir="./logs",  # Directory for storing logs
             save_strategy="steps",  # Save the model checkpoint every logging step
             save_steps=50,  # Save checkpoints every 50 steps
