@@ -148,7 +148,7 @@ def run():
         args=transformers.TrainingArguments(
             output_dir=output_dir,
             warmup_steps=5,
-            per_device_train_batch_size=2
+            per_device_train_batch_size=2,
             per_device_eval_batch_size=2,
             gradient_accumulation_steps=4,
             max_steps=1000,
