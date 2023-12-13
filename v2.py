@@ -26,11 +26,11 @@ parser = ArgumentParser()
 
 # Mode of operation
 
-parser.add_argument("--mode", default="train")
+parser.add_argument("--mode", "-m", default="train")
 
 # Data and model
 
-parser.add_argument("--train", required=True)
+parser.add_argument("--train", "-t", required=True)
 parser.add_argument("--test")
 parser.add_argument("--labels", default="all")
 parser.add_argument("--model_name", default="xlm-roberta-base")
@@ -50,7 +50,7 @@ parser.add_argument("--return_tensors")
 
 # Visualization
 
-parser.add_argument("--plot")
+parser.add_argument("--plot", "-p")
 
 # Hyperparameter search
 
