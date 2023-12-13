@@ -84,3 +84,98 @@ def run():
                 skip_special_tokens=True,
             )
         )
+
+    from peft import prepare_model_for_kbit_training
+
+    model.gradient_checkpointing_enable()
+    model = prepare_model_for_kbit_training(model)
+
+    def print_trainable_parameters(model):
+        """
+        Prints the number of trainable parameters in the model.
+        """
+        trainable_params = 0
+        all_param = 0
+        for _, param in model.named_parameters():
+            all_param += param.numel()
+            if param.requires_grad:
+                trainable_params += param.numel()
+        print(
+            f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}"
+        )
+
+    from peft import LoraConfig, get_peft_model
+
+    config = LoraConfig(
+        r=32,
+        lora_alpha=64,
+        target_modules=[
+            "q_proj",
+            "k_proj",
+            "v_proj",
+            "o_proj",
+            "gate_proj",
+            "up_proj",
+            "down_proj",
+            "lm_head",
+        ],
+        bias="none",
+        lora_dropout=0.05,  # Conventional
+        task_type="CAUSAL_LM",
+    )
+
+    model = get_peft_model(model, config)
+    print_trainable_parameters(model)
+
+    print(model)
+
+    import wandb, os
+
+    wandb.login()
+
+    wandb_project = "register_classes"
+    if len(wandb_project) > 0:
+        os.environ["WANDB_PROJECT"] = wandb_project
+
+    import transformers
+    from datetime import datetime
+
+    project = "register_classes"
+    base_model_name = "mistral"
+    run_name = base_model_name + "-" + project
+    output_dir = "./" + run_name
+
+    trainer = transformers.Trainer(
+        model=model,
+        train_dataset=tokenized_train_dataset,
+        eval_dataset=tokenized_val_dataset,
+        args=transformers.TrainingArguments(
+            output_dir=output_dir,
+            warmup_steps=1,
+            per_device_train_batch_size=2,
+            per_device_eval_batch_size=2,
+            gradient_accumulation_steps=4,
+            gradient_checkpointing=True,
+            max_steps=500,
+            learning_rate=2.5e-5,  # Want a small lr for finetuning
+            bf16=True,
+            optim="paged_adamw_8bit",
+            logging_steps=25,  # When to start reporting loss
+            logging_dir="./logs",  # Directory for storing logs
+            save_strategy="steps",  # Save the model checkpoint every logging step
+            save_steps=25,  # Save checkpoints every 50 steps
+            evaluation_strategy="steps",  # Evaluate the model every logging step
+            eval_steps=25,  # Evaluate and save checkpoints every 50 steps
+            do_eval=True,  # Perform evaluation at the end of training
+            report_to="wandb",  # Comment this out if you don't want to use weights & baises
+            run_name=f"{run_name}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}",  # Name of the W&B run (optional)
+        ),
+        data_collator=transformers.DataCollatorForLanguageModeling(
+            tokenizer, mlm=False
+        ),
+    )
+
+    model.config.use_cache = (
+        False  # silence the warnings. Please re-enable for inference!
+    )
+    trainer.train()
