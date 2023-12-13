@@ -44,8 +44,20 @@ def run():
         result["labels"] = result["input_ids"].copy()
         return result
 
-    tokenized_train_dataset = dataset["train"].map(generate_and_tokenize_prompt)
-    tokenized_val_dataset = dataset["dev"].map(generate_and_tokenize_prompt)
+    tokenized_train_dataset = (
+        dataset["train"]
+        .map(generate_and_tokenize_prompt)
+        .remove_columns(
+            ["label", "label_text", "language", "text", "id", "split", "length"]
+        )
+    )
+    tokenized_val_dataset = (
+        dataset["dev"]
+        .map(generate_and_tokenize_prompt)
+        .remove_columns(
+            ["label", "label_text", "language", "text", "id", "split", "length"]
+        )
+    )
     """
     import matplotlib.pyplot as plt
 
