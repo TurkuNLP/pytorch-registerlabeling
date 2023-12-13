@@ -154,7 +154,11 @@ def run(options):
 
             if options.loss:
                 loss_cls = locate(f"v2.loss.{options.loss}")
-                loss_fct = loss_cls(alpha=options.loss_alpha, gamma=options.loss_gamma)
+                loss_fct = loss_cls(
+                    alpha=options.loss_alpha,
+                    gamma=options.loss_gamma,
+                    threshold=current_optimal_threshold,
+                )
             else:
                 loss_fct = BCEWithLogitsLoss()
 
@@ -316,22 +320,7 @@ def run(options):
 
         return model
 
-    # Custom Callback to update the loss function's threshold
-    class UpdateThresholdCallback(TrainerCallback):
-        def __init__(self, loss_function):
-            self.loss_function = loss_function
-
-        def on_evaluate(self, args, state, control, **kwargs):
-            # Update the threshold of the loss function
-            global current_optimal_threshold
-            self.loss_function.threshold = current_optimal_threshold
-
     # Init trainer
-
-    callbacks = [EarlyStoppingCallback(early_stopping_patience=options.patience)]
-
-    if options.loss == "HierarchicalBCEFocalLoss":
-        callbacks.append(UpdateThresholdCallback(locate(f"v2.loss.{options.loss}")))
 
     trainer = MultilabelTrainer(
         model=None if options.mode == "hp_search" else model_init(),
@@ -374,7 +363,7 @@ def run(options):
         data_collator=DataCollatorWithPadding(
             tokenizer=tokenizer, padding="longest", max_length=options.max_length
         ),
-        callbacks=callbacks,
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=options.patience)],
     )
 
     # Prepare with Accelerate

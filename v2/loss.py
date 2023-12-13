@@ -54,7 +54,7 @@ class HierarchicalBCEFocalLoss(torch.nn.Module):
 
 
 class BCEFocalLoss(torch.nn.Module):
-    def __init__(self, gamma=1.0, alpha=1.0, reduction="mean"):
+    def __init__(self, gamma=1.0, alpha=1.0, reduction="mean", threshold=None):
         super(BCEFocalLoss, self).__init__()
         self.gamma = gamma
         self.alpha = alpha
