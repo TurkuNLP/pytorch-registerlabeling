@@ -154,8 +154,8 @@ def run(options):
 
             if options.loss:
                 loss_params = {
-                    "gamma": options.gamma,
-                    "alpha": options.alpha,
+                    "gamma": options.loss_gamma,
+                    "alpha": options.loss_alpha,
                 }
                 if options.loss == "HierarchicalBCEFocalLoss":
                     loss_params["threshold"] = current_optimal_threshold
