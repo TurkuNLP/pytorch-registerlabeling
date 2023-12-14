@@ -6,7 +6,7 @@ import tempfile
 
 project = "/scratch/project_2009199"
 
-tempfile.tempdir = f"{project}/tmp"
+tempfile.tempdir = f"{project}/output"
 
 _print = print
 
