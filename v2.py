@@ -2,10 +2,11 @@ from argparse import ArgumentParser
 from datetime import datetime
 import os
 import sys
+import tempfile
 
 project = "/scratch/project_2009199"
-os.environ["TMPDIR"] = f"{project}/tmp"
 
+tempfile.tempdir = f"{project}/tmp"
 
 _print = print
 
