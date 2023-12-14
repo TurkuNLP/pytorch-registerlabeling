@@ -289,13 +289,16 @@ def run(options):
             device_map=options.device_map or None,
             offload_folder="offload",
             low_cpu_mem_usage=True,
-            use_flash_attention_2=options.use_flash_attention_2,
+            attn_implementation="flash_attention_2"
+            if options.use_flash_attention_2
+            else "sdpa",
+            # use_flash_attention_2=options.use_flash_attention_2,
             torch_dtype=torch_dtype,
             quantization_config=BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_quant_type="nf4",
                 bnb_4bit_use_double_quant=True,
-                bnb_4bit_compute_dtype=bfloat16,
+                bnb_4bit_compute_dtype=torch_dtype,
             )
             if options.quantize
             else None,
@@ -334,7 +337,8 @@ def run(options):
             # add LoRA adaptor
             model.gradient_checkpointing_enable()
             model.config.use_cache = False
-            model = prepare_model_for_kbit_training(model)
+
+            # model = prepare_model_for_kbit_training(model)
             model = get_peft_model(model, lora_config)
             model.print_trainable_parameters()
 
