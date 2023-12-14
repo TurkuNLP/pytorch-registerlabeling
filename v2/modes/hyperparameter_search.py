@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from ray.tune.schedulers import ASHAScheduler
 from ray.tune.schedulers import PopulationBasedTraining
 from ray.tune import grid_search, CLIReporter, loguniform, choice, uniform
@@ -8,10 +10,12 @@ from ray import init as ray_init
 def hyperparameter_search(
     trainer, hp_search_lib, working_dir, wandb_project_name, num_gpus
 ):
+    absolute_path = Path(f"{working_dir}/{hp_search_lib}/").resolve()
+
     hp_config = {
         "direction": "maximize",
         "backend": hp_search_lib,
-        "local_dir": f"{working_dir}/{hp_search_lib}/",
+        "local_dir": absolute_path,
         "hp_space": {},
         "resources_per_trial": {
             "gpu": num_gpus,
