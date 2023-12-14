@@ -440,5 +440,10 @@ def run(options):
         from .modes.hyperparameter_search import hyperparameter_search
 
         hyperparameter_search(
-            trainer, options.hp_search_lib, working_dir, wandb_project_name, num_gpus
+            trainer,
+            options.hp_search_lib,
+            working_dir,
+            wandb_project_name,
+            num_gpus,
+            options.ray_log_path,
         )

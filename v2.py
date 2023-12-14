@@ -54,6 +54,7 @@ parser.add_argument("--plot", "-p")
 # Hyperparameter search
 
 parser.add_argument("--hp_search_lib", default="ray")
+parser.add_argument("--ray_log_path", default="/scratch/project_2009199/log")
 
 # Training arguments
 

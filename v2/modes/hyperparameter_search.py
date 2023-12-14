@@ -8,7 +8,7 @@ from ray import init as ray_init
 
 
 def hyperparameter_search(
-    trainer, hp_search_lib, working_dir, wandb_project_name, num_gpus
+    trainer, hp_search_lib, working_dir, wandb_project_name, num_gpus, ray_log_path
 ):
     absolute_path = str(Path(f"{working_dir}/{hp_search_lib}").resolve())
 
@@ -23,9 +23,7 @@ def hyperparameter_search(
     }
 
     if hp_search_lib == "ray":
-        ray_init(
-            ignore_reinit_error=True, num_cpus=1, _temp_dir=absolute_path + "/logs"
-        )
+        ray_init(ignore_reinit_error=True, num_cpus=1, _temp_dir=ray_log_path)
         hp_config["scheduler"] = ASHAScheduler(metric="eval_f1", mode="max")
         hp_config["search_alg"] = HyperOptSearch(metric="eval_f1", mode="max")
         hp_config["hp_space"] = lambda _: {
