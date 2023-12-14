@@ -280,29 +280,27 @@ def run(options):
     # Initialize model
 
     def model_init():
-        model_type = locate(f"transformers.{options.transformer_model}")
-        model = model_type.from_pretrained(
-            model_name,
-            num_labels=len(label_scheme),
-            cache_dir=f"{options.output_path}/model_cache",
-            trust_remote_code=True,
-            device_map=options.device_map or None,
-            offload_folder="offload",
-            low_cpu_mem_usage=True,
-            attn_implementation="flash_attention_2"
-            if options.use_flash_attention_2
-            else "sdpa",
-            # use_flash_attention_2=options.use_flash_attention_2,
-            torch_dtype=torch_dtype,
-            quantization_config=BitsAndBytesConfig(
+        model_cls = locate(f"transformers.{options.transformer_model}")
+        params = {
+            "num_labels": len(label_scheme),
+            "cache_dir": f"{options.output_path}/model_cache",
+            "trust_remote_code": True,
+            "offload_folder": "offload",
+            "low_cpu_mem_usage": True,
+            "torch_dtype": torch_dtype,
+        }
+        if options.device_map:
+            params["device_map"] = options.device_map
+        if options.use_flash_attention_2:
+            params["attn_implementation"] = "flash_attention_2"
+        if options.quantize:
+            params["quantization_config"] = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_quant_type="nf4",
                 bnb_4bit_use_double_quant=True,
                 bnb_4bit_compute_dtype=torch_dtype,
             )
-            if options.quantize
-            else None,
-        )
+        model = model_cls.from_pretrained(model_name, **params)
 
         if options.set_pad_id:
             model.config.pad_token_id = model.config.eos_token_id
