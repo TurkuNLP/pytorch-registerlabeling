@@ -11,7 +11,7 @@ def hyperparameter_search(
     hp_config = {
         "direction": "maximize",
         "backend": hp_search_lib,
-        "local_dir": f"{working_dir}/{hp_search_lib}",
+        "local_dir": f"{working_dir}/{hp_search_lib}/",
         "hp_space": {},
         "resources_per_trial": {
             "gpu": num_gpus,
