@@ -19,7 +19,7 @@ def hyperparameter_search(
     }
 
     if hp_search_lib == "ray":
-        ray_init()
+        ray_init(ignore_reinit_error=True, num_cpus=1)
         hp_config["scheduler"] = ASHAScheduler(metric="eval_f1", mode="max")
         hp_config["search_alg"] = HyperOptSearch(metric="eval_f1", mode="max")
         hp_config["hp_space"] = lambda _: {
