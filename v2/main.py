@@ -293,6 +293,7 @@ def run(options):
             params["device_map"] = options.device_map
         if options.use_flash_attention_2:
             params["attn_implementation"] = "flash_attention_2"
+            params["use_flash_attention_2"] = True
         if options.quantize:
             params["quantization_config"] = BitsAndBytesConfig(
                 load_in_4bit=True,
