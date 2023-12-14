@@ -3,8 +3,9 @@ from datetime import datetime
 import os
 import sys
 
-cwd = os.getcwd()
-os.environ["TMPDIR"] = f"{cwd}/tmp"
+project = "/scratch/project_2009199"
+os.environ["TMPDIR"] = f"{project}/tmp"
+
 
 _print = print
 
@@ -56,7 +57,7 @@ parser.add_argument("--plot", "-p")
 # Hyperparameter search
 
 parser.add_argument("--hp_search_lib", default="ray")
-parser.add_argument("--ray_log_path", default=f"{cwd}/log")
+parser.add_argument("--ray_log_path", default=f"{project}/log")
 
 # Training arguments
 
