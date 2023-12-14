@@ -149,6 +149,9 @@ def run(options):
     # Override Trainer
 
     class MultilabelTrainer(Trainer):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
         if options.balance:
 
             def get_train_dataloader(self):
