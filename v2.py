@@ -3,7 +3,7 @@ from datetime import datetime
 import os
 import sys
 
-cwd = os.get_cwd()
+cwd = os.getcwd()
 os.environ["TMPDIR"] = f"{cwd}/tmp"
 
 _print = print
