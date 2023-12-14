@@ -10,7 +10,7 @@ from ray import init as ray_init
 def hyperparameter_search(
     trainer, hp_search_lib, working_dir, wandb_project_name, num_gpus
 ):
-    absolute_path = Path(f"{working_dir}/{hp_search_lib}/").resolve()
+    absolute_path = str(Path(f"{working_dir}/{hp_search_lib}/").resolve())
 
     hp_config = {
         "direction": "maximize",
