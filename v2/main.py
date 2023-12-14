@@ -337,7 +337,7 @@ def run(options):
             model.gradient_checkpointing_enable()
             model.config.use_cache = False
 
-            # model = prepare_model_for_kbit_training(model)
+            model = prepare_model_for_kbit_training(model)
             model = get_peft_model(model, lora_config)
             model.print_trainable_parameters()
 
