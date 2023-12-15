@@ -59,6 +59,8 @@ parser.add_argument("--plot", "-p")
 
 parser.add_argument("--hp_search_lib", default="ray")
 parser.add_argument("--ray_log_path", default=f"{project}/log")
+parser.add_argument("--min_lr", type=float, default=1e-6)
+parser.add_argument("--max_lr", type=float, default=1e-4)
 
 # Training arguments
 

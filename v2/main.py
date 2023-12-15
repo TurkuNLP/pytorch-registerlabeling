@@ -447,4 +447,6 @@ def run(options):
             wandb_project_name,
             num_gpus,
             options.ray_log_path,
+            options.min_lr,
+            options.max_lr,
         )

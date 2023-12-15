@@ -8,7 +8,14 @@ from ray import init as ray_init
 
 
 def hyperparameter_search(
-    trainer, hp_search_lib, working_dir, wandb_project_name, num_gpus, ray_log_path
+    trainer,
+    hp_search_lib,
+    working_dir,
+    wandb_project_name,
+    num_gpus,
+    ray_log_path,
+    min_lr,
+    max_lr,
 ):
     absolute_path = str(Path(f"{working_dir}/{hp_search_lib}/").resolve())
 
@@ -27,23 +34,8 @@ def hyperparameter_search(
         hp_config["scheduler"] = ASHAScheduler(metric="eval_f1", mode="max")
         hp_config["search_alg"] = HyperOptSearch(metric="eval_f1", mode="max")
         hp_config["hp_space"] = lambda _: {
-            "learning_rate": loguniform(1e-6, 1e-4),
+            "learning_rate": loguniform(min_lr, max_lr),
             "per_device_train_batch_size": choice([x / num_gpus for x in [6, 8, 12]]),
-        }
-
-    elif hp_search_lib == "wandb":
-        hp_config["hp_space"] = lambda _: {
-            "method": "bayes",
-            "name": wandb_project_name,
-            "metric": {"goal": "maximize", "name": "eval_f1"},
-            "parameters": {
-                "learning_rate": {
-                    "distribution": "uniform",
-                    "min": 1e-6,
-                    "max": 1e-4,
-                },
-                "per_device_train_batch_size": {"values": [6, 8, 12]},
-            },
         }
 
     best_model = trainer.hyperparameter_search(**hp_config)
