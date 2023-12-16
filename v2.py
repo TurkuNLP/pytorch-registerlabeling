@@ -123,7 +123,7 @@ print(f"Settings: {options}")
 
 
 if options.num_gpus:
-    os.environ["CUDA_VISIBLE_DEVICES"] = options.num_gpus
+    os.environ["CUDA_VISIBLE_DEVICES"] = f"{options.num_gpus}"
 
     print(f'{os.environ["CUDA_VISIBLE_DEVICES"]} visible GPUs.')
 
