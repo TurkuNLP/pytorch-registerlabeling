@@ -47,7 +47,10 @@ def run(options):
     working_dir = f"{options.output_path}/{options.train}_{options.test}{'_'+options.hp_search_lib if options.mode == 'hp_search' else ''}/{model_name.replace('/', '_')}"
     peft_modules = options.peft_modules.split(",") if options.peft_modules else None
     # accelerator = Accelerator()
-    num_gpus = cuda.device_count() or 1
+    num_gpus = cuda.device_count()
+    if not num_gpus:
+        print("No GPUs!")
+        exit()
 
     # Labels
     label_scheme = get_label_scheme(options.labels)
