@@ -398,7 +398,7 @@ def run(options):
 
     # Prepare with Accelerate
 
-    trainer = accelerator.prepare(trainer)
+    # trainer = accelerator.prepare(trainer)
 
     print(f"Trainer prepared! Using {trainer.args._n_gpu} GPUs.")
 
