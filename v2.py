@@ -123,9 +123,13 @@ print(f"Settings: {options}")
 
 if options.num_gpus:
     os.environ["CUDA_VISIBLE_DEVICES"] = f"{options.num_gpus}"
+    from torch import cuda
 
-    print(f'{os.environ["CUDA_VISIBLE_DEVICES"]} visible GPUs.')
+    print(
+        f'{os.environ["CUDA_VISIBLE_DEVICES"]} visible GPUs. Cuda has {cuda.device_count()}'
+    )
 
 from v2 import main
+
 
 main.run(options)
