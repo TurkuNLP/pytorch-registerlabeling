@@ -121,11 +121,13 @@ options = parser.parse_args()
 print(f"Args: {' '.join(sys.argv)}")
 print(f"Settings: {options}")
 
+from torch import cuda
+
 if options.num_gpus:
     os.environ["CUDA_VISIBLE_DEVICES"] = f"{options.num_gpus}"
 
     print(f'{os.environ["CUDA_VISIBLE_DEVICES"]} visible GPUs.')
-from torch import cuda
+
 
 print(f"Cuda has {cuda.device_count()} GPUs")
 
