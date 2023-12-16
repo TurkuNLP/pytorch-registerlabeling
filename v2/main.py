@@ -26,7 +26,8 @@ from transformers import (
 
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, cuda, bfloat16
-from accelerate import Accelerator
+
+# from accelerate import Accelerator
 
 from .labels import get_label_scheme
 from .data import get_dataset
@@ -45,14 +46,14 @@ def run(options):
     model_name = options.model_name
     working_dir = f"{options.output_path}/{options.train}_{options.test}{'_'+options.hp_search_lib if options.mode == 'hp_search' else ''}/{model_name.replace('/', '_')}"
     peft_modules = options.peft_modules.split(",") if options.peft_modules else None
-    accelerator = Accelerator()
+    # accelerator = Accelerator()
     num_gpus = cuda.device_count() or 1
 
     # Labels
     label_scheme = get_label_scheme(options.labels)
 
     print(f"Predicting {len(label_scheme)} labels with {num_gpus} GPUs")
-    print(f"Accelerator: {accelerator.num_processes} - {accelerator.distributed_type}")
+    # print(f"Accelerator: {accelerator.num_processes} - {accelerator.distributed_type}")
 
     # Torch dtype
 
