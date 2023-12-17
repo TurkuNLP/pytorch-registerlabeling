@@ -294,7 +294,7 @@ def run(options):
         model_cls = locate(f"transformers.{options.transformer_model}")
         params = {
             "num_labels": len(label_scheme),
-            "cache_dir": f"{options.output_path}/model_cache",
+            "cache_dir": f"model_cache",
             "trust_remote_code": True,
             "offload_folder": "offload",
             "low_cpu_mem_usage": True,
