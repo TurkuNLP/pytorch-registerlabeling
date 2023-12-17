@@ -43,6 +43,8 @@ current_optimal_threshold = 0.5
 def run(options):
     # Common variables
 
+    np.random.seed(options.seed)
+
     options.test = options.train if not options.test else options.test
     model_name = options.model_name
     working_dir = f"{options.output_path}/{options.train}_{options.test}{'_'+options.hp_search_lib if options.mode == 'hp_search' else ''}/{model_name.replace('/', '_')}"

@@ -4,6 +4,54 @@ from transformers.trainer_utils import seed_worker
 from torch.utils.data import DataLoader
 
 
+class BalancedUpsamplingLanguageSampler(Sampler):
+    def __init__(self, language_data):
+        self.language_data = language_data
+        self.indices_per_language = self._create_indices_per_language()
+        self.num_languages = len(self.indices_per_language)
+        self.smallest_dataset_size = min(
+            len(indices) for indices in self.indices_per_language.values()
+        )
+        self.largest_dataset_size = max(
+            len(indices) for indices in self.indices_per_language.values()
+        )
+        # Define the epoch size as the size of the smallest dataset times the number of languages
+        self.epoch_size = self.num_languages * self.largest_dataset_size
+
+        print(f"Sampler epoch size: {self.epoch_size}")
+
+    def _create_indices_per_language(self):
+        indices_per_language = {}
+        for idx, language in enumerate(self.language_data):
+            if language not in indices_per_language:
+                indices_per_language[language] = []
+            indices_per_language[language].append(idx)
+        return indices_per_language
+
+    def __len__(self):
+        # The total number of samples per epoch is the size of the smallest dataset times the number of languages
+        return self.epoch_size
+
+    def __iter__(self):
+        for _ in range(self.epoch_size):
+            # Randomly select a language
+            language = np.random.choice(list(self.indices_per_language.keys()))
+
+            # Replenish the indices for the language if necessary
+            if not self.indices_per_language[language]:
+                self.indices_per_language[language] = [
+                    idx
+                    for idx, lang in enumerate(self.language_data)
+                    if lang == language
+                ]
+
+            # Randomly select one index from the language's indices
+            idx = np.random.choice(self.indices_per_language[language], replace=False)
+            # Remove the selected index
+            self.indices_per_language[language].remove(idx)
+            yield idx
+
+
 class BalancedMixedLanguageSampler(Sampler):
     def __init__(self, language_data):
         self.language_data = language_data
@@ -103,6 +151,8 @@ def custom_train_dataloader(self, custom_sampler) -> DataLoader:
         sampler = BalancedMixedLanguageSampler
     elif custom_sampler == "focused":
         sampler = BalancedFocusedLanguageSampler
+    elif custom_sampler == "upsample":
+        sampler = BalancedUpsamplingLanguageSampler
     batch_size = self._train_batch_size
     dataloader_params = {
         "batch_size": batch_size,
