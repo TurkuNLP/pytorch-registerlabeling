@@ -24,6 +24,7 @@ from transformers import (
     TrainerCallback,
 )
 
+import torch
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, cuda, bfloat16
 
@@ -65,6 +66,12 @@ def run(options):
         if options.torch_dtype not in [None, "auto"]
         else options.torch_dtype
     )
+
+    # Tf32
+
+    if options.tf32:
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
 
     # Imports based on options
 
@@ -341,7 +348,7 @@ def run(options):
             # model.gradient_checkpointing_enable()
             # model.config.use_cache = False
 
-            model = prepare_model_for_kbit_training(model)
+            # model = prepare_model_for_kbit_training(model)
             model = get_peft_model(model, lora_config)
             model.print_trainable_parameters()
 
@@ -388,6 +395,7 @@ def run(options):
             optim=options.optim,
             fp16=options.fp16,
             bf16=options.bf16,
+            tf32=options.tf32,
             group_by_length=True,
             resume_from_checkpoint=True if options.resume else None,
         ),

@@ -88,6 +88,7 @@ parser.add_argument("--threshold", type=float, default=None)
 parser.add_argument("--device_map", default="auto")
 parser.add_argument("--fp16", action="store_true")
 parser.add_argument("--bf16", action="store_true")
+parser.add_argument("--tf16", action="store_true")
 parser.add_argument("--resume", action="store_true")
 parser.add_argument("--num_gpus", "-g", type=int)
 
