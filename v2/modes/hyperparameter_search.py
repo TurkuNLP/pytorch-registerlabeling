@@ -29,6 +29,8 @@ def hyperparameter_search(
         },
     }
 
+    print(f"Ray is using {num_gpus} per trial")
+
     if hp_search_lib == "ray":
         ray_init(ignore_reinit_error=True, num_cpus=1, _temp_dir=ray_log_path)
         hp_config["scheduler"] = ASHAScheduler(metric="eval_f1", mode="max")
