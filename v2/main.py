@@ -73,21 +73,9 @@ def run(options):
     # Imports based on options
 
     if options.accelerate:
-        from accelerate import FullyShardedDataParallelPlugin, Accelerator
-        from torch.distributed.fsdp.fully_sharded_data_parallel import (
-            FullOptimStateDictConfig,
-            FullStateDictConfig,
-        )
+        from accelerate import Accelerator
 
-        fsdp_plugin = FullyShardedDataParallelPlugin(
-            state_dict_config=FullStateDictConfig(
-                offload_to_cpu=True, rank0_only=False
-            ),
-            optim_state_dict_config=FullOptimStateDictConfig(
-                offload_to_cpu=True, rank0_only=False
-            ),
-        )
-        accelerator = Accelerator(fsdp_plugin=fsdp_plugin)
+        accelerator = Accelerator()
 
         print(
             f"Accelerator info: {accelerator.num_processes} - {accelerator.distributed_type}"
