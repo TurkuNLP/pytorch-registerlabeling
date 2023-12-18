@@ -6,11 +6,7 @@ import torch
 from peft import LoraConfig, get_peft_model, PeftModel
 
 
-def run():
-    project = "register_classes"
-    base_model_name = "mistral"
-    run_name = base_model_name + "-" + project
-
+def run(peft_model_path):
     dataset = get_dataset("en-fi-fr-sv", "en-fi-fr-sv", "all", few_shot=10)
 
     base_model_id = "mistralai/Mistral-7B-v0.1"
@@ -29,7 +25,7 @@ def run():
     tokenizer = AutoTokenizer.from_pretrained(base_model_id, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token
 
-    ft_model = PeftModel.from_pretrained(base_model, run_name)
+    ft_model = PeftModel.from_pretrained(base_model, peft_model_path)
 
     ft_model.eval()
 

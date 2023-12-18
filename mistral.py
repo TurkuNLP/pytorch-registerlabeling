@@ -8,10 +8,11 @@ os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
 
 parser = ArgumentParser()
 parser.add_argument("--mode", "-m", default="train")
+parser.add_argument("--peft_model_path", "-p", default="")
 options = parser.parse_args()
 
 if options.mode == "train":
     mistral_train.run()
 
 elif options.mode == "predict":
-    mistral_predict.run()
+    mistral_predict.run(options.peft_model_path)
