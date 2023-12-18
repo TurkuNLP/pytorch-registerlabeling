@@ -29,9 +29,11 @@ def run(peft_model_path):
 
     ft_model.eval()
 
-    model_input = tokenizer(prompt(dataset["test"][0]), return_tensors="pt")
-    labels_true = model_input["label_text"]
-    lang = model_input["language"]
+    example = dataset["test"][0]
+
+    model_input = tokenizer(example, return_tensors="pt")
+    labels_true = example["label_text"]
+    lang = example["language"]
     with torch.no_grad():
         result = tokenizer.decode(
             ft_model.generate(**model_input, max_new_tokens=100, pad_token_id=2)[0],
