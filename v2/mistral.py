@@ -1,5 +1,6 @@
 from .data import get_dataset
 from .mistral_prompt import prompt
+import os
 
 dataset = get_dataset("en-fi-fr-sv", "en-fi-fr-sv", "all", few_shot=10)
 
@@ -8,6 +9,21 @@ print(dataset)
 import torch
 
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+
+from dotenv import load_dotenv
+
+load_dotenv()
+wandb_project_name = f"mistral_prompt"
+
+os.environ["WANDB_PROJECT"] = wandb_project_name
+os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY", "")
+os.environ["WANDB_WATCH"] = "all"
+
+import wandb
+
+wandb.login()
+
+print("Using wandb")
 
 
 def run():
@@ -123,14 +139,6 @@ def run():
 
     print(model)
 
-    import wandb, os
-
-    wandb.login()
-
-    wandb_project = "register_classes"
-    if len(wandb_project) > 0:
-        os.environ["WANDB_PROJECT"] = wandb_project
-
     import transformers
     from datetime import datetime
 
@@ -150,16 +158,17 @@ def run():
             per_device_eval_batch_size=2,
             gradient_accumulation_steps=4,
             gradient_checkpointing=True,
-            max_steps=500,
             learning_rate=2.5e-5,  # Want a small lr for finetuning
             bf16=True,
             optim="paged_adamw_8bit",
-            logging_steps=25,  # When to start reporting loss
+            num_train_epochs=1,
+            save_total_limit=2,
+            logging_steps=100,  # When to start reporting loss
             logging_dir="./logs",  # Directory for storing logs
             save_strategy="steps",  # Save the model checkpoint every logging step
-            save_steps=25,  # Save checkpoints every 50 steps
+            save_steps=100,  # Save checkpoints every 50 steps
             evaluation_strategy="steps",  # Evaluate the model every logging step
-            eval_steps=25,  # Evaluate and save checkpoints every 50 steps
+            eval_steps=100,  # Evaluate and save checkpoints every 50 steps
             do_eval=True,  # Perform evaluation at the end of training
             report_to="wandb",  # Comment this out if you don't want to use weights & baises
             run_name=f"{run_name}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}",  # Name of the W&B run (optional)
