@@ -1,32 +1,31 @@
-from .data import get_dataset
-from .mistral_prompt import prompt
 import os
-
-dataset = get_dataset("en-fi-fr-sv", "en-fi-fr-sv", "all", few_shot=10)
-
-print(dataset)
-
-import torch
-
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
 from dotenv import load_dotenv
 
-load_dotenv()
-wandb_project_name = f"mistral_prompt"
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
-os.environ["WANDB_PROJECT"] = wandb_project_name
-os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY", "")
-os.environ["WANDB_WATCH"] = "all"
-
-import wandb
-
-wandb.login()
-
-print("Using wandb")
+from .data import get_dataset
+from .mistral_prompt import prompt
 
 
 def run():
+    load_dotenv()
+    wandb_project_name = f"mistral_prompt"
+
+    os.environ["WANDB_PROJECT"] = wandb_project_name
+    os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY", "")
+    os.environ["WANDB_WATCH"] = "all"
+
+    import wandb
+
+    wandb.login()
+
+    print("Using wandb")
+
+    dataset = get_dataset("en-fi-fr-sv", "en-fi-fr-sv", "all", few_shot=10)
+
+    print(dataset)
     base_model_id = "mistralai/Mistral-7B-v0.1"
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,

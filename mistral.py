@@ -1,6 +1,6 @@
 import os
 from argparse import ArgumentParser
-from v2 import mistral, mistral_predict
+from v2 import mistral_train, mistral_predict
 
 os.environ["TRANSFORMERS_CACHE"] = ".hf/transformers_cache"
 os.environ["HF_HOME"] = ".hf/hf_home"
@@ -11,7 +11,7 @@ parser.add_argument("--mode", "-m", default="train")
 options = parser.parse_args()
 
 if options.mode == "train":
-    mistral.run()
+    mistral_train.run()
 
 elif options.mode == "predict":
     mistral_predict.run()
