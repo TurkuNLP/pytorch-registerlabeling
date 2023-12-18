@@ -1,7 +1,47 @@
+from itertools import cycle
+
 import numpy as np
 from torch.utils.data import Sampler
 from transformers.trainer_utils import seed_worker
 from torch.utils.data import DataLoader
+
+
+class MeanBalancedLanguageSampler(Sampler):
+    def __init__(self, language_data):
+        self.language_data = language_data
+        self.indices_per_language = self._create_indices_per_language()
+        self.mean_dataset_size = int(
+            np.mean([len(indices) for indices in self.indices_per_language.values()])
+        )
+        self.epoch_size = self.mean_dataset_size * len(self.indices_per_language)
+
+        print(f"Eval mean balanced epoch size: {self.epoch_size}")
+
+    def _create_indices_per_language(self):
+        indices_per_language = {lang: [] for lang in set(self.language_data)}
+        for idx, lang in enumerate(self.language_data):
+            indices_per_language[lang].append(idx)
+        return indices_per_language
+
+    def __len__(self):
+        return self.epoch_size
+
+    def __iter__(self):
+        language_cycle = cycle(self.indices_per_language.keys())
+        for _ in range(self.epoch_size):
+            language = next(language_cycle)
+
+            # Replenish the indices for the language if necessary
+            if not self.indices_per_language[language]:
+                self.indices_per_language[language] = [
+                    idx
+                    for idx, lang in enumerate(self.language_data)
+                    if lang == language
+                ]
+
+            idx = np.random.choice(self.indices_per_language[language], replace=False)
+            self.indices_per_language[language].remove(idx)
+            yield idx
 
 
 class BalancedUpsamplingLanguageSampler(Sampler):
@@ -163,7 +203,7 @@ def custom_eval_dataloader(self, batch_size) -> DataLoader:
     eval_dataset = self._remove_unused_columns(
         self.eval_dataset, description="training"
     )
-    sampler = BalancedUpsamplingLanguageSampler
+    sampler = MeanBalancedLanguageSampler
 
     dataloader_params = {
         "batch_size": batch_size,
