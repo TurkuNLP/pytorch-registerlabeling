@@ -185,7 +185,7 @@ def run(options):
                 return custom_train_dataloader(self)
 
             def get_eval_dataloader(self, eval_dataset=None):
-                return custom_eval_dataloader(self)
+                return custom_eval_dataloader(self, options.eval_batch_size)
 
         def compute_loss(self, model, inputs, return_outputs=False):
             labels = inputs.pop("labels")

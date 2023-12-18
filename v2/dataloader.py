@@ -160,14 +160,13 @@ def custom_train_dataloader(self) -> DataLoader:
     return self.accelerator.prepare(DataLoader(train_dataset, **dataloader_params))
 
 
-def custom_eval_dataloader(self) -> DataLoader:
+def custom_eval_dataloader(self, batch_size) -> DataLoader:
     language_data = [sample["language"] for sample in self.eval_dataset]
     eval_dataset = self._remove_unused_columns(
         self.eval_dataset, description="training"
     )
     sampler = BalancedUpsamplingLanguageSampler
 
-    batch_size = self._eval_batch_size
     dataloader_params = {
         "batch_size": batch_size,
         "collate_fn": self.data_collator,
