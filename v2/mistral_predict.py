@@ -29,21 +29,33 @@ def run(peft_model_path):
 
     ft_model.eval()
 
-    example = dataset["test"][0]
+    correct = 0
+    incorrect = 0
 
-    model_input = tokenizer(prompt(example), return_tensors="pt").to("cuda")
-    labels_true = example["label_text"]
-    lang = example["language"]
     with torch.no_grad():
-        result = tokenizer.decode(
-            ft_model.generate(**model_input, max_new_tokens=100, pad_token_id=2)[0],
-            skip_special_tokens=True,
-        )
-        try:
-            labels_pred = result.split("### Labels")[1].strip()
-            print(f"True: {labels_true}")
-            print(f"Pred: {labels_pred}")
-            print(f"Language: {lang}")
-        except:
-            print("Error: could not parse labels. Here is the full result:")
-            print(result)
+        for i, example in enumerate(dataset["test"]):
+            example = dataset["test"][0]
+            model_input = tokenizer(prompt(example), return_tensors="pt").to("cuda")
+            labels_true = example["label_text"]
+            lang = example["language"]
+            result = tokenizer.decode(
+                ft_model.generate(**model_input, max_new_tokens=100, pad_token_id=2)[0],
+                skip_special_tokens=True,
+            )
+            try:
+                labels_pred = result.split("### Labels")[1].strip()
+                print(f"True: {labels_true}")
+                print(f"Pred: {labels_pred}")
+                print(f"Language: {lang}")
+                if labels_true == labels_pred:
+                    correct += 1
+                else:
+                    incorrect += 1
+
+                print()
+                print(
+                    f"[{i}] Correct: {correct}, Incorrect: {incorrect}, Ratio: {round(correct/((correct+incorrect) or 1), 2)}"
+                )
+            except:
+                print(f"[{i}] Error: could not parse labels. Here is the full result:")
+                print(result)
