@@ -34,7 +34,9 @@ def run(peft_model_path):
 
     with torch.no_grad():
         for i, example in enumerate(dataset["test"]):
-            model_input = tokenizer(prompt(example), return_tensors="pt").to("cuda")
+            model_input = tokenizer(
+                prompt(example, labels=False), return_tensors="pt"
+            ).to("cuda")
             labels_true = example["label_text"]
             lang = example["language"]
             result = tokenizer.decode(
@@ -51,6 +53,8 @@ def run(peft_model_path):
                 if labels_true == labels_pred:
                     correct += 1
                 else:
+                    print("Incorrect! Here it is: ")
+                    print(result)
                     incorrect += 1
 
                 print()
