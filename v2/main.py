@@ -29,7 +29,7 @@ from torch import Tensor, cuda, bfloat16
 
 from .labels import get_label_scheme
 from .data import get_dataset
-from .dataloader import custom_train_dataloader
+from .dataloader import custom_train_dataloader, custom_eval_dataloader
 from .modes.extract_embeddings import extract_doc_embeddings
 from .modes.extract_keywords import extract_doc_keywords
 from .utils import log_gpu_memory
@@ -183,6 +183,9 @@ def run(options):
 
             def get_train_dataloader(self):
                 return custom_train_dataloader(self, options.sampler)
+
+            def get_eval_dataloader(self):
+                return custom_eval_dataloader(self)
 
         def compute_loss(self, model, inputs, return_outputs=False):
             labels = inputs.pop("labels")

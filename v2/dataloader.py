@@ -18,7 +18,7 @@ class BalancedUpsamplingLanguageSampler(Sampler):
         # Define the epoch size as the size of the smallest dataset times the number of languages
         self.epoch_size = self.largest_dataset_size
 
-        print(f"Sampler epoch size: {self.epoch_size}")
+        print(f"Upsampling sampler epoch size: {self.epoch_size}")
 
     def _create_indices_per_language(self):
         indices_per_language = {}
@@ -61,15 +61,13 @@ class BalancedMixedLanguageSampler(Sampler):
             len(indices) for indices in self.indices_per_language.values()
         )
         # Define the epoch size as the size of the smallest dataset times the number of languages
-        self.epoch_size = int(self.num_languages * self.smallest_dataset_size / 100)
+        self.epoch_size = int(self.num_languages * self.smallest_dataset_size)
 
-        print(f"Sampler epoch size: {self.epoch_size}")
+        print(f"Mixed balancing sampler epoch size: {self.epoch_size}")
 
     def _create_indices_per_language(self):
-        indices_per_language = {}
+        indices_per_language = {lang: [] for lang in set(self.language_data)}
         for idx, language in enumerate(self.language_data):
-            if language not in indices_per_language:
-                indices_per_language[language] = []
             indices_per_language[language].append(idx)
         return indices_per_language
 
@@ -90,12 +88,10 @@ class BalancedMixedLanguageSampler(Sampler):
                     if lang == language
                 ]
 
-            # Randomly select one index from the language's indices
+            # Randomly select and remove one index from the language's indices
             idx = np.random.choice(self.indices_per_language[language], replace=False)
-            yield idx
-
-            # Remove the selected index
             self.indices_per_language[language].remove(idx)
+            yield idx
 
 
 class BalancedFocusedLanguageSampler(Sampler):
@@ -165,3 +161,24 @@ def custom_train_dataloader(self, custom_sampler) -> DataLoader:
     }
 
     return self.accelerator.prepare(DataLoader(train_dataset, **dataloader_params))
+
+
+def custom_eval_dataloader(self) -> DataLoader:
+    language_data = [sample["language"] for sample in self.eval_dataset]
+    eval_dataset = self._remove_unused_columns(
+        self.eval_dataset, description="training"
+    )
+    sampler = BalancedUpsamplingLanguageSampler
+
+    batch_size = self._eval_batch_size
+    dataloader_params = {
+        "batch_size": batch_size,
+        "collate_fn": self.data_collator,
+        "num_workers": self.args.dataloader_num_workers,
+        "pin_memory": self.args.dataloader_pin_memory,
+        "sampler": sampler(language_data),
+        "drop_last": self.args.dataloader_drop_last,
+        "worker_init_fn": seed_worker,
+    }
+
+    return self.accelerator.prepare(DataLoader(eval_dataset, **dataloader_params))
