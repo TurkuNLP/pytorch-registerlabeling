@@ -30,11 +30,18 @@ def run(peft_model_path):
     ft_model.eval()
 
     model_input = tokenizer(prompt(dataset["test"][0]), return_tensors="pt")
-
+    labels_true = model_input["label_text"]
+    lang = model_input["language"]
     with torch.no_grad():
-        print(
-            tokenizer.decode(
-                ft_model.generate(**model_input, max_new_tokens=100, pad_token_id=2)[0],
-                skip_special_tokens=True,
-            )
+        result = tokenizer.decode(
+            ft_model.generate(**model_input, max_new_tokens=100, pad_token_id=2)[0],
+            skip_special_tokens=True,
         )
+        try:
+            labels_pred = result.split("### Labels")[1].strip()
+            print(f"True: {labels_true}")
+            print(f"Pred: {labels_pred}")
+            print(f"Language: {lang}")
+        except:
+            print("Error: could not parse labels. Here is the full result:")
+            print(result)
