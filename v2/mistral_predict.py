@@ -31,7 +31,7 @@ def run(peft_model_path):
 
     example = dataset["test"][0]
 
-    model_input = tokenizer(example, return_tensors="pt")
+    model_input = tokenizer(prompt(example), return_tensors="pt")
     labels_true = example["label_text"]
     lang = example["language"]
     with torch.no_grad():
