@@ -34,7 +34,6 @@ def run(peft_model_path):
 
     with torch.no_grad():
         for i, example in enumerate(dataset["test"]):
-            example = dataset["test"][0]
             model_input = tokenizer(prompt(example), return_tensors="pt").to("cuda")
             labels_true = example["label_text"]
             lang = example["language"]
