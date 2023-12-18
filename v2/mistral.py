@@ -1,7 +1,9 @@
 from .data import get_dataset
 from .mistral_prompt import prompt
 
-dataset = get_dataset("en-fi-fr-sv", "en-fi-fr-sv", "all")
+dataset = get_dataset("en-fi-fr-sv", "en-fi-fr-sv", "all", few_shot=10)
+
+print(dataset)
 
 import torch
 

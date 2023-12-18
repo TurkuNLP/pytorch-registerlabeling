@@ -1,6 +1,8 @@
 import csv
 import sys
 
+import pandas as pd
+
 csv.field_size_limit(sys.maxsize)
 
 from datasets import Dataset, DatasetDict
@@ -26,7 +28,7 @@ small_languages = [
 ]
 
 
-def get_dataset(train, test, label_config):
+def get_dataset(train, test, label_config, few_shot=False):
     def data_gen(ls, split):
         row_id = 0
         for l in ls.split("-"):
@@ -71,5 +73,19 @@ def get_dataset(train, test, label_config):
             ),
         }
     )
+
+    if few_shot:
+
+        def sample_group(group, random_state=42):
+            n = min(len(group), few_shot)
+            return group.sample(n, random_state=random_state)
+
+        for split in ["train", "dev", "test"]:
+            dataset[split] = Dataset.from_pandas(
+                pd.DataFrame(dataset[split])
+                .groupby(["language", "label_text"])
+                .apply(sample_group)
+                .reset_index(drop=True)
+            )
 
     return dataset
