@@ -22,8 +22,9 @@ def run(peft_model_path):
         device_map="auto",
         cache_dir="cache",
     )
-    tokenizer = AutoTokenizer.from_pretrained(base_model_id, trust_remote_code=True)
-    tokenizer.pad_token = tokenizer.eos_token
+    tokenizer = AutoTokenizer.from_pretrained(
+        base_model_id, add_bos_token=True, trust_remote_code=True
+    )
 
     ft_model = PeftModel.from_pretrained(base_model, peft_model_path)
 
@@ -40,7 +41,7 @@ def run(peft_model_path):
             labels_true = example["label_text"]
             lang = example["language"]
             result = tokenizer.decode(
-                ft_model.generate(**model_input, max_new_tokens=100, pad_token_id=2)[0],
+                ft_model.generate(**model_input, max_new_tokens=100)[0],
                 skip_special_tokens=True,
             )
             try:
