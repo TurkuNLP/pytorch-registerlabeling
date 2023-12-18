@@ -184,7 +184,7 @@ def run(options):
             def get_train_dataloader(self):
                 return custom_train_dataloader(self)
 
-            def get_eval_dataloader(self):
+            def get_eval_dataloader(self, eval_dataset=None):
                 return custom_eval_dataloader(self)
 
         def compute_loss(self, model, inputs, return_outputs=False):
