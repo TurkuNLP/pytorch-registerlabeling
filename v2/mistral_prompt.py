@@ -1,42 +1,41 @@
 def prompt(data_point, labels=True):
-    return f"""
-        You are a hierarchical multilabel text classifier tool. There are the following 9 upper level labels ([upper_label]: [abbreviation]):
+    return f""" You are a hierarchical multilabel text classifier tool. There are the following 9 upper level labels:
 
-        MACHINE TRANSLATED OR GENERATED: MT
-        LYRICAL: LY
-        SPOKEN: SP
-        INTERACTIVE DISCUSSION: ID
-        NARRATIVE: NA
-        HOW-TO or INSTRUCTIONS: HI
-        INFORMATIONAL DESCRIPTION: IN
-        OPINION: OP
-        INFORMATIONAL PERSUASION: IP
+MACHINE TRANSLATED OR GENERATED: MT
+LYRICAL: LY
+SPOKEN: SP
+INTERACTIVE DISCUSSION: ID
+NARRATIVE: NA
+HOW-TO or INSTRUCTIONS: HI
+INFORMATIONAL DESCRIPTION: IN
+OPINION: OP
+INFORMATIONAL PERSUASION: IP
 
-        Some upper level labels have lower labels. They are as follows ([upper_label]: [lower_label]: [abbreviation]):
+Some upper level labels additionally have lower labels. They are as follows:
 
-        SPOKEN: Interview: it
-        NARRATIVE: News report: ne
-        NARRATIVE: Sports report: sr
-        NARRATIVE: Narrative blog nb
-        HOW-TO or INSTRUCTIONS: Recipe: re
-        INFORMATIONAL DESCRIPTION: Encyclopedia article: en
-        INFORMATIONAL DESCRIPTION: Research article: ra
-        INFORMATIONAL DESCRIPTION: Description of a thing or person: dtp
-        INFORMATIONAL DESCRIPTION: Faq: fi
-        INFORMATIONAL DESCRIPTION: Legal terms and conditions: lt
-        OPINION: Review: rv
-        OPINION: Opinion blog: ob
-        OPINION: Denominational religious blog / sermon: rs
-        OPINION: Advice: av
-        INFORMATIONAL PERSUASIONDescription with intent to sell: ds
-        INFORMATIONAL PERSUASIONNews & opinion blog or editorial: ed
+SPOKEN: Interview: it
+NARRATIVE: News report: ne
+NARRATIVE: Sports report: sr
+NARRATIVE: Narrative blog nb
+HOW-TO or INSTRUCTIONS: Recipe: re
+INFORMATIONAL DESCRIPTION: Encyclopedia article: en
+INFORMATIONAL DESCRIPTION: Research article: ra
+INFORMATIONAL DESCRIPTION: Description of a thing or person: dtp
+INFORMATIONAL DESCRIPTION: Faq: fi
+INFORMATIONAL DESCRIPTION: Legal terms and conditions: lt
+OPINION: Review: rv
+OPINION: Opinion blog: ob
+OPINION: Denominational religious blog / sermon: rs
+OPINION: Advice: av
+INFORMATIONAL PERSUASION: Description with intent to sell: ds
+INFORMATIONAL PERSUASION: News & opinion blog or editorial: ed
 
-        Your task is classify the target text to one or more labels. If you classify a text into a lower level label, its corresponding upper level label must always also be included. Your output should consist of space-separated label names, alphabetically sorted. They should all be on a single line.
+Your task is classify the target text (enclosed within ```) into one or more labels. If you classify a text into a lower level label, its corresponding upper level label must always also be included. Your output should consist of space-separated label names, alphabetically sorted. They should all be on a single line immediately after ### Labels.
 
-        ### Target text
-        {data_point["text"][:3000]}
+### Target text
+```{data_point["text"][:3000]}```
 
 
-        ### Labels
-        {data_point["label_text"] if labels else ""}
-    """
+### Labels
+{data_point["label_text"] if labels else ""}
+"""
