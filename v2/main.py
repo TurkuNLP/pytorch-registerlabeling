@@ -182,7 +182,7 @@ def run(options):
         if options.balance:
 
             def get_train_dataloader(self):
-                return custom_train_dataloader(self, options.sampler)
+                return custom_train_dataloader(self)
 
             def get_eval_dataloader(self):
                 return custom_eval_dataloader(self)

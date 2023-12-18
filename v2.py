@@ -96,7 +96,6 @@ parser.add_argument("--num_gpus", "-g", type=int)
 # Balanced sampling
 
 parser.add_argument("--balance", action="store_true")
-parser.add_argument("--sampler", default="upsample")
 
 # Loss function, uses BCEFocalLoss by default
 

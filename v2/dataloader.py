@@ -138,17 +138,14 @@ class BalancedFocusedLanguageSampler(Sampler):
                 self.indices_per_language[language].remove(idx)
 
 
-def custom_train_dataloader(self, custom_sampler) -> DataLoader:
+def custom_train_dataloader(self) -> DataLoader:
     language_data = [sample["language"] for sample in self.train_dataset]
     train_dataset = self._remove_unused_columns(
         self.train_dataset, description="training"
     )
-    if custom_sampler == "mixed":
-        sampler = BalancedMixedLanguageSampler
-    elif custom_sampler == "focused":
-        sampler = BalancedFocusedLanguageSampler
-    elif custom_sampler == "upsample":
-        sampler = BalancedUpsamplingLanguageSampler
+
+    sampler = BalancedMixedLanguageSampler
+
     batch_size = self._train_batch_size
     dataloader_params = {
         "batch_size": batch_size,
