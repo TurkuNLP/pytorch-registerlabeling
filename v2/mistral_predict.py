@@ -42,7 +42,9 @@ def run(peft_model_path):
                 skip_special_tokens=True,
             )
             try:
-                labels_pred = result.split("### Labels")[1].strip()
+                labels_pred = (
+                    result.split("### Labels")[1].strip().split("#")[0].strip()
+                )
                 print(f"True: {labels_true}")
                 print(f"Pred: {labels_pred}")
                 print(f"Language: {lang}")
