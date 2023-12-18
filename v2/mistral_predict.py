@@ -24,8 +24,7 @@ def run():
         base_model_id,  # Mistral, same as before
         quantization_config=bnb_config,  # Same quantization config as before
         device_map="auto",
-        trust_remote_code=True,
-        use_auth_token=True,
+        cache_dir="cache",
     )
     tokenizer = AutoTokenizer.from_pretrained(base_model_id, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token
