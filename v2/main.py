@@ -21,14 +21,11 @@ from transformers import (
     BitsAndBytesConfig,
     TrainingArguments,
     EarlyStoppingCallback,
-    TrainerCallback,
 )
 
 import torch
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, cuda, bfloat16
-
-# from accelerate import Accelerator
 
 from .labels import get_label_scheme
 from .data import get_dataset
@@ -37,7 +34,7 @@ from .modes.extract_embeddings import extract_doc_embeddings
 from .modes.extract_keywords import extract_doc_keywords
 from .utils import log_gpu_memory
 
-current_optimal_threshold = 0.5
+current_optimal_threshold = 0.5  # Used in hierarchical loss (now obsolete)
 
 
 def run(options):
@@ -49,7 +46,6 @@ def run(options):
     model_name = options.model_name
     working_dir = f"{options.output_path}/{options.train}_{options.test}{'_'+options.hp_search_lib if options.mode == 'hp_search' else ''}/{model_name.replace('/', '_')}"
     peft_modules = options.peft_modules.split(",") if options.peft_modules else None
-    # accelerator = Accelerator()
     num_gpus = cuda.device_count()
     if not num_gpus:
         print("No GPUs!")
@@ -59,7 +55,6 @@ def run(options):
     label_scheme = get_label_scheme(options.labels)
 
     print(f"Predicting {len(label_scheme)} labels with {num_gpus} GPUs")
-    # print(f"Accelerator: {accelerator.num_processes} - {accelerator.distributed_type}")
 
     # Torch dtype
 
@@ -76,6 +71,27 @@ def run(options):
         torch.backends.cudnn.allow_tf32 = True
 
     # Imports based on options
+
+    if options.accelerate:
+        from accelerate import FullyShardedDataParallelPlugin, Accelerator
+        from torch.distributed.fsdp.fully_sharded_data_parallel import (
+            FullOptimStateDictConfig,
+            FullStateDictConfig,
+        )
+
+        fsdp_plugin = FullyShardedDataParallelPlugin(
+            state_dict_config=FullStateDictConfig(
+                offload_to_cpu=True, rank0_only=False
+            ),
+            optim_state_dict_config=FullOptimStateDictConfig(
+                offload_to_cpu=True, rank0_only=False
+            ),
+        )
+        accelerator = Accelerator(fsdp_plugin=fsdp_plugin)
+
+        print(
+            f"Accelerator info: {accelerator.num_processes} - {accelerator.distributed_type}"
+        )
 
     if options.use_flash_attention_2:
         from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
@@ -352,6 +368,8 @@ def run(options):
 
             # model = prepare_model_for_kbit_training(model)
             model = get_peft_model(model, lora_config)
+            if options.accelerate:
+                model = accelerator.prepare_model(model)
             model.print_trainable_parameters()
 
         if options.add_classification_head:

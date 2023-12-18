@@ -41,6 +41,7 @@ parser.add_argument("--output_path", default="output")
 parser.add_argument("--transformer_model", default="AutoModelForSequenceClassification")
 parser.add_argument("--seed", "-s", type=int, default=42)
 parser.add_argument("--torch_dtype")
+parser.add_argument("--accelerate", action="store_true")
 parser.add_argument("--wandb_project", "-w")
 
 # Tokenizer
