@@ -16,15 +16,13 @@ class BalancedUpsamplingLanguageSampler(Sampler):
             len(indices) for indices in self.indices_per_language.values()
         )
         # Define the epoch size as the size of the smallest dataset times the number of languages
-        self.epoch_size = self.largest_dataset_size
+        self.epoch_size = self.largest_dataset_size * self.num_languages
 
         print(f"Upsampling sampler epoch size: {self.epoch_size}")
 
     def _create_indices_per_language(self):
-        indices_per_language = {}
+        indices_per_language = {lang: [] for lang in set(self.language_data)}
         for idx, language in enumerate(self.language_data):
-            if language not in indices_per_language:
-                indices_per_language[language] = []
             indices_per_language[language].append(idx)
         return indices_per_language
 
