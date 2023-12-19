@@ -201,7 +201,7 @@ def custom_train_dataloader(self) -> DataLoader:
 def custom_eval_dataloader(self, batch_size) -> DataLoader:
     language_data = [sample["language"] for sample in self.eval_dataset]
     eval_dataset = self._remove_unused_columns(
-        self.eval_dataset, description="training"
+        self.eval_dataset, description="evaluating"
     )
     sampler = MeanBalancedLanguageSampler
 
@@ -216,3 +216,21 @@ def custom_eval_dataloader(self, batch_size) -> DataLoader:
     }
 
     return self.accelerator.prepare(DataLoader(eval_dataset, **dataloader_params))
+
+
+def custom_test_dataloader(self, batch_size) -> DataLoader:
+    language_data = [sample["language"] for sample in self.eval_dataset]
+    test_dataset = self._remove_unused_columns(self.test_dataset, description="testing")
+    sampler = MeanBalancedLanguageSampler
+
+    dataloader_params = {
+        "batch_size": batch_size,
+        "collate_fn": self.data_collator,
+        "num_workers": self.args.dataloader_num_workers,
+        "pin_memory": self.args.dataloader_pin_memory,
+        "sampler": sampler(language_data),
+        "drop_last": self.args.dataloader_drop_last,
+        "worker_init_fn": seed_worker,
+    }
+
+    return self.accelerator.prepare(DataLoader(test_dataset, **dataloader_params))

@@ -25,11 +25,15 @@ from transformers import (
 
 import torch
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
-from torch import Tensor, cuda, bfloat16
+from torch import Tensor, cuda
 
 from .labels import get_label_scheme
 from .data import get_dataset
-from .dataloader import custom_train_dataloader, custom_eval_dataloader
+from .dataloader import (
+    custom_train_dataloader,
+    custom_eval_dataloader,
+    custom_test_dataloader,
+)
 from .modes.extract_embeddings import extract_doc_embeddings
 from .modes.extract_keywords import extract_doc_keywords
 from .utils import log_gpu_memory
@@ -47,14 +51,11 @@ def run(options):
     working_dir = f"{options.output_path}/{options.train}_{options.test}{'_'+options.hp_search_lib if options.mode == 'hp_search' else ''}/{model_name.replace('/', '_')}"
     peft_modules = options.peft_modules.split(",") if options.peft_modules else None
     num_gpus = cuda.device_count()
-    if not num_gpus:
-        print("No GPUs!")
-        exit()
 
     # Labels
     label_scheme = get_label_scheme(options.labels)
 
-    print(f"Predicting {len(label_scheme)} labels with {num_gpus} GPUs")
+    print(f"Predicting {len(label_scheme)} labels.")
 
     # Torch dtype
 
@@ -71,25 +72,6 @@ def run(options):
         torch.backends.cudnn.allow_tf32 = True
 
     # Imports based on options
-
-    if options.accelerate:
-        from accelerate import FullyShardedDataParallelPlugin, Accelerator
-        from torch.distributed.fsdp.fully_sharded_data_parallel import (
-            FullOptimStateDictConfig,
-            FullStateDictConfig,
-        )
-
-        fsdp_plugin = FullyShardedDataParallelPlugin(
-            state_dict_config=FullStateDictConfig(offload_to_cpu=True, rank0_only=True),
-            optim_state_dict_config=FullOptimStateDictConfig(
-                offload_to_cpu=True, rank0_only=True
-            ),
-        )
-        accelerator = Accelerator(fsdp_plugin=fsdp_plugin)
-
-        print(
-            f"Accelerator info: {accelerator.num_processes} - {accelerator.distributed_type}"
-        )
 
     if options.use_flash_attention_2:
         from flash_attn import flash_attn_qkvpacked_func, flash_attn_func
@@ -128,26 +110,39 @@ def run(options):
 
     print(f"Imports finished!")
 
-    # Data processing
+    # Tokenizer
 
-    # Init tokenizer
+    tokenizer_cnf = {
+        "torch_dtype": torch_dtype,
+        "cache_dir": f"{options.output_path}/tokenizer_cache",
+    }
+
+    if options.low_cpu_mem_usage:
+        tokenizer_cnf["low_cpu_mem_usage"] = True
+
+    if options.add_prefix_space:
+        tokenizer_cnf["add_prefix_space"] = True
+
+    if options.llm:
+        tokenizer_cnf["add_eos_token"] = True
+        tokenizer_cnf["add_bos_token"] = True
+        tokenizer_cnf["padding_side"] = "left"
 
     tokenizer = AutoTokenizer.from_pretrained(
         model_name if not options.custom_tokenizer else options.custom_tokenizer,
-        add_prefix_space=options.add_prefix_space,
-        low_cpu_mem_usage=options.low_cpu_mem_usage,
-        torch_dtype=torch_dtype,
-        cache_dir=f"{options.output_path}/tokenizer_cache",
+        **tokenizer_cnf,
     )
 
     # Some LLM's require a pad id
-    if options.set_pad_id:
+    if options.set_pad_id or options.llm:
         tokenizer.pad_token_id = tokenizer.eos_token_id
         tokenizer.pad_token = tokenizer.eos_token
 
-    # Get data
+    # Dataset
 
-    dataset = get_dataset(options.train, options.test, options.labels)
+    dataset = get_dataset(
+        options.train, options.test, options.labels, few_shot=options.few_shot
+    )
 
     # If plotting, stop here
 
@@ -188,7 +183,7 @@ def run(options):
                 return custom_eval_dataloader(self, options.eval_batch_size)
 
             def get_test_dataloader(self, test_dataset=None):
-                return custom_eval_dataloader(self, options.eval_batch_size)
+                return custom_test_dataloader(self, options.eval_batch_size)
 
         def compute_loss(self, model, inputs, return_outputs=False):
             labels = inputs.pop("labels")
@@ -232,7 +227,7 @@ def run(options):
                 best_f1 = f1
                 best_f1_threshold = th
 
-        # This is used by the loss function, so we need it global
+        # This is used by the hierarchical loss, so we'll use global
         global current_optimal_threshold
         current_optimal_threshold = best_f1_threshold
         return best_f1_threshold
@@ -367,13 +362,11 @@ def run(options):
             )
 
             # add LoRA adaptor
-            # model.gradient_checkpointing_enable()
-            # model.config.use_cache = False
+            model.gradient_checkpointing_enable()
+            model.config.use_cache = False
 
-            # model = prepare_model_for_kbit_training(model)
+            model = prepare_model_for_kbit_training(model)
             model = get_peft_model(model, lora_config)
-            if options.accelerate:
-                model = accelerator.prepare_model(model)
             model.print_trainable_parameters()
 
         if options.add_classification_head:
@@ -431,10 +424,6 @@ def run(options):
         ),
         callbacks=[EarlyStoppingCallback(early_stopping_patience=options.patience)],
     )
-
-    # Prepare with Accelerate
-
-    # trainer = accelerator.prepare(trainer)
 
     print(f"Trainer prepared! Using {trainer.args._n_gpu} GPUs.")
 

@@ -117,24 +117,32 @@ parser.add_argument("--lora_alpha", type=float, default=1)
 parser.add_argument("--lora_dropout", type=float, default=0.05)
 parser.add_argument("--lora_bias", default="none")
 
+# LLM specific settings
+
+parser.add_argument("--few_shot", type=int, default=0)
+parser.add_argument("--llm", action="store_true")
+
+
 options = parser.parse_args()
 
 print(f"Args: {' '.join(sys.argv)}")
 print(f"Settings: {options}")
-
 
 if options.num_gpus:
     os.environ[
         "CUDA_VISIBLE_DEVICES"
     ] = f"{','.join([str(x) for x in range(0, options.num_gpus)])}"
 
-    print(f'{os.environ["CUDA_VISIBLE_DEVICES"]} visible GPUs.')
+    print(f'Chosen GPUs: [{os.environ["CUDA_VISIBLE_DEVICES"]}]')
 
 from torch import cuda
 
 print(f"Cuda has {cuda.device_count()} GPUs")
 
-from v2 import main
+if not cuda.device_count():
+    print("No GPUs!")
+    exit()
 
+from v2 import main
 
 main.run(options)
