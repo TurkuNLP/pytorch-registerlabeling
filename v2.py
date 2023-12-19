@@ -43,6 +43,7 @@ parser.add_argument("--seed", "-s", type=int, default=42)
 parser.add_argument("--torch_dtype")
 parser.add_argument("--accelerate", action="store_true")
 parser.add_argument("--wandb_project", "-w")
+parser.add_argument("--quit", "-q", action="store_true")
 
 # Tokenizer
 
@@ -127,6 +128,10 @@ options = parser.parse_args()
 
 print(f"Args: {' '.join(sys.argv)}")
 print(f"Settings: {options}")
+
+if options.quit:
+    print(os.getcwd())
+    exit()
 
 if options.num_gpus:
     os.environ[
