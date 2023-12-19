@@ -128,6 +128,9 @@ def run(options):
         tokenizer_cnf["add_bos_token"] = True
         tokenizer_cnf["padding_side"] = "left"
 
+    if options.use_slow:
+        tokenizer_cnf["use_fast"] = False
+
     tokenizer = AutoTokenizer.from_pretrained(
         model_name if not options.custom_tokenizer else options.custom_tokenizer,
         **tokenizer_cnf,
