@@ -147,7 +147,7 @@ def run(base_model_id, new_model_id):
             eval_steps=50,  # Evaluate and save checkpoints every 50 steps
             do_eval=True,  # Perform evaluation at the end of training
             report_to="wandb",  # Comment this out if you don't want to use weights & baises
-            run_name=f"{run_name}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}",  # Name of the W&B run (optional)
+            run_name=f"{new_model_id}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}",  # Name of the W&B run (optional)
         ),
         data_collator=transformers.DataCollatorForLanguageModeling(
             tokenizer, mlm=False
