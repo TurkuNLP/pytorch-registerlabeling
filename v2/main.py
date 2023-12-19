@@ -334,6 +334,8 @@ def run(options):
                 bnb_4bit_use_double_quant=True,
                 bnb_4bit_compute_dtype=torch_dtype,
             )
+        if options.ignore_mismatched_sizes:
+            params["ignore_mismatched_sizes"] = True
         model = model_cls.from_pretrained(model_name, **params)
 
         if options.set_pad_id:

@@ -45,6 +45,7 @@ parser.add_argument("--accelerate", action="store_true")
 parser.add_argument("--wandb_project", "-w")
 parser.add_argument("--cwd")
 parser.add_argument("--quit", "-q", action="store_true")
+parser.add_argument("--ignore_mismatched_sizes", action="store_true")
 
 # Tokenizer
 
