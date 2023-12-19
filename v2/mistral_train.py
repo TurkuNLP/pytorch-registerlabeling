@@ -7,9 +7,12 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
 from .data import get_dataset
 from .mistral_prompt import prompt
+from .mistral_instruct import instruct_prompt
+
+from peft import prepare_model_for_kbit_training
 
 
-def run():
+def run(base_model_id, new_model_id):
     load_dotenv()
     wandb_project_name = f"mistral_prompt"
 
@@ -21,12 +24,9 @@ def run():
 
     wandb.login()
 
-    print("Using wandb")
-
     dataset = get_dataset("en-fi-fr-sv", "en-fi-fr-sv", "all", few_shot=10)
-
     print(dataset)
-    base_model_id = "mistralai/Mistral-7B-v0.1"
+
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_use_double_quant=True,
@@ -75,26 +75,6 @@ def run():
             ["label", "label_text", "language", "text", "id", "split", "length"]
         )
     )
-    """
-    import matplotlib.pyplot as plt
-
-    def plot_data_lengths(tokenized_train_dataset, tokenized_val_dataset):
-        lengths = [len(x["input_ids"]) for x in tokenized_train_dataset]
-        lengths += [len(x["input_ids"]) for x in tokenized_val_dataset]
-        print(len(lengths))
-
-        # Plotting the histogram
-        plt.figure(figsize=(10, 6))
-        plt.hist(lengths, bins=20, alpha=0.7, color="blue")
-        plt.xlabel("Length of input_ids")
-        plt.ylabel("Frequency")
-        plt.title("Distribution of Lengths of input_ids")
-        plt.show()
-
-    plot_data_lengths(tokenized_train_dataset, tokenized_val_dataset)
-    """
-
-    from peft import prepare_model_for_kbit_training
 
     model.gradient_checkpointing_enable()
     model = prepare_model_for_kbit_training(model)
@@ -141,10 +121,7 @@ def run():
     import transformers
     from datetime import datetime
 
-    project = "register_classes"
-    base_model_name = "mistral"
-    run_name = base_model_name + "-" + project
-    output_dir = "./" + run_name
+    output_dir = "./" + new_model_id
 
     trainer = transformers.Trainer(
         model=model,
@@ -157,12 +134,12 @@ def run():
             per_device_eval_batch_size=4,
             gradient_accumulation_steps=1,
             gradient_checkpointing=True,
-            learning_rate=1e-5,  # Want a small lr for finetuning
+            learning_rate=1e-4,
             bf16=True,
             optim="paged_adamw_8bit",
             num_train_epochs=1,
             save_total_limit=2,
-            logging_steps=50,  # When to start reporting loss
+            logging_steps=50,
             logging_dir="./logs",  # Directory for storing logs
             save_strategy="steps",  # Save the model checkpoint every logging step
             save_steps=50,  # Save checkpoints every 50 steps
