@@ -21,6 +21,7 @@ from transformers import (
     BitsAndBytesConfig,
     TrainingArguments,
     EarlyStoppingCallback,
+    PreTrainedModel,
 )
 
 import torch
@@ -39,6 +40,22 @@ from .modes.extract_keywords import extract_doc_keywords
 from .utils import log_gpu_memory
 
 current_optimal_threshold = 0.5  # Used in hierarchical loss (now obsolete)
+
+
+class MT5Model(PreTrainedModel):
+    # ... [other methods and properties of the class]
+
+    def make_tensors_contiguous(self):
+        for name, param in self.named_parameters():
+            if not param.is_contiguous():
+                param.data = param.data.contiguous()
+
+    def save_pretrained(self, save_directory, **kwargs):
+        # Make tensors contiguous
+        self.make_tensors_contiguous()
+
+        # Call the original save_pretrained method
+        super().save_pretrained(save_directory, **kwargs)
 
 
 def run(options):
@@ -313,7 +330,10 @@ def run(options):
     # Initialize model
 
     def model_init():
-        model_cls = locate(f"transformers.{options.transformer_model}")
+        if options.transformer_model == "mt5":
+            model_cls = MT5Model
+        else:
+            model_cls = locate(f"transformers.{options.transformer_model}")
         params = {
             "num_labels": len(label_scheme),
             "cache_dir": f"model_cache",
