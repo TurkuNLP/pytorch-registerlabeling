@@ -21,7 +21,7 @@ from transformers import (
     BitsAndBytesConfig,
     TrainingArguments,
     EarlyStoppingCallback,
-    PreTrainedModel,
+    AutoModelForSequenceClassification,
 )
 
 import torch
@@ -42,7 +42,7 @@ from .utils import log_gpu_memory
 current_optimal_threshold = 0.5  # Used in hierarchical loss (now obsolete)
 
 
-class MT5Model(PreTrainedModel):
+class MT5Model(AutoModelForSequenceClassification):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
