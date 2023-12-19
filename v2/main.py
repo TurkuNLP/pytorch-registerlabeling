@@ -21,7 +21,7 @@ from transformers import (
     BitsAndBytesConfig,
     TrainingArguments,
     EarlyStoppingCallback,
-    AutoModelForSequenceClassification,
+    MT5ForSequenceClassification,
 )
 
 import torch
@@ -42,14 +42,12 @@ from .utils import log_gpu_memory
 current_optimal_threshold = 0.5  # Used in hierarchical loss (now obsolete)
 
 
-class MT5Model(AutoModelForSequenceClassification):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
+class MT5Model(MT5ForSequenceClassification):
     def make_tensors_contiguous(self):
         for name, param in self.named_parameters():
             if not param.is_contiguous():
-                param.data = param.data.contiguous()
+                # Clone the tensor and make the clone contiguous
+                param.data = param.data.clone().contiguous()
 
     def save_pretrained(self, save_directory, **kwargs):
         # Make tensors contiguous
