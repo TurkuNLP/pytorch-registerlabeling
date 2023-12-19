@@ -45,7 +45,7 @@ def run(peft_model_path):
             )
             try:
                 labels_pred = (
-                    result.split("### Labels")[1].strip().split("#")[0].strip()
+                    result.split("### Labels")[2].strip().split("#")[0].strip()
                 )
                 print(f"True: {labels_true}")
                 print(f"Pred: {labels_pred}")
