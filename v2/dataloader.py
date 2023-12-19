@@ -218,9 +218,9 @@ def custom_eval_dataloader(self, batch_size) -> DataLoader:
     return self.accelerator.prepare(DataLoader(eval_dataset, **dataloader_params))
 
 
-def custom_test_dataloader(self, batch_size) -> DataLoader:
+def custom_test_dataloader(self, batch_size, test_dataset) -> DataLoader:
     language_data = [sample["language"] for sample in self.eval_dataset]
-    test_dataset = self._remove_unused_columns(self.test_dataset, description="testing")
+    test_dataset = self._remove_unused_columns(test_dataset, description="testing")
     sampler = MeanBalancedLanguageSampler
 
     dataloader_params = {
