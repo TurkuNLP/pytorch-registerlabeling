@@ -293,9 +293,7 @@ def run(options):
             "threshold": threshold,
         }
         print(
-            classification_report(
-                labels, predictions, target_names=label_scheme, digits=4
-            )
+            classification_report(labels, y_pred, target_names=label_scheme, digits=4)
         )
         if not return_preds:
             return metrics
