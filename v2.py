@@ -56,6 +56,7 @@ parser.add_argument("--max_length", type=int, default=512)
 parser.add_argument("--return_tensors")
 parser.add_argument("--use_slow", action="store_true")
 parser.add_argument("--not_legacy", action="store_true")
+parser.add_argument("--add_special_tokens", action="store_true")
 
 # Visualization
 
