@@ -43,6 +43,9 @@ current_optimal_threshold = 0.5  # Used in hierarchical loss (now obsolete)
 
 
 class MT5Model(MT5ForSequenceClassification):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def make_tensors_contiguous(self):
         for name, param in self.named_parameters():
             if not param.is_contiguous():
