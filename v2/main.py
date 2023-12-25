@@ -418,6 +418,10 @@ def run(options):
             model.resize_token_embeddings(len(tokenizer))
             model.classifier = Linear(model.config.hidden_size, len(label_scheme))
 
+        # Resize embedding size as we added bos token
+        if model.config.vocab_size < len(tokenizer.get_vocab()):
+            model.resize_token_embeddings(len(tokenizer.get_vocab()))
+
         print("Model initialized!")
 
         return model
