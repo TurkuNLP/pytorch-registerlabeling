@@ -164,8 +164,6 @@ def run(options):
         options.train, options.test, options.labels, few_shot=options.few_shot
     )
 
-    print(dataset["train"][0])
-
     # If plotting, stop here
 
     if options.mode == "plot":
@@ -189,6 +187,8 @@ def run(options):
     )
 
     print("Data prepared!")
+
+    print(dataset["train"][0])
 
     # Override Trainer
 
