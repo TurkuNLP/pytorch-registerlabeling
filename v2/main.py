@@ -256,6 +256,10 @@ def run(options):
     # Calculate metrics
 
     def compute_metrics_fn(labels, predictions, return_preds=False):
+        print("labels:")
+        print(labels)
+        print("preds:")
+        print(predictions)
         threshold = (
             options.threshold
             if options.threshold
