@@ -142,6 +142,8 @@ def run(options):
     if options.llm:
         tokenizer_cnf["add_eos_token"] = True
         tokenizer_cnf["add_bos_token"] = True
+
+    if options.left_padding:
         tokenizer_cnf["padding_side"] = "left"
 
     if options.use_slow:
