@@ -151,6 +151,7 @@ def run(options):
 
     if options.use_slow:
         tokenizer_cnf["use_fast"] = False
+    if options.not_legacy:
         tokenizer_cnf["legacy"] = False
 
     tokenizer = AutoTokenizer.from_pretrained(
