@@ -334,9 +334,10 @@ def run(options):
 
         print("Evaluating with test set...")
         p = trainer.predict(dataset["test"])
-        metrics, preds = compute_metrics_fn(
-            p.label_ids, p.predictions, return_preds=True
+        predictions = (
+            p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
         )
+        metrics, preds = compute_metrics_fn(p.label_ids, predictions, return_preds=True)
         print(metrics)
         print(
             classification_report(
