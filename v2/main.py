@@ -307,9 +307,9 @@ def run(options):
             "accuracy": accuracy,
             "threshold": threshold,
         }
-        print(
-            classification_report(labels, y_pred, target_names=label_scheme, digits=4)
-        )
+        # print(
+        #    classification_report(labels, y_pred, target_names=label_scheme, digits=4)
+        # )
         if not return_preds:
             return metrics
         else:
