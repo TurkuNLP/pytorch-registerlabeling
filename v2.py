@@ -71,7 +71,7 @@ parser.add_argument("--max_lr", type=float, default=1e-4)
 
 # Training arguments
 
-parser.add_argument("--lr", type=float, default=1e-5)
+parser.add_argument("--lr", "-lr", type=float, default=1e-5)
 parser.add_argument("--train_batch_size", "-b", type=int, default=8)
 parser.add_argument("--eval_batch_size", type=int, default=8)
 parser.add_argument("--weight_decay", "-wd", type=float, default=0.05)
