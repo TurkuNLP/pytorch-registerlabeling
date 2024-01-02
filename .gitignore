@@ -9,3 +9,5 @@ data/sv/*.tsv
 __pycache*
 *.jsonl
 output*
+gemini.py
+google.py
