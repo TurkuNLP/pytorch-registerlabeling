@@ -37,27 +37,9 @@ from .dataloader import (
 )
 from .modes.extract_embeddings import extract_doc_embeddings
 from .modes.extract_keywords import extract_doc_keywords
-from .utils import log_gpu_memory, infer_device_map
+from .utils import log_gpu_memory, infer_device_map, CustomModel
 
 current_optimal_threshold = 0.5  # Used in hierarchical loss (now obsolete)
-
-
-class MT5Model(MT5ForSequenceClassification):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def make_tensors_contiguous(self):
-        for name, param in self.named_parameters():
-            if not param.is_contiguous():
-                # Clone the tensor and make the clone contiguous
-                param.data = param.data.clone().contiguous()
-
-    def save_pretrained(self, save_directory, **kwargs):
-        # Make tensors contiguous
-        self.make_tensors_contiguous()
-
-        # Call the original save_pretrained method
-        super().save_pretrained(save_directory, **kwargs)
 
 
 def run(options):
@@ -349,10 +331,7 @@ def run(options):
     # Initialize model
 
     def model_init():
-        if options.transformer_model == "mt5":
-            model_cls = MT5Model
-        else:
-            model_cls = locate(f"transformers.{options.transformer_model}")
+        model_cls = locate(f"transformers.{options.transformer_model}")
         params = {
             "num_labels": len(label_scheme),
             "cache_dir": f"model_cache",
@@ -376,7 +355,14 @@ def run(options):
             )
         if options.ignore_mismatched_sizes:
             params["ignore_mismatched_sizes"] = True
-        model = model_cls.from_pretrained(model_name, **params)
+
+        # Load the model
+
+        if options.gemini_embeddings:
+            print("Using Gemini embeddings")
+            model = CustomModel(768, 256, len(label_scheme))
+        else:
+            model = model_cls.from_pretrained(model_name, **params)
 
         if options.set_pad_id:
             model.config.pad_token_id = model.config.eos_token_id
@@ -477,7 +463,9 @@ def run(options):
         compute_metrics=compute_metrics,
         data_collator=DataCollatorWithPadding(
             tokenizer=tokenizer, padding="longest", max_length=options.max_length
-        ),
+        )
+        if not options.gemini_embeddings
+        else None,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=options.patience)],
     )
 
