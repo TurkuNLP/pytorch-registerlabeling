@@ -8,3 +8,12 @@ def log_gpu_memory():
         print(
             f"GPU {gpu}: Current Memory Allocated: {allocated_memory:.2f} GB, Max Memory Allocated: {max_allocated_memory:.2f} GB"
         )
+
+
+def infer_device_map():
+    num_available_gpus = cuda.device_count()
+    if num_available_gpus > 1:
+        device_map = {0: [i for i in range(num_available_gpus)]}
+    else:
+        device_map = {}
+    return device_map

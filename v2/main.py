@@ -37,7 +37,7 @@ from .dataloader import (
 )
 from .modes.extract_embeddings import extract_doc_embeddings
 from .modes.extract_keywords import extract_doc_keywords
-from .utils import log_gpu_memory
+from .utils import log_gpu_memory, infer_device_map
 
 current_optimal_threshold = 0.5  # Used in hierarchical loss (now obsolete)
 
@@ -359,9 +359,10 @@ def run(options):
             "offload_folder": "offload",
             "low_cpu_mem_usage": True,
             "torch_dtype": torch_dtype,
+            "device_map": options.device_map,
         }
-        if options.device_map:
-            params["device_map"] = options.device_map
+        if options.infer_device_map:
+            params["device_map"] = infer_device_map()
         if options.use_flash_attention_2:
             params["attn_implementation"] = "flash_attention_2"
             params["use_flash_attention_2"] = True
