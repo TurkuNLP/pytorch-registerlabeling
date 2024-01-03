@@ -101,6 +101,7 @@ def run(options):
             get_peft_model,
             TaskType,
             prepare_model_for_kbit_training,
+            PeftModel,
         )
 
     # Wandb setup
@@ -359,7 +360,7 @@ def run(options):
             "offload_folder": "offload",
             "low_cpu_mem_usage": True,
             "torch_dtype": torch_dtype,
-            "device_map": options.device_map,
+            "device_map": options.device_map or None,
         }
         if options.infer_device_map:
             params["device_map"] = infer_device_map()
@@ -383,39 +384,42 @@ def run(options):
         if options.peft:
             print("Using PEFT")
 
-            # model.config.pretraining_tp = 1  # Set max linear layers (llama2)
+            if options.mode == "evaluate":
+                model = PeftModel.from_pretrained(model, options.adapter_model_path)
+            else:
+                # model.config.pretraining_tp = 1  # Set max linear layers (llama2)
 
-            model_modules = str(model.modules)
-            pattern = r"\((\w+)\): Linear"
-            linear_layer_names = re.findall(pattern, model_modules)
+                model_modules = str(model.modules)
+                pattern = r"\((\w+)\): Linear"
+                linear_layer_names = re.findall(pattern, model_modules)
 
-            names = []
-            # Print the names of the Linear layers
-            for name in linear_layer_names:
-                names.append(name)
-            target_modules = list(set(names))
+                names = []
+                # Print the names of the Linear layers
+                for name in linear_layer_names:
+                    names.append(name)
+                target_modules = list(set(names))
 
-            print(f"Linear layers:\n {target_modules}")
+                print(f"Linear layers:\n {target_modules}")
 
-            # Define LoRA Config
-            lora_config = LoraConfig(
-                r=options.lora_rank,
-                lora_alpha=options.lora_alpha,
-                target_modules=target_modules if not peft_modules else peft_modules,
-                lora_dropout=options.lora_dropout,
-                bias=options.lora_bias,
-                task_type=TaskType.SEQ_CLS,
-            )
+                # Define LoRA Config
+                lora_config = LoraConfig(
+                    r=options.lora_rank,
+                    lora_alpha=options.lora_alpha,
+                    target_modules=target_modules if not peft_modules else peft_modules,
+                    lora_dropout=options.lora_dropout,
+                    bias=options.lora_bias,
+                    task_type=TaskType.SEQ_CLS,
+                )
 
-            # add LoRA adaptor
-            model.config.use_cache = False
-            if options.gradient_checkpointing:
-                model.gradient_checkpointing_enable()
+                # add LoRA adaptor
+                model.config.use_cache = False
+                if options.gradient_checkpointing:
+                    model.gradient_checkpointing_enable()
 
-            if options.kbit:
-                model = prepare_model_for_kbit_training(model)
-            model = get_peft_model(model, lora_config)
-            model.print_trainable_parameters()
+                if options.kbit:
+                    model = prepare_model_for_kbit_training(model)
+                model = get_peft_model(model, lora_config)
+                model.print_trainable_parameters()
 
         if options.add_classification_head:
             # Add a classification head on top of the model
