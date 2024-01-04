@@ -240,10 +240,11 @@ def run(options):
             )
 
             return (loss, outputs) if return_outputs else loss
-        
+
         def __getattr__(self, item):
             try:
-                return self[item]
+                state = self.__dict__.copy()
+                return state
             except KeyError:
                 raise AttributeError(item)
 
