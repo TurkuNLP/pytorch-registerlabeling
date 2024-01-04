@@ -21,7 +21,6 @@ from transformers import (
     BitsAndBytesConfig,
     TrainingArguments,
     EarlyStoppingCallback,
-    MT5ForSequenceClassification,
 )
 
 import torch
@@ -241,6 +240,12 @@ def run(options):
             )
 
             return (loss, outputs) if return_outputs else loss
+        
+        def __getattr__(self, item):
+            try:
+                return self[item]
+            except KeyError:
+                raise AttributeError(item)
 
     # Compute optimal threshold
 
