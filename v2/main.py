@@ -243,7 +243,7 @@ def run(options):
 
         def __getattr__(self, item):
             try:
-                return None
+                return vars(self)
             except KeyError:
                 raise AttributeError(item)
 
