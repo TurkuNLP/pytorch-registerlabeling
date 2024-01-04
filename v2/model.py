@@ -14,6 +14,7 @@ class GeminiModel(nn.Module):
                 "num_labels": output_size,
                 "to_json_string": lambda: "",
                 "keys_to_ignore_at_inference": [],
+                "to_dict": self.config,
             }
         )
         self.fc1 = nn.Linear(input_size, 512)
