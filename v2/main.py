@@ -28,8 +28,9 @@ import torch
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, cuda
 
+from .model import GeminiModel
 from .labels import get_label_scheme
-from .data import get_dataset
+from .data import get_dataset, get_gemini_data
 from .dataloader import (
     custom_train_dataloader,
     custom_eval_dataloader,
@@ -139,9 +140,13 @@ def run(options):
     if options.add_special_tokens:
         tokenizer_cnf["add_special_tokens"] = True
 
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_name if not options.custom_tokenizer else options.custom_tokenizer,
-        **tokenizer_cnf,
+    tokenizer = (
+        AutoTokenizer.from_pretrained(
+            model_name if not options.custom_tokenizer else options.custom_tokenizer,
+            **tokenizer_cnf,
+        )
+        if not options.gemini
+        else None
     )
 
     # Some LLM's require a pad id
@@ -151,8 +156,12 @@ def run(options):
 
     # Dataset
 
-    dataset = get_dataset(
-        options.train, options.test, options.labels, few_shot=options.few_shot
+    dataset = (
+        get_dataset(
+            options.train, options.test, options.labels, few_shot=options.few_shot
+        )
+        if not options.gemini
+        else get_gemini_data(options.train)
     )
 
     # If plotting, stop here
@@ -167,14 +176,18 @@ def run(options):
     # Shuffle and tokenize
 
     dataset = dataset.shuffle(seed=options.seed)
-    dataset = dataset.map(
-        lambda example: tokenizer(
-            example["text"],
-            truncation=True,
-            max_length=options.max_length,
-            return_tensors=options.return_tensors,
-        ),
-        batched=True,
+    dataset = (
+        dataset.map(
+            lambda example: tokenizer(
+                example["text"],
+                truncation=True,
+                max_length=options.max_length,
+                return_tensors=options.return_tensors,
+            ),
+            batched=True,
+        )
+        if not options.gemini
+        else dataset
     )
 
     print("Data prepared!")
@@ -203,7 +216,10 @@ def run(options):
         def compute_loss(self, model, inputs, return_outputs=False):
             labels = inputs.pop("labels")
             outputs = model(**inputs)
-            logits = outputs.logits
+            try:
+                logits = outputs.logits
+            except:
+                logits = outputs.get("logits")
 
             if options.loss:
                 loss_params = {
@@ -331,7 +347,6 @@ def run(options):
     # Initialize model
 
     def model_init():
-        model_cls = locate(f"transformers.{options.transformer_model}")
         params = {
             "num_labels": len(label_scheme),
             "cache_dir": f"model_cache",
@@ -355,7 +370,14 @@ def run(options):
             )
         if options.ignore_mismatched_sizes:
             params["ignore_mismatched_sizes"] = True
-        model = model_cls.from_pretrained(model_name, **params)
+
+        model = (
+            locate(f"transformers.{options.transformer_model}").from_pretrained(
+                model_name, **params
+            )
+            if not options.gemini
+            else GeminiModel()
+        )
 
         if options.set_pad_id:
             model.config.pad_token_id = model.config.eos_token_id
@@ -406,8 +428,9 @@ def run(options):
             model.classifier = Linear(model.config.hidden_size, len(label_scheme))
 
         # Resize embedding size as we added bos token
-        if model.config.vocab_size < len(tokenizer.get_vocab()):
-            model.resize_token_embeddings(len(tokenizer.get_vocab()))
+        if options.llm:
+            if model.config.vocab_size < len(tokenizer.get_vocab()):
+                model.resize_token_embeddings(len(tokenizer.get_vocab()))
 
         print("Model initialized!")
 
@@ -439,8 +462,8 @@ def run(options):
             greater_is_better=False
             if "loss" in options.metric_for_best_model
             else True,
-            per_device_train_batch_size=int(options.train_batch_size / num_gpus),
-            per_device_eval_batch_size=int(options.eval_batch_size / num_gpus),
+            per_device_train_batch_size=int(options.train_batch_size / (num_gpus or 1)),
+            per_device_eval_batch_size=int(options.eval_batch_size / (num_gpus or 1)),
             num_train_epochs=options.epochs,
             gradient_checkpointing=options.gradient_checkpointing,
             gradient_accumulation_steps=options.gradient_steps,
@@ -456,7 +479,9 @@ def run(options):
         compute_metrics=compute_metrics,
         data_collator=DataCollatorWithPadding(
             tokenizer=tokenizer, padding="longest", max_length=options.max_length
-        ),
+        )
+        if not options.gemini
+        else None,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=options.patience)],
     )
 

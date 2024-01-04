@@ -1,5 +1,6 @@
 import csv
 import sys
+import ast
 
 import pandas as pd
 
@@ -89,3 +90,44 @@ def get_dataset(train, test, label_config, few_shot=False):
             )
 
     return dataset
+
+
+def get_gemini_data(lang):
+    def convert_to_list(text):
+        l = ast.literal_eval(text)
+        if len(l) not in [25, 768]:
+            print("er")
+        return l
+
+    df_dev = pd.read_csv(
+        f"google_embeddings/{lang}_dev.csv",
+    ).dropna(subset=["Embeddings", "label"])
+    df_test = pd.read_csv(
+        f"google_embeddings/{lang}_test.csv",
+    ).dropna(subset=["Embeddings", "label"])
+    df_train = pd.read_csv(
+        f"google_embeddings/{lang}_train.csv",
+    ).dropna(subset=["Embeddings", "label"])
+
+    return DatasetDict(
+        {
+            "train": Dataset.from_dict(
+                {
+                    "input_ids": df_train["Embeddings"].apply(convert_to_list),
+                    "label": df_train["label"].apply(convert_to_list),
+                }
+            ),
+            "dev": Dataset.from_dict(
+                {
+                    "input_ids": df_dev["Embeddings"].apply(convert_to_list),
+                    "label": df_dev["label"].apply(convert_to_list),
+                }
+            ),
+            "test": Dataset.from_dict(
+                {
+                    "input_ids": df_test["Embeddings"].apply(convert_to_list),
+                    "label": df_test["label"].apply(convert_to_list),
+                }
+            ),
+        }
+    )

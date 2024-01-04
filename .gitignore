@@ -11,3 +11,6 @@ __pycache*
 output*
 gemini.py
 google.py
+tmp
+logs
+results
