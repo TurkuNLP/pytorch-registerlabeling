@@ -478,7 +478,6 @@ def run(options):
             tf32=options.tf32,
             group_by_length=True,
             resume_from_checkpoint=True if options.resume else None,
-            skip_memory_metrics=True,
         ),
         train_dataset=dataset["train"],
         eval_dataset=dataset["dev"],
