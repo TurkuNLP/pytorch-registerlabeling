@@ -2,6 +2,17 @@ import json
 import torch.nn as nn
 
 
+class Cnf:
+    def __init__(self, output_size):
+        self.output_size = output_size
+
+    def to_dict(self):
+        return vars(self)
+
+    def to_json_string(self):
+        return json.dumps(vars.self)
+
+
 class AttDict(dict):
     __getattr__ = dict.__getitem__
 
@@ -9,14 +20,7 @@ class AttDict(dict):
 class GeminiModel(nn.Module):
     def __init__(self, input_size=768, output_size=25):
         super(GeminiModel, self).__init__()
-        self.config = AttDict(
-            {
-                "num_labels": output_size,
-                "to_json_string": lambda: "",
-                "keys_to_ignore_at_inference": [],
-            }
-        )
-        self.config["to_dict"] = lambda: self.config
+        self.config = Cnf(output_size)
         self.fc1 = nn.Linear(input_size, 512)
         self.bn1 = nn.BatchNorm1d(512)
         self.fc2 = nn.Linear(512, 256)
