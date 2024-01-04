@@ -243,8 +243,7 @@ def run(options):
 
         def __getattr__(self, item):
             try:
-                state = self.__dict__.copy()
-                return state
+                return None
             except KeyError:
                 raise AttributeError(item)
 
