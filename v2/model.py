@@ -38,3 +38,7 @@ class GeminiModel(nn.Module):
 
         x = self.fc3(x)
         return {"logits": x}
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        return state
