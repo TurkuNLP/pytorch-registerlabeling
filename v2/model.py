@@ -4,7 +4,7 @@ import torch.nn as nn
 
 class Cnf:
     def __init__(self, output_size):
-        self.output_size = output_size
+        self.num_labels = output_size
 
     def to_dict(self):
         return vars(self)
