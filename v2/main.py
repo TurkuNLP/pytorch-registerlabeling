@@ -242,10 +242,6 @@ def run(options):
 
             return (loss, outputs) if return_outputs else loss
 
-        def __getstate__(self):
-            state = self.__dict__.copy()
-            return state
-
     # Compute optimal threshold
 
     def optimize_threshold(predictions, labels):
