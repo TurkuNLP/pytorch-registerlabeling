@@ -241,11 +241,8 @@ def run(options):
 
             return (loss, outputs) if return_outputs else loss
 
-        def __getattr__(self, item):
-            try:
-                return lambda: vars(self)
-            except KeyError:
-                raise AttributeError(item)
+        def __getattr__(self, attr):
+            return super().__getattr__(attr)
 
     # Compute optimal threshold
 
