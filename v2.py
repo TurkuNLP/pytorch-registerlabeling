@@ -101,6 +101,7 @@ parser.add_argument("--bf16", action="store_true")
 parser.add_argument("--tf32", action="store_true")
 parser.add_argument("--resume", action="store_true")
 parser.add_argument("--num_gpus", "-g", type=int)
+parser.add_argument("--eval_accumulation_steps", type=int, default=None)
 
 # Balanced sampling
 
