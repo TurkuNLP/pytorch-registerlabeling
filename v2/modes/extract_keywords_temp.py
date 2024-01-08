@@ -1,7 +1,7 @@
 import csv
-import numpy as np
+
 import tqdm
-import json
+
 from sklearn.metrics.pairwise import cosine_similarity
 
 
@@ -65,30 +65,31 @@ def compute_cosine_similarity(doc_embedding, word_embeddings):
     return sorted_cosine_similarities
 
 
+import json
+
+
 def extract_doc_keywords(model, dataset, tokenizer, output_file):
+    category_doc_word_similarities = {}
+
     with open(f"{output_file}", "w", newline="") as tsvfile:
         writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
-
         for d in tqdm(dataset["train"]):
-            # Extract data
             word_ids = d["input_ids"].tolist()[0]
             tokens = tokenizer.convert_ids_to_tokens(word_ids)
             label_text = d.pop("label_text")
+            label_one_hot = d.pop("label")
+            text = d.pop("text")
             language = d.pop("language")
 
-            # Get model outputs with hidden states
             outputs = model(**d, output_hidden_states=True)
 
-            # Extract text_embedding and token_embeddings from the model outputs
             text_embedding = outputs.hidden_states[-1][0][0, :].detach().numpy()
             token_embeddings = outputs.hidden_states[-1][0].detach().numpy()
 
-            # Pool token embeddings for each word in the document
             word_embeddings = pool_embeddings_for_words(
                 token_embeddings, tokens, tokenizer
             )
 
-            # Compute cosine similarities between document embedding and word embeddings
             cosine_similarities = compute_cosine_similarity(
                 text_embedding,
                 word_embeddings,
@@ -99,7 +100,22 @@ def extract_doc_keywords(model, dataset, tokenizer, output_file):
                     language,
                     label_text,
                     " ".join([str(x) for x in text_embedding.tolist()]),
-                    json.dumps(str(cosine_similarities)),
+                    # json.dumps(str(cosine_similarities)),
                     json.dumps(str(word_embeddings)),
                 ]
             )
+
+            continue
+
+            if label_text not in category_doc_word_similarities:
+                category_doc_word_similarities[label_text] = {}
+
+            for k, v in cosine_similarities.items():
+                if k not in category_doc_word_similarities[label_text]:
+                    category_doc_word_similarities[label_text][k] = []
+                category_doc_word_similarities[label_text][k].append(v)
+
+        # for k, v in category_doc_word_similarities.items():
+        #    print(f"CATEGORY {k}")
+        #    print(v)
+        #    exit()

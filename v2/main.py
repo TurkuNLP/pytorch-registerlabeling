@@ -507,7 +507,7 @@ def run(options):
         model = model_init()
         dataset.set_format(type="torch")
         model = model.to("cpu")
-        extract_doc_keywords(model, dataset, working_dir, tokenizer)
+        extract_doc_keywords(model, dataset, tokenizer, f"{working_dir}/keywords2.tsv")
 
     # Mode: train
 
