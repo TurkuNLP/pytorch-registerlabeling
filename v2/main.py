@@ -350,8 +350,8 @@ def run(options):
             "num_labels": len(label_scheme),
             "cache_dir": f"model_cache",
             "trust_remote_code": True,
-            # "offload_folder": "offload",
-            # "low_cpu_mem_usage": True,
+            "offload_folder": "offload" if options.offload else None,
+            "low_cpu_mem_usage": options.low_cpu_mem_usage,
             "torch_dtype": torch_dtype,
             "device_map": options.device_map or None,
         }
