@@ -222,8 +222,8 @@ def run(options):
 
             if options.loss:
                 loss_params = {
-                    "gamma": options.loss_gamma,
-                    "alpha": options.loss_alpha,
+                    "gamma": self.args.loss_gamma,
+                    "alpha": self.args.loss_alpha,
                 }
                 if options.loss == "HierarchicalBCEFocalLoss":
                     loss_params["threshold"] = current_optimal_threshold
@@ -435,12 +435,27 @@ def run(options):
 
         return model
 
+    # Extend TrainingArguments to include custom hyperparameters
+    class CustomTrainingArguments(TrainingArguments):
+        def __init__(
+            self,
+            loss_gamma,
+            loss_alpha,
+            *args,
+            **kwargs,
+        ):
+            super().__init__(*args, **kwargs)
+            self.loss_gamma = loss_gamma
+            self.loss_alpha = loss_alpha
+
     # Init trainer
 
     trainer = MultilabelTrainer(
         model=None if options.mode == "hp_search" else model_init(),
         model_init=model_init if options.mode == "hp_search" else None,
-        args=TrainingArguments(
+        args=CustomTrainingArguments(
+            options.loss_gamma,
+            options.loss_alpha,
             f"{working_dir}/checkpoints",
             overwrite_output_dir=True if not options.resume else False,
             evaluation_strategy=options.iter_strategy,

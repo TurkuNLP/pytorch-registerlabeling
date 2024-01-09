@@ -38,6 +38,8 @@ def hyperparameter_search(
         hp_config["hp_space"] = lambda _: {
             "learning_rate": loguniform(min_lr, max_lr),
             "per_device_train_batch_size": choice([x / num_gpus for x in [6, 8, 12]]),
+            "loss_gamma": choice([1, 2, 3]),
+            "loss_alpha": choice([0.5, 0.75, 0.25]),
         }
 
     best_model = trainer.hyperparameter_search(**hp_config)

@@ -35,7 +35,7 @@ parser.add_argument("--gemini", action="store_true")
 
 parser.add_argument("--train", "-t", required=True)
 parser.add_argument("--test")
-parser.add_argument("--labels", default="all")
+parser.add_argument("--labels", "-l", default="all")
 parser.add_argument("--model_name", default="xlm-roberta-base")
 parser.add_argument("--adapter_model_path", "-a")
 parser.add_argument("--data_path", default="data")
@@ -110,7 +110,7 @@ parser.add_argument("--balance", action="store_true")
 
 # Loss function, uses BCEFocalLoss by default
 
-parser.add_argument("--loss", "-l", default="BCEFocalLoss")
+parser.add_argument("--loss", default="BCEFocalLoss")
 parser.add_argument("--loss_alpha", type=float, default=0.85)
 parser.add_argument("--loss_gamma", type=float, default=3.00)
 parser.add_argument("--loss_penalty", type=float, default=10.00)
