@@ -19,7 +19,6 @@ from transformers import (
     DataCollatorWithPadding,
     Trainer,
     BitsAndBytesConfig,
-    TrainingArguments,
     EarlyStoppingCallback,
 )
 
@@ -35,6 +34,7 @@ from .dataloader import (
     custom_eval_dataloader,
     custom_test_dataloader,
 )
+from .training_args import CustomTrainingArguments
 from .modes.extract_embeddings import extract_doc_embeddings
 from .modes.extract_keywords import extract_doc_keywords
 from .utils import log_gpu_memory, infer_device_map
@@ -434,19 +434,6 @@ def run(options):
         print("Model initialized!")
 
         return model
-
-    # Extend TrainingArguments to include custom hyperparameters
-    class CustomTrainingArguments(TrainingArguments):
-        def __init__(
-            self,
-            loss_gamma,
-            loss_alpha,
-            *args,
-            **kwargs,
-        ):
-            super().__init__(*args, **kwargs)
-            self.loss_gamma = loss_gamma
-            self.loss_alpha = loss_alpha
 
     # Init trainer
 

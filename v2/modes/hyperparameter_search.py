@@ -5,6 +5,7 @@ from ray.tune.schedulers import PopulationBasedTraining
 from ray.tune import grid_search, CLIReporter, loguniform, choice, uniform
 from ray.tune.search.hyperopt import HyperOptSearch
 from ray import init as ray_init
+from ..training_args import CustomTrainingArguments
 
 
 def hyperparameter_search(
