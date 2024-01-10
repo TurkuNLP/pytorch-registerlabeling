@@ -398,8 +398,10 @@ def run(options):
             print("Using PEFT")
 
             if options.mode == "evaluate":
-                model.load_adapter(options.adapter_model_path)
-                print("Adapter loaded.")
+                model = PeftModel.from_pretrained(
+                    model, options.adapter_model_path, **params
+                )
+                model = model.merge_and_unload()
             else:
                 # model.config.pretraining_tp = 1  # Set max linear layers (llama2)
 
