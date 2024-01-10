@@ -2,6 +2,7 @@ import os
 from pydoc import locate
 import re
 
+
 import numpy as np
 
 from sklearn.metrics import (
@@ -20,11 +21,14 @@ from transformers import (
     Trainer,
     BitsAndBytesConfig,
     EarlyStoppingCallback,
+    AutoConfig,
 )
 
 import torch
 from torch.nn import BCEWithLogitsLoss, Sigmoid, Linear
 from torch import Tensor, cuda
+from accelerate import infer_auto_device_map, init_empty_weights
+
 
 from .model import GeminiModel
 from .labels import get_label_scheme
@@ -357,6 +361,15 @@ def run(options):
         }
         if options.infer_device_map:
             params["device_map"] = infer_device_map()
+        if options.infer_auto_device_map:
+            config = AutoConfig.from_pretrained(model_name)
+            with init_empty_weights():
+                model = locate(f"transformers.{options.transformer_model}").from_config(
+                    config
+                )
+
+            params["device_map"] = infer_auto_device_map(model, dtype=torch_dtype)
+
         if options.use_flash_attention_2:
             params["attn_implementation"] = "flash_attention_2"
             params["use_flash_attention_2"] = True
