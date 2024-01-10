@@ -96,6 +96,7 @@ parser.add_argument("--max_grad_norm", type=float, default=1)
 parser.add_argument("--threshold", type=float, default=None)
 parser.add_argument("--device_map", default="auto")
 parser.add_argument("--infer_device_map", action="store_true"),
+parser.add_argument("--infer_auto_device_map", action="store_true"),
 parser.add_argument("--fp16", action="store_true")
 parser.add_argument("--bf16", action="store_true")
 parser.add_argument("--tf32", action="store_true")
