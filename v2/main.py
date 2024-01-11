@@ -428,7 +428,7 @@ def run(options):
             )
 
             # add LoRA adaptor
-            model.config.use_cache = False
+            model.config.use_cache = options.use_cache
             if options.gradient_checkpointing:
                 model.gradient_checkpointing_enable()
 

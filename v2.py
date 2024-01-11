@@ -130,6 +130,7 @@ parser.add_argument("--lora_rank", type=int, default=16)
 parser.add_argument("--lora_alpha", type=float, default=1)
 parser.add_argument("--lora_dropout", type=float, default=0.05)
 parser.add_argument("--lora_bias", default="none")
+parser.add_argument("--use_cache", type=bool, default=True)
 
 # LLM specific settings
 
