@@ -88,6 +88,7 @@ def run(options):
             TaskType,
             prepare_model_for_kbit_training,
             PeftModel,
+            PeftConfig,
         )
 
     # Wandb setup
@@ -398,10 +399,7 @@ def run(options):
             print("Using PEFT")
 
             if options.mode == "evaluate":
-                model = PeftModel.from_pretrained(
-                    model, options.adapter_model_path, **params
-                )
-                model = model.merge_and_unload()
+                a = 1  # PLACEHOLDER
             else:
                 # model.config.pretraining_tp = 1  # Set max linear layers (llama2)
 
@@ -436,6 +434,12 @@ def run(options):
                     model = prepare_model_for_kbit_training(model)
                 model = get_peft_model(model, lora_config)
                 model.print_trainable_parameters()
+
+                if options.mode == "evaluate":
+                    model = PeftModel.from_pretrained(
+                        model, options.adapter_model_path  # , **params
+                    )
+                    # model = model.merge_and_unload()
 
         if options.add_classification_head:
             # Add a classification head on top of the model
