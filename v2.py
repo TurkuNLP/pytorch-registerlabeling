@@ -53,7 +53,7 @@ parser.add_argument("--ignore_mismatched_sizes", action="store_true")
 # Tokenizer
 
 parser.add_argument("--add_prefix_space", action="store_true")  # For peft
-parser.add_argument("--low_cpu_mem_usage", action="store_true")
+parser.add_argument("--low_cpu_mem_usage", type=bool, default=True)
 parser.add_argument("--custom_tokenizer")
 parser.add_argument("--max_length", type=int, default=512)
 parser.add_argument("--return_tensors")
