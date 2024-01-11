@@ -498,8 +498,8 @@ def run(options):
             resume_from_checkpoint=True if options.resume else None,
             eval_accumulation_steps=options.eval_accumulation_steps,
         ),
-        train_dataset=dataset["train"],
-        eval_dataset=dataset["dev"],
+        train_dataset=dataset.get('train', None)
+        eval_dataset=dataset.get('dev', None),
         compute_metrics=compute_metrics,
         data_collator=DataCollatorWithPadding(
             tokenizer=tokenizer, padding="longest", max_length=options.max_length
