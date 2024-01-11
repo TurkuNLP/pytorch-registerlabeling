@@ -106,6 +106,7 @@ parser.add_argument("--num_gpus", "-g", type=int)
 parser.add_argument("--eval_accumulation_steps", type=int, default=None)
 parser.add_argument("--offload", action="store_true")
 parser.add_argument("--auto_find_batch_size", action="store_true")
+parser.add_argument("--preprocess_logits", action="store_true")
 
 # Balanced sampling
 

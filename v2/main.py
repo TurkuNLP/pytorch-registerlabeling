@@ -41,7 +41,7 @@ from .dataloader import (
 from .training_args import CustomTrainingArguments
 from .modes.extract_embeddings import extract_doc_embeddings
 from .modes.extract_keywords import extract_doc_keywords
-from .utils import log_gpu_memory, infer_device_map
+from .utils import log_gpu_memory, infer_device_map, preprocess_logits_for_metrics
 
 current_optimal_threshold = 0.5  # Used in hierarchical loss (now obsolete)
 
@@ -498,6 +498,9 @@ def run(options):
             resume_from_checkpoint=True if options.resume else None,
             eval_accumulation_steps=options.eval_accumulation_steps,
             auto_find_batch_size=options.auto_find_batch_size or False,
+            preprocess_logits_for_metrics=preprocess_logits_for_metrics
+            if options.preprocess_logits
+            else None,
         ),
         train_dataset=dataset.get("train", []),
         eval_dataset=dataset.get("dev", []),
