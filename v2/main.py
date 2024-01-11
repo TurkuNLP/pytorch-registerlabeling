@@ -497,6 +497,7 @@ def run(options):
             group_by_length=True,
             resume_from_checkpoint=True if options.resume else None,
             eval_accumulation_steps=options.eval_accumulation_steps,
+            auto_find_batch_size=options.auto_find_batch_size or False,
         ),
         train_dataset=dataset.get("train", []),
         eval_dataset=dataset.get("dev", []),

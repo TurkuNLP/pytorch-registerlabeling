@@ -15,7 +15,7 @@ class MeanBalancedLanguageSampler(Sampler):
         )
         self.epoch_size = self.mean_dataset_size * len(self.indices_per_language)
 
-        print(f"Eval mean balanced epoch size: {self.epoch_size}")
+        print(f"Mean balanced epoch size: {self.epoch_size}")
 
     def _create_indices_per_language(self):
         indices_per_language = {lang: [] for lang in set(self.language_data)}
