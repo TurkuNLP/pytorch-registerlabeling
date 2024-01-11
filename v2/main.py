@@ -179,6 +179,9 @@ def run(options):
 
     # Shuffle and tokenize
 
+    if options.mode == "evaluate":
+        dataset.pop("train")
+
     dataset = dataset.shuffle(seed=options.seed)
     dataset = (
         dataset.map(
