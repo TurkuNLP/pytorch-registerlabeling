@@ -437,7 +437,7 @@ def run(options):
             model = get_peft_model(model, lora_config)
             model.print_trainable_parameters()
 
-            if options.mode == "evaluate":
+            if options.mode == "evaluate" and options.adapter_model_path:
                 model = PeftModel.from_pretrained(
                     model, options.adapter_model_path  # , **params
                 )
