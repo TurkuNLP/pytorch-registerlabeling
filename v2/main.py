@@ -199,8 +199,6 @@ def run(options):
 
     print("Data prepared!")
 
-    print(dataset["train"][0])
-
     # Override Trainer
 
     class MultilabelTrainer(Trainer):
