@@ -30,6 +30,7 @@ parser = ArgumentParser()
 
 parser.add_argument("--mode", "-m", default="train")
 parser.add_argument("--gemini", action="store_true")
+parser.add_argument("--only_test", action="store_true")
 
 # Data and model
 

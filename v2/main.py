@@ -182,6 +182,9 @@ def run(options):
     if options.mode == "evaluate":
         dataset.pop("train")
 
+    if options.only_test:
+        dataset.pop("dev")
+
     dataset = dataset.shuffle(seed=options.seed)
     dataset = (
         dataset.map(
@@ -333,8 +336,9 @@ def run(options):
     # Print evaluation results
 
     def evaluate():
-        print("Evaluating with dev set...")
-        print(trainer.evaluate(dataset["dev"]))
+        if not options.only_test:
+            print("Evaluating with dev set...")
+            print(trainer.evaluate(dataset["dev"]))
 
         print("Evaluating with test set...")
         p = trainer.predict(dataset["test"])
