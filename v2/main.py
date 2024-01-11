@@ -498,9 +498,6 @@ def run(options):
             resume_from_checkpoint=True if options.resume else None,
             eval_accumulation_steps=options.eval_accumulation_steps,
             auto_find_batch_size=options.auto_find_batch_size or False,
-            preprocess_logits_for_metrics=preprocess_logits_for_metrics
-            if options.preprocess_logits
-            else None,
         ),
         train_dataset=dataset.get("train", []),
         eval_dataset=dataset.get("dev", []),
@@ -511,6 +508,9 @@ def run(options):
         if not options.gemini
         else None,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=options.patience)],
+        preprocess_logits_for_metrics=preprocess_logits_for_metrics
+        if options.preprocess_logits
+        else None,
     )
 
     print(f"Trainer prepared! Using {trainer.args._n_gpu} GPUs.")
