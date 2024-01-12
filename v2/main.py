@@ -124,8 +124,7 @@ def run(options):
         "cache_dir": f"{options.output_path}/tokenizer_cache",
     }
 
-    if options.low_cpu_mem_usage:
-        tokenizer_cnf["low_cpu_mem_usage"] = True
+    tokenizer_cnf["low_cpu_mem_usage"] = not options.high_cpu_mem_usage
 
     if options.add_prefix_space:
         tokenizer_cnf["add_prefix_space"] = True
@@ -361,7 +360,7 @@ def run(options):
             "cache_dir": f"model_cache",
             "trust_remote_code": True,
             "offload_folder": "offload" if options.offload else None,
-            "low_cpu_mem_usage": options.low_cpu_mem_usage,
+            "low_cpu_mem_usage": not options.high_cpu_mem_usage,
             "torch_dtype": torch_dtype,
             "device_map": options.device_map or None,
         }
@@ -428,7 +427,7 @@ def run(options):
             )
 
             # add LoRA adaptor
-            model.config.use_cache = options.use_cache
+            model.config.use_cache = not options.no_cache
             if options.gradient_checkpointing:
                 model.gradient_checkpointing_enable()
 

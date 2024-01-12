@@ -53,7 +53,7 @@ parser.add_argument("--ignore_mismatched_sizes", action="store_true")
 # Tokenizer
 
 parser.add_argument("--add_prefix_space", action="store_true")  # For peft
-parser.add_argument("--low_cpu_mem_usage", type=bool, default=True)
+parser.add_argument("--high_cpu_mem_usage", action="store_true")
 parser.add_argument("--custom_tokenizer")
 parser.add_argument("--max_length", type=int, default=512)
 parser.add_argument("--return_tensors")
@@ -132,7 +132,7 @@ parser.add_argument("--lora_rank", type=int, default=16)
 parser.add_argument("--lora_alpha", type=float, default=1)
 parser.add_argument("--lora_dropout", type=float, default=0.05)
 parser.add_argument("--lora_bias", default="none")
-parser.add_argument("--use_cache", type=bool, default=True)
+parser.add_argument("--no_cache", action="store_true")
 
 # LLM specific settings
 
