@@ -328,7 +328,7 @@ map_xgenre = {
     "re": "Instruction",
     ### 7. INFORMATIONAL DESCRIPTION
     "IN": "Information/Explanation",
-    "id": "Information/Explanation",
+    "in": "Information/Explanation",
     "oi": "Information/Explanation",
     # Encyclopedia article
     "en": "Information/Explanation",
