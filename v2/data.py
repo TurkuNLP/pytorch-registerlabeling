@@ -29,7 +29,7 @@ small_languages = [
 ]
 
 
-def get_dataset(train, test, label_config, few_shot=False):
+def get_dataset(train, test, label_config, output_path, few_shot=False):
     def data_gen(ls, split):
         row_id = 0
         for l in ls.split("-"):
@@ -64,13 +64,19 @@ def get_dataset(train, test, label_config, few_shot=False):
     dataset = DatasetDict(
         {
             "train": Dataset.from_generator(
-                data_gen, gen_kwargs={"ls": train, "split": "train"}
+                data_gen,
+                gen_kwargs={"ls": train, "split": "train"},
+                cache_dir=output_path,
             ),
             "dev": Dataset.from_generator(
-                data_gen, gen_kwargs={"ls": train, "split": "dev"}
+                data_gen,
+                gen_kwargs={"ls": train, "split": "dev"},
+                cache_dir=output_path,
             ),
             "test": Dataset.from_generator(
-                data_gen, gen_kwargs={"ls": test, "split": "test"}
+                data_gen,
+                gen_kwargs={"ls": test, "split": "test"},
+                cache_dir=output_path,
             ),
         }
     )

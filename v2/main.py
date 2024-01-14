@@ -161,7 +161,11 @@ def run(options):
 
     dataset = (
         get_dataset(
-            options.train, options.test, options.labels, few_shot=options.few_shot
+            options.train,
+            options.test,
+            options.labels,
+            options.output_path,
+            few_shot=options.few_shot,
         )
         if not options.gemini
         else get_gemini_data(options.train)
