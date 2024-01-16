@@ -25,7 +25,7 @@ def init_split_dataloader(dataset, split, batch_size, tokenizer_pad_token_id):
         }
 
     dataloader = DataLoader(
-        dataset[split],
+        dataset,
         shuffle=True,
         batch_size=batch_size,
         collate_fn=collate_fn,
