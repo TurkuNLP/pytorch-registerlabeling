@@ -22,7 +22,7 @@ class Main:
         cfg.working_dir = "/".join[
             cfg.data.output_path,
             cfg.model.name,
-            "_".join(filter([cfg.data.train, cfg.data.dev, cfg.data.test])),
+            "_".join(filter([cfg.data.train, cfg.data.dev, cfg.data.test], None)),
         ]
         self.cfg = cfg
 
