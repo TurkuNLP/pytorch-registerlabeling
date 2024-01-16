@@ -19,11 +19,15 @@ class Main:
         cfg.label_scheme = get_label_scheme(cfg.data.labels)
         cfg.num_labels = len(cfg.label_scheme)
         cfg.device = torch.device(cfg.device)
-        cfg.working_dir = "/".join[
-            cfg.data.output_path,
-            cfg.model.name,
-            "_".join([cfg.data.train or "", cfg.data.dev or "", cfg.data.test or ""]),
-        ]
+        cfg.working_dir = "/".join(
+            [
+                cfg.data.output_path,
+                cfg.model.name,
+                "_".join(
+                    [cfg.data.train or "", cfg.data.dev or "", cfg.data.test or ""]
+                ),
+            ]
+        )
         self.cfg = cfg
 
         np.random.seed(cfg.seed)
