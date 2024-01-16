@@ -181,7 +181,7 @@ class Main:
                 best_score = metrics[patience_metric]
                 best_epoch = epoch
                 self._checkpoint(model)
-            elif epoch - best_epoch > self.cnf.trainer.patience:
+            elif epoch - best_epoch > self.cfg.trainer.patience:
                 print("Early stopped training at epoch %d" % epoch)
                 break
 
