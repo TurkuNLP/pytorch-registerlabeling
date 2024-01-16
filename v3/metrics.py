@@ -30,6 +30,8 @@ def optimize_threshold(logits, labels):
 
 
 def compute_metrics(logits, labels, label_scheme=None):
+    logits = logits.cpu().numpy()
+    labels = labels.cpu().numpy()
     threshold = optimize_threshold(logits, labels)
     probs = sigmoid(logits)
     y_pred = np.zeros(probs.shape)
