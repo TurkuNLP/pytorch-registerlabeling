@@ -1,0 +1,7 @@
+data:
+  train: sv
+model:
+  name: xlm-roberta-base
+trainer:
+  epochs: 3
+  wandb_project: sv_test
