@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import LambdaLR
 import torch
 import torch.nn.functional as F
+import numpy as np
 
 
 class Main:
@@ -18,7 +19,15 @@ class Main:
         cfg.label_scheme = get_label_scheme(cfg.data.labels)
         cfg.num_labels = len(cfg.label_scheme)
         cfg.device = torch.device(cfg.device)
+        cfg.working_dir = "/".join[
+            cfg.data.output_dir,
+            cfg.model.name,
+            "_".join(filter([cfg.data.train, cfg.data.dev, cfg.data.test])),
+        ]
         self.cfg = cfg
+
+        np.random.seed(cfg.seed)
+        torch.manual_seed(cfg.seed)
 
         # Prepare dataset
         dataset = get_dataset(cfg)
@@ -69,6 +78,15 @@ class Main:
         print(f"{split} dataloader size: {len(dataloader)}")
 
         return dataloader
+
+    def _checkpoint(self, model):
+        torch.save(
+            model.state_dict(),
+            f"{self.working_dir}/best_model.pth",
+        )
+
+    def _resume(self, model):
+        model.load_state_dict(torch.load(f"{self.working_dir}/best_model.pth"))
 
     def _train(self, model, optimizer, lr_scheduler, epoch, progress_bar):
         model.train()
@@ -148,11 +166,21 @@ class Main:
         )
 
         progress_bar = tqdm(range(num_training_steps))
-
+        best_score = -1
+        best_epoch = -1
         for epoch in range(self.cfg.trainer.epochs):
             self._train(model, optimizer, lr_scheduler, epoch + 1, progress_bar)
-            dev_metrics = self._evaluate(model)
-            print(dev_metrics)
+            metrics = self._evaluate(model)
+            print(metrics)
+            patience_metric = metrics[self.cnf.trainer.best_model_metric]
+            if metrics[patience_metric] > best_score:
+                best_score = metrics[patience_metric]
+                best_epoch = epoch
+                self._checkpoint(model)
+            elif epoch - best_epoch > self.cnf.trainer.patience:
+                print("Early stopped training at epoch %d" % epoch)
+                break
 
         print("Testing")
+        self._resume(model)
         print(self._evaluate(model, "test", True))

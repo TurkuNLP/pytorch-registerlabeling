@@ -34,6 +34,8 @@ class Trainer:
     loss_alpha: float = 0.75
     loss_gamma: float = 2
     dev_classification_report: bool = False
+    patience: int = 3
+    best_model_metric: str = "f1"
 
 
 @dataclass
