@@ -1,4 +1,5 @@
 import os
+import random
 
 import numpy as np
 
@@ -36,8 +37,14 @@ class Main:
         )
         self.cfg = cfg
 
-        np.random.seed(cfg.seed)
         torch.manual_seed(cfg.seed)
+        np.random.seed(cfg.seed)
+        random.seed(cfg.seed)
+        # for cuda
+        torch.cuda.manual_seed_all(cfg.seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.enabled = False
 
         # Prepare dataset
         dataset = get_dataset(cfg)
