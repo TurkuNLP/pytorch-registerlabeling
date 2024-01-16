@@ -29,7 +29,7 @@ class Model:
 class Trainer:
     epochs: int = 30
     wandb_project: str = "unnamed_project"
-    learning_rate: float = 5e-5
+    learning_rate: float = 1e-5
     warmup_ratio: float = 0.01
     loss_alpha: float = 0.75
     loss_gamma: float = 2
