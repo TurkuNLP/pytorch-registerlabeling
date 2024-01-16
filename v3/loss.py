@@ -13,3 +13,5 @@ def BCEFocalLoss(outputs, labels, loss_gamma, loss_alpha):
     # Class balancing
     loss = loss * (labels * loss_alpha + (1 - labels) * (1 - loss_alpha))
     loss = loss.mean()
+
+    return loss
