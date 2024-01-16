@@ -86,11 +86,11 @@ class Main:
     def _checkpoint(self, model):
         torch.save(
             model.state_dict(),
-            f"{self.working_dir}/best_model.pth",
+            f"{self.cfg.working_dir}/best_model.pth",
         )
 
     def _resume(self, model):
-        model.load_state_dict(torch.load(f"{self.working_dir}/best_model.pth"))
+        model.load_state_dict(torch.load(f"{self.cfg.working_dir}/best_model.pth"))
 
     def _train(self, model, optimizer, lr_scheduler, epoch, progress_bar):
         model.train()
