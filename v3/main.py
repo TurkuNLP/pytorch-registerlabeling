@@ -6,15 +6,15 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from torch.optim import AdamW
 from tqdm.auto import tqdm
 import torch
-from torch.utils.data import DataLoader
 from torch.optim.lr_scheduler import LambdaLR
-import torch.nn.functional as F
 
 from .labels import get_label_scheme
 from .data import get_dataset, preprocess_data
+from .dataloader import init_dataloaders
 from .utils import get_torch_dtype
 from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
+from .loss import BCEFocalLoss
 
 
 class Main:
@@ -47,48 +47,15 @@ class Main:
         )
 
         # Get dataloaders
-        self.dataloaders = {k: self._init_dataloader(k) for k in self.dataset.keys()}
+        self.dataloaders = init_dataloaders(
+            self.dataset, self.cfg.dataloader, self.tokenizer.pad_token_id
+        )
 
         # Init model
         self._init_model()
 
         # Run
         getattr(self, cfg.method)()
-
-    def _init_dataloader(self, split):
-        def collate_fn(batch):
-            max_length = max(len(example["input_ids"]) for example in batch)
-            # Pad sequences dynamically to the maximum length in the batch
-            for example in batch:
-                pad_length = max_length - len(example["input_ids"])
-                for key in example:
-                    if key == "input_ids":
-                        # Use tokenizer.pad_token_id as the padding value for input_ids
-                        example[key] = torch.nn.functional.pad(
-                            example[key],
-                            (0, pad_length),
-                            value=self.tokenizer.pad_token_id,
-                        )
-                    elif key == "attention_mask":
-                        # Use 0 as the padding value for attention_mask
-                        example[key] = torch.nn.functional.pad(
-                            example[key], (0, pad_length), value=0
-                        )
-
-            return {
-                key: torch.stack([example[key] for example in batch])
-                for key in batch[0]
-            }
-
-        dataloader = DataLoader(
-            self.dataset[split],
-            shuffle=True,
-            batch_size=self.cfg.dataloader[f"{split}_batch_size"],
-            collate_fn=collate_fn,
-        )
-        print(f"{split} dataloader size: {len(dataloader)}")
-
-        return dataloader
 
     def _checkpoint(self):
         os.makedirs(self.cfg.working_dir, exist_ok=True)
@@ -108,23 +75,7 @@ class Main:
             labels = batch.pop("labels")
             outputs = self.model(**batch)
 
-            # BCE Focal Loss
-            BCE_loss = F.binary_cross_entropy_with_logits(
-                outputs.logits, labels.float(), reduction="none"
-            )
-            pt = torch.exp(-BCE_loss)
-            loss = (
-                self.cfg.trainer.loss_alpha
-                * (1 - pt) ** self.cfg.trainer.loss_gamma
-                * BCE_loss
-            )
-
-            # Class balancing
-            loss = loss * (
-                labels * self.cfg.trainer.loss_alpha
-                + (1 - labels) * (1 - self.cfg.trainer.loss_alpha)
-            )
-            loss = loss.mean()
+            loss = BCEFocalLoss(outputs, labels)
 
             loss.backward()
             optimizer.step()
@@ -165,7 +116,7 @@ class Main:
         ).to(self.cfg.device)
 
     def predict(self):
-        print("Predicting")
+        print("Test evaluation")
         self._resume()
         print(self._evaluate("test", True))
 
@@ -199,6 +150,4 @@ class Main:
                 print("Early stopped training at epoch %d" % epoch)
                 break
 
-        print("Testing")
-        self._resume()
-        print(self._evaluate("test", True))
+        self.predict()
