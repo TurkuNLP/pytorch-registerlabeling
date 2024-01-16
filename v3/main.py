@@ -77,7 +77,12 @@ class Main:
             labels = batch.pop("labels")
             outputs = self.model(**batch)
 
-            loss = BCEFocalLoss(outputs, labels)
+            loss = BCEFocalLoss(
+                outputs,
+                labels,
+                self.cfg.trainer.loss_gamma,
+                self.cfg.trainer.loss_alpha,
+            )
 
             loss.backward()
             optimizer.step()
