@@ -177,8 +177,8 @@ class Main:
             metrics = self._evaluate(model)
             print(metrics)
             patience_metric = metrics[self.cfg.trainer.best_model_metric]
-            if metrics[patience_metric] > best_score:
-                best_score = metrics[patience_metric]
+            if patience_metric > best_score:
+                best_score = patience_metric
                 best_epoch = epoch
                 self._checkpoint(model)
             elif epoch - best_epoch > self.cfg.trainer.patience:
