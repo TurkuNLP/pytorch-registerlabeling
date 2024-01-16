@@ -49,6 +49,9 @@ class Main:
         # Get dataloaders
         self.dataloaders = {k: self._init_dataloader(k) for k in self.dataset.keys()}
 
+        # Init model
+        self._init_model()
+
         # Run
         getattr(self, cfg.method)()
 
@@ -87,23 +90,23 @@ class Main:
 
         return dataloader
 
-    def _checkpoint(self, model):
+    def _checkpoint(self):
         os.makedirs(self.cfg.working_dir, exist_ok=True)
         torch.save(
-            model.state_dict(),
+            self.model.state_dict(),
             f"{self.cfg.working_dir}/best_model.pth",
         )
 
-    def _resume(self, model):
-        model.load_state_dict(torch.load(f"{self.cfg.working_dir}/best_model.pth"))
+    def _resume(self):
+        self.model.load_state_dict(torch.load(f"{self.cfg.working_dir}/best_model.pth"))
 
-    def _train(self, model, optimizer, lr_scheduler, epoch, progress_bar):
-        model.train()
+    def _train(self, optimizer, lr_scheduler, epoch, progress_bar):
+        self.model.train()
         batch_i = 0
         for batch in self.dataloaders["train"]:
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
-            outputs = model(**batch)
+            outputs = self.model(**batch)
 
             # BCE Focal Loss
             BCE_loss = F.binary_cross_entropy_with_logits(
@@ -133,8 +136,8 @@ class Main:
                 f"Epoch {epoch} ({int((batch_i/len(self.dataloaders['train'])* 100))}%)"
             )
 
-    def _evaluate(self, model, split="dev", cl_report=False):
-        model.eval()
+    def _evaluate(self, split="dev", cl_report=False):
+        self.model.eval()
         all_logits = []
         all_labels = []
         progress_bar = tqdm(range(len(self.dataloaders[split])))
@@ -143,7 +146,7 @@ class Main:
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
             with torch.no_grad():
-                outputs = model(**batch)
+                outputs = self.model(**batch)
 
             all_logits.append(outputs.logits)
             all_labels.append(labels)
@@ -156,16 +159,22 @@ class Main:
             self.cfg.label_scheme if cl_report else None,
         )
 
+    def _init_model(self):
+        self.model = AutoModelForSequenceClassification.from_pretrained(
+            self.cfg.model.name, num_labels=self.cfg.num_labels
+        ).to(self.cfg.device)
+
+    def predict(self):
+        print("Predicting")
+        self._resume()
+        print(self._evaluate("test", True))
+
     def finetune(self):
         print("Fine-tuning")
 
         num_training_steps = self.cfg.trainer.epochs * len(self.dataloaders["train"])
 
-        model = AutoModelForSequenceClassification.from_pretrained(
-            self.cfg.model.name, num_labels=self.cfg.num_labels
-        ).to(self.cfg.device)
-
-        optimizer = AdamW(model.parameters(), lr=self.cfg.trainer.learning_rate)
+        optimizer = AdamW(self.model.parameters(), lr=self.cfg.trainer.learning_rate)
 
         lr_scheduler = LambdaLR(
             optimizer,
@@ -178,18 +187,18 @@ class Main:
         best_score = -1
         best_epoch = -1
         for epoch in range(self.cfg.trainer.epochs):
-            self._train(model, optimizer, lr_scheduler, epoch + 1, progress_bar)
-            metrics = self._evaluate(model)
+            self._train(optimizer, lr_scheduler, epoch + 1, progress_bar)
+            metrics = self._evaluate()
             print(metrics)
             patience_metric = metrics[self.cfg.trainer.best_model_metric]
             if patience_metric > best_score:
                 best_score = patience_metric
                 best_epoch = epoch
-                self._checkpoint(model)
+                self._checkpoint()
             elif epoch - best_epoch > self.cfg.trainer.patience:
                 print("Early stopped training at epoch %d" % epoch)
                 break
 
         print("Testing")
-        self._resume(model)
-        print(self._evaluate(model, "test", True))
+        self._resume()
+        print(self._evaluate("test", True))
