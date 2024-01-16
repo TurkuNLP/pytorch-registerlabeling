@@ -115,7 +115,7 @@ class Main:
     def _init_model(self):
         self.model = AutoModelForSequenceClassification.from_pretrained(
             self.cfg.model.name, num_labels=self.cfg.num_labels
-        ).to(self.cfg.device)
+        ).to(self.cfg.device, dtype=self.cfg.torch_dtype)
 
     def predict(self):
         print("Test evaluation")
