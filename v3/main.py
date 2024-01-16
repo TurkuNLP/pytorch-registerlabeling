@@ -176,7 +176,7 @@ class Main:
             self._train(model, optimizer, lr_scheduler, epoch + 1, progress_bar)
             metrics = self._evaluate(model)
             print(metrics)
-            patience_metric = metrics[self.cnf.trainer.best_model_metric]
+            patience_metric = metrics[self.cfg.trainer.best_model_metric]
             if metrics[patience_metric] > best_score:
                 best_score = metrics[patience_metric]
                 best_epoch = epoch
