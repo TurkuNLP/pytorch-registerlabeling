@@ -45,12 +45,6 @@ class Dataloader:
     test_batch_size: int = 8
 
 
-@dataclass
-class Optimizer:
-    name: str = "adamw_torch"
-    lr: float = 5e-5
-
-
 if __name__ == "__main__":
     parser = ArgumentParser()
 
@@ -62,7 +56,6 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=Model, default=Model())
     parser.add_argument("--trainer", type=Trainer, default=Trainer())
     parser.add_argument("--dataloader", type=Dataloader, default=Dataloader())
-    parser.add_argument("--optimizer", type=Optimizer, default=Optimizer())
     parser.add_argument("--config", "-c", action=ActionConfigFile)
 
     cfg = parser.parse_args()
