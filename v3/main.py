@@ -16,6 +16,8 @@ from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
 from .loss import BCEFocalLoss
 
+torch.set_float32_matmul_precision("high")
+
 
 class Main:
     def __init__(self, cfg):
