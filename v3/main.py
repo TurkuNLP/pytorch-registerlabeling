@@ -36,10 +36,35 @@ class Main:
         getattr(self, cfg.method)()
 
     def _init_dataloader(self, split):
+        def collate_fn(batch):
+            max_length = max(len(example["input_ids"]) for example in batch)
+            # Pad sequences dynamically to the maximum length in the batch
+            for example in batch:
+                pad_length = max_length - len(example["input_ids"])
+                for key in example:
+                    if key == "input_ids":
+                        # Use tokenizer.pad_token_id as the padding value for input_ids
+                        example[key] = torch.nn.functional.pad(
+                            example[key],
+                            (0, pad_length),
+                            value=self.tokenizer.pad_token_id,
+                        )
+                    elif key == "attention_mask":
+                        # Use 0 as the padding value for attention_mask
+                        example[key] = torch.nn.functional.pad(
+                            example[key], (0, pad_length), value=0
+                        )
+
+            return {
+                key: torch.stack([example[key] for example in batch])
+                for key in batch[0]
+            }
+
         dataloader = DataLoader(
             self.dataset[split],
             shuffle=True,
             batch_size=self.cfg.dataloader[f"{split}_batch_size"],
+            collate_fn=collate_fn,
         )
         print(f"{split} dataloader size: {len(dataloader)}")
 

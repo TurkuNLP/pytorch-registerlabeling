@@ -87,8 +87,6 @@ def preprocess_data(dataset, tokenizer, seed, max_length):
             example["text"],
             truncation=True,
             max_length=max_length,
-            padding="max_length",
-            return_tensors="pt",
         ),
         batched=True,
     )
