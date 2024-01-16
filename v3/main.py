@@ -1,16 +1,20 @@
+import os
+
+import numpy as np
+
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from torch.optim import AdamW
+from tqdm.auto import tqdm
+import torch
+from torch.utils.data import DataLoader
+from torch.optim.lr_scheduler import LambdaLR
+import torch.nn.functional as F
+
 from .labels import get_label_scheme
 from .data import get_dataset, preprocess_data
 from .utils import get_torch_dtype
 from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-from torch.optim import AdamW
-from tqdm.auto import tqdm
-from torch.utils.data import DataLoader
-from torch.optim.lr_scheduler import LambdaLR
-import torch
-import torch.nn.functional as F
-import numpy as np
 
 
 class Main:
@@ -84,6 +88,7 @@ class Main:
         return dataloader
 
     def _checkpoint(self, model):
+        os.makedirs(self.cfg.working_dir, exist_ok=True)
         torch.save(
             model.state_dict(),
             f"{self.cfg.working_dir}/best_model.pth",
