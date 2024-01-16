@@ -20,7 +20,7 @@ class Main:
         cfg.num_labels = len(cfg.label_scheme)
         cfg.device = torch.device(cfg.device)
         cfg.working_dir = "/".join[
-            cfg.data.output_dir,
+            cfg.data.output_path,
             cfg.model.name,
             "_".join(filter([cfg.data.train, cfg.data.dev, cfg.data.test])),
         ]
