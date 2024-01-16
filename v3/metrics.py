@@ -21,7 +21,7 @@ def optimize_threshold(logits, labels):
     for th in np.arange(0.3, 0.7, 0.05):
         y_pred = np.zeros(probs.shape)
         y_pred[np.where(probs >= th)] = 1
-        f1 = f1_score(y_true=labels, y_pred=y_pred, average="micro")
+        f1 = f1_score(y_true=labels.cpu().numpy(), y_pred=y_pred, average="micro")
         if f1 > best_f1:
             best_f1 = f1
             best_f1_threshold = th
@@ -30,8 +30,6 @@ def optimize_threshold(logits, labels):
 
 
 def compute_metrics(logits, labels, label_scheme=None):
-    logits = logits.cpu().numpy()
-    labels = labels.cpu().numpy()
     threshold = optimize_threshold(logits, labels)
     probs = sigmoid(logits)
     y_pred = np.zeros(probs.shape)
