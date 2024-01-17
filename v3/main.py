@@ -135,12 +135,13 @@ class Main:
             all_labels.append(labels)
 
             progress_bar.update(1)
-
-        return compute_metrics(
+        metrics = compute_metrics(
             torch.cat(all_logits, dim=0),
             torch.cat(all_labels, dim=0),
             self.cfg.label_scheme if cl_report else None,
         )
+        wandb.log(metrics)
+        return metrics
 
     def _init_model(self):
         self.model = AutoModelForSequenceClassification.from_pretrained(
@@ -152,7 +153,7 @@ class Main:
 
     def predict(self):
         print("Test evaluation")
-        self._load_model("best_model.pth")
+        self._load_model("best_checkpoint.pth")
         print(self._evaluate("test", cl_report=True))
 
     def finetune(self):
@@ -179,7 +180,6 @@ class Main:
         for epoch in range(self.cfg.trainer.epochs):
             self._train(optimizer, lr_scheduler, epoch + 1, progress_bar)
             metrics = self._evaluate()
-            print(metrics)
             patience_metric = metrics[self.cfg.trainer.best_model_metric]
             if patience_metric > best_score:
                 best_score = patience_metric
