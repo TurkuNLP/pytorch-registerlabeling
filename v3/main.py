@@ -73,22 +73,6 @@ class Main:
         # Run
         getattr(self, cfg.method)()
 
-    def _save_checkpoint(self):
-        os.makedirs(self.cfg.working_dir, exist_ok=True)
-        torch.save(
-            self.model.state_dict(),
-            f"{self.cfg.working_dir}/best_checkpoint.pth",
-        )
-
-    def _load_model(self, name):
-        self.model.load_state_dict(torch.load(f"{self.cfg.working_dir}/{name}"))
-
-    def _save_model(self):
-        shutil.copy2(
-            f"{self.cfg.working_dir}/best_checkpoint.pth",
-            f"{self.cfg.working_dir}/best_model.pth",
-        )
-
     def _train(self, optimizer, lr_scheduler, epoch, progress_bar):
         self.model.train()
         batch_i = 0
@@ -156,6 +140,22 @@ class Main:
             metrics["dev/loss"] = sum(batch_losses) / len(batch_losses)
 
         return metrics
+
+    def _save_checkpoint(self):
+        os.makedirs(self.cfg.working_dir, exist_ok=True)
+        torch.save(
+            self.model.state_dict(),
+            f"{self.cfg.working_dir}/best_checkpoint.pth",
+        )
+
+    def _load_model(self, name):
+        self.model.load_state_dict(torch.load(f"{self.cfg.working_dir}/{name}"))
+
+    def _save_model(self):
+        shutil.copy2(
+            f"{self.cfg.working_dir}/best_checkpoint.pth",
+            f"{self.cfg.working_dir}/best_model.pth",
+        )
 
     def _init_model(self):
         self.model = AutoModelForSequenceClassification.from_pretrained(
