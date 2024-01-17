@@ -54,7 +54,7 @@ class Main:
         # Wandb
 
         wandb.login()
-        wandb.init(project=cfg.working_dir, config=cfg)
+        wandb.init(project=cfg.working_dir.replace("/", "|"), config=cfg)
 
         # Prepare dataset
         dataset = get_dataset(cfg)
