@@ -142,7 +142,11 @@ class Main:
 
         num_training_steps = self.cfg.trainer.epochs * len(self.dataloaders["train"])
 
-        optimizer = AdamW(self.model.parameters(), lr=self.cfg.trainer.learning_rate)
+        optimizer = AdamW(
+            self.model.parameters(),
+            lr=self.cfg.trainer.learning_rate,
+            weight_decay=self.cfg.trainer.weight_decay,
+        )
 
         lr_scheduler = LambdaLR(
             optimizer,

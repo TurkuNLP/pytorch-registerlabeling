@@ -1,8 +1,26 @@
 import torch
 from torch.utils.data import DataLoader
+from .sampler import BalancedLanguageSampler
+
+SAMPLER_CNF = {
+    "train": {
+        "size": "smallest",
+        "lang_cycle": "random",
+    },
+    "test": {
+        "size": "mean",
+        "lang_cycle": "cycle",
+    },
+    "dev": {
+        "size": "mean",
+        "lang_cycle": "cycle",
+    },
+}
 
 
-def init_split_dataloader(dataset, split, batch_size, tokenizer_pad_token_id):
+def init_split_dataloader(
+    dataset, split, batch_size, tokenizer_pad_token_id, balance_languages
+):
     def collate_fn(batch):
         max_length = max(len(example["input_ids"]) for example in batch)
         # Pad sequences dynamically to the maximum length in the batch
@@ -29,16 +47,23 @@ def init_split_dataloader(dataset, split, batch_size, tokenizer_pad_token_id):
         shuffle=True,
         batch_size=batch_size,
         collate_fn=collate_fn,
+        sampler=BalancedLanguageSampler(SAMPLER_CNF[split])
+        if balance_languages
+        else None,
     )
     print(f"{split} dataloader size: {len(dataloader)}")
 
     return dataloader
 
 
-def init_dataloaders(dataset, cfg, tokenizer_pad_token_id):
+def init_dataloaders(dataset, cfg, tokenizer_pad_token_id, balance_languages):
     return {
         split: init_split_dataloader(
-            ds, split, cfg[f"{split}_batch_size"], tokenizer_pad_token_id
+            ds,
+            split,
+            cfg[f"{split}_batch_size"],
+            tokenizer_pad_token_id,
+            balance_languages,
         )
         for split, ds in dataset.items()
     }

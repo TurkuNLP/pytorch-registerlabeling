@@ -31,6 +31,7 @@ class Trainer:
     epochs: int = 30
     wandb_project: str = "unnamed_project"
     learning_rate: float = 1e-5
+    weight_decay: float = 0.05
     warmup_ratio: float = 0.01
     loss_alpha: float = 0.75
     loss_gamma: float = 2
@@ -44,6 +45,7 @@ class Dataloader:
     train_batch_size: int = 8
     dev_batch_size: int = 8
     test_batch_size: int = 8
+    balancing_sampler: bool = False
 
 
 if __name__ == "__main__":
