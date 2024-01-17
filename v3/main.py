@@ -20,7 +20,7 @@ from .utils import get_torch_dtype
 from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
 from .loss import BCEFocalLoss
-from .optimizer import Sophia
+from .optimizer import SophiaG
 
 torch.set_float32_matmul_precision("high")
 torch.backends.cudnn.allow_tf32
@@ -182,7 +182,7 @@ class Main:
 
         num_training_steps = self.cfg.trainer.epochs * len(self.dataloaders["train"])
 
-        optimizer = Sophia(
+        optimizer = SophiaG(
             self.model.parameters(),
             lr=self.cfg.trainer.learning_rate,
             weight_decay=self.cfg.trainer.weight_decay,
