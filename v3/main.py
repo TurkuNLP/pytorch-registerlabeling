@@ -148,7 +148,7 @@ class Main:
             )
             batch_logits.append(outputs.logits)
             batch_labels.append(labels)
-            batch_losses.append(loss)
+            batch_losses.append(loss.item())
 
             progress_bar.update(1)
         metrics = compute_metrics(
@@ -159,6 +159,8 @@ class Main:
         )
         if split == "dev":
             metrics["dev/loss"] = sum(batch_losses) / len(batch_losses)
+
+        return metrics
 
     def _init_model(self):
         self.model = AutoModelForSequenceClassification.from_pretrained(
