@@ -36,9 +36,7 @@ class Main:
                 cfg.data.output_path,
                 f"labels_{cfg.data.labels}",
                 cfg.model.name,
-                "_".join(
-                    [cfg.data.train or "", cfg.data.dev or "", cfg.data.test or ""]
-                ),
+                "_".join([cfg.data.train or "", cfg.data.dev or ""]),
             ]
         )
         self.cfg = cfg

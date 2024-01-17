@@ -59,13 +59,17 @@ def init_split_dataloader(
 
 
 def init_dataloaders(dataset, cfg, tokenizer_pad_token_id):
+    split_n_languages = {
+        k: len(set([sample["language"] for sample in dataset[k]]))
+        for k in dataset.keys()
+    }
     return {
         split: init_split_dataloader(
             ds,
             split,
             cfg[f"{split}_batch_size"],
             tokenizer_pad_token_id,
-            cfg.balancing_sampler,
+            False if split_n_languages[split] < 2 else cfg.balancing_sampler,
         )
         for split, ds in dataset.items()
     }
