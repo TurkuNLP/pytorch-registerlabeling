@@ -57,7 +57,10 @@ class Main:
 
         # Get dataloaders
         self.dataloaders = init_dataloaders(
-            self.dataset, self.cfg.dataloader, self.tokenizer.pad_token_id
+            self.dataset,
+            self.cfg.dataloader,
+            self.tokenizer.pad_token_id,
+            self.cfg.trainer.balance_languages,
         )
 
         # Init model
