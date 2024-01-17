@@ -52,11 +52,6 @@ class Main:
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
-        # Wandb
-
-        wandb.login()
-        wandb.init(project=cfg.working_dir.replace("/", ","), config=cfg)
-
         # Prepare dataset
         dataset = get_dataset(cfg)
         self.tokenizer = AutoTokenizer.from_pretrained(
@@ -178,6 +173,10 @@ class Main:
 
     def finetune(self):
         print("Fine-tuning")
+        # Wandb
+
+        wandb.login()
+        wandb.init(project=self.cfg.working_dir.replace("/", ","), config=self.cfg)
 
         num_training_steps = self.cfg.trainer.epochs * len(self.dataloaders["train"])
 
