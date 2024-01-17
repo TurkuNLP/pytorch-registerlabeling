@@ -63,6 +63,7 @@ def init_dataloaders(dataset, cfg, tokenizer_pad_token_id):
         k: len(set([sample["language"] for sample in dataset[k]]))
         for k in dataset.keys()
     }
+    print(split_n_languages)
     return {
         split: init_split_dataloader(
             ds,
