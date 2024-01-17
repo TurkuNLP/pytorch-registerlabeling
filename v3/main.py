@@ -34,9 +34,10 @@ class Main:
         cfg.working_dir = "/".join(
             [
                 cfg.data.output_path,
-                f"labels_{cfg.data.labels}",
                 cfg.model.name,
+                f"labels_{cfg.data.labels}",
                 "_".join([cfg.data.train or "", cfg.data.dev or ""]),
+                cfg.seed,
             ]
         )
         self.cfg = cfg
@@ -174,7 +175,10 @@ class Main:
         # Wandb
 
         wandb.login()
-        wandb.init(project=self.cfg.working_dir.replace("/", ","), config=self.cfg)
+        wandb.init(
+            project=self.cfg.working_dir.split("/", 1)[1].replace("/", ","),
+            config=self.cfg,
+        )
 
         num_training_steps = self.cfg.trainer.epochs * len(self.dataloaders["train"])
 
