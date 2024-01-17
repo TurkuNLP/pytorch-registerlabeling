@@ -13,8 +13,6 @@ from tqdm.auto import tqdm
 import torch
 from torch.optim.lr_scheduler import LambdaLR
 
-from Sophia import SophiaG
-
 from .labels import get_label_scheme
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
@@ -22,6 +20,7 @@ from .utils import get_torch_dtype
 from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
 from .loss import BCEFocalLoss
+from .optimizer import Sophia
 
 torch.set_float32_matmul_precision("high")
 torch.backends.cudnn.allow_tf32
@@ -183,7 +182,7 @@ class Main:
 
         num_training_steps = self.cfg.trainer.epochs * len(self.dataloaders["train"])
 
-        optimizer = SophiaG(
+        optimizer = Sophia(
             self.model.parameters(),
             lr=self.cfg.trainer.learning_rate,
             weight_decay=self.cfg.trainer.weight_decay,

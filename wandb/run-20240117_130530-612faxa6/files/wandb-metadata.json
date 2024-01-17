@@ -1,0 +1,44 @@
+{
+    "os": "macOS-14.0-arm64-arm-64bit",
+    "python": "3.11.5",
+    "heartbeatAt": "2024-01-17T11:05:30.945529",
+    "startedAt": "2024-01-17T11:05:30.077657",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "-c",
+        "v3/configs/labels_all/xlmr-base/sv.yaml",
+        "--seed",
+        "42",
+        "--model.save",
+        "False"
+    ],
+    "state": "running",
+    "program": "/Users/erikhenriksson/Documents/GitHub/TurkuNLP/pytorch-registerlabeling/v3.py",
+    "codePathLocal": "v3.py",
+    "codePath": "v3.py",
+    "git": {
+        "remote": "https://github.com/TurkuNLP/pytorch-registerlabeling.git",
+        "commit": "014e19e8a6e142957e7a02b97f80c9a2373b0518"
+    },
+    "email": "eekihenriksson@gmail.com",
+    "root": "/Users/erikhenriksson/Documents/GitHub/TurkuNLP/pytorch-registerlabeling",
+    "host": "m1.local",
+    "username": "erikhenriksson",
+    "executable": "/Users/erikhenriksson/Documents/GitHub/TurkuNLP/pytorch-registerlabeling/venv/bin/python3",
+    "cpu_count": 10,
+    "cpu_count_logical": 10,
+    "disk": {
+        "/": {
+            "total": 460.4317207336426,
+            "used": 9.142280578613281
+        }
+    },
+    "gpuapple": {
+        "type": "arm",
+        "vendor": "Apple"
+    },
+    "memory": {
+        "total": 16.0
+    }
+}
