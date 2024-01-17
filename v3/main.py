@@ -54,7 +54,7 @@ class Main:
         # Wandb
 
         wandb.login()
-        wandb.init(project=cfg.working_dir.replace("/", "|"), config=cfg)
+        wandb.init(project=cfg.working_dir.replace("/", ","), config=cfg)
 
         # Prepare dataset
         dataset = get_dataset(cfg)
@@ -110,7 +110,7 @@ class Main:
                 self.cfg.trainer.loss_alpha,
             )
 
-            batch_losses.append(loss)
+            batch_losses.append(loss.item())
 
             loss.backward()
             optimizer.step()
