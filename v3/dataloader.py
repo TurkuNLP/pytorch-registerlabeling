@@ -42,11 +42,8 @@ def init_split_dataloader(
             key: torch.stack([example[key] for example in batch]) for key in batch[0]
         }
 
-    dataloader_params = {"batch_size"}
-
     dataloader = DataLoader(
         dataset,
-        shuffle=True if balance_languages else False,
         batch_size=batch_size,
         collate_fn=collate_fn,
         **{"sampler": BalancedLanguageSampler(SAMPLER_CNF[split])}
