@@ -1,5 +1,6 @@
 import os
 import random
+import shutil
 
 import numpy as np
 
@@ -58,16 +59,16 @@ class Main:
         # Prepare dataset
         dataset = get_dataset(cfg)
         self.tokenizer = AutoTokenizer.from_pretrained(
-            self.cfg.model.name, torch_dtype=self.cfg.torch_dtype
+            cfg.model.name, torch_dtype=cfg.torch_dtype
         )
         self.dataset = preprocess_data(
-            dataset, self.tokenizer, self.cfg.seed, self.cfg.data.max_length
+            dataset, self.tokenizer, cfg.seed, cfg.data.max_length
         )
 
         # Get dataloaders
         self.dataloaders = init_dataloaders(
             self.dataset,
-            self.cfg.dataloader,
+            cfg.dataloader,
             self.tokenizer.pad_token_id,
         )
 
@@ -77,15 +78,21 @@ class Main:
         # Run
         getattr(self, cfg.method)()
 
-    def _checkpoint(self):
+    def _save_checkpoint(self, name):
         os.makedirs(self.cfg.working_dir, exist_ok=True)
         torch.save(
             self.model.state_dict(),
-            f"{self.cfg.working_dir}/best_model.pth",
+            f"{self.cfg.working_dir}/{name}",
         )
 
-    def _resume(self):
-        self.model.load_state_dict(torch.load(f"{self.cfg.working_dir}/best_model.pth"))
+    def _load_model(self, name):
+        self.model.load_state_dict(torch.load(f"{self.cfg.working_dir}/{name}"))
+
+    def _save_model(self):
+        shutil.copy2(
+            f"{self.cfg.working_dir}/best_checkpoint.pth",
+            f"{self.cfg.working_dir}/best_model.pth",
+        )
 
     def _train(self, optimizer, lr_scheduler, epoch, progress_bar):
         self.model.train()
@@ -145,7 +152,7 @@ class Main:
 
     def predict(self):
         print("Test evaluation")
-        self._resume()
+        self._load_model("best_model.pth")
         print(self._evaluate("test", cl_report=True))
 
     def finetune(self):
@@ -177,9 +184,12 @@ class Main:
             if patience_metric > best_score:
                 best_score = patience_metric
                 best_epoch = epoch
-                self._checkpoint()
+                self._save_checkpoint("best_checkpoint.pt")
             elif epoch - best_epoch > self.cfg.trainer.patience:
                 print("Early stopped training at epoch %d" % epoch)
                 break
+
+        if best_score > -1 and self.cfg.model.save:
+            self._save_model()
 
         self.predict()

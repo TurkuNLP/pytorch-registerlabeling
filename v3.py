@@ -30,6 +30,7 @@ class Data:
 class Model:
     name: str = "xlm-roberta-base"
     compile: bool = False
+    save: bool = True
 
 
 @dataclass
