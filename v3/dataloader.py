@@ -44,33 +44,28 @@ def init_split_dataloader(
 
     language_data = [sample["language"] for sample in dataset]
     dataset = dataset.remove_columns(["language"])
-
+    use_balancer = balance_languages and len(set(language_data)) > 1
     dataloader = DataLoader(
         dataset,
         batch_size=batch_size,
         collate_fn=collate_fn,
         **{"sampler": BalancedLanguageSampler(language_data, **SAMPLER_CNF[split])}
-        if balance_languages
+        if use_balancer
         else {"shuffle": True},
     )
-    print(f"{split} dataloader size: {len(dataloader)}")
+    print(f"{split} dataloader size: {len(dataloader)} (balancer: {use_balancer})")
 
     return dataloader
 
 
 def init_dataloaders(dataset, cfg, tokenizer_pad_token_id):
-    split_n_languages = {
-        k: len(set([sample["language"] for sample in dataset[k]]))
-        for k in dataset.keys()
-    }
-    print(split_n_languages)
     return {
         split: init_split_dataloader(
             ds,
             split,
             cfg[f"{split}_batch_size"],
             tokenizer_pad_token_id,
-            False if split_n_languages[split] < 2 else cfg.balancing_sampler,
+            cfg.balancing_sampler,
         )
         for split, ds in dataset.items()
     }
