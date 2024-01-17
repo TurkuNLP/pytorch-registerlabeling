@@ -78,7 +78,7 @@ class Main:
         # Run
         getattr(self, cfg.method)()
 
-    def _save_checkpoint(self, name):
+    def _save_checkpoint(self):
         os.makedirs(self.cfg.working_dir, exist_ok=True)
         torch.save(
             self.model.state_dict(),
