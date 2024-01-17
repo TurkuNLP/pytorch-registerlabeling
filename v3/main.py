@@ -129,6 +129,8 @@ class Main:
             self.cfg.model.name, num_labels=self.cfg.num_labels
         ).to(self.cfg.device, dtype=self.cfg.torch_dtype)
 
+        self.model = torch.compile(self.model)
+
     def predict(self):
         print("Test evaluation")
         self._resume()
