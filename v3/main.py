@@ -82,7 +82,7 @@ class Main:
         os.makedirs(self.cfg.working_dir, exist_ok=True)
         torch.save(
             self.model.state_dict(),
-            f"{self.cfg.working_dir}/{name}",
+            f"{self.cfg.working_dir}/best_checkpoint.pth",
         )
 
     def _load_model(self, name):
@@ -203,12 +203,12 @@ class Main:
             dev_metrics = self._evaluate()
             print(train_metrics)
             print(dev_metrics)
-            wandb.log(**dev_metrics, **train_metrics)
+            wandb.log({**dev_metrics, **train_metrics})
             patience_metric = dev_metrics[self.cfg.trainer.best_model_metric]
             if patience_metric > best_score:
                 best_score = patience_metric
                 best_epoch = epoch
-                self._save_checkpoint("best_checkpoint.pt")
+                self._save_checkpoint()
             elif epoch - best_epoch > self.cfg.trainer.patience:
                 print("Early stopped training at epoch %d" % epoch)
                 break
