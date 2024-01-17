@@ -37,7 +37,7 @@ class Main:
                 cfg.model.name,
                 f"labels_{cfg.data.labels}",
                 "_".join([cfg.data.train or "", cfg.data.dev or ""]),
-                cfg.seed,
+                f"seed_{cfg.seed}",
             ]
         )
         self.cfg = cfg
