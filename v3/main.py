@@ -67,6 +67,9 @@ class Main:
             self.tokenizer.pad_token_id,
         )
 
+        # Init model
+        self._init_model()
+
         # Run
         getattr(self, cfg.method)()
 
@@ -176,9 +179,6 @@ class Main:
             project=self.cfg.working_dir.split("/", 1)[1].replace("/", ","),
             config=self.cfg,
         )
-
-        # Init model
-        self._init_model()
 
         num_training_steps = self.cfg.trainer.epochs * len(self.dataloaders["train"])
 
