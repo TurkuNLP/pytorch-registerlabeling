@@ -23,6 +23,7 @@ class Data:
 @dataclass
 class Model:
     name: str = "xlm-roberta-base"
+    compile: bool = False
 
 
 @dataclass
