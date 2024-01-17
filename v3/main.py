@@ -97,6 +97,7 @@ class Main:
     def _train(self, optimizer, lr_scheduler, epoch, progress_bar):
         self.model.train()
         batch_i = 0
+        batch_losses = []
         for batch in self.dataloaders["train"]:
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
@@ -109,6 +110,8 @@ class Main:
                 self.cfg.trainer.loss_alpha,
             )
 
+            batch_losses.append(loss)
+
             loss.backward()
             optimizer.step()
             lr_scheduler.step()
@@ -118,11 +121,17 @@ class Main:
             progress_bar.set_description(
                 f"Epoch {epoch} ({int((batch_i/len(self.dataloaders['train'])* 100))}%)"
             )
+        return {
+            "train/loss": sum(batch_losses) / len(batch_losses),
+            "train/learning_rate": optimizer.param_groups[0]["lr"],
+            "train/epoch": epoch,
+        }
 
     def _evaluate(self, split="dev", cl_report=False):
         self.model.eval()
-        all_logits = []
-        all_labels = []
+        batch_logits = []
+        batch_labels = []
+        batch_losses = []
         progress_bar = tqdm(range(len(self.dataloaders[split])))
         progress_bar.set_description(f"testing {split}")
         for batch in self.dataloaders[split]:
@@ -131,17 +140,25 @@ class Main:
             with torch.no_grad():
                 outputs = self.model(**batch)
 
-            all_logits.append(outputs.logits)
-            all_labels.append(labels)
+            loss = BCEFocalLoss(
+                outputs,
+                labels,
+                self.cfg.trainer.loss_gamma,
+                self.cfg.trainer.loss_alpha,
+            )
+            batch_logits.append(outputs.logits)
+            batch_labels.append(labels)
+            batch_losses.append(loss)
 
             progress_bar.update(1)
         metrics = compute_metrics(
-            torch.cat(all_logits, dim=0),
-            torch.cat(all_labels, dim=0),
+            torch.cat(batch_logits, dim=0),
+            torch.cat(batch_labels, dim=0),
+            split,
             self.cfg.label_scheme if cl_report else None,
         )
-        wandb.log(metrics)
-        return metrics
+        if split == "dev":
+            metrics["dev/loss"] = sum(batch_losses) / len(batch_losses)
 
     def _init_model(self):
         self.model = AutoModelForSequenceClassification.from_pretrained(
@@ -178,9 +195,14 @@ class Main:
         best_score = -1
         best_epoch = -1
         for epoch in range(self.cfg.trainer.epochs):
-            self._train(optimizer, lr_scheduler, epoch + 1, progress_bar)
-            metrics = self._evaluate()
-            patience_metric = metrics[self.cfg.trainer.best_model_metric]
+            train_metrics = self._train(
+                optimizer, lr_scheduler, epoch + 1, progress_bar
+            )
+            dev_metrics = self._evaluate()
+            print(train_metrics)
+            print(dev_metrics)
+            wandb.log(**dev_metrics, **train_metrics)
+            patience_metric = dev_metrics[self.cfg.trainer.best_model_metric]
             if patience_metric > best_score:
                 best_score = patience_metric
                 best_epoch = epoch

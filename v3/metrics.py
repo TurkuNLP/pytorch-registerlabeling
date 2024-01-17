@@ -29,7 +29,7 @@ def optimize_threshold(logits, labels):
     return best_f1_threshold
 
 
-def compute_metrics(logits, labels, label_scheme=None):
+def compute_metrics(logits, labels, split, label_scheme=None):
     logits = logits.to(torch.float32)
     labels = labels.cpu().numpy()
     threshold = optimize_threshold(logits, labels)
@@ -54,14 +54,20 @@ def compute_metrics(logits, labels, label_scheme=None):
         pr_auc = 0
     accuracy = accuracy_score(labels, y_pred)
     metrics = {
-        "f1": f1_score(y_true=labels, y_pred=y_pred, average="micro"),
-        "f1_th05": f1_score(y_true=labels, y_pred=y_th05, average="micro"),
-        "precision": precision,
-        "recall": recall,
-        "pr_auc": pr_auc,
-        "roc_auc": roc_auc,
-        "accuracy": accuracy,
-        "threshold": threshold,
+        f"f1": f1_score(y_true=labels, y_pred=y_pred, average="micro"),
+        f"f1_th05": f1_score(y_true=labels, y_pred=y_th05, average="micro"),
+        f"precision": precision,
+        f"recall": recall,
+        f"pr_auc": pr_auc,
+        f"roc_auc": roc_auc,
+        f"accuracy": accuracy,
+        f"threshold": threshold,
+    }
+
+    # Add prefix for dev
+    metrics = {
+        f"{(split+'/') if split != 'test' else ''}{key}": value
+        for key, value in metrics.items()
     }
 
     if label_scheme:
