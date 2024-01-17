@@ -43,7 +43,7 @@ class Trainer:
     loss_gamma: float = 2
     dev_classification_report: bool = False
     patience: int = 5
-    best_model_metric: str = "f1"
+    best_model_metric: str = "dev/f1"
 
 
 @dataclass
