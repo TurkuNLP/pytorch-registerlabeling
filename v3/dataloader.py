@@ -56,14 +56,14 @@ def init_split_dataloader(
     return dataloader
 
 
-def init_dataloaders(dataset, cfg, tokenizer_pad_token_id, balance_languages):
+def init_dataloaders(dataset, cfg, tokenizer_pad_token_id):
     return {
         split: init_split_dataloader(
             ds,
             split,
             cfg[f"{split}_batch_size"],
             tokenizer_pad_token_id,
-            balance_languages,
+            cfg.balance_languages,
         )
         for split, ds in dataset.items()
     }

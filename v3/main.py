@@ -40,7 +40,6 @@ class Main:
         torch.manual_seed(cfg.seed)
         np.random.seed(cfg.seed)
         random.seed(cfg.seed)
-        # for cuda
         torch.cuda.manual_seed_all(cfg.seed)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
@@ -60,7 +59,6 @@ class Main:
             self.dataset,
             self.cfg.dataloader,
             self.tokenizer.pad_token_id,
-            self.cfg.trainer.balance_languages,
         )
 
         # Init model
