@@ -63,7 +63,7 @@ def init_dataloaders(dataset, cfg, tokenizer_pad_token_id):
             split,
             cfg[f"{split}_batch_size"],
             tokenizer_pad_token_id,
-            cfg.balance_languages,
+            cfg.balancing_sampler,
         )
         for split, ds in dataset.items()
     }
