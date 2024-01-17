@@ -1,6 +1,7 @@
 import os
 import random
 import shutil
+from pprint import pprint
 
 import numpy as np
 
@@ -201,8 +202,8 @@ class Main:
                 optimizer, lr_scheduler, epoch + 1, progress_bar
             )
             dev_metrics = self._evaluate()
-            print(train_metrics)
-            print(dev_metrics)
+            pprint(train_metrics)
+            pprint(dev_metrics)
             wandb.log({**dev_metrics, **train_metrics})
             patience_metric = dev_metrics[self.cfg.trainer.best_model_metric]
             if patience_metric > best_score:

@@ -41,7 +41,6 @@ class Trainer:
     warmup_ratio: float = 0.01
     loss_alpha: float = 0.75
     loss_gamma: float = 2
-    dev_classification_report: bool = False
     patience: int = 5
     best_model_metric: str = "dev/f1"
 
