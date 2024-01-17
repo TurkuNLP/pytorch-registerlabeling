@@ -89,9 +89,7 @@ def preprocess_data(dataset, tokenizer, seed, max_length):
         batched=True,
     )
 
-    dataset = dataset.remove_columns(
-        ["label_text", "language", "text", "id", "split", "length"]
-    )
+    dataset = dataset.remove_columns(["label_text", "text", "id", "split", "length"])
     dataset = dataset.rename_column("label", "labels")
     dataset.set_format("torch")
     return dataset

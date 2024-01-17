@@ -42,11 +42,14 @@ def init_split_dataloader(
             key: torch.stack([example[key] for example in batch]) for key in batch[0]
         }
 
+    language_data = [sample["language"] for sample in dataset]
+    dataset = dataset.remove_columns(["language"])
+
     dataloader = DataLoader(
         dataset,
         batch_size=batch_size,
         collate_fn=collate_fn,
-        **{"sampler": BalancedLanguageSampler(**SAMPLER_CNF[split])}
+        **{"sampler": BalancedLanguageSampler(language_data, **SAMPLER_CNF[split])}
         if balance_languages
         else {"shuffle": True},
     )
