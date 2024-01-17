@@ -46,7 +46,7 @@ def init_split_dataloader(
         dataset,
         batch_size=batch_size,
         collate_fn=collate_fn,
-        **{"sampler": BalancedLanguageSampler(SAMPLER_CNF[split])}
+        **{"sampler": BalancedLanguageSampler(**SAMPLER_CNF[split])}
         if balance_languages
         else {"shuffle": True},
     )
