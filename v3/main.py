@@ -171,9 +171,9 @@ class Main:
         if self.cfg.model.compile:
             self.model = torch.compile(self.model)
 
-    def predict(self):
+    def predict(self, from_checkpoint=False):
         print("Test evaluation")
-        self._load_model("best_checkpoint.pth")
+        self._load_model(f"best_{'checkpoint' if from_checkpoint else 'model'}.pth")
         print(self._evaluate("test", cl_report=True))
 
     def finetune(self):
@@ -217,4 +217,4 @@ class Main:
         if best_score > -1 and self.cfg.model.save:
             self._save_model()
 
-        self.predict()
+        self.predict(from_checkpoint=True)
