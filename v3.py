@@ -2,10 +2,16 @@ from dataclasses import dataclass
 from jsonargparse import ArgumentParser, ActionConfigFile
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 os.environ["TRANSFORMERS_CACHE"] = ".hf/transformers_cache"
 os.environ["HF_HOME"] = ".hf/hf_home"
 os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
 os.environ["HF_DATASETS_CACHE"] = ".hf/datasets_cache"
+os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY", "")
+os.environ["WANDB_WATCH"] = "all"
 
 
 @dataclass
@@ -29,7 +35,6 @@ class Model:
 @dataclass
 class Trainer:
     epochs: int = 30
-    wandb_project: str = "unnamed_project"
     learning_rate: float = 1e-5
     weight_decay: float = 0.05
     warmup_ratio: float = 0.01

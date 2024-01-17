@@ -1,0 +1,7 @@
+data:
+  test: ca
+model:
+  name: xlm-roberta-large
+trainer:
+  wandb_project: sv_test
+  learning_rate: 1e-4

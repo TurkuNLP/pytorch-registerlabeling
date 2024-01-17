@@ -3,6 +3,8 @@ import random
 
 import numpy as np
 
+import wandb
+
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from torch.optim import AdamW
 from tqdm.auto import tqdm
@@ -18,6 +20,7 @@ from .scheduler import linear_warmup_decay
 from .loss import BCEFocalLoss
 
 torch.set_float32_matmul_precision("high")
+torch.backends.cudnn.allow_tf32
 
 
 class Main:
@@ -29,6 +32,7 @@ class Main:
         cfg.working_dir = "/".join(
             [
                 cfg.data.output_path,
+                f"labels_{cfg.data.labels}",
                 cfg.model.name,
                 "_".join(
                     [cfg.data.train or "", cfg.data.dev or "", cfg.data.test or ""]
@@ -37,13 +41,19 @@ class Main:
         )
         self.cfg = cfg
 
+        # Make process deterministic
+
         torch.manual_seed(cfg.seed)
         np.random.seed(cfg.seed)
         random.seed(cfg.seed)
         torch.cuda.manual_seed_all(cfg.seed)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
-        torch.backends.cudnn.enabled = False
+
+        # Wandb
+
+        wandb.login()
+        wandb.init(project=cfg.working_dir, config=cfg)
 
         # Prepare dataset
         dataset = get_dataset(cfg)
@@ -136,7 +146,7 @@ class Main:
     def predict(self):
         print("Test evaluation")
         self._resume()
-        print(self._evaluate("test", True))
+        print(self._evaluate("test", cl_report=True))
 
     def finetune(self):
         print("Fine-tuning")
