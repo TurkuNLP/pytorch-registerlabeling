@@ -50,7 +50,7 @@ class Sophia(torch.optim.Optimizer):
                 state["step"] += 1
 
                 if group["weight_decay"] != 0:
-                    grad = grad.add(group["weight_decau"], p.data)
+                    grad = grad.add(group["weight_decay"], p.data)
 
                 # update biased first moment estimate
                 m.mul_(beta1).add_(1 - beta1, grad)
