@@ -43,6 +43,7 @@ class Trainer:
     loss_gamma: float = 2
     patience: int = 5
     best_model_metric: str = "dev/f1"
+    gradient_accumulation_steps: int = 1
 
 
 @dataclass

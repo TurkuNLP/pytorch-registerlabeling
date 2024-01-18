@@ -77,9 +77,8 @@ class Main:
 
     def _train(self, optimizer, lr_scheduler, epoch, progress_bar):
         self.model.train()
-        batch_i = 0
         batch_losses = []
-        for batch in self.dataloaders["train"]:
+        for batch_i, batch in enumerate(self.dataloaders["train"]):
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
             outputs = self.model(**batch)
@@ -95,8 +94,11 @@ class Main:
 
             loss.backward()
             optimizer.step()
-            lr_scheduler.step()
-            optimizer.zero_grad()
+            if (batch_i + 1) % self.cfg.trainer.gradient_accumulation_steps == 0:
+                optimizer.step()
+                lr_scheduler.step()
+                optimizer.zero_grad()
+
             progress_bar.update(1)
             batch_i += 1
             progress_bar.set_description(
@@ -236,7 +238,10 @@ class Main:
         lr_scheduler = LambdaLR(
             optimizer,
             linear_warmup_decay(
-                self.cfg.trainer.warmup_ratio * num_training_steps, num_training_steps
+                self.cfg.trainer.warmup_ratio
+                * num_training_steps
+                / self.cfg.trainer.gradient_accumulation_steps,
+                num_training_steps,
             ),
         )
 
