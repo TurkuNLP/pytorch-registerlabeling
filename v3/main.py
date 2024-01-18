@@ -144,10 +144,28 @@ class Main:
         return metrics
 
     def _wrap_peft(self, model):
+        print("Wrapping PEFT model")
+
+        def get_linear_modules(model):
+            print("Getting linear module names")
+            print(model)
+
+            linear_modules = set()
+
+            for name, module in model.named_modules():
+                if (
+                    "attention" in name
+                    and "self" in name
+                    and "Linear" in str(type(module))
+                ):
+                    linear_modules.add(name.split(".")[-1])
+
+            print(f"Found linear modules: {linear_modules}")
+            return list(linear_modules)
+
         target_modules = self.cfg.peft.target_modules
         if self.cfg.peft.target_modules == "linear":
-            # TODO
-            target_modules = "GET_USING_FUNCTION"
+            target_modules = get_linear_modules(model)
 
         lora_config = LoraConfig(
             r=self.cfg.peft.lora_rank,
@@ -159,6 +177,8 @@ class Main:
 
         model = get_peft_model(model, lora_config)
         model.print_trainable_parameters()
+
+        return model
 
     def _save_checkpoint(self):
         os.makedirs(self.cfg.working_dir, exist_ok=True)
@@ -177,12 +197,17 @@ class Main:
         )
 
     def _init_model(self):
-        self.model = AutoModelForSequenceClassification.from_pretrained(
+        model = AutoModelForSequenceClassification.from_pretrained(
             self.cfg.model.name, num_labels=self.cfg.num_labels
         ).to(self.cfg.device, dtype=self.cfg.torch_dtype)
 
         if self.cfg.model.compile:
-            self.model = torch.compile(self.model)
+            model = torch.compile(model)
+
+        if self.cfg.peft.enable:
+            model = self._wrap_peft(model)
+
+        self.model = model
 
     def predict(self, from_checkpoint=False):
         print("Test evaluation")

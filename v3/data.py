@@ -28,7 +28,7 @@ small_languages = [
 ]
 
 
-def split_gen(split, languages, label_cfg):
+def split_gen(split, languages, label_cfg, concat_small):
     row_id = 0
     for l in languages.split("-"):
         if l in small_languages and split == "test":
@@ -41,12 +41,15 @@ def split_gen(split, languages, label_cfg):
                     text = ro[1]
                     label = binarize_labels(normalized_labels, label_cfg)
                     label_text = " ".join(normalized_labels)
+                    language = l
+                    if split == "test" and concat_small and l in small_languages:
+                        language = "small"
 
                     if label_text:
                         yield {
                             "label": label,
                             "label_text": label_text,
-                            "language": l,
+                            "language": language,
                             "text": text,
                             "id": str(row_id),
                             "split": split,
@@ -56,14 +59,18 @@ def split_gen(split, languages, label_cfg):
 
 
 def get_dataset(cnf):
-    label_cfg = cnf.data.labels
     train, dev, test = None, None, cnf.data.test
     if cnf.method == "finetune":
         train, dev = cnf.data.train, cnf.data.dev
 
     make_generator = lambda split, target: Dataset.from_generator(
         split_gen,
-        gen_kwargs={"split": split, "languages": target, "label_cfg": label_cfg},
+        gen_kwargs={
+            "split": split,
+            "languages": target,
+            "label_cfg": cnf.data.labels,
+            "concat_small": cnf.data.concat_small,
+        },
     )
 
     if not dev:

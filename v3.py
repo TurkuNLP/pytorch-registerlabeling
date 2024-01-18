@@ -24,6 +24,7 @@ class Data:
     source_path: str = "data"
     max_length: int = 512
     return_tensors: str = "pt"
+    concat_small: bool = False
 
 
 @dataclass
@@ -55,7 +56,7 @@ class Dataloader:
 
 @dataclass
 class Peft:
-    use: bool = False
+    enable: bool = False
     lora_rank: int = 128
     lora_alpha: int = 256
     target_modules: str = "linear"
