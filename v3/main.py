@@ -186,7 +186,7 @@ class Main:
         model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint else 'model'}"
 
         if self.cfg.peft.enable:
-            self.model = self._init_model()
+            self._init_model()
             self.model.load_adapter(model_path)
         else:
             self.model = AutoModelForSequenceClassification.from_pretrained(
