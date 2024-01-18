@@ -42,6 +42,7 @@ class Main:
                 f"seed_{cfg.seed}",
             ]
         )
+        print(f"Working directory: {cfg.working_dir}")
         self.cfg = cfg
 
         # Make process deterministic
@@ -184,7 +185,7 @@ class Main:
 
         model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint else 'model'}"
 
-        if self.cfg.peft_enable:
+        if self.cfg.peft.enable:
             self.model = self._init_model()
             self.model.load_adapter(model_path)
         else:
