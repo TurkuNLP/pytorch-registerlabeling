@@ -93,7 +93,6 @@ class Main:
             batch_losses.append(loss.item())
             loss = loss / self.cfg.trainer.gradient_accumulation_steps
             loss.backward()
-            optimizer.step()
             if (batch_i + 1) % self.cfg.trainer.gradient_accumulation_steps == 0:
                 optimizer.step()
                 lr_scheduler.step()
@@ -194,9 +193,6 @@ class Main:
             f"{self.cfg.working_dir}/best_checkpoint.pth",
         )
 
-    def _load_model(self, name):
-        self.model.load_state_dict(torch.load(f"{self.cfg.working_dir}/{name}"))
-
     def _save_model(self):
         shutil.copy2(
             f"{self.cfg.working_dir}/best_checkpoint.pth",
@@ -218,7 +214,13 @@ class Main:
 
     def predict(self, from_checkpoint=False):
         print("Test evaluation")
-        self._load_model(f"best_{'checkpoint' if from_checkpoint else 'model'}.pth")
+
+        name = f"best_{'checkpoint' if from_checkpoint else 'model'}.pth"
+        if self.cnf.peft.enable:
+            self.model.load_adapter(torch.load(f"{self.cfg.working_dir}/{name}"))
+        else:
+            self.model.load_state_dict(torch.load(f"{self.cfg.working_dir}/{name}"))
+
         print(self._evaluate("test", cl_report=True))
 
     def finetune(self):
