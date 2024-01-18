@@ -217,7 +217,7 @@ class Main:
 
         name = f"best_{'checkpoint' if from_checkpoint else 'model'}.pth"
         if self.cfg.peft.enable:
-            self.model.load_adapter(torch.load(f"{self.cfg.working_dir}/{name}"))
+            self.model.load_adapter(f"{self.cfg.working_dir}/{name}")
         else:
             self.model.load_state_dict(torch.load(f"{self.cfg.working_dir}/{name}"))
 

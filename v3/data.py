@@ -60,7 +60,13 @@ def split_gen(split, languages, label_cfg, concat_small):
 
 def get_dataset(cnf):
     train, dev, test = cnf.data.train, cnf.data.dev, cnf.data.test
+    if not dev:
+        dev = train
+    if not test:
+        test = dev
 
+    if cnf.method == "predict":
+        train, dev = None, None
     make_generator = lambda split, target: Dataset.from_generator(
         split_gen,
         gen_kwargs={
@@ -71,10 +77,6 @@ def get_dataset(cnf):
         },
     )
 
-    if not dev:
-        dev = train
-    if not test:
-        test = dev
     splits = {}
 
     if train:
