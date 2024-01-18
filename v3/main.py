@@ -13,13 +13,7 @@ from tqdm.auto import tqdm
 import torch
 from torch.optim.lr_scheduler import LambdaLR
 
-from peft import (
-    get_peft_model,
-    LoraConfig,
-    TaskType,
-    get_peft_model_state_dict,
-    PeftModel,
-)
+from peft import get_peft_model, LoraConfig, TaskType, get_peft_model_state_dict
 
 from .labels import get_label_scheme
 from .data import get_dataset, preprocess_data
@@ -223,9 +217,7 @@ class Main:
 
         name = f"best_{'checkpoint' if from_checkpoint else 'model'}.pth"
         if self.cfg.peft.enable:
-            self.model = PeftModel.from_pretrained(
-                self.model, f"{self.cfg.working_dir}/{name}"
-            )
+            self.model.load_adapter(f"{self.cfg.working_dir}/{name}", adapter_name="")
         else:
             self.model.load_state_dict(torch.load(f"{self.cfg.working_dir}/{name}"))
 
