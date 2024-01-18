@@ -208,7 +208,7 @@ class Main:
         if self.cfg.peft.enable:
             self._wrap_peft()
 
-        num_training_steps = (
+        num_training_steps = int(
             self.cfg.trainer.epochs
             * len(self.dataloaders["train"])
             / self.cfg.trainer.gradient_accumulation_steps
