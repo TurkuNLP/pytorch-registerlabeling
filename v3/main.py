@@ -100,7 +100,6 @@ class Main:
                 optimizer.zero_grad()
 
             progress_bar.update(1)
-            batch_i += 1
             progress_bar.set_description(
                 f"Epoch {epoch} ({int((batch_i/len(self.dataloaders['train'])* 100))}%)"
             )
