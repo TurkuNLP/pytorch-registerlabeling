@@ -9,4 +9,4 @@ peft:
   enable: True
 dataloader:
   train_batch_size: 4
-  eval_batch_size: 4
+  dev_batch_size: 4
