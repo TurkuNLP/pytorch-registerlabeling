@@ -189,7 +189,9 @@ class Main:
             self.model = self._init_model()
             self.model.load_adapter(model_path)
         else:
-            self.model = AutoModelForSequenceClassification.from_pretrained(model_path)
+            self.model = AutoModelForSequenceClassification.from_pretrained(
+                model_path
+            ).to(self.cfg.device, dtype=self.cfg.torch_dtype)
 
         print(self._evaluate("test", cl_report=True))
 
