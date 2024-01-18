@@ -42,7 +42,7 @@ def split_gen(split, languages, label_cfg, concat_small):
                     label = binarize_labels(normalized_labels, label_cfg)
                     label_text = " ".join(normalized_labels)
                     language = l
-                    if split == "test" and concat_small and l in small_languages:
+                    if concat_small and l in small_languages:
                         language = "small"
 
                     if label_text:
