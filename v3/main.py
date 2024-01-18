@@ -91,7 +91,7 @@ class Main:
             )
 
             batch_losses.append(loss.item())
-
+            loss = loss / self.cfg.trainer.gradient_accumulation_steps
             loss.backward()
             optimizer.step()
             if (batch_i + 1) % self.cfg.trainer.gradient_accumulation_steps == 0:
