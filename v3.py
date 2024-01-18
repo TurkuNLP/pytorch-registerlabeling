@@ -58,7 +58,7 @@ class Peft:
     use: bool = False
     rank: int = 128
     alpha: int = 256
-    target_modules: list = []
+    target_modules: str = ""
     all_linear_modules: bool = True
 
 
