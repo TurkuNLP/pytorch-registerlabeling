@@ -13,7 +13,7 @@ from tqdm.auto import tqdm
 import torch
 from torch.optim.lr_scheduler import LambdaLR
 
-from peft import get_peft_config, get_peft_model, LoraConfig, TaskType
+from peft import get_peft_model, LoraConfig, TaskType
 
 from .labels import get_label_scheme
 from .data import get_dataset, preprocess_data
