@@ -66,8 +66,6 @@ def get_dataset(cnf):
         gen_kwargs={"split": split, "languages": target, "label_cfg": label_cfg},
     )
 
-    print(train)
-
     if not dev:
         dev = train
     if not test:
