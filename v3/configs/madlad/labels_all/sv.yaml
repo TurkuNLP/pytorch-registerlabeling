@@ -8,5 +8,6 @@ trainer:
 peft:
   enable: True
 dataloader:
-  train_batch_size: 4
+  train_batch_size: 3
   dev_batch_size: 4
+  test_batch_size: 4
