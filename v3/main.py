@@ -168,7 +168,7 @@ class Main:
         if self.cfg.peft.target_modules == "linear":
             target_modules = get_linear_modules(model)
 
-        lora_config = LoraConfig(
+        self.lora_config = LoraConfig(
             r=self.cfg.peft.lora_rank,
             lora_alpha=self.cfg.peft.lora_alpha,
             target_modules=target_modules,
@@ -176,7 +176,7 @@ class Main:
             task_type=TaskType.SEQ_CLS,
         )
 
-        model = get_peft_model(model, lora_config)
+        model = get_peft_model(model, self.lora_config)
         model.print_trainable_parameters()
 
         return model
@@ -217,7 +217,11 @@ class Main:
 
         name = f"best_{'checkpoint' if from_checkpoint else 'model'}.pth"
         if self.cfg.peft.enable:
-            self.model.load_adapter(f"{self.cfg.working_dir}/{name}", adapter_name="")
+            self.model.load_adapter(
+                f"{self.cfg.working_dir}/{name}",
+                adapter_name="",
+                peft_config=self.lora_config,
+            )
         else:
             self.model.load_state_dict(torch.load(f"{self.cfg.working_dir}/{name}"))
 
