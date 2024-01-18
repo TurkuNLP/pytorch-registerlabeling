@@ -4,3 +4,5 @@ model:
   name: google/madlad400-3b-mt
 trainer:
   learning_rate: 1e-4
+peft:
+  enable: True
