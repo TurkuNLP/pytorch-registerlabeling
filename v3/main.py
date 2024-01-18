@@ -13,7 +13,7 @@ from tqdm.auto import tqdm
 import torch
 from torch.optim.lr_scheduler import LambdaLR
 
-from peft import get_peft_model, LoraConfig, TaskType
+from peft import get_peft_model, LoraConfig, TaskType, get_peft_model_state_dict
 
 from .labels import get_label_scheme
 from .data import get_dataset, preprocess_data
@@ -183,9 +183,14 @@ class Main:
         return model
 
     def _save_checkpoint(self):
+        state_dict = (
+            self.model.state_dict()
+            if not self.cfg.peft.enable
+            else get_peft_model_state_dict(self.model)
+        )
         os.makedirs(self.cfg.working_dir, exist_ok=True)
         torch.save(
-            self.model.state_dict(),
+            state_dict,
             f"{self.cfg.working_dir}/best_checkpoint.pth",
         )
 

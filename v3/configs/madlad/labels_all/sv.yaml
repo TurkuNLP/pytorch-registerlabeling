@@ -6,3 +6,6 @@ trainer:
   learning_rate: 1e-4
 peft:
   enable: True
+dataloader:
+  train_batch_size: 4
+  eval_batch_size: 4
