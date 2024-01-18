@@ -69,9 +69,6 @@ class Main:
             self.tokenizer.pad_token_id,
         )
 
-        # Init model
-        self._init_model()
-
         # Run
         getattr(self, cfg.method)()
 
@@ -143,7 +140,7 @@ class Main:
 
         return metrics
 
-    def _wrap_peft(self, model):
+    def _wrap_peft(self):
         print("Wrapping PEFT model")
 
         def get_linear_modules(model):
@@ -166,7 +163,7 @@ class Main:
 
         target_modules = self.cfg.peft.target_modules
         if self.cfg.peft.target_modules == "linear":
-            target_modules = get_linear_modules(model)
+            target_modules = get_linear_modules(self.model)
 
         self.lora_config = LoraConfig(
             r=self.cfg.peft.lora_rank,
@@ -176,27 +173,19 @@ class Main:
             task_type=TaskType.SEQ_CLS,
         )
 
-        model = get_peft_model(model, self.lora_config)
-        model.print_trainable_parameters()
-
-        return model
+        self.model = get_peft_model(self.model, self.lora_config)
+        self.model.print_trainable_parameters()
 
     def _save_checkpoint(self):
-        state_dict = (
-            self.model.state_dict()
-            if not self.cfg.peft.enable
-            else get_peft_model_state_dict(self.model)
-        )
         os.makedirs(self.cfg.working_dir, exist_ok=True)
-        torch.save(
-            state_dict,
-            f"{self.cfg.working_dir}/best_checkpoint.pth",
+        self.model.save_pretrained(
+            f"{self.cfg.working_dir}/best_checkpoint",
         )
 
     def _save_model(self):
-        shutil.copy2(
-            f"{self.cfg.working_dir}/best_checkpoint.pth",
-            f"{self.cfg.working_dir}/best_model.pth",
+        shutil.copytree(
+            f"{self.cfg.working_dir}/best_checkpoint",
+            f"{self.cfg.working_dir}/best_model",
         )
 
     def _init_model(self):
@@ -207,23 +196,18 @@ class Main:
         if self.cfg.model.compile:
             model = torch.compile(model)
 
-        if self.cfg.peft.enable:
-            model = self._wrap_peft(model)
-
         self.model = model
 
     def predict(self, from_checkpoint=False):
         print("Test evaluation")
 
-        name = f"best_{'checkpoint' if from_checkpoint else 'model'}.pth"
-        if self.cfg.peft.enable:
-            self.model.load_adapter(
-                f"{self.cfg.working_dir}/{name}",
-                adapter_name="",
-                peft_config=self.lora_config,
-            )
+        model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint else 'model'}"
+
+        if self.cfg.peft_enable:
+            self.model = self._init_model()
+            self.model.load_adapter(model_path)
         else:
-            self.model.load_state_dict(torch.load(f"{self.cfg.working_dir}/{name}"))
+            self.model = AutoModelForSequenceClassification.from_pretrained(model_path)
 
         print(self._evaluate("test", cl_report=True))
 
@@ -236,6 +220,13 @@ class Main:
             project=self.cfg.working_dir.split("/", 1)[1].replace("/", ","),
             config=self.cfg,
         )
+
+        # Init new model
+        self._init_model()
+
+        # Init PEFT
+        if self.cfg.peft.enable:
+            self._wrap_peft()
 
         num_training_steps = self.cfg.trainer.epochs * len(self.dataloaders["train"])
 
@@ -262,8 +253,8 @@ class Main:
             train_metrics = self._train(
                 optimizer, lr_scheduler, epoch + 1, progress_bar
             )
-            dev_metrics = self._evaluate()
             pprint(train_metrics)
+            dev_metrics = self._evaluate()
             pprint(dev_metrics)
             wandb.log({**dev_metrics, **train_metrics})
             patience_metric = dev_metrics[self.cfg.trainer.best_model_metric]
