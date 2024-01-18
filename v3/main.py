@@ -153,6 +153,7 @@ class Main:
             linear_modules = set()
 
             for name, module in model.named_modules():
+                name = name.lower()
                 if (
                     "attention" in name
                     and "self" in name
