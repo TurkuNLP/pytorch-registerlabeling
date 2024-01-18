@@ -216,7 +216,7 @@ class Main:
         print("Test evaluation")
 
         name = f"best_{'checkpoint' if from_checkpoint else 'model'}.pth"
-        if self.cnf.peft.enable:
+        if self.cfg.peft.enable:
             self.model.load_adapter(torch.load(f"{self.cfg.working_dir}/{name}"))
         else:
             self.model.load_state_dict(torch.load(f"{self.cfg.working_dir}/{name}"))

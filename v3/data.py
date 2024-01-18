@@ -59,9 +59,7 @@ def split_gen(split, languages, label_cfg, concat_small):
 
 
 def get_dataset(cnf):
-    train, dev, test = None, None, cnf.data.test
-    if cnf.method == "finetune":
-        train, dev = cnf.data.train, cnf.data.dev
+    train, dev, test = cnf.data.train, cnf.data.dev, cnf.data.test
 
     make_generator = lambda split, target: Dataset.from_generator(
         split_gen,
