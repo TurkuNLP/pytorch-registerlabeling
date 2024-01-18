@@ -55,6 +55,7 @@ class Main:
 
         # Prepare dataset
         dataset = get_dataset(cfg)
+        print(dataset["train"]["language"])
         self.tokenizer = AutoTokenizer.from_pretrained(
             cfg.model.name, torch_dtype=cfg.torch_dtype
         )
