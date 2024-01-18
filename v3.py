@@ -56,10 +56,9 @@ class Dataloader:
 @dataclass
 class Peft:
     use: bool = False
-    rank: int = 128
-    alpha: int = 256
-    target_modules: str = ""
-    all_linear_modules: bool = True
+    lora_rank: int = 128
+    lora_alpha: int = 256
+    target_modules: str = "linear"
 
 
 if __name__ == "__main__":

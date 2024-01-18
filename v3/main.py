@@ -144,10 +144,15 @@ class Main:
         return metrics
 
     def _wrap_peft(self, model):
+        target_modules = self.cfg.peft.target_modules
+        if self.cfg.peft.target_modules == "linear":
+            # TODO
+            target_modules = "GET_USING_FUNCTION"
+
         lora_config = LoraConfig(
-            r=self.cfg.lora.rank,
-            lora_alpha=self.cfg.lora.alpha,
-            target_modules=target_modules if not peft_modules else peft_modules,
+            r=self.cfg.peft.lora_rank,
+            lora_alpha=self.cfg.peft.lora_alpha,
+            target_modules=target_modules,
             lora_dropout=0.05,
             task_type=TaskType.SEQ_CLS,
         )

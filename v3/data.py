@@ -57,17 +57,16 @@ def split_gen(split, languages, label_cfg):
 
 def get_dataset(cnf):
     label_cfg = cnf.data.labels
-    train, dev, test = (
-        (cnf.data.train, cnf.data.dev, cnf.data.test)
-        if cnf.method == "finetune"
-        else None,
-        None,
-        cnf.data.test,
-    )
+    train, dev, test = None, None, cnf.data.test
+    if cnf.method == "finetune":
+        train, dev = cnf.data.train, cnf.data.dev
+
     make_generator = lambda split, target: Dataset.from_generator(
         split_gen,
         gen_kwargs={"split": split, "languages": target, "label_cfg": label_cfg},
     )
+
+    print(train)
 
     if not dev:
         dev = train
