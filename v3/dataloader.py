@@ -45,6 +45,7 @@ def init_split_dataloader(
     language_data = [sample["language"] for sample in dataset]
     dataset = dataset.remove_columns(["language"])
     use_balancer = balance_languages and len(set(language_data)) > 1
+    print(f"Languages: {set(language_data)}")
     dataloader = DataLoader(
         dataset,
         batch_size=batch_size,
