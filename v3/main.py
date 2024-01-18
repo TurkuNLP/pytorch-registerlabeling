@@ -13,12 +13,12 @@ from tqdm.auto import tqdm
 import torch
 from torch.optim.lr_scheduler import LambdaLR
 
-from peft import get_peft_model, LoraConfig, TaskType, get_peft_model_state_dict
+from peft import get_peft_model, LoraConfig, TaskType
 
 from .labels import get_label_scheme
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
-from .utils import get_torch_dtype
+from .utils import get_torch_dtype, get_linear_modules
 from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
 from .loss import BCEFocalLoss
@@ -45,7 +45,6 @@ class Main:
         self.cfg = cfg
 
         # Make process deterministic
-
         torch.manual_seed(cfg.seed)
         np.random.seed(cfg.seed)
         random.seed(cfg.seed)
@@ -95,10 +94,10 @@ class Main:
                 lr_scheduler.step()
                 optimizer.zero_grad()
 
-            progress_bar.update(1)
-            progress_bar.set_description(
-                f"Epoch {epoch} ({int((batch_i/len(self.dataloaders['train'])* 100))}%)"
-            )
+                progress_bar.update(1)
+                progress_bar.set_description(
+                    f"Epoch {epoch} ({int((batch_i/len(self.dataloaders['train'])* 100))}%)"
+                )
         return {
             "train/loss": sum(batch_losses) / len(batch_losses),
             "train/learning_rate": optimizer.param_groups[0]["lr"],
@@ -142,24 +141,6 @@ class Main:
 
     def _wrap_peft(self):
         print("Wrapping PEFT model")
-
-        def get_linear_modules(model):
-            print("Getting linear module names")
-            print(model)
-
-            linear_modules = set()
-
-            for name, module in model.named_modules():
-                name = name.lower()
-                if (
-                    "attention" in name
-                    and "self" in name
-                    and "Linear" in str(type(module))
-                ):
-                    linear_modules.add(name.split(".")[-1])
-
-            print(f"Found linear modules: {linear_modules}")
-            return list(linear_modules)
 
         target_modules = self.cfg.peft.target_modules
         if self.cfg.peft.target_modules == "linear":
@@ -221,14 +202,17 @@ class Main:
             config=self.cfg,
         )
 
-        # Init new model
+        # Init model
         self._init_model()
 
-        # Init PEFT
         if self.cfg.peft.enable:
             self._wrap_peft()
 
-        num_training_steps = self.cfg.trainer.epochs * len(self.dataloaders["train"])
+        num_training_steps = (
+            self.cfg.trainer.epochs
+            * len(self.dataloaders["train"])
+            / self.cfg.trainer.gradient_accumulation_steps
+        )
 
         optimizer = AdamW(
             self.model.parameters(),
@@ -239,9 +223,7 @@ class Main:
         lr_scheduler = LambdaLR(
             optimizer,
             linear_warmup_decay(
-                self.cfg.trainer.warmup_ratio
-                * num_training_steps
-                / self.cfg.trainer.gradient_accumulation_steps,
+                self.cfg.trainer.warmup_ratio * num_training_steps,
                 num_training_steps,
             ),
         )
