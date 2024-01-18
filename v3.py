@@ -53,6 +53,14 @@ class Dataloader:
     balancing_sampler: bool = False
 
 
+@dataclass
+class Peft:
+    use: bool = False
+    rank: int = 128
+    alpha: int = 256
+    target_modules: list | str = "linear"
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
 
@@ -64,6 +72,7 @@ if __name__ == "__main__":
     parser.add_argument("--model", type=Model, default=Model())
     parser.add_argument("--trainer", type=Trainer, default=Trainer())
     parser.add_argument("--dataloader", type=Dataloader, default=Dataloader())
+    parser.add_argument("--peft", type=Peft, default=Peft())
     parser.add_argument("--config", "-c", action=ActionConfigFile)
 
     cfg = parser.parse_args()

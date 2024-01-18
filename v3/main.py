@@ -13,6 +13,8 @@ from tqdm.auto import tqdm
 import torch
 from torch.optim.lr_scheduler import LambdaLR
 
+from peft import get_peft_config, get_peft_model, LoraConfig, TaskType
+
 from .labels import get_label_scheme
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
@@ -140,6 +142,18 @@ class Main:
             metrics["dev/loss"] = sum(batch_losses) / len(batch_losses)
 
         return metrics
+
+    def _wrap_peft(self, model):
+        lora_config = LoraConfig(
+            r=self.cfg.lora.rank,
+            lora_alpha=self.cfg.lora.alpha,
+            target_modules=target_modules if not peft_modules else peft_modules,
+            lora_dropout=0.05,
+            task_type=TaskType.SEQ_CLS,
+        )
+
+        model = get_peft_model(model, lora_config)
+        model.print_trainable_parameters()
 
     def _save_checkpoint(self):
         os.makedirs(self.cfg.working_dir, exist_ok=True)
