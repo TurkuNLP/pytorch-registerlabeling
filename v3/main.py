@@ -201,7 +201,7 @@ class Main:
 
         model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint else 'model'}"
 
-        self._init_model(model_path if self.cfg.peft.enable else None)
+        self._init_model()
         if self.cfg.peft.enable:
             self.model.load_adapter(model_path)
 
