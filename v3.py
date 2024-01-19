@@ -31,7 +31,6 @@ class Model:
     name: str = "xlm-roberta-base"
     compile: bool = False
     save: bool = True
-    resume: str = None
 
 
 @dataclass
@@ -70,6 +69,7 @@ if __name__ == "__main__":
     parser.add_argument("--method", "-m", type=str, default="finetune")
     parser.add_argument("--torch_dtype", type=str, default="bfloat16")
     parser.add_argument("--device", type=str, default="cuda")
+    parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--data", type=Data, default=Data())
     parser.add_argument("--model", type=Model, default=Model())
     parser.add_argument("--trainer", type=Trainer, default=Trainer())
