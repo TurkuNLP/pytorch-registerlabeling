@@ -31,6 +31,7 @@ class Model:
     name: str = "xlm-roberta-base"
     compile: bool = False
     save: bool = True
+    low_cpu_mem_usage: bool = False
 
 
 @dataclass

@@ -186,6 +186,7 @@ class Main:
         model = AutoModelForSequenceClassification.from_pretrained(
             self.cfg.model.name if not model_path else model_path,
             num_labels=self.cfg.num_labels,
+            low_cpu_mem_usage=self.cfg.model.low_cpu_mem_usage,
         ).to(self.cfg.device, dtype=self.cfg.torch_dtype)
 
         if self.cfg.multi_gpu:
