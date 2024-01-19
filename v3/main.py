@@ -74,7 +74,7 @@ class Main:
         # Run
         getattr(self, cfg.method)()
 
-    def _train(self, optimizer, lr_scheduler, epoch, progress_bar):
+    def _train(self, optimizer, lr_scheduler, epoch, progress_bar, patience):
         self.model.train()
         batch_losses = []
         for batch_i, batch in enumerate(self.dataloaders["train"]):
@@ -99,7 +99,7 @@ class Main:
 
                 progress_bar.update(1)
                 progress_bar.set_description(
-                    f"Epoch {epoch} ({int((batch_i/len(self.dataloaders['train'])* 100))}%)"
+                    f"E-{epoch}:{int((batch_i/len(self.dataloaders['train'])* 100))}% ({patience}), loss: {sum(batch_losses) / len(batch_losses)}"
                 )
         return {
             "train/loss": sum(batch_losses) / len(batch_losses),
@@ -272,11 +272,9 @@ class Main:
                 )
 
         for epoch in range(self.cfg.trainer.epochs):
-            print(
-                f"Remaining patience: {self.cfg.trainer.patience - (epoch - best_epoch)}  (of {self.cfg.trainer.patience})"
-            )
+            remaining_patience = f"{self.cfg.trainer.patience - (epoch - best_epoch)}/{self.cfg.trainer.patience}"
             train_metrics = self._train(
-                optimizer, lr_scheduler, epoch + 1, progress_bar
+                optimizer, lr_scheduler, epoch + 1, progress_bar, remaining_patience
             )
             pprint(train_metrics)
             dev_metrics = self._evaluate()
