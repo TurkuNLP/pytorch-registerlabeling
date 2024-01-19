@@ -2,6 +2,7 @@ import os
 import random
 import shutil
 from pprint import pprint
+import json
 
 import numpy as np
 
@@ -158,13 +159,25 @@ class Main:
         self.model = get_peft_model(self.model, self.lora_config)
         self.model.print_trainable_parameters()
 
-    def _save_checkpoint(self):
+    def _save_checkpoint(self, optimizer, lr_scheduler):
         os.makedirs(self.cfg.working_dir, exist_ok=True)
         self.model.save_pretrained(
             f"{self.cfg.working_dir}/best_checkpoint",
         )
 
+        with open(
+            f"{self.cfg.working_dir}/best_checkpoint/checkpoint_state.json", "w"
+        ) as f:
+            json.dump(
+                {
+                    "optimizer_state_dict": optimizer.state_dict(),
+                    "lr_scheduler_state_dict": lr_scheduler.state_dict(),
+                },
+                f,
+            )
+
     def _save_model(self):
+        shutil.rmtree(f"{self.cfg.working_dir}/best_model", ignore_errors=True)
         shutil.copytree(
             f"{self.cfg.working_dir}/best_checkpoint",
             f"{self.cfg.working_dir}/best_model",
@@ -246,7 +259,7 @@ class Main:
             if patience_metric > best_score:
                 best_score = patience_metric
                 best_epoch = epoch
-                self._save_checkpoint()
+                self._save_checkpoint(optimizer, lr_scheduler)
             elif epoch - best_epoch > self.cfg.trainer.patience:
                 print("Early stopped training at epoch %d" % epoch)
                 break
