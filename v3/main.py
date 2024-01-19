@@ -12,6 +12,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from torch.optim import AdamW
 from tqdm.auto import tqdm
 import torch
+from torch.nn.parallel import DataParallel
 from torch.optim.lr_scheduler import LambdaLR
 
 from peft import get_peft_model, LoraConfig, TaskType
@@ -170,8 +171,8 @@ class Main:
         ) as f:
             json.dump(
                 {
-                    "optimizer_state_dict": optimizer.state_dict().cpu().numpy(),
-                    "lr_scheduler_state_dict": lr_scheduler.state_dict().cpu().numpy(),
+                    "optimizer_state_dict": optimizer.state_dict().numpy(),
+                    "lr_scheduler_state_dict": lr_scheduler.state_dict().numpy(),
                 },
                 f,
             )
@@ -186,7 +187,11 @@ class Main:
     def _init_model(self):
         model = AutoModelForSequenceClassification.from_pretrained(
             self.cfg.model.name, num_labels=self.cfg.num_labels
-        ).to(self.cfg.device, dtype=self.cfg.torch_dtype)
+        )
+
+        model = DataParallel(model)
+
+        model = model.to(self.cfg.device, dtype=self.cfg.torch_dtype)
 
         if self.cfg.model.compile:
             model = torch.compile(model)
