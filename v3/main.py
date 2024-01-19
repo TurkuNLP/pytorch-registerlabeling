@@ -170,8 +170,8 @@ class Main:
         ) as f:
             json.dump(
                 {
-                    "optimizer_state_dict": optimizer.state_dict(),
-                    "lr_scheduler_state_dict": lr_scheduler.state_dict(),
+                    "optimizer_state_dict": optimizer.state_dict().cpu().numpy(),
+                    "lr_scheduler_state_dict": lr_scheduler.state_dict().cpu().numpy(),
                 },
                 f,
             )
