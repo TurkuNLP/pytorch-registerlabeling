@@ -1,0 +1,14 @@
+data:
+  train: en-fi-fr-sv
+model:
+  name: google/umt5-xl
+trainer:
+  learning_rate: 1e-4
+  gradient_accumulation_steps: 4
+peft:
+  enable: True
+dataloader:
+  train_batch_size: 4
+  dev_batch_size: 8
+  test_batch_size: 8
+  balancing_sampler: True

@@ -58,22 +58,22 @@ def split_gen(split, languages, label_cfg, concat_small):
                         row_id += 1
 
 
-def get_dataset(cnf):
-    train, dev, test = cnf.data.train, cnf.data.dev, cnf.data.test
+def get_dataset(cfg):
+    train, dev, test = cfg.data.train, cfg.data.dev, cfg.data.test
     if not dev:
         dev = train
     if not test:
         test = dev
 
-    if cnf.method == "predict":
+    if cfg.method == "predict":
         train, dev = None, None
     make_generator = lambda split, target: Dataset.from_generator(
         split_gen,
         gen_kwargs={
             "split": split,
             "languages": target,
-            "label_cfg": cnf.data.labels,
-            "concat_small": cnf.data.concat_small,
+            "label_cfg": cfg.data.labels,
+            "concat_small": cfg.data.concat_small,
         },
     )
 

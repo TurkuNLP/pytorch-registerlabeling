@@ -12,3 +12,4 @@ dataloader:
   dev_batch_size: 4
   test_batch_size: 4
   balancing_sampler: True
+# 1 {'f1': 0.7608275862068965, 'f1_th05': 0.7542743470581175, 'precision': 0.7679884161283137, 'recall': 0.7537990598010277, 'pr_auc': 0.8352877548588576, 'roc_auc': 0.8673984975431813, 'accuracy': 0.5712180746561886, 'threshold': 0.5499999999999999}
