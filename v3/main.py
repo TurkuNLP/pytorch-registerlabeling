@@ -264,7 +264,10 @@ class Main:
         if self.cfg.resume:
             with open(f"{self.cfg.resume}/model_state.json", "r") as f:
                 loaded_data = json.load(f)
-                best_score = loaded_data["dev/f1"]
+                best_score = loaded_data[self.cfg.trainer.best_model_metric]
+                print(
+                    f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
+                )
 
         for epoch in range(self.cfg.trainer.epochs):
             print(
