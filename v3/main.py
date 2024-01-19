@@ -273,7 +273,7 @@ class Main:
 
         for epoch in range(self.cfg.trainer.epochs):
             print(
-                f"Remaining patience: {self.cfg.trainer.patience - epoch - best_epoch}  (of {self.cfg.trainer.patience})"
+                f"Remaining patience: {self.cfg.trainer.patience - (epoch - best_epoch)}  (of {self.cfg.trainer.patience})"
             )
             train_metrics = self._train(
                 optimizer, lr_scheduler, epoch + 1, progress_bar
