@@ -176,9 +176,10 @@ class Main:
             f"{self.cfg.working_dir}/best_model",
         )
 
-    def _init_model(self):
+    def _init_model(self, model_path=None):
         model = AutoModelForSequenceClassification.from_pretrained(
-            self.cfg.model.name, num_labels=self.cfg.num_labels
+            self.cfg.model.name if not model_path else model_path,
+            num_labels=self.cfg.num_labels,
         )
 
         model = DataParallel(model)
@@ -195,13 +196,9 @@ class Main:
 
         model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint else 'model'}"
 
+        self._init_model(model_path if self.cfg.peft.enable else None)
         if self.cfg.peft.enable:
-            self._init_model()
             self.model.load_adapter(model_path)
-        else:
-            self.model = AutoModelForSequenceClassification.from_pretrained(
-                model_path
-            ).to(self.cfg.device, dtype=self.cfg.torch_dtype)
 
         print(self._evaluate("test", cl_report=True))
 
@@ -216,10 +213,16 @@ class Main:
         )
 
         # Init model
-        self._init_model()
+
+        self._init_model(
+            self.cfg.resume if (self.cfg.resume and not self.cfg.peft.enable) else None
+        )
 
         if self.cfg.peft.enable:
-            self._wrap_peft()
+            if not self.cfg.resume:
+                self._wrap_peft()
+            else:
+                self.model.load_adapter(self.cfg.resume)
 
         num_training_steps = int(
             self.cfg.trainer.epochs
@@ -233,6 +236,11 @@ class Main:
             weight_decay=self.cfg.trainer.weight_decay,
         )
 
+        if self.cfg.resume:
+            optimizer.load_state_dict(
+                torch.load(f"{self.cfg.resume}/optimizer_state.pth")
+            )
+
         lr_scheduler = LambdaLR(
             optimizer,
             linear_warmup_decay(
@@ -240,6 +248,11 @@ class Main:
                 num_training_steps,
             ),
         )
+
+        if self.cfg.resume:
+            lr_scheduler.load_state_dict(
+                torch.load(f"{self.cfg.resume}/lr_scheduler_state.pth")
+            )
 
         progress_bar = tqdm(range(num_training_steps))
         best_score = -1
