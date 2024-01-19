@@ -161,11 +161,9 @@ class Main:
         self.model.print_trainable_parameters()
 
     def _save_checkpoint(self, optimizer, lr_scheduler):
-        working_dir = self.cfg.working_dir
-        checkpoint_dir = f"{working_dir}/best_checkpoint"
-        os.makedirs(working_dir, exist_ok=True)
+        checkpoint_dir = f"{self.cfg.working_dir}/best_checkpoint"
+        os.makedirs(self.cfg.working_dir, exist_ok=True)
         self.model.module.save_pretrained(checkpoint_dir)
-
         torch.save(optimizer.state_dict(), f"{checkpoint_dir}/optimizer_state.pth")
         torch.save(
             lr_scheduler.state_dict(), f"{checkpoint_dir}/lr_scheduler_state.pth"
