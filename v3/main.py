@@ -99,7 +99,7 @@ class Main:
 
                 progress_bar.update(1)
                 progress_bar.set_description(
-                    f"E-{epoch}:{int((batch_i/len(self.dataloaders['train'])* 100))}% ({patience}), loss: {sum(batch_losses) / len(batch_losses)}"
+                    f"E-{epoch}:{int((batch_i/len(self.dataloaders['train'])* 100))}% ({patience}), loss: {(sum(batch_losses) / len(batch_losses)):4f}"
                 )
         return {
             "train/loss": sum(batch_losses) / len(batch_losses),
