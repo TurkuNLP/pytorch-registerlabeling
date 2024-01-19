@@ -160,7 +160,7 @@ class Main:
         self.model = get_peft_model(self.model, self.lora_config)
         self.model.print_trainable_parameters()
 
-    def _save_checkpoint(self, optimizer, lr_scheduler):
+    def _save_checkpoint(self, optimizer, lr_scheduler, dev_metrics):
         checkpoint_dir = f"{self.cfg.working_dir}/best_checkpoint"
         os.makedirs(self.cfg.working_dir, exist_ok=True)
         self.model.module.save_pretrained(checkpoint_dir)
@@ -168,6 +168,9 @@ class Main:
         torch.save(
             lr_scheduler.state_dict(), f"{checkpoint_dir}/lr_scheduler_state.pth"
         )
+
+        with open(f"{checkpoint_dir}/dev_metrics.json", "w") as f:
+            json.dump(dev_metrics, f)
 
     def _save_model(self):
         shutil.rmtree(f"{self.cfg.working_dir}/best_model", ignore_errors=True)
@@ -255,9 +258,18 @@ class Main:
             )
 
         progress_bar = tqdm(range(num_training_steps))
-        best_score = -1
-        best_epoch = -1
+        best_score = 0
+        best_epoch = 0
+
+        if self.cfg.resume:
+            with open(f"{self.cfg.resume}/model_state.json", "r") as f:
+                loaded_data = json.load(f)
+                best_score = loaded_data["dev/f1"]
+
         for epoch in range(self.cfg.trainer.epochs):
+            print(
+                f"Remaining patience: {self.cfg.trainer.patience - epoch - best_epoch}  (of {self.cfg.trainer.patience})"
+            )
             train_metrics = self._train(
                 optimizer, lr_scheduler, epoch + 1, progress_bar
             )
@@ -269,7 +281,8 @@ class Main:
             if patience_metric > best_score:
                 best_score = patience_metric
                 best_epoch = epoch
-                self._save_checkpoint(optimizer, lr_scheduler)
+                self._save_checkpoint(optimizer, lr_scheduler, dev_metrics)
+
             elif epoch - best_epoch > self.cfg.trainer.patience:
                 print("Early stopped training at epoch %d" % epoch)
                 break
