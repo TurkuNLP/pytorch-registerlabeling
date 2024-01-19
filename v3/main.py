@@ -183,9 +183,10 @@ class Main:
         model = AutoModelForSequenceClassification.from_pretrained(
             self.cfg.model.name if not model_path else model_path,
             num_labels=self.cfg.num_labels,
-        ).to(dtype=self.cfg.torch_dtype)
+        ).to(self.cfg.device, dtype=self.cfg.torch_dtype)
 
-        model = DataParallel(model)
+        if self.cfg.multi_gpu:
+            model = DataParallel(model)
 
         if self.cfg.model.compile:
             model = torch.compile(model)
