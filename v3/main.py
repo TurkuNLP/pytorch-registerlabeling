@@ -161,21 +161,14 @@ class Main:
         self.model.print_trainable_parameters()
 
     def _save_checkpoint(self, optimizer, lr_scheduler):
-        os.makedirs(self.cfg.working_dir, exist_ok=True)
+        working_dir = self.cfg.working_dir
+        os.makedirs(working_dir, exist_ok=True)
         self.model.module.save_pretrained(
-            f"{self.cfg.working_dir}/best_checkpoint",
+            f"{working_dir}/best_checkpoint",
         )
 
-        with open(
-            f"{self.cfg.working_dir}/best_checkpoint/checkpoint_state.json", "w"
-        ) as f:
-            json.dump(
-                {
-                    "optimizer_state_dict": optimizer.state_dict().numpy(),
-                    "lr_scheduler_state_dict": lr_scheduler.state_dict().numpy(),
-                },
-                f,
-            )
+        torch.save(optimizer.state_dict(), f"{working_dir}/optimizer_state.pth")
+        torch.save(lr_scheduler.state_dict(), f"{working_dir}/lr_scheduler_state.pth")
 
     def _save_model(self):
         shutil.rmtree(f"{self.cfg.working_dir}/best_model", ignore_errors=True)
