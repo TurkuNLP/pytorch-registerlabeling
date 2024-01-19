@@ -163,7 +163,10 @@ class Main:
     def _save_checkpoint(self, optimizer, lr_scheduler, dev_metrics):
         checkpoint_dir = f"{self.cfg.working_dir}/best_checkpoint"
         os.makedirs(self.cfg.working_dir, exist_ok=True)
-        self.model.module.save_pretrained(checkpoint_dir)
+        if self.cfg.multi_gpu:
+            self.model.module.save_pretrained(checkpoint_dir)
+        else:
+            self.model.save_pretrained(checkpoint_dir)
         torch.save(optimizer.state_dict(), f"{checkpoint_dir}/optimizer_state.pth")
         torch.save(
             lr_scheduler.state_dict(), f"{checkpoint_dir}/lr_scheduler_state.pth"
