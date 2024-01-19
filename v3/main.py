@@ -162,7 +162,7 @@ class Main:
 
     def _save_checkpoint(self, optimizer, lr_scheduler):
         os.makedirs(self.cfg.working_dir, exist_ok=True)
-        self.model.save_pretrained(
+        self.model.module.trained(
             f"{self.cfg.working_dir}/best_checkpoint",
         )
 
