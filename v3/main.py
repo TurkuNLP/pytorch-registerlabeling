@@ -198,14 +198,16 @@ class Main:
         self.model = model
 
     def predict(self, from_checkpoint=False):
-        print("Test evaluation")
-
         model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint else 'model'}"
 
         self._init_model()
         if self.cfg.peft.enable:
             self.model.load_adapter(model_path)
 
+        print("Dev set evaluation")
+        print(self._evaluate("dev"))
+
+        print("Test set evaluation")
         print(self._evaluate("test", cl_report=True))
 
     def finetune(self):
@@ -260,10 +262,6 @@ class Main:
                 torch.load(f"{self.cfg.resume}/lr_scheduler_state.pth")
             )
 
-        progress_bar = tqdm(range(num_training_steps))
-        best_score = 0
-        best_epoch = 0
-
         if self.cfg.resume:
             with open(f"{self.cfg.resume}/model_state.json", "r") as f:
                 loaded_data = json.load(f)
@@ -272,8 +270,12 @@ class Main:
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
 
+        progress_bar = tqdm(range(num_training_steps))
+        best_score = 0
+        best_epoch = 0
+        remaining_patience = ""
+
         for epoch in range(self.cfg.trainer.epochs):
-            remaining_patience = f"{self.cfg.trainer.patience - (epoch - best_epoch)}/{self.cfg.trainer.patience}"
             train_metrics = self._train(
                 optimizer, lr_scheduler, epoch + 1, progress_bar, remaining_patience
             )
@@ -290,6 +292,8 @@ class Main:
             elif epoch - best_epoch > self.cfg.trainer.patience:
                 print("Early stopped training at epoch %d" % epoch)
                 break
+
+            remaining_patience = f"{self.cfg.trainer.patience - (epoch - best_epoch)}/{self.cfg.trainer.patience}"
 
         if best_score > -1 and self.cfg.model.save:
             self._save_model()
