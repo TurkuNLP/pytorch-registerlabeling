@@ -66,7 +66,7 @@ def get_dataset(cfg):
         test = dev
 
     if cfg.method == "predict":
-        train, dev = None, None
+        train = None
     make_generator = lambda split, target: Dataset.from_generator(
         split_gen,
         gen_kwargs={
