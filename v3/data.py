@@ -81,8 +81,8 @@ def get_dataset(cfg):
 
     if train:
         splits["train"] = make_generator("train", train)
-        splits["dev"] = make_generator("dev", dev)
 
+    splits["dev"] = make_generator("dev", dev)
     splits["test"] = make_generator("test", test)
 
     return DatasetDict(splits)
