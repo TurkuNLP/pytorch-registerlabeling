@@ -32,7 +32,7 @@ class Model:
     compile: bool = False
     save: bool = True
     low_cpu_mem_usage: bool = False
-    quantize: False
+    quantize: bool = False
 
 
 @dataclass
