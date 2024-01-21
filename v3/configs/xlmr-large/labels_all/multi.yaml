@@ -3,7 +3,7 @@ data:
 model:
   name: xlm-roberta-large
 trainer:
-  learning_rate: 1e-5
+  learning_rate: 5e-5
 dataloader:
   balancing_sampler: True
 # 42 {'f1': 0.7713384474681301, 'f1_th05': 0.7618487592614372, 'precision': 0.7918982102479593, 'recall': 0.7518192402852569, 'pr_auc': 0.844034640719991, 'roc_auc': 0.8676527226680529, 'accuracy': 0.6018102722424923, 'threshold': 0.5999999999999999}
