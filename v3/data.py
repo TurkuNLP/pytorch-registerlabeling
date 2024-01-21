@@ -31,8 +31,8 @@ small_languages = [
 def split_gen(split, languages, label_cfg, concat_small):
     row_id = 0
     for l in languages.split("-"):
-        c = concat_small and l in small_languages
-        with open(f"data/{l}/{l if c else split}.tsv", "r") as c:
+        concat = concat_small and l in small_languages
+        with open(f"data/{l}/{l if concat else split}.tsv", "r") as c:
             re = csv.reader(c, delimiter="\t")
             for ro in re:
                 if ro[0] and ro[1]:
@@ -45,7 +45,7 @@ def split_gen(split, languages, label_cfg, concat_small):
                         yield {
                             "label": label,
                             "label_text": label_text,
-                            "language": "small" if c else l,
+                            "language": "small" if concat else l,
                             "text": text,
                             "id": str(row_id),
                             "split": split,
