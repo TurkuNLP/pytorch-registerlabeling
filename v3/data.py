@@ -31,8 +31,13 @@ small_languages = [
 def split_gen(split, languages, label_cfg, concat_small):
     row_id = 0
     for l in languages.split("-"):
+        print(l)
+        print(split)
         if l in small_languages and split == "test":
             split = l
+        print(l)
+        print(split)
+        print()
         with open(f"data/{l}/{split}.tsv", "r") as c:
             re = csv.reader(c, delimiter="\t")
             for ro in re:
@@ -41,9 +46,6 @@ def split_gen(split, languages, label_cfg, concat_small):
                     text = ro[1]
                     label = binarize_labels(normalized_labels, label_cfg)
                     label_text = " ".join(normalized_labels)
-                    language = l
-                    if concat_small and l in small_languages:
-                        language = "small"
 
                     if label_text:
                         yield {
