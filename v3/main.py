@@ -8,7 +8,12 @@ import numpy as np
 
 import wandb
 
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import (
+    AutoTokenizer,
+    AutoModelForSequenceClassification,
+    BitsAndBytesConfig,
+)
+
 from torch.optim import AdamW
 from tqdm.auto import tqdm
 import torch
@@ -187,6 +192,11 @@ class Main:
             self.cfg.model.name if not model_path else model_path,
             num_labels=self.cfg.num_labels,
             low_cpu_mem_usage=self.cfg.model.low_cpu_mem_usage,
+            quantization_config=BitsAndBytesConfig(
+                load_in_4bit=True, bnb_4bit_use_double_quant=True
+            )
+            if self.cfg.model.quantize
+            else None,
         ).to(self.cfg.device, dtype=self.cfg.torch_dtype)
 
         if self.cfg.multi_gpu:
