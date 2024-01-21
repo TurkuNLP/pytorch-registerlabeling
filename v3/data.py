@@ -49,7 +49,9 @@ def split_gen(split, languages, label_cfg, concat_small):
                         yield {
                             "label": label,
                             "label_text": label_text,
-                            "language": language,
+                            "language": "small"
+                            if concat_small and l in small_languages
+                            else l,
                             "text": text,
                             "id": str(row_id),
                             "split": split,
