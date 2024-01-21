@@ -197,7 +197,10 @@ class Main:
             )
             if self.cfg.model.quantize
             else None,
-        ).to(self.cfg.device, dtype=self.cfg.torch_dtype)
+        )
+
+        if not self.cfg.model.quantize:
+            model = model.to(self.cfg.device, dtype=self.cfg.torch_dtype)
 
         if self.cfg.multi_gpu:
             model = DataParallel(model)
