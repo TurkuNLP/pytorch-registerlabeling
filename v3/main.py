@@ -214,9 +214,11 @@ class Main:
     def predict(self, from_checkpoint=False):
         model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint else 'model'}"
 
-        self._init_model()
         if self.cfg.peft.enable:
+            self._init_model()
             self.model.load_adapter(model_path)
+        else:
+            self._init_model(model_path)
 
         print("Dev set evaluation")
         print(self._evaluate("dev"))
