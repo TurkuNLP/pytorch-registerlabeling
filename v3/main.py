@@ -150,9 +150,10 @@ class Main:
     def _wrap_peft(self):
         print("Wrapping PEFT model")
 
-        target_modules = self.cfg.peft.target_modules
         if self.cfg.peft.target_modules == "linear":
             target_modules = get_linear_modules(self.model)
+        else:
+            target_modules = self.cfg.peft.target_modules.split(",")
 
         self.lora_config = LoraConfig(
             r=self.cfg.peft.lora_rank,
