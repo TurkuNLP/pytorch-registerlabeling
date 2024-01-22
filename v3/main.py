@@ -239,7 +239,7 @@ class Main:
         else:
             self._init_model(model_path)
 
-        if self.cfg.data.dev or self.method == "finetune":
+        if self.cfg.data.dev or self.cfg.method == "finetune":
             print("Final dev set evaluation")
             print(self._evaluate())
 
