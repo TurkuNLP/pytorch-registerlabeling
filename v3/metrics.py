@@ -29,7 +29,7 @@ def optimize_threshold(logits, labels):
     return best_f1_threshold
 
 
-def compute_metrics(logits, labels, split, label_scheme=None):
+def compute_metrics(logits, labels, split, label_scheme=None, return_output=False):
     logits = logits.to(torch.float32)
     labels = labels.cpu().numpy()
     threshold = optimize_threshold(logits, labels)
@@ -74,5 +74,6 @@ def compute_metrics(logits, labels, split, label_scheme=None):
         print(
             classification_report(labels, y_pred, target_names=label_scheme, digits=4)
         )
-
+    if return_output:
+        return metrics, (labels, y_pred)
     return metrics

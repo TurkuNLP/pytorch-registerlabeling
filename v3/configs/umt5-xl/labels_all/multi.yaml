@@ -12,3 +12,4 @@ dataloader:
   dev_batch_size: 8
   test_batch_size: 8
   balancing_sampler: True
+# 2 zero-shot small {'f1': 0.6220721051472208, 'f1_th05': 0.6220721051472208, 'precision': 0.6156976744186047, 'recall': 0.6285799079982193, 'pr_auc': 0.6633545686963859, 'roc_auc': 0.7949726356286613, 'accuracy': 0.3528433654805454, 'threshold': 0.49999999999999994}

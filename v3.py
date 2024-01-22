@@ -71,7 +71,7 @@ if __name__ == "__main__":
     parser.add_argument("--method", "-m", type=str, default="finetune")
     parser.add_argument("--torch_dtype", type=str, default="bfloat16")
     parser.add_argument("--device", type=str, default="cuda")
-    parser.add_argument("--multi_gpu", type=bool, default=False)
+    parser.add_argument("--multi_gpu", action="store_true")
     parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--data", type=Data, default=Data())
     parser.add_argument("--model", type=Model, default=Model())
@@ -85,9 +85,5 @@ if __name__ == "__main__":
     print(parser.dump(cfg))
 
     from v3.main import Main
-    from v3.explore import explore
 
-    if "explore" in cfg.method:
-        explore(cfg)
-    else:
-        Main(cfg)
+    Main(cfg)

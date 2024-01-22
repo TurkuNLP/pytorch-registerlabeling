@@ -56,13 +56,15 @@ def split_gen(split, languages, label_cfg, concat_small):
 
 def get_dataset(cfg):
     train, dev, test = cfg.data.train, cfg.data.dev, cfg.data.test
-    if not dev:
-        dev = train
-    if not test:
-        test = dev
+    if cfg.method == "finetune":
+        if not dev:
+            dev = train
+        if not test:
+            test = dev
 
-    if cfg.method == "predict":
+    elif cfg.method == "predict":
         train = None
+
     make_generator = lambda split, target: Dataset.from_generator(
         split_gen,
         gen_kwargs={
@@ -77,8 +79,8 @@ def get_dataset(cfg):
 
     if train:
         splits["train"] = make_generator("train", train)
-
-    splits["dev"] = make_generator("dev", dev)
+    if dev:
+        splits["dev"] = make_generator("dev", dev)
     splits["test"] = make_generator("test", test)
 
     return DatasetDict(splits)

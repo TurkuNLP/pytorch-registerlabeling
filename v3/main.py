@@ -3,6 +3,7 @@ import random
 import shutil
 from pprint import pprint
 import json
+import csv
 
 import numpy as np
 
@@ -25,7 +26,7 @@ from peft import get_peft_model, LoraConfig, TaskType
 from .labels import get_label_scheme
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
-from .utils import get_torch_dtype, get_linear_modules
+from .utils import get_torch_dtype, get_linear_modules, decode_binary_labels
 from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
 from .loss import BCEFocalLoss
@@ -112,7 +113,7 @@ class Main:
             "train/epoch": epoch,
         }
 
-    def _evaluate(self, split="dev", cl_report=False):
+    def _evaluate(self, split="dev"):
         self.model.eval()
         batch_logits = []
         batch_labels = []
@@ -136,16 +137,21 @@ class Main:
             batch_losses.append(loss.item())
 
             progress_bar.update(1)
+
         metrics = compute_metrics(
             torch.cat(batch_logits, dim=0),
             torch.cat(batch_labels, dim=0),
             split,
-            self.cfg.label_scheme if cl_report else None,
+            self.cfg.label_scheme if split == "test" else None,
+            True if split == "test" else False,
         )
         if split == "dev":
             metrics["dev/loss"] = sum(batch_losses) / len(batch_losses)
+            return metrics
 
-        return metrics
+        elif split == "test":
+            self._save_predictions(*metrics[1])
+            return metrics[0]
 
     def _wrap_peft(self):
         print("Wrapping PEFT model")
@@ -188,6 +194,19 @@ class Main:
             f"{self.cfg.working_dir}/best_model",
         )
 
+    def _save_predictions(self, trues, preds):
+        true_labels_str = decode_binary_labels(trues, self.cfg.label_scheme)
+        predicted_labels_str = decode_binary_labels(preds, self.cfg.label_scheme)
+
+        data = list(zip(true_labels_str, predicted_labels_str))
+        out_file = f"{self.cfg.working_dir}/test_{self.cfg.data.test}.csv"
+
+        with open(out_file, "w", newline="") as csvfile:
+            csv_writer = csv.writer(csvfile, delimiter="\t")
+            csv_writer.writerows(data)
+
+        print(f"Predictions saved to {out_file}")
+
     def _init_model(self, model_path=None):
         model = AutoModelForSequenceClassification.from_pretrained(
             self.cfg.model.name if not model_path else model_path,
@@ -220,11 +239,12 @@ class Main:
         else:
             self._init_model(model_path)
 
-        print("Dev set evaluation")
-        print(self._evaluate("dev"))
+        if self.cfg.data.dev or self.method == "finetune":
+            print("Final dev set evaluation")
+            print(self._evaluate())
 
         print("Test set evaluation")
-        print(self._evaluate("test", cl_report=True))
+        print(self._evaluate("test"))
 
     def finetune(self):
         print("Fine-tuning")
@@ -273,22 +293,23 @@ class Main:
             ),
         )
 
+        best_starting_score = 0
+
+        # If resuming, load optimizer state and previous best score
         if self.cfg.resume:
             lr_scheduler.load_state_dict(
                 torch.load(f"{self.cfg.resume}/lr_scheduler_state.pth")
             )
-
-        if self.cfg.resume:
             with open(f"{self.cfg.resume}/model_state.json", "r") as f:
                 loaded_data = json.load(f)
-                best_score = loaded_data[self.cfg.trainer.best_model_metric]
+                best_starting_score = loaded_data[self.cfg.trainer.best_model_metric]
                 print(
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
 
         progress_bar = tqdm(range(num_training_steps))
-        best_score = 0
         best_epoch = 0
+        best_score = best_starting_score
         remaining_patience = ""
 
         for epoch in range(self.cfg.trainer.epochs):
@@ -311,7 +332,7 @@ class Main:
 
             remaining_patience = f"{self.cfg.trainer.patience - (epoch - best_epoch)}/{self.cfg.trainer.patience}"
 
-        if best_score > -1 and self.cfg.model.save:
+        if best_score > 0 and self.cfg.model.save:
             self._save_model()
 
         self.predict(from_checkpoint=True)

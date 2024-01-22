@@ -31,3 +31,16 @@ def get_linear_modules(model):
 
     print(f"Found linear modules: {linear_modules}")
     return list(linear_modules)
+
+
+def decode_binary_labels(data, label_scheme):
+    return [
+        " ".join(
+            [
+                label_scheme[i]
+                for i, binary_value in enumerate(binary_row)
+                if binary_value == 1
+            ]
+        )
+        for binary_row in data
+    ]
