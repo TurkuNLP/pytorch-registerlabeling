@@ -1,5 +1,8 @@
 from datetime import datetime
+import csv
 from pydoc import locate
+
+from tqdm import tqdm
 
 _print = print
 
@@ -33,14 +36,34 @@ def get_linear_modules(model):
     return list(linear_modules)
 
 
-def decode_binary_labels(data, label_scheme):
-    return [
-        " ".join(
-            [
-                label_scheme[i]
-                for i, binary_value in enumerate(binary_row)
-                if binary_value == 1
-            ]
-        )
-        for binary_row in data
-    ]
+def extract_doc_embeddings(model, dataset, output_path):
+    dataset.set_format(type="torch")
+    model = model.to("cpu")
+
+    for split, data in dataset.items():
+        print(f"Extracting from {split}")
+        print(f"Writing to {output_path}/doc_embeddings.tsv")
+        for d in tqdm(data):
+            label_text = d.pop("label_text")
+            d.pop("labels")
+            d.pop("text")
+            d.pop("id")
+            d.pop("split")
+            d.pop("length")
+            language = d.pop("language")
+
+            d["input_ids"] = d["input_ids"].unsqueeze(0)
+            d["attention_mask"] = d["attention_mask"].unsqueeze(0)
+
+            outputs = model(**d, output_hidden_states=True)
+            last_hidden_states = outputs.hidden_states[-1]
+            doc_embeddings = last_hidden_states[0][0, :].detach().numpy()
+            with open(f"{output_path}/doc_embeddings.tsv", "a", newline="") as tsvfile:
+                writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
+                writer.writerow(
+                    [
+                        language,
+                        label_text,
+                        " ".join([str(x) for x in doc_embeddings.tolist()]),
+                    ]
+                )

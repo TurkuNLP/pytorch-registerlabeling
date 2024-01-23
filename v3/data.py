@@ -27,6 +27,24 @@ small_languages = [
     "zh",
 ]
 
+language_names = {
+    "ar": "Arabic",
+    "ca": "Catalan",
+    "en": "English",
+    "es": "Spanish",
+    "fa": "Persian",
+    "fi": "Finnish",
+    "fr": "French",
+    "hi": "Hindi",
+    "id": "Indonesian",
+    "jp": "Japanese",
+    "no": "Norwegian",
+    "pt": "Portuguese",
+    "tr": "Turkish",
+    "ur": "Urdu",
+    "zh": "Chinese",
+}
+
 
 def split_gen(split, languages, label_cfg, concat_small):
     row_id = 0
@@ -56,14 +74,13 @@ def split_gen(split, languages, label_cfg, concat_small):
 
 def get_dataset(cfg):
     train, dev, test = cfg.data.train, cfg.data.dev, cfg.data.test
-    if cfg.method == "finetune":
+    if cfg.method == "predict":
+        train = None
+    else:
         if not dev:
             dev = train
         if not test:
             test = dev
-
-    elif cfg.method == "predict":
-        train = None
 
     make_generator = lambda split, target: Dataset.from_generator(
         split_gen,
@@ -86,7 +103,7 @@ def get_dataset(cfg):
     return DatasetDict(splits)
 
 
-def preprocess_data(dataset, tokenizer, seed, max_length):
+def preprocess_data(dataset, tokenizer, seed, max_length, remove_unused_cols=True):
     dataset = dataset.shuffle(seed=seed)
     dataset = dataset.map(
         lambda example: tokenizer(
@@ -96,8 +113,10 @@ def preprocess_data(dataset, tokenizer, seed, max_length):
         ),
         batched=True,
     )
-
-    dataset = dataset.remove_columns(["label_text", "text", "id", "split", "length"])
+    if remove_unused_cols:
+        dataset = dataset.remove_columns(
+            ["label_text", "text", "id", "split", "length"]
+        )
     dataset = dataset.rename_column("label", "labels")
     dataset.set_format("torch")
     return dataset

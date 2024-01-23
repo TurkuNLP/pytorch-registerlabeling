@@ -23,10 +23,10 @@ from torch.optim.lr_scheduler import LambdaLR
 
 from peft import get_peft_model, LoraConfig, TaskType
 
-from .labels import get_label_scheme
+from .labels import get_label_scheme, decode_binary_labels
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
-from .utils import get_torch_dtype, get_linear_modules, decode_binary_labels
+from .utils import get_torch_dtype, get_linear_modules, extract_doc_embeddings
 from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
 from .loss import BCEFocalLoss
@@ -67,7 +67,11 @@ class Main:
             cfg.model.name, torch_dtype=cfg.torch_dtype
         )
         self.dataset = preprocess_data(
-            dataset, self.tokenizer, cfg.seed, cfg.data.max_length
+            dataset,
+            self.tokenizer,
+            cfg.seed,
+            cfg.data.max_length,
+            cfg.data.remove_unused_cols,
         )
 
         # Get dataloaders
@@ -229,6 +233,12 @@ class Main:
             model = torch.compile(model)
 
         self.model = model
+
+    def extract_doc_embeddings(self):
+        path = "/".join(self.cfg.working_dir.split("/")[:-1]) + "/embeddings"
+        self._init_model()
+        os.makedirs(path, exist_ok=True)
+        extract_doc_embeddings(self.model, self.dataset, path)
 
     def predict(self, from_checkpoint=False):
         model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint else 'model'}"

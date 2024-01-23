@@ -24,6 +24,7 @@ class Data:
     max_length: int = 512
     return_tensors: str = "pt"
     concat_small: bool = False
+    remove_unused_cols: bool = True
 
 
 @dataclass

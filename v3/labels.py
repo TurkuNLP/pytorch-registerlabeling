@@ -504,3 +504,16 @@ def binarize_labels(labels, label_config):
     label_scheme = get_label_scheme(label_config)
 
     return [1 if scheme_label in labels else 0 for scheme_label in label_scheme]
+
+
+def decode_binary_labels(data, label_scheme):
+    return [
+        " ".join(
+            [
+                label_scheme[i]
+                for i, binary_value in enumerate(binary_row)
+                if binary_value == 1
+            ]
+        )
+        for binary_row in data
+    ]
