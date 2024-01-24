@@ -50,7 +50,10 @@ def split_gen(split, languages, label_cfg, concat_small):
     row_id = 0
     for l in languages.split("-"):
         concat = concat_small and l in small_languages
-        with open(f"data/{l}/{l if concat else split}.tsv", "r") as c:
+        with open(
+            f"data/{l}/{l if concat else (split if l not in small_languages else l)}.tsv",
+            "r",
+        ) as c:
             re = csv.reader(c, delimiter="\t")
             for ro in re:
                 if ro[0] and ro[1]:

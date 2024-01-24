@@ -1,0 +1,8 @@
+data:
+  train: ar-ca-en-es-fa-fi-fr-hi-id-jp-no-pt-sv-tr-ur-zh
+  dev: en-fi-fr-sv
+  test: en-fi-fr-sv
+model:
+  name: xlm-roberta-large
+dataloader:
+  balancing_sampler: False
