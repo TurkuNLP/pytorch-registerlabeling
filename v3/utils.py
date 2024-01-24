@@ -41,7 +41,7 @@ def model_output_embeddings(batch_data, model, output_path, device):
         "input_ids": torch.stack([x for x in batch_data["input_ids"]]),
         "attention_mask": torch.stack([x for x in batch_data["attention_mask"]]),
     }
-    batch = {k: v.to(device) for k, v in batch_data.items()}
+    batch = {k: v.to(device) for k, v in batch.items()}
     outputs = model(
         input_ids=batch.pop("input_ids"),
         attention_mask=batch.pop("attention_mask"),
