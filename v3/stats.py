@@ -72,8 +72,8 @@ class Stats:
         labels_mapped = [f"{map_full_names[x]} ({x})" for x in self.labels]
 
         for l in small_languages:
-            if l in ["id"]:
-                continue
+            #if l in ["id"]:
+            #    continue
             with open(f"{self.source_path}/test_{l}.csv", "r") as csvfile:
                 csv_reader = csv.reader(csvfile, delimiter="\t")
                 lang_data = list(csv_reader)
@@ -101,7 +101,7 @@ class Stats:
                     if v["f1-score"] != 0
                     else 0.005
                     for k, v in rep.items()
-                    if v["support"] >= 10
+                    if v["support"] >= 20
                 }
                 if language_data:
                     data[language_names[l]] = language_data

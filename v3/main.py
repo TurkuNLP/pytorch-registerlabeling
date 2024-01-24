@@ -72,6 +72,7 @@ class Main:
             cfg.seed,
             cfg.data.max_length,
             cfg.data.remove_unused_cols,
+            cfg.data.no_dynamic_padding,
         )
 
         # Get dataloaders

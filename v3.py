@@ -25,6 +25,7 @@ class Data:
     return_tensors: str = "pt"
     concat_small: bool = False
     remove_unused_cols: bool = True
+    no_dynamic_padding: bool = False
 
 
 @dataclass

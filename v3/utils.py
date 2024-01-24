@@ -1,7 +1,7 @@
 from datetime import datetime
 import csv
 from pydoc import locate
-
+import torch
 from tqdm import tqdm
 
 _print = print
@@ -36,6 +36,38 @@ def get_linear_modules(model):
     return list(linear_modules)
 
 
+def model_output_embeddings(batch_data, model, output_path):
+    batch = {
+        "input_ids": torch.stack([x for x in batch_data["input_ids"]]),
+        "attention_mask": torch.stack([x for x in batch_data["attention_mask"]]),
+    }
+    outputs = model(
+        input_ids=batch.pop("input_ids"),
+        attention_mask=batch.pop("attention_mask"),
+        output_hidden_states=True,
+    )
+    batch_data["embedding"] = outputs.hidden_states[-1][:, 0, :].detach().numpy()
+
+    with open(f"{output_path}/doc_embeddings.tsv", "a", newline="") as tsvfile:
+        writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
+        for b in range(len(batch_data["embedding"])):
+            writer.writerow(
+                [
+                    batch_data["language"][b],
+                    batch_data["label"][b],
+                    " ".join([str(x) for x in batch_data["embedding"][b].tolist()]),
+                ]
+            )
+
+
+init_batch_data = lambda: {
+    "input_ids": [],
+    "attention_mask": [],
+    "language": [],
+    "label": [],
+}
+
+
 def extract_doc_embeddings(model, dataset, output_path):
     dataset.set_format(type="torch")
     model = model.to("cpu")
@@ -43,27 +75,18 @@ def extract_doc_embeddings(model, dataset, output_path):
     for split, data in dataset.items():
         print(f"Extracting from {split}")
         print(f"Writing to {output_path}/doc_embeddings.tsv")
+        batch_size = 16
+        batch_data = init_batch_data()
         for d in tqdm(data):
-            label_text = d.pop("label_text")
-            d.pop("labels")
-            d.pop("text")
-            d.pop("id")
-            d.pop("split")
-            d.pop("length")
-            language = d.pop("language")
+            batch_data["input_ids"].append(d["input_ids"])
+            batch_data["attention_mask"].append(d["attention_mask"])
+            batch_data["language"].append(d["language"])
+            batch_data["label"].append(d["label_text"])
 
-            d["input_ids"] = d["input_ids"].unsqueeze(0)
-            d["attention_mask"] = d["attention_mask"].unsqueeze(0)
+            if len(batch_data["input_ids"]) == batch_size:
+                model_output_embeddings(batch_data, model, output_path)
+                batch_data = init_batch_data()
 
-            outputs = model(**d, output_hidden_states=True)
-            last_hidden_states = outputs.hidden_states[-1]
-            doc_embeddings = last_hidden_states[0][0, :].detach().numpy()
-            with open(f"{output_path}/doc_embeddings.tsv", "a", newline="") as tsvfile:
-                writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
-                writer.writerow(
-                    [
-                        language,
-                        label_text,
-                        " ".join([str(x) for x in doc_embeddings.tolist()]),
-                    ]
-                )
+        if len(batch_data["input_ids"]):
+            model_output_embeddings(batch_data, model, output_path)
+            batch_data = init_batch_data()

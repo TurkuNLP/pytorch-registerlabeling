@@ -103,13 +103,21 @@ def get_dataset(cfg):
     return DatasetDict(splits)
 
 
-def preprocess_data(dataset, tokenizer, seed, max_length, remove_unused_cols=True):
+def preprocess_data(
+    dataset,
+    tokenizer,
+    seed,
+    max_length,
+    remove_unused_cols=True,
+    no_dynamic_padding=False,
+):
     dataset = dataset.shuffle(seed=seed)
     dataset = dataset.map(
         lambda example: tokenizer(
             example["text"],
             truncation=True,
             max_length=max_length,
+            padding="max_length" if no_dynamic_padding else False,
         ),
         batched=True,
     )
