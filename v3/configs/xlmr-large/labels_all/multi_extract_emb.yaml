@@ -6,3 +6,7 @@ model:
   name: xlm-roberta-large
 dataloader:
   balancing_sampler: False
+data:
+  no_dynamic_padding: True
+  remove_unused_cols: False
+torch_dtype: float32
