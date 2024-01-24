@@ -47,7 +47,7 @@ def model_output_embeddings(batch_data, model, output_path, device):
         attention_mask=batch.pop("attention_mask"),
         output_hidden_states=True,
     )
-    batch_data["embedding"] = outputs.hidden_states[-1][:, 0, :].detach().numpy()
+    batch_data["embedding"] = outputs.hidden_states[-1][:, 0, :].cpu().detach().numpy()
 
     with open(f"{output_path}/doc_embeddings.tsv", "a", newline="") as tsvfile:
         writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
