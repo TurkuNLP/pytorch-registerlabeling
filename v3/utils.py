@@ -36,11 +36,12 @@ def get_linear_modules(model):
     return list(linear_modules)
 
 
-def model_output_embeddings(batch_data, model, output_path):
+def model_output_embeddings(batch_data, model, output_path, device):
     batch = {
         "input_ids": torch.stack([x for x in batch_data["input_ids"]]),
         "attention_mask": torch.stack([x for x in batch_data["attention_mask"]]),
     }
+    batch = {k: v.to(device) for k, v in batch_data.items()}
     outputs = model(
         input_ids=batch.pop("input_ids"),
         attention_mask=batch.pop("attention_mask"),
@@ -83,10 +84,9 @@ def extract_doc_embeddings(model, dataset, output_path, device):
             batch_data["label"].append(d["label_text"])
 
             if len(batch_data["input_ids"]) == batch_size:
-                batch_data = {k: v.to(device) for k, v in batch_data.items()}
-                model_output_embeddings(batch_data, model, output_path)
+                model_output_embeddings(batch_data, model, output_path, device)
                 batch_data = init_batch_data()
 
         if len(batch_data["input_ids"]):
-            model_output_embeddings(batch_data, model, output_path)
+            model_output_embeddings(batch_data, model, output_path, device)
             batch_data = init_batch_data()
