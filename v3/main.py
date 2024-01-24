@@ -239,7 +239,7 @@ class Main:
         path = "/".join(self.cfg.working_dir.split("/")[:-1]) + "/embeddings"
         self._init_model()
         os.makedirs(path, exist_ok=True)
-        extract_doc_embeddings(self.model, self.dataset, path)
+        extract_doc_embeddings(self.model, self.dataset, path, self.cfg.device)
 
     def predict(self, from_checkpoint=False):
         model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint else 'model'}"

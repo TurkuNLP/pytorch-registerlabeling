@@ -68,9 +68,8 @@ init_batch_data = lambda: {
 }
 
 
-def extract_doc_embeddings(model, dataset, output_path):
+def extract_doc_embeddings(model, dataset, output_path, device):
     dataset.set_format(type="torch")
-    model = model.to("cpu")
 
     for split, data in dataset.items():
         print(f"Extracting from {split}")
@@ -84,6 +83,7 @@ def extract_doc_embeddings(model, dataset, output_path):
             batch_data["label"].append(d["label_text"])
 
             if len(batch_data["input_ids"]) == batch_size:
+                batch_data = {k: v.to(device) for k, v in batch_data.items()}
                 model_output_embeddings(batch_data, model, output_path)
                 batch_data = init_batch_data()
 
