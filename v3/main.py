@@ -408,7 +408,7 @@ class Main:
 
         wandb.login()
 
-        ray_init(ignore_reinit_error=True, num_cpus=1, _temp_dir=checkpoint_path)
+        ray_init(ignore_reinit_error=True, num_cpus=1)
 
         tuner = tune.Tuner(
             tune.with_resources(
