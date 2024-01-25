@@ -320,7 +320,7 @@ class Main:
         optimizer = AdamW(
             self.model.parameters(),
             lr=config["learning_rate"],
-            weight_decay=self.cfg.trainer.weight_decay,
+            weight_decay=10,
         )
 
         if self.cfg.resume:
