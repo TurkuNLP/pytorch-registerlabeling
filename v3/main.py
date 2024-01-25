@@ -54,7 +54,7 @@ class Main:
                 f"seed_{cfg.seed}",
             ]
         )
-        cfg.wandb_project = self.cfg.working_dir.split("/", 1)[1].replace("/", ",")
+        cfg.wandb_project = cfg.working_dir.split("/", 1)[1].replace("/", ",")
         print(f"Working directory: {cfg.working_dir}")
         self.cfg = cfg
 
