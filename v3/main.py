@@ -325,7 +325,7 @@ class Main:
         remaining_patience = ""
 
         def condition(patience_metric, best_score):
-            if "loss" in self.cfg.best_model_metric:
+            if "loss" in self.cfg.trainer.best_model_metric:
                 return patience_metric < best_score
             return patience_metric > best_score
 
