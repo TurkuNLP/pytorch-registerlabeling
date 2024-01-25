@@ -69,6 +69,7 @@ class Main:
         if not self.cfg.no_tf32:
             torch.set_float32_matmul_precision("high")
             torch.backends.cudnn.allow_tf32
+            torch.backends.cuda.matmul.allow_tf32 = True
 
         # Make process deterministic
         torch.manual_seed(cfg.seed)
