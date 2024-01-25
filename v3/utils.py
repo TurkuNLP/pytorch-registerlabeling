@@ -55,7 +55,7 @@ def init_progress(total_iters, iter_ratio):
     return progress_bar, progress
 
 
-def update_progress(progress_bar, progress):
+def update_progress(progress_bar, progress, description=None):
     progress["cur_iters"] += 1
     progress["iters"] += 1
     if (
@@ -66,3 +66,6 @@ def update_progress(progress_bar, progress):
             min(progress["min_iters"], (progress["total_iters"] - progress["iters"]))
         )
         progress["cur_iters"] = 0
+
+        if description:
+            progress_bar.set_description(description)

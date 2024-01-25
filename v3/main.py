@@ -132,10 +132,12 @@ class Main:
                 lr_scheduler.step()
                 optimizer.zero_grad()
 
-                update_progress(progress_bar, progress)
-                progress_bar.set_description(
-                    f"E-{epoch}:{int((batch_i/len(self.dataloaders['train'])* 100))}% ({patience}), loss: {(sum(batch_losses) / len(batch_losses)):4f}"
+                update_progress(
+                    progress_bar,
+                    progress,
+                    f"E-{epoch}:{int((batch_i/len(self.dataloaders['train'])* 100))}% ({patience}), loss: {(sum(batch_losses) / len(batch_losses)):4f}",
                 )
+
         return {
             "train/loss": sum(batch_losses) / len(batch_losses),
             "train/learning_rate": optimizer.param_groups[0]["lr"],
