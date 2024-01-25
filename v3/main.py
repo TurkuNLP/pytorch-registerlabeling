@@ -26,7 +26,7 @@ from peft import get_peft_model, LoraConfig, TaskType
 
 from ray import tune, train
 from ray.tune.search.hyperopt import HyperOptSearch
-from ray.air.integrations.wandb import WandbLoggerCallback
+from ray.air.integrations.wandb import setup_wandb
 from ray import init as ray_init
 
 from .labels import get_label_scheme, decode_binary_labels
@@ -54,6 +54,7 @@ class Main:
                 f"seed_{cfg.seed}",
             ]
         )
+        cfg.wandb_project = self.cfg.working_dir.split("/", 1)[1].replace("/", ",")
         print(f"Working directory: {cfg.working_dir}")
         self.cfg = cfg
 
@@ -327,6 +328,9 @@ class Main:
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
 
+        if self.cfg.method == "ray_tune":
+            wandb = setup_wandb(config, project=f"ray_{self.cfg.wandb_project}")
+
         progress_bar = tqdm(range(num_training_steps))
         best_epoch = 0
         best_score = best_starting_score
@@ -368,7 +372,7 @@ class Main:
 
         wandb.login()
         wandb.init(
-            project=self.cfg.working_dir.split("/", 1)[1].replace("/", ","),
+            project=self.cfg.wandb_project,
             config=self.cfg,
         )
 
@@ -408,7 +412,9 @@ class Main:
 
         wandb.login()
 
-        ray_init(ignore_reinit_error=True, num_cpus=1)
+        ray_init(
+            ignore_reinit_error=True, num_cpus=1, _temp_dir=self.cfg.root_path + "/tmp"
+        )
 
         tuner = tune.Tuner(
             tune.with_resources(
@@ -421,14 +427,6 @@ class Main:
                 scheduler=scheduler,
                 num_samples=20,
                 search_alg=HyperOptSearch(metric="loss", mode="min"),
-            ),
-            run_config=train.RunConfig(
-                callbacks=[
-                    WandbLoggerCallback(
-                        project="tune_"
-                        + self.cfg.working_dir.split("/", 1)[1].replace("/", ",")
-                    )
-                ]
             ),
             param_space=config,
         )
