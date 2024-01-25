@@ -1,3 +1,4 @@
+embeddings: tokens_mean
 data:
   train: ar-ca-en-es-fa-fi-fr-hi-id-jp-no-pt-sv-tr-ur-zh
   dev: en-fi-fr-sv
