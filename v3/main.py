@@ -19,8 +19,6 @@ from transformers import (
 
 from torch.optim import AdamW
 from tqdm.auto import tqdm
-
-tqdm = partial(tqdm, position=0, leave=True)
 import torch
 from torch.nn.parallel import DataParallel
 from torch.optim.lr_scheduler import LambdaLR
@@ -141,9 +139,7 @@ class Main:
         batch_logits = []
         batch_labels = []
         batch_losses = []
-        progress_bar = tqdm(
-            range(len(self.dataloaders[split])), disable=self.cfg.disable_tqdm
-        )
+        progress_bar = tqdm(range(len(self.dataloaders[split])), miniters=self.cfg.tqdm_ratio * len(self.dataloaders[split])
         progress_bar.set_description(f"testing {split}")
         for batch in self.dataloaders[split]:
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
@@ -338,7 +334,9 @@ class Main:
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
 
-        progress_bar = tqdm(range(num_training_steps), disable=self.cfg.disable_tqdm)
+        progress_bar = tqdm(
+            range(num_training_steps), miniters=self.cfg.tqdm_ratio * num_training_steps
+        )
         best_epoch = 0
         best_score = best_starting_score
         remaining_patience = ""
@@ -373,15 +371,6 @@ class Main:
 
             remaining_patience = f"{self.cfg.trainer.patience - (epoch - best_epoch)}/{self.cfg.trainer.patience}"
 
-        return best_starting_score, best_score
-
-    def finetune(self):
-        print("Fine-tuning")
-
-        config = {"learning_rater": self.cfg.trainer.learning_rate}
-
-        best_starting_score, best_score = self._train(config)
-
         if (
             self.cfg.model.save
             and best_score is not False
@@ -391,10 +380,20 @@ class Main:
         ):
             self._save_model()
 
-        self.predict(from_checkpoint=True)
+        if self.cfg.predict:
+            self.predict(from_checkpoint=True)
+
+    def finetune(self):
+        print("Fine-tuning")
+
+        config = {"learning_rater": self.cfg.trainer.learning_rate}
+        self._train(config)
 
     def ray_tune(self):
-        self.cfg.disable_tqdm = True
+        self.cfg.tqdm_ratio = 0.1
+        self.cfg.model.save = False
+        self.cfg.predict = False
+
         config = {
             "learning_rate": tune.quniform(
                 *self.cfg.ray.learning_rate, self.cfg.ray.learning_rate[0]
