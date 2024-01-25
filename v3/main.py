@@ -337,7 +337,7 @@ class Main:
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
 
-        progress_bar = tqdm(range(num_training_steps), minininterval=1)
+        progress_bar = tqdm(range(num_training_steps), mininterval=1)
         best_epoch = 0
         best_score = best_starting_score
         remaining_patience = ""
