@@ -141,7 +141,7 @@ class Main:
         batch_losses = []
         progress_bar = tqdm(
             range(len(self.dataloaders[split])),
-            int(miniters=self.cfg.tqdm_ratio * len(self.dataloaders[split])),
+            miniters=int(self.cfg.tqdm_ratio * len(self.dataloaders[split])),
         )
         progress_bar.set_description(f"testing {split}")
         for batch in self.dataloaders[split]:
