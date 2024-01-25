@@ -29,12 +29,14 @@ def extract_doc_embeddings(model, dataset, output_path, device, method):
             embeddings = outputs.hidden_states[-1][:, 0, :].cpu().detach().numpy()
         elif method == "tokens_mean":
             embeddings = [
-                np.mean(x, axis=0) for x in outputs.hidden_states[-1].detach().numpy()
+                np.mean(x, axis=0)
+                for x in outputs.hidden_states[-1].cpu().detach().numpy()
             ]
 
         elif method == "tokens_max":
             embeddings = [
-                np.max(x, axis=0) for x in outputs.hidden_states[-1].detach().numpy()
+                np.max(x, axis=0)
+                for x in outputs.hidden_states[-1].cpu().detach().numpy()
             ]
 
         batch_data["embeddings"] = embeddings
