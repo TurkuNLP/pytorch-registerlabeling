@@ -70,7 +70,17 @@ if __name__ == "__main__":
     parser = ArgumentParser()
 
     parser.add_argument("--seed", "-s", type=int, default=42)
-    parser.add_argument("--method", "-m", type=str, default="finetune")
+    parser.add_argument(
+        "--method",
+        "-m",
+        default="finetune",
+        choices=["finetune", "predict", "extract_doc_embeddings"],
+    )
+    parser.add_argument(
+        "--embeddings",
+        default="document",
+        choices=["document", "tokens_mean", "tokens_max"],
+    )
     parser.add_argument("--torch_dtype", type=str, default="bfloat16")
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--multi_gpu", action="store_true")
