@@ -351,7 +351,7 @@ class Main:
 
         if (
             self.cfg.model.save
-            and self.best_score is not False
+            and best_score is not False
             and (not self.cfg.resume or condition(best_score, best_starting_score))
         ):
             self._save_model()
