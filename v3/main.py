@@ -285,7 +285,7 @@ class Main:
     def _train(self, config):
         wandb.login()
         wandb.init(
-            project=f"{self.cfg.method}_self.cfg.wandb_project",
+            project=f"{self.cfg.method}_{self.cfg.wandb_project}",
             config=self.cfg,
         )
         self._init_model(
@@ -402,8 +402,9 @@ class Main:
         ray_init(
             ignore_reinit_error=True, num_cpus=1, _temp_dir=self.cfg.root_path + "/tmp"
         )
-
-        os.makedirs(f"{self.cfg.working_dir}/ray", exist_ok=True)
+        ray_dir = f"{self.cfg.root_path}/tmp/ray/{self.cfg.wandb_project}"
+        shutil.rmtree(ray_dir, ignore_errors=True)
+        os.makedirs(ray_dir, exist_ok=True)
 
         tuner = tune.Tuner(
             tune.with_resources(
@@ -419,7 +420,7 @@ class Main:
             ),
             run_config=RunConfig(
                 name=self.cfg.wandb_project,
-                storage_path=f"{os.getcwd()}/{self.cfg.working_dir}/ray",
+                storage_path=ray_dir,
             ),
             param_space=config,
         )
