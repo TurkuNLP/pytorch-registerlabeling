@@ -182,7 +182,7 @@ class Main:
     def _save_checkpoint(self, optimizer, lr_scheduler, dev_metrics):
         checkpoint_dir = f"{self.cfg.working_dir}/best_checkpoint"
         os.makedirs(self.cfg.working_dir, exist_ok=True)
-        if self.cfg.multi_gpu:
+        if self.cfg.gpus > 1:
             self.model.module.save_pretrained(checkpoint_dir)
         else:
             self.model.save_pretrained(checkpoint_dir)
@@ -226,8 +226,8 @@ class Main:
             else None,
         )
 
-        if self.cfg.multi_gpu:
-            model = DataParallel(model)
+        if self.cfg.gpus > 1:
+            model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
 
         if not self.cfg.model.quantize:
             model = model.to(self.cfg.device, dtype=self.cfg.torch_dtype)
