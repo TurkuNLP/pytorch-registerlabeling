@@ -139,7 +139,10 @@ class Main:
         batch_logits = []
         batch_labels = []
         batch_losses = []
-        progress_bar = tqdm(range(len(self.dataloaders[split])), miniters=self.cfg.tqdm_ratio * len(self.dataloaders[split])
+        progress_bar = tqdm(
+            range(len(self.dataloaders[split])),
+            miniters=self.cfg.tqdm_ratio * len(self.dataloaders[split]),
+        )
         progress_bar.set_description(f"testing {split}")
         for batch in self.dataloaders[split]:
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
