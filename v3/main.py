@@ -419,7 +419,7 @@ class Main:
             ),
             run_config=train.RunConfig(
                 name=self.cfg.wandb_project,
-                storage_path=f"{self.cfg.working_dir}/ray",
+                storage_path=f"{os.getcwd()}/{self.cfg.working_dir}/ray",
             ),
             param_space=config,
         )
