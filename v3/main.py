@@ -33,7 +33,13 @@ from ray.train import RunConfig
 from .labels import get_label_scheme, decode_binary_labels
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
-from .utils import get_torch_dtype, get_linear_modules, log_gpu_memory
+from .utils import (
+    get_torch_dtype,
+    get_linear_modules,
+    log_gpu_memory,
+    init_progress,
+    update_progress,
+)
 from .embeddings import extract_doc_embeddings
 from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
@@ -96,7 +102,9 @@ class Main:
         # Run
         getattr(self, cfg.method)()
 
-    def _train_epoch(self, optimizer, lr_scheduler, epoch, progress_bar, patience):
+    def _train_epoch(
+        self, optimizer, lr_scheduler, epoch, progress_bar, progress, patience
+    ):
         self.model.train()
         batch_losses = []
         log_gpu_memory()
@@ -124,7 +132,7 @@ class Main:
                 lr_scheduler.step()
                 optimizer.zero_grad()
 
-                progress_bar.update(1)
+                update_progress(progress_bar, progress)
                 progress_bar.set_description(
                     f"E-{epoch}:{int((batch_i/len(self.dataloaders['train'])* 100))}% ({patience}), loss: {(sum(batch_losses) / len(batch_losses)):4f}"
                 )
@@ -139,11 +147,12 @@ class Main:
         batch_logits = []
         batch_labels = []
         batch_losses = []
-        progress_bar = tqdm(
-            range(len(self.dataloaders[split])),
-            miniters=int(self.cfg.tqdm_ratio * len(self.dataloaders[split])),
+
+        progress_bar, progress = init_progress(
+            len(self.dataloaders[split]), self.cfg.tqdm_ratio
         )
-        progress_bar.set_description(f"testing {split}")
+
+        progress_bar.set_description(f"Testing {split}")
         for batch in self.dataloaders[split]:
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
@@ -160,7 +169,7 @@ class Main:
             batch_labels.append(labels)
             batch_losses.append(loss.item())
 
-            progress_bar.update(1)
+            update_progress(progress_bar, progress)
 
         metrics = compute_metrics(
             torch.cat(batch_logits, dim=0),
@@ -336,18 +345,19 @@ class Main:
                 print(
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
-
-        progress_bar = tqdm(
-            range(num_training_steps),
-            miniters=int(self.cfg.tqdm_ratio * num_training_steps),
-        )
+        progress_bar, progress = init_progress(num_training_steps, self.cfg.tqdm_ratio)
         best_epoch = 0
         best_score = best_starting_score
         remaining_patience = ""
 
         for epoch in range(self.cfg.trainer.epochs):
             train_metrics = self._train_epoch(
-                optimizer, lr_scheduler, epoch + 1, progress_bar, remaining_patience
+                optimizer,
+                lr_scheduler,
+                epoch + 1,
+                progress_bar,
+                progress,
+                remaining_patience,
             )
             pprint(train_metrics)
             dev_metrics = self._evaluate()
