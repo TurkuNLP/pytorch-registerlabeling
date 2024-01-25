@@ -403,6 +403,8 @@ class Main:
             ignore_reinit_error=True, num_cpus=1, _temp_dir=self.cfg.root_path + "/tmp"
         )
 
+        os.makedirs(f"{self.cfg.working_dir}/ray", exist_ok=True)
+
         tuner = tune.Tuner(
             tune.with_resources(
                 tune.with_parameters(self._train),
