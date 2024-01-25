@@ -48,6 +48,7 @@ class Trainer:
     patience: int = 5
     best_model_metric: str = "dev/loss"
     gradient_accumulation_steps: int = 1
+    max_grad_norm: float = 1.0
 
 
 @dataclass

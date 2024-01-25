@@ -106,6 +106,10 @@ class Main:
             loss = loss / self.cfg.trainer.gradient_accumulation_steps
             loss.backward()
             if (batch_i + 1) % self.cfg.trainer.gradient_accumulation_steps == 0:
+                if self.cfg.trainer.max_grad_norm > 0:
+                    torch.nn.utils.clip_grad_norm_(
+                        self.model.parameters(), self.cfg.trainer.max_grad_norm
+                    )
                 optimizer.step()
                 lr_scheduler.step()
                 optimizer.zero_grad()
