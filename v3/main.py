@@ -263,15 +263,12 @@ class Main:
 
     def finetune(self):
         print("Fine-tuning")
-        # Wandb
 
         wandb.login()
         wandb.init(
             project=self.cfg.working_dir.split("/", 1)[1].replace("/", ","),
             config=self.cfg,
         )
-
-        # Init model
 
         self._init_model(
             self.cfg.resume if (self.cfg.resume and not self.cfg.peft.enable) else None
@@ -308,7 +305,7 @@ class Main:
             ),
         )
 
-        best_starting_score = 0
+        best_starting_score = False
 
         # If resuming, load optimizer state and previous best score
         if self.cfg.resume:
@@ -327,6 +324,11 @@ class Main:
         best_score = best_starting_score
         remaining_patience = ""
 
+        def condition(patience_metric, best_score):
+            if "loss" in self.cfg.best_model_metric:
+                return patience_metric < best_score
+            return patience_metric > best_score
+
         for epoch in range(self.cfg.trainer.epochs):
             train_metrics = self._train(
                 optimizer, lr_scheduler, epoch + 1, progress_bar, remaining_patience
@@ -336,7 +338,7 @@ class Main:
             pprint(dev_metrics)
             wandb.log({**dev_metrics, **train_metrics})
             patience_metric = dev_metrics[self.cfg.trainer.best_model_metric]
-            if patience_metric > best_score:
+            if best_score is False or condition(patience_metric, best_score):
                 best_score = patience_metric
                 best_epoch = epoch
                 self._save_checkpoint(optimizer, lr_scheduler, dev_metrics)
@@ -347,7 +349,11 @@ class Main:
 
             remaining_patience = f"{self.cfg.trainer.patience - (epoch - best_epoch)}/{self.cfg.trainer.patience}"
 
-        if best_score > 0 and self.cfg.model.save:
+        if (
+            self.cfg.model.save
+            and self.best_score is not False
+            and (not self.cfg.resume or condition(best_score, best_starting_score))
+        ):
             self._save_model()
 
         self.predict(from_checkpoint=True)
