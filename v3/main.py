@@ -389,7 +389,7 @@ class Main:
     def finetune(self):
         print("Fine-tuning")
 
-        config = {"learning_rater": self.cfg.trainer.learning_rate}
+        config = {"learning_rate": self.cfg.trainer.learning_rate}
         self._train(config)
 
     def ray_tune(self):
