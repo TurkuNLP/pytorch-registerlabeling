@@ -451,8 +451,4 @@ class Main:
         print(
             "Best trial final validation loss: {}".format(best_result.metrics["loss"])
         )
-        print(
-            "Best trial final validation accuracy: {}".format(
-                best_result.metrics["accuracy"]
-            )
-        )
+        print("Best trial final validation f1: {}".format(best_result.metrics["f1"]))
