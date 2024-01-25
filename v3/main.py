@@ -141,7 +141,9 @@ class Main:
         batch_logits = []
         batch_labels = []
         batch_losses = []
-        progress_bar = tqdm(range(len(self.dataloaders[split])))
+        progress_bar = tqdm(
+            range(len(self.dataloaders[split])), disable=self.cfg.disable_tqdm
+        )
         progress_bar.set_description(f"testing {split}")
         for batch in self.dataloaders[split]:
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
@@ -336,7 +338,7 @@ class Main:
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
 
-        progress_bar = tqdm(range(num_training_steps))
+        progress_bar = tqdm(range(num_training_steps), disable=self.cfg.disable_tqdm)
         best_epoch = 0
         best_score = best_starting_score
         remaining_patience = ""
@@ -392,6 +394,7 @@ class Main:
         self.predict(from_checkpoint=True)
 
     def ray_tune(self):
+        self.cfg.disable_tqdm = True
         config = {
             "learning_rate": tune.quniform(
                 *self.cfg.ray.learning_rate, self.cfg.ray.learning_rate[0]
