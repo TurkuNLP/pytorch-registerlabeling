@@ -95,7 +95,7 @@ if __name__ == "__main__":
     parser.add_argument("--gpus", type=int, default=1)
     parser.add_argument("--resume", type=str)
     parser.add_argument("--no_tf32", action="store_true")
-    parser.add_argument("--root_path", action="/scratch/project_2009199")
+    parser.add_argument("--root_path", default="/scratch/project_2009199")
     parser.add_argument("--data", type=Data, default=Data())
     parser.add_argument("--model", type=Model, default=Model())
     parser.add_argument("--trainer", type=Trainer, default=Trainer())
