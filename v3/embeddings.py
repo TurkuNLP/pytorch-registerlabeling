@@ -58,7 +58,7 @@ def extract_doc_embeddings(model, dataset, output_path, device, method):
 
     for split, data in dataset.items():
         print(f"Extracting from {split}")
-        print(f"Writing to {output_path}/doc_embeddings.tsv")
+        print(f"Writing to {output_path}/{method}_embeddings.tsv")
         batch_size = 16
         batch_data = init_batch_data()
         for d in tqdm(data):
