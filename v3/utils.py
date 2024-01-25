@@ -63,6 +63,6 @@ def update_progress(progress_bar, progress):
         or (progress["total_iters"] - progress["iters"]) < progress["min_iters"]
     ):
         progress_bar.update(
-            min(progress["miniters"], (progress["total_iters"] - progress["iters"]))
+            min(progress["min_iters"], (progress["total_iters"] - progress["iters"]))
         )
         progress["cur_iters"] = 0
