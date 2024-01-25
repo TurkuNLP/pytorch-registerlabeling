@@ -18,7 +18,7 @@ from transformers import (
 )
 
 from torch.optim import AdamW
-from tqdm.auto import tqdm
+from tqdm import tqdm
 import torch
 from torch.nn.parallel import DataParallel
 from torch.optim.lr_scheduler import LambdaLR
