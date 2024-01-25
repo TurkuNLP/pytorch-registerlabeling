@@ -26,7 +26,7 @@ from peft import get_peft_model, LoraConfig, TaskType
 from .labels import get_label_scheme, decode_binary_labels
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
-from .utils import get_torch_dtype, get_linear_modules
+from .utils import get_torch_dtype, get_linear_modules, log_gpu_memory
 from .embeddings import extract_doc_embeddings
 from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
@@ -89,6 +89,7 @@ class Main:
     def _train(self, optimizer, lr_scheduler, epoch, progress_bar, patience):
         self.model.train()
         batch_losses = []
+        log_gpu_memory()
         for batch_i, batch in enumerate(self.dataloaders["train"]):
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")

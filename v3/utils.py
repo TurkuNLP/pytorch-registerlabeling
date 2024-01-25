@@ -1,7 +1,7 @@
 from datetime import datetime
 from pydoc import locate
 
-from tqdm import tqdm
+from torch import cuda
 
 _print = print
 
@@ -33,3 +33,12 @@ def get_linear_modules(model):
 
     print(f"Found linear modules: {linear_modules}")
     return list(linear_modules)
+
+
+def log_gpu_memory():
+    for gpu in range(cuda.device_count()):
+        allocated_memory = cuda.memory_allocated(gpu) / (1024**3)  # Convert to GB
+        max_allocated_memory = cuda.max_memory_allocated(gpu) / (1024**3)
+        print(
+            f"[GPU-{gpu}]: {allocated_memory:.2f} ({max_allocated_memory:.2f}) GB"
+        )
