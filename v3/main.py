@@ -5,6 +5,7 @@ from pprint import pprint
 import json
 import csv
 import tempfile
+from functools import partial
 
 import numpy as np
 
@@ -18,6 +19,8 @@ from transformers import (
 
 from torch.optim import AdamW
 from tqdm.auto import tqdm
+
+tqdm = partial(tqdm, position=0, leave=True)
 import torch
 from torch.nn.parallel import DataParallel
 from torch.optim.lr_scheduler import LambdaLR
@@ -280,6 +283,11 @@ class Main:
         return patience_metric > best_score
 
     def _train(self, config):
+        wandb.login()
+        wandb.init(
+            project=f"{self.cfg.method}_self.cfg.wandb_project",
+            config=self.cfg,
+        )
         self._init_model(
             self.cfg.resume if (self.cfg.resume and not self.cfg.peft.enable) else None
         )
@@ -328,9 +336,6 @@ class Main:
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
 
-        if self.cfg.method == "ray_tune":
-            wandb = setup_wandb(config, project=f"ray_{self.cfg.wandb_project}")
-
         progress_bar = tqdm(range(num_training_steps))
         best_epoch = 0
         best_score = best_starting_score
@@ -354,14 +359,15 @@ class Main:
                 print("Early stopped training at epoch %d" % epoch)
                 break
 
-            with tempfile.TemporaryDirectory() as temp_checkpoint_dir:
-                path = os.path.join(temp_checkpoint_dir, "checkpoint.pt")
-                torch.save((self.model.state_dict(), optimizer.state_dict()), path)
-                checkpoint = train.Checkpoint.from_directory(temp_checkpoint_dir)
-                train.report(
-                    {"loss": dev_metrics["dev/loss"], "f1": dev_metrics["dev/f1"]},
-                    checkpoint=checkpoint,
-                )
+            if self.cfg.method == "ray_tune":
+                with tempfile.TemporaryDirectory() as temp_checkpoint_dir:
+                    path = os.path.join(temp_checkpoint_dir, "checkpoint.pt")
+                    torch.save((self.model.state_dict(), optimizer.state_dict()), path)
+                    checkpoint = train.Checkpoint.from_directory(temp_checkpoint_dir)
+                    train.report(
+                        {"loss": dev_metrics["dev/loss"], "f1": dev_metrics["dev/f1"]},
+                        checkpoint=checkpoint,
+                    )
 
             remaining_patience = f"{self.cfg.trainer.patience - (epoch - best_epoch)}/{self.cfg.trainer.patience}"
 
@@ -369,12 +375,6 @@ class Main:
 
     def finetune(self):
         print("Fine-tuning")
-
-        wandb.login()
-        wandb.init(
-            project=self.cfg.wandb_project,
-            config=self.cfg,
-        )
 
         config = {"learning_rater": self.cfg.trainer.learning_rate}
 
@@ -396,21 +396,8 @@ class Main:
             "learning_rate": tune.quniform(
                 *self.cfg.ray.learning_rate, self.cfg.ray.learning_rate[0]
             ),
-            # "learning_rate": tune.sample_from(
-            #    lambda: np.random.choice(np.arange(*self.cfg.ray.learning_rate, 0.25))
-            # )
-            # "batch_size": tune.choice([2, 4, 8, 16]),
         }
         scheduler = tune.schedulers.ASHAScheduler()
-
-        checkpoint_path = (
-            "/".join(self.cfg.working_dir.split("/")[:-1]) + "/ray_checkpoints"
-        )
-        shutil.rmtree(checkpoint_path, ignore_errors=True)
-        os.makedirs(checkpoint_path, exist_ok=True)
-        tempfile.tempdir = checkpoint_path
-
-        wandb.login()
 
         ray_init(
             ignore_reinit_error=True, num_cpus=1, _temp_dir=self.cfg.root_path + "/tmp"
@@ -427,6 +414,10 @@ class Main:
                 scheduler=scheduler,
                 num_samples=20,
                 search_alg=HyperOptSearch(metric="loss", mode="min"),
+            ),
+            run_config=train.RunConfig(
+                name=self.cfg.wandb_project,
+                storage_path=f"{self.cfg.working_dir}/ray",
             ),
             param_space=config,
         )

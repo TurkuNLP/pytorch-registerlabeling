@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+import tempfile
 
 from jsonargparse import ArgumentParser, ActionConfigFile
 import os
@@ -107,6 +107,8 @@ if __name__ == "__main__":
     cfg = parser.parse_args()
 
     print(parser.dump(cfg))
+
+    tempfile.tempdir = cfg.root_path + "/tmp"
 
     from v3.main import Main
 
