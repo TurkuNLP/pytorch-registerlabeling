@@ -83,7 +83,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--torch_dtype", type=str, default="bfloat16")
     parser.add_argument("--device", type=str, default="cuda")
-    parser.add_argument("--gpus", type="int", default=1)
+    parser.add_argument("--gpus", type=int, default=1)
     parser.add_argument("--resume", type=str, default=None)
     parser.add_argument("--data", type=Data, default=Data())
     parser.add_argument("--model", type=Model, default=Model())
