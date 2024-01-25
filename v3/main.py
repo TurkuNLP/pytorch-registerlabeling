@@ -141,7 +141,7 @@ class Main:
         batch_losses = []
         progress_bar = tqdm(
             range(len(self.dataloaders[split])),
-            miniters=self.cfg.tqdm_ratio * len(self.dataloaders[split]),
+            int(miniters=self.cfg.tqdm_ratio * len(self.dataloaders[split])),
         )
         progress_bar.set_description(f"testing {split}")
         for batch in self.dataloaders[split]:
@@ -338,7 +338,8 @@ class Main:
                 )
 
         progress_bar = tqdm(
-            range(num_training_steps), miniters=self.cfg.tqdm_ratio * num_training_steps
+            range(num_training_steps),
+            miniters=int(self.cfg.tqdm_ratio * num_training_steps),
         )
         best_epoch = 0
         best_score = best_starting_score
