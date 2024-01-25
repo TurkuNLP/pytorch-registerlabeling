@@ -25,7 +25,7 @@ from torch.optim.lr_scheduler import LambdaLR
 from peft import get_peft_model, LoraConfig, TaskType
 
 from ray import tune, train
-
+from ray.tune.search.hyperopt import HyperOptSearch
 
 from .labels import get_label_scheme, decode_binary_labels
 from .data import get_dataset, preprocess_data
@@ -295,7 +295,7 @@ class Main:
 
         optimizer = AdamW(
             self.model.parameters(),
-            lr=config["lr"],
+            lr=config["learning_rate"],
             weight_decay=self.cfg.trainer.weight_decay,
         )
 
@@ -371,7 +371,7 @@ class Main:
             config=self.cfg,
         )
 
-        config = {"lr": self.cfg.trainer.learning_rate}
+        config = {"learning_rater": self.cfg.trainer.learning_rate}
 
         best_starting_score, best_score = self._train(config)
 
@@ -388,7 +388,12 @@ class Main:
 
     def ray_tune(self):
         config = {
-            "lr": tune.loguniform(1e-6, 1e-4),
+            "learning_rate": tune.quniform(
+                *self.cfg.ray.learning_rate, self.cfg.ray.learning_rate[0]
+            ),
+            # "learning_rate": tune.sample_from(
+            #    lambda: np.random.choice(np.arange(*self.cfg.ray.learning_rate, 0.25))
+            # )
             # "batch_size": tune.choice([2, 4, 8, 16]),
         }
         scheduler = tune.schedulers.ASHAScheduler()
@@ -410,6 +415,7 @@ class Main:
                 mode="min",
                 scheduler=scheduler,
                 num_samples=20,
+                search_alg=HyperOptSearch(metric="loss", mode="min"),
             ),
             param_space=config,
         )

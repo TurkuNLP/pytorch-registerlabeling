@@ -1,4 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import List
+
 from jsonargparse import ArgumentParser, ActionConfigFile
 import os
 
@@ -69,8 +71,7 @@ class Peft:
 
 @dataclass
 class Ray:
-    batch_size: list = [8, 12, 16]
-    learning_rate: list = [1e-6, 1e-4]
+    learning_rate: list = field(default_factory=lambda: [1e-6, 1e-4])
     gpus_per_trial: int = 1
 
 
@@ -82,7 +83,7 @@ if __name__ == "__main__":
         "--method",
         "-m",
         default="finetune",
-        choices=["finetune", "predict", "extract_doc_embeddings"],
+        choices=["finetune", "predict", "extract_doc_embeddings", "ray_tune"],
     )
     parser.add_argument(
         "--embeddings",
@@ -99,6 +100,7 @@ if __name__ == "__main__":
     parser.add_argument("--trainer", type=Trainer, default=Trainer())
     parser.add_argument("--dataloader", type=Dataloader, default=Dataloader())
     parser.add_argument("--peft", type=Peft, default=Peft())
+    parser.add_argument("--ray", type=Ray, default=Ray())
     parser.add_argument("--config", "-c", action=ActionConfigFile)
 
     cfg = parser.parse_args()
