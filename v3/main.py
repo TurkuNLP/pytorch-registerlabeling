@@ -337,7 +337,9 @@ class Main:
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
 
-        progress_bar = tqdm(range(num_training_steps), mininterval=1)
+        progress_bar = tqdm(
+            range(num_training_steps), miniters=self.cfg.tqdm_ratio * num_training_steps
+        )
         best_epoch = 0
         best_score = best_starting_score
         remaining_patience = ""
@@ -424,6 +426,7 @@ class Main:
             run_config=RunConfig(
                 name=self.cfg.wandb_project,
                 storage_path=ray_dir,
+                local_dir=ray_dir,
             ),
             param_space=config,
         )
