@@ -29,8 +29,8 @@ from peft import get_peft_model, LoraConfig, TaskType
 
 from ray import tune, train
 from ray.tune.search.hyperopt import HyperOptSearch
-from ray.air.integrations.wandb import setup_wandb
 from ray import init as ray_init
+from ray.train import RunConfig
 
 from .labels import get_label_scheme, decode_binary_labels
 from .data import get_dataset, preprocess_data
@@ -417,7 +417,7 @@ class Main:
                 num_samples=20,
                 search_alg=HyperOptSearch(metric="loss", mode="min"),
             ),
-            run_config=train.RunConfig(
+            run_config=RunConfig(
                 name=self.cfg.wandb_project,
                 storage_path=f"{os.getcwd()}/{self.cfg.working_dir}/ray",
             ),
