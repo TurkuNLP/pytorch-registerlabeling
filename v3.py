@@ -67,6 +67,13 @@ class Peft:
     target_modules: str = "linear"
 
 
+@dataclass
+class Ray:
+    batch_size: list = [8, 12, 16]
+    learning_rate: list = [1e-6, 1e-4]
+    gpus_per_trial: int = 1
+
+
 if __name__ == "__main__":
     parser = ArgumentParser()
 

@@ -4,6 +4,7 @@ import shutil
 from pprint import pprint
 import json
 import csv
+import tempfile
 
 import numpy as np
 
@@ -22,6 +23,9 @@ from torch.nn.parallel import DataParallel
 from torch.optim.lr_scheduler import LambdaLR
 
 from peft import get_peft_model, LoraConfig, TaskType
+
+from ray import tune, train
+
 
 from .labels import get_label_scheme, decode_binary_labels
 from .data import get_dataset, preprocess_data
@@ -88,7 +92,7 @@ class Main:
         # Run
         getattr(self, cfg.method)()
 
-    def _train(self, optimizer, lr_scheduler, epoch, progress_bar, patience):
+    def _train_epoch(self, optimizer, lr_scheduler, epoch, progress_bar, patience):
         self.model.train()
         batch_losses = []
         log_gpu_memory()
@@ -267,15 +271,12 @@ class Main:
         print("Test set evaluation")
         print(self._evaluate("test"))
 
-    def finetune(self):
-        print("Fine-tuning")
+    def _condition(self, patience_metric, best_score):
+        if "loss" in self.cfg.trainer.best_model_metric:
+            return patience_metric < best_score
+        return patience_metric > best_score
 
-        wandb.login()
-        wandb.init(
-            project=self.cfg.working_dir.split("/", 1)[1].replace("/", ","),
-            config=self.cfg,
-        )
-
+    def _train(self, config):
         self._init_model(
             self.cfg.resume if (self.cfg.resume and not self.cfg.peft.enable) else None
         )
@@ -294,7 +295,7 @@ class Main:
 
         optimizer = AdamW(
             self.model.parameters(),
-            lr=self.cfg.trainer.learning_rate,
+            lr=config["lr"],
             weight_decay=self.cfg.trainer.weight_decay,
         )
 
@@ -330,13 +331,8 @@ class Main:
         best_score = best_starting_score
         remaining_patience = ""
 
-        def condition(patience_metric, best_score):
-            if "loss" in self.cfg.trainer.best_model_metric:
-                return patience_metric < best_score
-            return patience_metric > best_score
-
         for epoch in range(self.cfg.trainer.epochs):
-            train_metrics = self._train(
+            train_metrics = self._train_epoch(
                 optimizer, lr_scheduler, epoch + 1, progress_bar, remaining_patience
             )
             pprint(train_metrics)
@@ -344,7 +340,7 @@ class Main:
             pprint(dev_metrics)
             wandb.log({**dev_metrics, **train_metrics})
             patience_metric = dev_metrics[self.cfg.trainer.best_model_metric]
-            if best_score is False or condition(patience_metric, best_score):
+            if best_score is False or self._condition(patience_metric, best_score):
                 best_score = patience_metric
                 best_epoch = epoch
                 self._save_checkpoint(optimizer, lr_scheduler, dev_metrics)
@@ -353,13 +349,80 @@ class Main:
                 print("Early stopped training at epoch %d" % epoch)
                 break
 
+            with tempfile.TemporaryDirectory() as temp_checkpoint_dir:
+                path = os.path.join(temp_checkpoint_dir, "checkpoint.pt")
+                torch.save((self.model.state_dict(), optimizer.state_dict()), path)
+                checkpoint = train.Checkpoint.from_directory(temp_checkpoint_dir)
+                train.report(
+                    {"loss": dev_metrics["dev/loss"], "f1": dev_metrics["dev/f1"]},
+                    checkpoint=checkpoint,
+                )
+
             remaining_patience = f"{self.cfg.trainer.patience - (epoch - best_epoch)}/{self.cfg.trainer.patience}"
+
+        return best_starting_score, best_score
+
+    def finetune(self):
+        print("Fine-tuning")
+
+        wandb.login()
+        wandb.init(
+            project=self.cfg.working_dir.split("/", 1)[1].replace("/", ","),
+            config=self.cfg,
+        )
+
+        config = {"lr": self.cfg.trainer.learning_rate}
+
+        best_starting_score, best_score = self._train(config)
 
         if (
             self.cfg.model.save
             and best_score is not False
-            and (not self.cfg.resume or condition(best_score, best_starting_score))
+            and (
+                not self.cfg.resume or self._condition(best_score, best_starting_score)
+            )
         ):
             self._save_model()
 
         self.predict(from_checkpoint=True)
+
+    def ray_tune(self):
+        config = {
+            "lr": tune.loguniform(1e-6, 1e-4),
+            # "batch_size": tune.choice([2, 4, 8, 16]),
+        }
+        scheduler = tune.schedulers.ASHAScheduler()
+
+        checkpoint_path = (
+            "/".join(self.cfg.working_dir.split("/")[:-1]) + "/ray_checkpoints"
+        )
+        shutil.rmtree(checkpoint_path, ignore_errors=True)
+        os.makedirs(checkpoint_path, exist_ok=True)
+        tempfile.tempdir = checkpoint_path
+
+        tuner = tune.Tuner(
+            tune.with_resources(
+                tune.with_parameters(self._train),
+                resources={"cpu": 1, "gpu": self.cfg.ray.gpus_per_trial},
+            ),
+            tune_config=tune.TuneConfig(
+                metric="loss",
+                mode="min",
+                scheduler=scheduler,
+                num_samples=20,
+            ),
+            param_space=config,
+        )
+        results = tuner.fit()
+
+        best_result = results.get_best_result("loss", "min")
+
+        print("Best trial config: {}".format(best_result.config))
+        print(
+            "Best trial final validation loss: {}".format(best_result.metrics["loss"])
+        )
+        print(
+            "Best trial final validation accuracy: {}".format(
+                best_result.metrics["accuracy"]
+            )
+        )
