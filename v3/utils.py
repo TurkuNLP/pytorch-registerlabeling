@@ -52,7 +52,6 @@ def init_progress(total_iters, iter_ratio):
         "cur_iters": 0,
         "iters": 0,
     }
-    print(progress)
     return progress_bar, progress
 
 

@@ -96,7 +96,7 @@ if __name__ == "__main__":
     parser.add_argument("--resume", type=str)
     parser.add_argument("--no_tf32", action="store_true")
     parser.add_argument("--root_path", default="/scratch/project_2009199")
-    parser.add_argument("--tqdm_ratio", type=float, default=0.1)
+    parser.add_argument("--tqdm_ratio", type=float, default=0.01)
     parser.add_argument("--predict", type=bool, default=True)
     parser.add_argument("--data", type=Data, default=Data())
     parser.add_argument("--model", type=Model, default=Model())
