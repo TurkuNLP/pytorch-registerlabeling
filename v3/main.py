@@ -32,9 +32,6 @@ from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
 from .loss import BCEFocalLoss
 
-torch.set_float32_matmul_precision("high")
-torch.backends.cudnn.allow_tf32
-
 
 class Main:
     def __init__(self, cfg):
@@ -53,6 +50,11 @@ class Main:
         )
         print(f"Working directory: {cfg.working_dir}")
         self.cfg = cfg
+
+        # Tf32
+        if not self.cfg.no_tf32:
+            torch.set_float32_matmul_precision("high")
+            torch.backends.cudnn.allow_tf32
 
         # Make process deterministic
         torch.manual_seed(cfg.seed)
