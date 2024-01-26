@@ -1,7 +1,7 @@
 import os
 from pydoc import locate
 import re
-
+import random
 
 import numpy as np
 
@@ -49,7 +49,13 @@ current_optimal_threshold = 0.5  # Used in hierarchical loss (now obsolete)
 def run(options):
     # Common variables
 
+    # Make process deterministic
+    torch.manual_seed(options.seed)
     np.random.seed(options.seed)
+    random.seed(options.seed)
+    torch.cuda.manual_seed_all(options.seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
     options.test = options.train if not options.test else options.test
     model_name = options.model_name
