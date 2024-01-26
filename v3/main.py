@@ -17,7 +17,7 @@ from transformers import (
 )
 
 from torch.optim import AdamW
-from tqdm import tqdm
+from tqdm import tqdm, trange
 import torch
 from torch.nn.parallel import DataParallel
 from torch.optim.lr_scheduler import LambdaLR
@@ -102,7 +102,7 @@ class Main:
         batch_labels = []
         batch_losses = []
 
-        progress_bar = tqdm(len(self.dataloaders[split]))
+        progress_bar = trange(len(self.dataloaders[split]))
 
         progress_bar.set_description(f"Testing {split}")
         for batch in self.dataloaders[split]:
@@ -338,7 +338,7 @@ class Main:
                 print(
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
-        progress_bar = tqdm(num_training_steps)
+        progress_bar = trange(num_training_steps, mininterval=1)
         best_epoch = 0
         best_score = best_starting_score
         remaining_patience = ""
