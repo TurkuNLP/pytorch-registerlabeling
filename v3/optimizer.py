@@ -44,5 +44,6 @@ def create_optimizer(model, config):
             "weight_decay": 0.0,
         },
     ]
+    del config["weight_decay"]
 
     return AdamW(optimizer_grouped_parameters, **config)
