@@ -9,8 +9,8 @@ def BCEFocalLoss(outputs, labels, loss_gamma, loss_alpha, num_labels):
         labels.float(),
         reduction="none",
     )
-    print(BCE_loss)
-    exit()
+    # print(BCE_loss)
+    # exit()
     pt = torch.exp(-BCE_loss)
     loss = loss_alpha * (1 - pt) ** loss_gamma * BCE_loss
 
