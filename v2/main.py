@@ -522,9 +522,9 @@ def run(options):
         else None,
     )
 
-    opt = trainer.optimizer
-
-    print(opt.param_groups[0])
+    # opt = trainer.optimizer
+    print(trainer.args)
+    # print(opt.param_groups[0])
     exit()
 
     print(f"Trainer prepared! Using {trainer.args._n_gpu} GPUs.")
