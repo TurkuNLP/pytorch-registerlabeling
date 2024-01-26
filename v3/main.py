@@ -60,7 +60,7 @@ class Main:
 
         # Tf32
         if not self.cfg.no_tf32:
-            # torch.set_float32_matmul_precision("high")
+            torch.set_float32_matmul_precision("high")
             torch.backends.cudnn.allow_tf32
             torch.backends.cuda.matmul.allow_tf32 = True
 
@@ -246,6 +246,10 @@ class Main:
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
             outputs = self.model(**batch)
+
+            print(labels)
+            print(labels.shape)
+            exit()
 
             loss = BCEFocalLoss(
                 outputs,
