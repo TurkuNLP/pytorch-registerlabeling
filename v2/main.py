@@ -257,9 +257,6 @@ def run(options):
                 labels.float().view(-1, self.model.config.num_labels),
             )
 
-            print(loss)
-            exit()
-
             return (loss, outputs) if return_outputs else loss
 
     # Compute optimal threshold
@@ -524,6 +521,11 @@ def run(options):
         if options.preprocess_logits
         else None,
     )
+
+    opt = trainer.optimizer
+
+    print(opt.param_groups[0])
+    exit()
 
     print(f"Trainer prepared! Using {trainer.args._n_gpu} GPUs.")
 
