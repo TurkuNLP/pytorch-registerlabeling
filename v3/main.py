@@ -5,6 +5,7 @@ from pprint import pprint
 import json
 import csv
 import tempfile
+import math
 
 import numpy as np
 
@@ -322,7 +323,7 @@ class Main:
         lr_scheduler = LambdaLR(
             optimizer,
             linear_warmup_decay(
-                self.cfg.trainer.warmup_ratio * num_training_steps,
+                math.ceil(num_training_steps * self.cfg.trainer.warmup_ratio),
                 num_training_steps,
             ),
         )
