@@ -26,7 +26,12 @@ class PooledRobertaForSequenceClassification(RobertaForSequenceClassification):
         inputs_embeds=None,
         output_attentions=None,
         output_hidden_states=None,
+        return_dict=None,
     ):
+        return_dict = (
+            return_dict if return_dict is not None else self.config.use_return_dict
+        )
+
         outputs = self.roberta(
             input_ids,
             attention_mask=attention_mask,
@@ -36,7 +41,7 @@ class PooledRobertaForSequenceClassification(RobertaForSequenceClassification):
             inputs_embeds=inputs_embeds,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
-            return_dict=False,
+            return_dict=return_dict,
         )
 
         logits = self.classifier(outputs[0])
