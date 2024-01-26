@@ -314,6 +314,9 @@ class Main:
             weight_decay=self.cfg.trainer.weight_decay,
         )
 
+        print(optimizer)
+        exit()
+
         if self.cfg.resume:
             optimizer.load_state_dict(
                 torch.load(f"{self.cfg.resume}/optimizer_state.pth")
