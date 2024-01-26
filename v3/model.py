@@ -14,9 +14,7 @@ class PooledRobertaForSequenceClassification(RobertaForSequenceClassification):
         super().__init__(config)
         # You can add any additional customization if needed
 
-        self.pooling = pooling
-
-        self.classifier = PooledRobertaClassificationHead(config)
+        self.classifier = PooledRobertaClassificationHead(config, pooling)
 
     def forward(
         self,
@@ -55,7 +53,7 @@ class PooledRobertaForSequenceClassification(RobertaForSequenceClassification):
 class PooledRobertaClassificationHead(nn.Module):
     """Head for sentence-level classification tasks."""
 
-    def __init__(self, config):
+    def __init__(self, config, pooling):
         super().__init__()
         self.dense = nn.Linear(config.hidden_size, config.hidden_size)
         classifier_dropout = (
@@ -65,6 +63,7 @@ class PooledRobertaClassificationHead(nn.Module):
         )
         self.dropout = nn.Dropout(classifier_dropout)
         self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
+        self.pooling = pooling
 
     def forward(self, features, **kwargs):
         if self.pooling == "max":
