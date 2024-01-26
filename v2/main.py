@@ -257,6 +257,9 @@ def run(options):
                 labels.float().view(-1, self.model.config.num_labels),
             )
 
+            print(loss)
+            exit()
+
             return (loss, outputs) if return_outputs else loss
 
     # Compute optimal threshold

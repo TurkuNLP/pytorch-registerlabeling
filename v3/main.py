@@ -247,10 +247,6 @@ class Main:
             labels = batch.pop("labels")
             outputs = self.model(**batch)
 
-            print(labels)
-            print(labels.shape)
-            exit()
-
             loss = BCEFocalLoss(
                 outputs,
                 labels,
