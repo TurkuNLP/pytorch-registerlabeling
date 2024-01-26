@@ -38,6 +38,7 @@ from .embeddings import extract_doc_embeddings
 from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
 from .loss import BCEFocalLoss
+from .optimizer import create_optimizer
 
 
 class Main:
@@ -286,7 +287,7 @@ class Main:
             return patience_metric < best_score
         return patience_metric > best_score
 
-    def _train(self, config):
+    def _train(self, config={}):
         wandb.login()
         wandb.init(
             project=f"{self.cfg.method}_{self.cfg.wandb_project}",
@@ -308,10 +309,9 @@ class Main:
             / self.cfg.trainer.gradient_accumulation_steps
         )
 
-        optimizer = AdamW(
-            self.model.parameters(),
-            lr=config["learning_rate"],
-            weight_decay=self.cfg.trainer.weight_decay,
+        optimizer = create_optimizer(
+            lr=config.get("learning_rate", self.cfg.trainer.learning_rate),
+            weight_decay=config.get("weight_decay", self.cfg.trainer.weight_decay),
         )
 
         if self.cfg.resume:
@@ -388,9 +388,7 @@ class Main:
 
     def finetune(self):
         print("Fine-tuning")
-
-        config = {"learning_rate": self.cfg.trainer.learning_rate}
-        self._train(config)
+        self._train()
 
     def ray_tune(self):
         self.cfg.tqdm_mininterval = 10
