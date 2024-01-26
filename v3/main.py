@@ -254,6 +254,8 @@ class Main:
                 self.cfg.trainer.loss_alpha,
             )
 
+            print(loss)
+
             batch_losses.append(loss.item())
             loss = loss / self.cfg.trainer.gradient_accumulation_steps
             loss.backward()
