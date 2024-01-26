@@ -231,7 +231,7 @@ def run(options):
                 )
 
         def compute_loss(self, model, inputs, return_outputs=False):
-            print(model.optimizer)
+            print(self.optimizer)
             exit()
             labels = inputs.pop("labels")
             outputs = model(**inputs)
