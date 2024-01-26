@@ -76,3 +76,5 @@ class PooledRobertaClassificationHead(nn.Module):
         x = torch.tanh(x)
         x = self.dropout(x)
         logits = self.out_proj(x)
+
+        return logits
