@@ -243,7 +243,7 @@ class Main:
         self.model.train()
         batch_losses = []
         for batch_i, batch in enumerate(self.dataloaders["train"]):
-            print(self.optimizer)
+            print(optimizer)
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
             outputs = self.model(**batch)
