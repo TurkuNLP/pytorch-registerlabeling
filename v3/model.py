@@ -1,4 +1,4 @@
-from transformers import RobertaForSequenceClassification, RobertaConfig
+from transformers import RobertaForSequenceClassification
 import torch
 import torch.nn as nn
 
@@ -15,6 +15,8 @@ class PooledRobertaForSequenceClassification(RobertaForSequenceClassification):
         # You can add any additional customization if needed
 
         self.pooling = pooling
+
+        self.classifier = PooledRobertaClassificationHead(config)
 
     def forward(
         self,
@@ -39,16 +41,7 @@ class PooledRobertaForSequenceClassification(RobertaForSequenceClassification):
             return_dict=False,
         )
 
-        # Override mean pooling with max pooling
-        if self.pooling == "max":
-            x, _ = outputs[0].max(dim=1)  # max pooling across the sequence dimension
-        else:
-            x = outputs[0].mean(dim=1)  # mean pooling across the sequence dimension
-        x = self.dropout(x)
-        x = self.dense(x)
-        x = torch.tanh(x)
-        x = self.dropout(x)
-        logits = self.out_proj(x)
+        logits = self.classifier(outputs[0])
 
         return DummyDotDict(
             {
@@ -57,3 +50,29 @@ class PooledRobertaForSequenceClassification(RobertaForSequenceClassification):
                 "attentions": outputs.attentions,
             }
         )
+
+
+class PooledRobertaClassificationHead(nn.Module):
+    """Head for sentence-level classification tasks."""
+
+    def __init__(self, config):
+        super().__init__()
+        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
+        classifier_dropout = (
+            config.classifier_dropout
+            if config.classifier_dropout is not None
+            else config.hidden_dropout_prob
+        )
+        self.dropout = nn.Dropout(classifier_dropout)
+        self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
+
+    def forward(self, features, **kwargs):
+        if self.pooling == "max":
+            x, _ = features.max(dim=1)  # max pooling across the sequence dimension
+        else:
+            x = features.mean(dim=1)  # mean pooling across the sequence dimension
+        x = self.dropout(x)
+        x = self.dense(x)
+        x = torch.tanh(x)
+        x = self.dropout(x)
+        logits = self.out_proj(x)
