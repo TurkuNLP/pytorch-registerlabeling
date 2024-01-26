@@ -5,7 +5,6 @@ from pprint import pprint
 import json
 import csv
 import tempfile
-from functools import partial
 
 import numpy as np
 
@@ -33,13 +32,7 @@ from ray.train import RunConfig
 from .labels import get_label_scheme, decode_binary_labels
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
-from .utils import (
-    get_torch_dtype,
-    get_linear_modules,
-    log_gpu_memory,
-    init_progress,
-    update_progress,
-)
+from .utils import get_torch_dtype, get_linear_modules, log_gpu_memory
 from .embeddings import extract_doc_embeddings
 from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
@@ -103,57 +96,13 @@ class Main:
         # Run
         getattr(self, cfg.method)()
 
-    def _train_epoch(
-        self, optimizer, lr_scheduler, epoch, progress_bar, progress, patience
-    ):
-        self.model.train()
-        batch_losses = []
-        log_gpu_memory()
-        for batch_i, batch in enumerate(self.dataloaders["train"]):
-            batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
-            labels = batch.pop("labels")
-            outputs = self.model(**batch)
-
-            loss = BCEFocalLoss(
-                outputs,
-                labels,
-                self.cfg.trainer.loss_gamma,
-                self.cfg.trainer.loss_alpha,
-            )
-
-            batch_losses.append(loss.item())
-            loss = loss / self.cfg.trainer.gradient_accumulation_steps
-            loss.backward()
-            if (batch_i + 1) % self.cfg.trainer.gradient_accumulation_steps == 0:
-                if self.cfg.trainer.max_grad_norm > 0:
-                    torch.nn.utils.clip_grad_norm_(
-                        self.model.parameters(), self.cfg.trainer.max_grad_norm
-                    )
-                optimizer.step()
-                lr_scheduler.step()
-                optimizer.zero_grad()
-
-                update_progress(
-                    progress_bar,
-                    progress,
-                    f"E-{epoch}:{int((batch_i/len(self.dataloaders['train'])* 100))}% ({patience}), loss: {(sum(batch_losses) / len(batch_losses)):4f}",
-                )
-
-        return {
-            "train/loss": sum(batch_losses) / len(batch_losses),
-            "train/learning_rate": optimizer.param_groups[0]["lr"],
-            "train/epoch": epoch,
-        }
-
     def _evaluate(self, split="dev"):
         self.model.eval()
         batch_logits = []
         batch_labels = []
         batch_losses = []
 
-        progress_bar, progress = init_progress(
-            len(self.dataloaders[split]), self.cfg.tqdm_ratio
-        )
+        progress_bar = tqdm(len(self.dataloaders[split]))
 
         progress_bar.set_description(f"Testing {split}")
         for batch in self.dataloaders[split]:
@@ -172,7 +121,7 @@ class Main:
             batch_labels.append(labels)
             batch_losses.append(loss.item())
 
-            update_progress(progress_bar, progress)
+            progress_bar.update(1)
 
         metrics = compute_metrics(
             torch.cat(batch_logits, dim=0),
@@ -290,6 +239,47 @@ class Main:
         print("Test set evaluation")
         print(self._evaluate("test"))
 
+    def _train_epoch(self, optimizer, lr_scheduler, epoch, progress_bar, patience):
+        self.model.train()
+        batch_losses = []
+        for batch_i, batch in enumerate(self.dataloaders["train"]):
+            batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
+            labels = batch.pop("labels")
+            outputs = self.model(**batch)
+
+            loss = BCEFocalLoss(
+                outputs,
+                labels,
+                self.cfg.trainer.loss_gamma,
+                self.cfg.trainer.loss_alpha,
+            )
+
+            batch_losses.append(loss.item())
+            loss = loss / self.cfg.trainer.gradient_accumulation_steps
+            loss.backward()
+            if (batch_i + 1) % self.cfg.trainer.gradient_accumulation_steps == 0:
+                if self.cfg.trainer.max_grad_norm > 0:
+                    torch.nn.utils.clip_grad_norm_(
+                        self.model.parameters(), self.cfg.trainer.max_grad_norm
+                    )
+                optimizer.step()
+                lr_scheduler.step()
+                optimizer.zero_grad()
+
+                progress_bar.update(1)
+                progress_bar.set_description(
+                    f"E-{epoch}:{int((batch_i/len(self.dataloaders['train'])* 100))}% ({patience}), loss: {(sum(batch_losses) / len(batch_losses)):4f}",
+                    refresh=False,
+                )
+
+        log_gpu_memory()
+
+        return {
+            "train/loss": sum(batch_losses) / len(batch_losses),
+            "train/learning_rate": optimizer.param_groups[0]["lr"],
+            "train/epoch": epoch,
+        }
+
     def _condition(self, patience_metric, best_score):
         if "loss" in self.cfg.trainer.best_model_metric:
             return patience_metric < best_score
@@ -348,19 +338,14 @@ class Main:
                 print(
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
-        progress_bar, progress = init_progress(num_training_steps, self.cfg.tqdm_ratio)
+        progress_bar = tqdm(num_training_steps)
         best_epoch = 0
         best_score = best_starting_score
         remaining_patience = ""
 
         for epoch in range(self.cfg.trainer.epochs):
             train_metrics = self._train_epoch(
-                optimizer,
-                lr_scheduler,
-                epoch + 1,
-                progress_bar,
-                progress,
-                remaining_patience,
+                optimizer, lr_scheduler, epoch + 1, progress_bar, remaining_patience
             )
             pprint(train_metrics)
             dev_metrics = self._evaluate()
