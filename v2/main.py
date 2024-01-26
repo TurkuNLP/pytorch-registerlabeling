@@ -217,6 +217,9 @@ def run(options):
         def __init__(self, *args, **kwargs):
             super(MultilabelTrainer, self).__init__(*args, **kwargs)
 
+        print(self.optimizer)
+        exit()
+
         if options.balance:
 
             def get_train_dataloader(self):
