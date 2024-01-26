@@ -37,7 +37,7 @@ from .utils import get_torch_dtype, get_linear_modules, log_gpu_memory
 from .embeddings import extract_doc_embeddings
 from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
-from .loss import BCEFocalLoss, BCEClassFocalLoss
+from .loss import BCEFocalLoss
 
 
 class Main:
@@ -117,7 +117,6 @@ class Main:
                 labels,
                 self.cfg.trainer.loss_gamma,
                 self.cfg.trainer.loss_alpha,
-                self.cfg.num_labels,
             )
             batch_logits.append(outputs.logits)
             batch_labels.append(labels)
@@ -254,7 +253,6 @@ class Main:
                 labels,
                 self.cfg.trainer.loss_gamma,
                 self.cfg.trainer.loss_alpha,
-                self.cfg.num_labels,
             )
 
             batch_losses.append(loss.item())
