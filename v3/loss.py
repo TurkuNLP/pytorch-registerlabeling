@@ -4,14 +4,13 @@ import torch.nn.functional as F
 
 # BCE Focal Loss
 def BCEFocalLoss(outputs, labels, loss_gamma, loss_alpha, num_labels):
-    print(outputs.logits.shape)
-    print(labels.shape)
-    exit()
     BCE_loss = F.binary_cross_entropy_with_logits(
         outputs.logits.view(-1, num_labels),
         labels.float().view(-1, num_labels),
         reduction="none",
     )
+    print(BCE_loss)
+    exit()
     pt = torch.exp(-BCE_loss)
     loss = loss_alpha * (1 - pt) ** loss_gamma * BCE_loss
 
