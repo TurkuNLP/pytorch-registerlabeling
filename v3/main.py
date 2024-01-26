@@ -338,7 +338,7 @@ class Main:
                 print(
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
-        progress_bar = trange(num_training_steps, mininterval=1)
+        progress_bar = trange(num_training_steps, mininterval=self.cfg.tqdm_mininterval)
         best_epoch = 0
         best_score = best_starting_score
         remaining_patience = ""
@@ -392,7 +392,7 @@ class Main:
         self._train(config)
 
     def ray_tune(self):
-        self.cfg.tqdm_ratio = 0.1
+        self.cfg.tqdm_mininterval = 10
         self.cfg.model.save = False
         self.cfg.predict = False
 
