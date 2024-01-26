@@ -310,12 +310,13 @@ class Main:
         )
 
         optimizer = create_optimizer(
+            self.model,
             {
                 "lr": config.get("learning_rate", self.cfg.trainer.learning_rate),
                 "weight_decay": config.get(
                     "weight_decay", self.cfg.trainer.weight_decay
                 ),
-            }
+            },
         )
 
         if self.cfg.resume:
