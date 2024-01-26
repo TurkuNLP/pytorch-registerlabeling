@@ -66,6 +66,7 @@ class PooledRobertaClassificationHead(nn.Module):
             if config.classifier_dropout is not None
             else config.hidden_dropout_prob
         )
+        print(f"Classifier dropout: {classifier_dropout}")
         self.dropout = nn.Dropout(classifier_dropout)
         self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
         self.pooling = pooling
