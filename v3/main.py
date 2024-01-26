@@ -39,6 +39,7 @@ from .metrics import compute_metrics
 from .scheduler import linear_warmup_decay
 from .loss import BCEFocalLoss
 from .optimizer import create_optimizer
+from .model import PooledRobertaForSequenceClassification
 
 
 class Main:
@@ -195,15 +196,24 @@ class Main:
         print(f"Predictions saved to {out_file}")
 
     def _init_model(self, model_path=None):
-        model = AutoModelForSequenceClassification.from_pretrained(
-            self.cfg.model.name if not model_path else model_path,
-            num_labels=self.cfg.num_labels,
-            low_cpu_mem_usage=self.cfg.model.low_cpu_mem_usage,
-            quantization_config=BitsAndBytesConfig(
+        model_cls = AutoModelForSequenceClassification
+        if self.cfg.model.roberta_pooled:
+            model_cls = PooledRobertaForSequenceClassification
+
+        model_params = {
+            "num_labels": self.cfg.num_labels,
+        }
+        if self.cfg.model.low_cpu_mem_usage:
+            model_params["low_cpu_mem_usage"] = True
+        if self.cfg.model.quantize:
+            model_params["quantization_config"] = BitsAndBytesConfig(
                 load_in_4bit=True, bnb_4bit_use_double_quant=True
             )
-            if self.cfg.model.quantize
-            else None,
+        if self.cfg.model.roberta_pooled:
+            model_params["pooling"] = self.cfg.model.roberta_pooled
+
+        model = model_cls.from_pretrained(
+            self.cfg.model.name if not model_path else model_path, **model_params
         )
 
         if self.cfg.gpus > 1:
