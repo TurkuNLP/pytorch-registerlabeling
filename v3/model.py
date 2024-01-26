@@ -10,11 +10,11 @@ class DummyDotDict(dict):
 
 
 class PooledRobertaForSequenceClassification(RobertaForSequenceClassification):
-    def __init__(self, config):
+    def __init__(self, config, pooling):
         super().__init__(config)
         # You can add any additional customization if needed
 
-        self.pooling = config.pooling
+        self.pooling = pooling
 
     def forward(
         self,
