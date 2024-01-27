@@ -187,7 +187,7 @@ class Main:
         predicted_labels_str = decode_binary_labels(preds, self.cfg.label_scheme)
 
         data = list(zip(true_labels_str, predicted_labels_str))
-        out_file = f"{self.cfg.working_dir}/test_{self.cfg.data.test}.csv"
+        out_file = f"{self.cfg.working_dir}/test_{self.cfg.data.test or self.cfg.data.dev or self.cfg.data.train}.csv"
 
         with open(out_file, "w", newline="") as csvfile:
             csv_writer = csv.writer(csvfile, delimiter="\t")
