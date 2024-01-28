@@ -17,6 +17,8 @@ from transformers import (
     BitsAndBytesConfig,
 )
 
+from accelerate import Accelerator
+
 from torch.optim import AdamW
 from tqdm import tqdm, trange
 import torch
@@ -60,6 +62,8 @@ class Main:
         cfg.wandb_project = cfg.working_dir.split("/", 1)[1].replace("/", ",")
         print(f"Working directory: {cfg.working_dir}")
         self.cfg = cfg
+        if self.cfg.accelerate:
+            self.accelerator = Accelerator()
 
         # Tf32
         if not self.cfg.no_tf32:
@@ -268,7 +272,10 @@ class Main:
 
             batch_losses.append(loss.item())
             loss = loss / self.cfg.trainer.gradient_accumulation_steps
-            loss.backward()
+            if self.cfg.accelerate:
+                self.accelerator.backward(loss)
+            else:
+                loss.backward()
             if (batch_i + 1) % self.cfg.trainer.gradient_accumulation_steps == 0:
                 if self.cfg.trainer.max_grad_norm > 0:
                     torch.nn.utils.clip_grad_norm_(
@@ -298,6 +305,7 @@ class Main:
         return patience_metric > best_score
 
     def _train(self, config={}):
+        # TODO: Not working with ray!
         wandb.login()
         wandb.init(
             project=f"{self.cfg.method}_{self.cfg.wandb_project}",
@@ -341,6 +349,18 @@ class Main:
                 num_training_steps,
             ),
         )
+        if self.cfg.accelerate:
+            (
+                self.model,
+                optimizer,
+                self.dataloaders["train"],
+                lr_scheduler,
+            ) = self.accelerator.prepare(
+                self.model,
+                optimizer,
+                self.dataloaders["train"],
+                lr_scheduler,
+            )
 
         best_starting_score = False
 
