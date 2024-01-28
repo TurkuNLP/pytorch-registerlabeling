@@ -17,7 +17,7 @@ from transformers import (
     BitsAndBytesConfig,
 )
 
-from accelerate import Accelerator
+from accelerate import Accelerator, AcceleratorState
 
 from torch.optim import AdamW
 from tqdm import tqdm, trange
@@ -64,8 +64,11 @@ class Main:
         self.cfg = cfg
         if self.cfg.accelerate:
             self.accelerator = Accelerator()
+            state = AcceleratorState()
             num_gpus = self.accelerator.state.num_processes
-            print(f"Accelerate is using {num_gpus} GPUs.")
+            print(
+                f"Accelerate is using {state.num_processes} GPUs using {state.distributed_type}."
+            )
 
             num_gpus = torch.cuda.device_count()
             print(f"torch.cuda.device_count() returned {num_gpus}.")
