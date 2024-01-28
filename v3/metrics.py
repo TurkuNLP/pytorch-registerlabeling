@@ -32,7 +32,8 @@ def optimize_threshold(logits, labels):
 def compute_metrics(
     logits, labels, split="train", label_scheme=None, return_output=False
 ):
-    logits = logits.to(torch.float32)
+    if torch.is_tensor(logits):
+        logits = logits.to(torch.float32)
     labels = labels.cpu().numpy()
     threshold = optimize_threshold(logits, labels)
     probs = sigmoid(logits).cpu().numpy()
