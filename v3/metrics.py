@@ -29,7 +29,9 @@ def optimize_threshold(logits, labels):
     return best_f1_threshold
 
 
-def compute_metrics(logits, labels, split, label_scheme=None, return_output=False):
+def compute_metrics(
+    logits, labels, split="train", label_scheme=None, return_output=False
+):
     logits = logits.to(torch.float32)
     labels = labels.cpu().numpy()
     threshold = optimize_threshold(logits, labels)

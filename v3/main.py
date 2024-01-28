@@ -65,6 +65,11 @@ class Main:
         self.cfg = cfg
         if self.cfg.accelerate:
             self.accelerator = Accelerator()
+            self.state = AcceleratorState()
+
+            print(
+                f"Accelerate is using {self.state.num_processes} GPUs using {self.state.distributed_type}."
+            )
 
             num_gpus = torch.cuda.device_count()
             print(f"torch.cuda.device_count() returned {num_gpus}.")
@@ -370,11 +375,6 @@ class Main:
                 lr_scheduler,
             )
 
-        self.state = AcceleratorState()
-        print(
-            f"Accelerate is using {self.state.num_processes} GPUs using {self.state.distributed_type}."
-        )
-
         best_starting_score = False
 
         if self.cfg.resume:
@@ -485,3 +485,77 @@ class Main:
             "Best trial final validation loss: {}".format(best_result.metrics["loss"])
         )
         print("Best trial final validation f1: {}".format(best_result.metrics["f1"]))
+
+    def hf_train(self):
+        from transformers import (
+            Trainer,
+            TrainingArguments,
+            EarlyStoppingCallback,
+            DataCollatorWithPadding,
+        )
+
+        def compute_metrics_fn(p):
+            _, labels = p
+            predictions = (
+                p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
+            )
+            return compute_metrics(predictions, labels)
+
+        class MultiLabelTrainer(Trainer):
+            def __init__(self, *args, **kwargs):
+                super(MultiLabelTrainer, self).__init__(*args, **kwargs)
+
+            def compute_loss(self, model, inputs, return_outputs=False):
+                labels = inputs.pop("labels")
+                outputs = model(**inputs)
+                loss = BCEFocalLoss(
+                    outputs,
+                    labels,
+                    self.cfg.trainer.loss_gamma,
+                    self.cfg.trainer.loss_alpha,
+                )
+
+                return (loss, outputs) if return_outputs else loss
+
+        trainer = MultiLabelTrainer(
+            model=self.model,
+            args=TrainingArguments(
+                f"{self.cfg.working_dir}/hf_checkpoints",
+                overwrite_output_dir=not self.cfg.resume,
+                evaluation_strategy="epoch",
+                save_strategy="epoch",
+                logging_strategy="epoch",
+                load_best_model_at_end=self.cfg.model.save,
+                save_total_limit=2,
+                weight_decay=self.trainer.weight_decay,
+                warmup_ratio=self.trainer.warmup_ratio,
+                learning_rate=self.trainer.learning_rate,
+                max_grad_norm=self.trainer.max_grad_norm,
+                lr_scheduler_type="linear",
+                metric_for_best_model=self.cfg.trainer.best_model_metric,
+                greater_is_better=not "loss" in self.cfg.trainer.best_model_metric,
+                per_device_train_batch_size=self.cfg.dataloader.train_batch_size,
+                per_device_eval_batch_size=self.cfg.dataloader.dev_batch_size,
+                num_train_epochs=self.cfg.trainer.epochs,
+                gradient_checkpointing=False,
+                gradient_accumulation_steps=self.cfg.trainer.gradient_accumulation_steps,
+                optim="adamw_torch",
+                bf16=self.cfg.bf16,
+                tf32=not self.cfg.no_tf32,
+                resume_from_checkpoint=self.cfg.resume,
+            ),
+            train_dataset=self.dataset.get("train", []),
+            eval_dataset=self.dataset.get("dev", []),
+            compute_metrics=compute_metrics_fn,
+            tokenizer=self.tokenizer,
+            data_collator=DataCollatorWithPadding(
+                tokenizer=self.tokenizer,
+                padding="longest",
+                max_length=self.cfg.data.max_length,
+            ),
+            callbacks=[
+                EarlyStoppingCallback(early_stopping_patience=self.cfg.trainer.patience)
+            ],
+        )
+
+        trainer.train()
