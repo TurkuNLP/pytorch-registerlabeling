@@ -15,9 +15,7 @@ sigmoid = torch.nn.Sigmoid()
 
 
 def optimize_threshold(probs, labels):
-    if not torch.is_tensor(probs):
-        probs = torch.Tensor(probs)
-    probs = sigmoid(probs).cpu().numpy()
+    probs = sigmoid(torch.Tensor(probs)).cpu().numpy()
     best_f1 = 0
     best_f1_threshold = 0.5
     for th in np.arange(0.3, 0.7, 0.05):
@@ -34,12 +32,10 @@ def optimize_threshold(probs, labels):
 def compute_metrics(
     logits, labels, split="train", label_scheme=None, return_output=False
 ):
-    if torch.is_tensor(logits):
-        logits = logits.to(torch.float32)
     if torch.is_tensor(labels):
         labels = labels.cpu().numpy()
     threshold = optimize_threshold(logits, labels)
-    probs = sigmoid(logits).cpu().numpy()
+    probs = sigmoid(torch.Tensor(logits).to(torch.float32)).cpu().numpy()
     y_pred = np.zeros(probs.shape)
     y_pred[np.where(probs >= threshold)] = 1
     y_th05 = np.zeros(probs.shape)
