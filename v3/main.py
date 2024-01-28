@@ -68,7 +68,7 @@ class Main:
             print(f"Accelerate is using {num_gpus} GPUs.")
 
             if self.cfg.accelerate_bf16:
-                self.accelerator.enable_mixed_precision(fp16_dtype=torch.bfloat16)
+                self.accelerator.bf16_weights = True
 
         # Tf32
         if not self.cfg.no_tf32:
