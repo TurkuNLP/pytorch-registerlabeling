@@ -84,7 +84,13 @@ if __name__ == "__main__":
         "--method",
         "-m",
         default="finetune",
-        choices=["finetune", "predict", "extract_doc_embeddings", "ray_tune"],
+        choices=[
+            "finetune",
+            "hf_finetune",
+            "predict",
+            "extract_doc_embeddings",
+            "ray_tune",
+        ],
     )
     parser.add_argument(
         "--embeddings",

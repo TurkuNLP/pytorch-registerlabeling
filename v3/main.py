@@ -486,7 +486,7 @@ class Main:
         )
         print("Best trial final validation f1: {}".format(best_result.metrics["f1"]))
 
-    def hf_train(self):
+    def hf_finetune(self):
         from transformers import (
             Trainer,
             TrainingArguments,
