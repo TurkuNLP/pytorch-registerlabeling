@@ -496,6 +496,9 @@ class Main:
 
         self._init_model()
 
+        loss_gamma = self.trainer.loss_gamma
+        loss_alpha = self.trainer.loss_alpha
+
         def compute_metrics_fn(p):
             _, labels = p
             predictions = (
@@ -510,12 +513,7 @@ class Main:
             def compute_loss(self, model, inputs, return_outputs=False):
                 labels = inputs.pop("labels")
                 outputs = model(**inputs)
-                loss = BCEFocalLoss(
-                    outputs,
-                    labels,
-                    self.cfg.trainer.loss_gamma,
-                    self.cfg.trainer.loss_alpha,
-                )
+                loss = BCEFocalLoss(outputs, labels, loss_gamma, loss_alpha)
 
                 return (loss, outputs) if return_outputs else loss
 
