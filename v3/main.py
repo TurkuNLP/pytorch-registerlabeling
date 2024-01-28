@@ -67,6 +67,9 @@ class Main:
             num_gpus = self.accelerator.state.num_processes
             print(f"Accelerate is using {num_gpus} GPUs.")
 
+            if self.cfg.accelerate_bf16:
+                self.accelerator.enable_mixed_precision(fp16_dtype=torch.bfloat16)
+
         # Tf32
         if not self.cfg.no_tf32:
             torch.set_float32_matmul_precision("high")
