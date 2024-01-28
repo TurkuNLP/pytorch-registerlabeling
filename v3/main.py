@@ -47,7 +47,7 @@ from .model import PooledRobertaForSequenceClassification
 
 class Main:
     def __init__(self, cfg):
-        cfg.torch_dtype = get_torch_dtype(cfg.torch_dtype)
+        cfg.torch_dtype_torch = get_torch_dtype(cfg.torch_dtype)
         cfg.label_scheme = get_label_scheme(cfg.data.labels)
         cfg.num_labels = len(cfg.label_scheme)
         cfg.device = torch.device(cfg.device)
@@ -236,7 +236,7 @@ class Main:
             model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
 
         if not self.cfg.model.quantize and not self.cfg.accelerate:
-            model = model.to(self.cfg.device, dtype=self.cfg.torch_dtype)
+            model = model.to(self.cfg.device, dtype=self.cfg.torch_dtype_torch)
 
         if self.cfg.model.compile:
             model = torch.compile(model)
@@ -521,12 +521,11 @@ class Main:
             model=self.model,
             args=TrainingArguments(
                 f"{self.cfg.working_dir}/hf_checkpoints",
+                seed=self.cfg.seed,
                 overwrite_output_dir=not self.cfg.resume,
                 evaluation_strategy="epoch",
                 save_strategy="epoch",
-                save_steps=None,
                 logging_strategy="epoch",
-                logging_steps=None,
                 load_best_model_at_end=self.cfg.model.save,
                 save_total_limit=2,
                 weight_decay=self.cfg.trainer.weight_decay,
