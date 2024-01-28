@@ -78,6 +78,8 @@ def split_gen(split, languages, label_cfg, concat_small):
 def get_dataset(cfg):
     train, dev, test = cfg.data.train, cfg.data.dev, cfg.data.test
     if cfg.method == "predict":
+        if train and not test:
+            test = train
         train = None
     else:
         if not dev:
