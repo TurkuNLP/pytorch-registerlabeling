@@ -49,7 +49,7 @@ class Trainer:
     loss_alpha: float = 0.75
     loss_gamma: float = 2
     patience: int = 5
-    best_model_metric: str = "dev/loss"
+    best_model_metric: str = "eval_loss"
     gradient_accumulation_steps: int = 1
     max_grad_norm: float = 1.0
 
