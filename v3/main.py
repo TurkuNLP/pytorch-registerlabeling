@@ -496,8 +496,8 @@ class Main:
 
         self._init_model()
 
-        loss_gamma = self.trainer.loss_gamma
-        loss_alpha = self.trainer.loss_alpha
+        loss_gamma = self.cfg.trainer.loss_gamma
+        loss_alpha = self.cfg.trainer.loss_alpha
 
         def compute_metrics_fn(p):
             _, labels = p
