@@ -494,6 +494,8 @@ class Main:
             DataCollatorWithPadding,
         )
 
+        self._init_model()
+
         def compute_metrics_fn(p):
             _, labels = p
             predictions = (
