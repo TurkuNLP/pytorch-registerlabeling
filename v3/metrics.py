@@ -14,8 +14,9 @@ from sklearn.metrics import (
 sigmoid = torch.nn.Sigmoid()
 
 
-def optimize_threshold(logits, labels):
-    probs = sigmoid(logits).cpu().numpy()
+def optimize_threshold(probs, labels):
+    if torch.is_tensor(probs):
+        probs = sigmoid(probs).cpu().numpy()
     best_f1 = 0
     best_f1_threshold = 0.5
     for th in np.arange(0.3, 0.7, 0.05):
