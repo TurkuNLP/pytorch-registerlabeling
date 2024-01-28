@@ -150,7 +150,7 @@ class Main:
             True if split == "test" else False,
         )
         if split == "dev":
-            metrics["dev/loss"] = sum(batch_losses) / len(batch_losses)
+            metrics["eval_loss"] = sum(batch_losses) / len(batch_losses)
             return metrics
 
         elif split == "test":
@@ -416,7 +416,10 @@ class Main:
                     torch.save((self.model.state_dict(), optimizer.state_dict()), path)
                     checkpoint = train.Checkpoint.from_directory(temp_checkpoint_dir)
                     train.report(
-                        {"loss": dev_metrics["dev/loss"], "f1": dev_metrics["dev/f1"]},
+                        {
+                            "loss": dev_metrics["eval_loss"],
+                            "f1": dev_metrics["eval_f1"],
+                        },
                         checkpoint=checkpoint,
                     )
 
