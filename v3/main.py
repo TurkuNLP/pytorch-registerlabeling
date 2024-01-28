@@ -17,7 +17,8 @@ from transformers import (
     BitsAndBytesConfig,
 )
 
-from accelerate import Accelerator, AcceleratorState
+from accelerate import Accelerator
+from accelerate.state import AcceleratorState
 
 from torch.optim import AdamW
 from tqdm import tqdm, trange
