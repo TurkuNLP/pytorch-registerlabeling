@@ -65,11 +65,6 @@ class Main:
         self.cfg = cfg
         if self.cfg.accelerate:
             self.accelerator = Accelerator()
-            state = AcceleratorState()
-            num_gpus = self.accelerator.state.num_processes
-            print(
-                f"Accelerate is using {state.num_processes} GPUs using {state.distributed_type}."
-            )
 
             num_gpus = torch.cuda.device_count()
             print(f"torch.cuda.device_count() returned {num_gpus}.")
@@ -374,6 +369,11 @@ class Main:
                 self.dataloaders["train"],
                 lr_scheduler,
             )
+
+        self.state = AcceleratorState()
+        print(
+            f"Accelerate is using {self.state.num_processes} GPUs using {self.state.distributed_type}."
+        )
 
         best_starting_score = False
 
