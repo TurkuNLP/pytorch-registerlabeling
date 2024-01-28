@@ -15,7 +15,7 @@ sigmoid = torch.nn.Sigmoid()
 
 
 def optimize_threshold(probs, labels):
-    probs = sigmoid(torch.Tensor(probs)).cpu().numpy()
+    probs = sigmoid(torch.Tensor(probs)).float().cpu().numpy()
     best_f1 = 0
     best_f1_threshold = 0.5
     for th in np.arange(0.3, 0.7, 0.05):
