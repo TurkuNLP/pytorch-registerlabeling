@@ -115,6 +115,9 @@ if __name__ == "__main__":
 
     tempfile.tempdir = cfg.root_path + "/tmp"
 
+    # Explicitly choose n GPUs
+    os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(str(x) for x in range(cfg.gpus))
+
     from v3.main import Main
 
     Main(cfg)

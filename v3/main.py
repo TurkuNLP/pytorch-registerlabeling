@@ -67,6 +67,9 @@ class Main:
             num_gpus = self.accelerator.state.num_processes
             print(f"Accelerate is using {num_gpus} GPUs.")
 
+            num_gpus = torch.cuda.device_count()
+            print(f"torch.cuda.device_count() returned {num_gpus}.")
+
             if self.cfg.accelerate_bf16:
                 self.accelerator.bf16_weights = True
 
@@ -225,7 +228,7 @@ class Main:
             self.cfg.model.name if not model_path else model_path, **model_params
         )
 
-        if self.cfg.gpus > 1:
+        if self.cfg.gpus > 1 and not self.cfg.accelerate:
             model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
 
         if not self.cfg.model.quantize and not self.cfg.accelerate:
