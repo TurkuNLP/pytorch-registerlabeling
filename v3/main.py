@@ -223,7 +223,7 @@ class Main:
         if self.cfg.gpus > 1:
             model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
 
-        if not self.cfg.model.quantize:
+        if not self.cfg.model.quantize and not self.cfg.accelerate:
             model = model.to(self.cfg.device, dtype=self.cfg.torch_dtype)
 
         if self.cfg.model.compile:
@@ -259,7 +259,8 @@ class Main:
         self.model.train()
         batch_losses = []
         for batch_i, batch in enumerate(self.dataloaders["train"]):
-            batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
+            if not self.cfg.accelerate:
+                batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
             outputs = self.model(**batch)
 
