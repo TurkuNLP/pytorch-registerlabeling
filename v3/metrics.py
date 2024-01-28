@@ -68,7 +68,7 @@ def compute_metrics(
 
     # Add prefix for dev
     metrics = {
-        f"{(split+'/') if split != 'test' else ''}{key}": value
+        f"{((split if split != 'dev' else 'eval')+'_') if split != 'test' else ''}{key}": value
         for key, value in metrics.items()
     }
 
