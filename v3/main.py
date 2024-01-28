@@ -64,6 +64,8 @@ class Main:
         self.cfg = cfg
         if self.cfg.accelerate:
             self.accelerator = Accelerator()
+            num_gpus = self.accelerator.state.num_processes
+            print(f"Accelerate is using {num_gpus} GPUs.")
 
         # Tf32
         if not self.cfg.no_tf32:
