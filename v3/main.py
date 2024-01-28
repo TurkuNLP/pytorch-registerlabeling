@@ -56,7 +56,7 @@ class Main:
                 cfg.data.output_path,
                 cfg.model.name,
                 f"labels_{cfg.data.labels}",
-                "_".join([cfg.data.train or "", cfg.data.dev or ""]),
+                "_".join([cfg.data.train or "", cfg.data.dev or cfg.data.train]),
                 f"seed_{cfg.seed}",
             ]
         )
