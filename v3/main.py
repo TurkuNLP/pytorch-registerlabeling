@@ -252,7 +252,7 @@ class Main:
         )
 
     def predict(self, from_checkpoint=False):
-        model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint else 'model'}"
+        model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint or self.cfg.predict_from_checkpoint else 'model'}"
 
         if self.cfg.peft.enable:
             self._init_model()
@@ -307,9 +307,9 @@ class Main:
         log_gpu_memory()
 
         return {
-            "train/loss": sum(batch_losses) / len(batch_losses),
-            "train/learning_rate": optimizer.param_groups[0]["lr"],
-            "train/epoch": epoch,
+            "train_loss": sum(batch_losses) / len(batch_losses),
+            "learning_rate": optimizer.param_groups[0]["lr"],
+            "epoch": epoch,
         }
 
     def _condition(self, patience_metric, best_score):
