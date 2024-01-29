@@ -97,6 +97,8 @@ class Main:
             self.tokenizer.pad_token_id,
         )
 
+        torch.set_default_device(self.cfg.device)
+
         # Run
         getattr(self, cfg.method)()
 
