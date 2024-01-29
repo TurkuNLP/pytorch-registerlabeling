@@ -524,7 +524,7 @@ class Main:
             model=self.model,
             args=TrainingArguments(
                 f"{self.cfg.working_dir}/hf_checkpoints",
-                seed=self.cfg.seed,
+                # seed=self.cfg.seed,
                 overwrite_output_dir=not self.cfg.resume,
                 evaluation_strategy="epoch",
                 save_strategy="epoch",
