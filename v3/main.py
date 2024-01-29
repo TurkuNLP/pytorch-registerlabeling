@@ -241,10 +241,11 @@ class Main:
         }
 
     def _train(self, config={}):
-        wandb.login()
         if self.cfg.method == "ray_tune":
             wandb = setup_wandb(config, project=f"ray_{self.cfg.wandb_project}")
         else:
+            import wandb
+
             wandb.init(
                 project=f"finetune_{self.cfg.wandb_project}",
                 config=self.cfg,
@@ -429,9 +430,11 @@ class Main:
         print(self._evaluate("test"))
 
     def finetune(self):
+        wandb.login()
         self._train()
 
     def ray_tune(self):
+        wandb.login()
         self.cfg.tqdm_mininterval = 10
         self.cfg.model.save = False
         self.cfg.predict = False
