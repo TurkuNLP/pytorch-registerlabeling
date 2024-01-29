@@ -28,8 +28,6 @@ from ray import init as ray_init
 from ray.train import RunConfig
 from ray.air.integrations.wandb import setup_wandb
 
-import keyboard
-
 import wandb
 
 from .labels import get_label_scheme, decode_binary_labels
@@ -336,10 +334,6 @@ class Main:
                 self._save_checkpoint(optimizer, lr_scheduler, dev_metrics)
 
             elif epoch - best_epoch > self.cfg.trainer.patience:
-                print("Early stopped training at epoch %d" % epoch)
-                break
-
-            if keyboard.is_pressed("q"):
                 print("Early stopped training at epoch %d" % epoch)
                 break
 
