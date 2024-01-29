@@ -9,8 +9,6 @@ import math
 
 import numpy as np
 
-import wandb
-
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
@@ -31,6 +29,8 @@ from ray.train import RunConfig
 from ray.air.integrations.wandb import setup_wandb
 
 import keyboard
+
+import wandb
 
 from .labels import get_label_scheme, decode_binary_labels
 from .data import get_dataset, preprocess_data
