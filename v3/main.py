@@ -78,7 +78,8 @@ class Main:
 
         # Init tokenizer
         self.tokenizer = AutoTokenizer.from_pretrained(
-            cfg.model.name, torch_dtype=cfg.torch_dtype
+            cfg.model.name,
+            torch_dtype=cfg.torch_dtype if not cfg.use_amp else torch.float32,
         )
 
         # Prepare dataset
@@ -242,6 +243,11 @@ class Main:
     def _train(self, config={}):
         if self.cfg.method == "ray_tune":
             wandb = setup_wandb(config, project=f"ray_{self.cfg.wandb_project}")
+        else:
+            wandb.init(
+                project=f"finetune_{self.cfg.wandb_project}",
+                config=self.cfg,
+            )
 
         self._init_model(
             self.cfg.resume if (self.cfg.resume and not self.cfg.peft.enable) else None
@@ -423,10 +429,6 @@ class Main:
 
     def finetune(self):
         wandb.login()
-        wandb.init(
-            project=f"finetune_{self.cfg.wandb_project}",
-            config=self.cfg,
-        )
         self._train()
 
     def ray_tune(self):
