@@ -54,6 +54,7 @@ class Main:
         cfg.torch_dtype_torch = get_torch_dtype(cfg.torch_dtype)
         cfg.label_scheme = get_label_scheme(cfg.data.labels)
         cfg.num_labels = len(cfg.label_scheme)
+        cfg.device_str = cfg.device
         cfg.device = torch.device(cfg.device)
         cfg.working_dir = format_working_dir(cfg.model.name, cfg.data, cfg.seed)
         cfg.wandb_project = cfg.working_dir.split("/", 1)[1].replace("/", ",")
@@ -195,7 +196,7 @@ class Main:
             labels = batch.pop("labels")
 
             with torch.autocast(
-                device_type=self.cfg.device,
+                device_type=self.cfg.device_str,
                 dtype=self.cfg.torch_dtype_torch,
                 enabled=self.cfg.use_amp,
             ):
