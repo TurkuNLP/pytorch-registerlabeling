@@ -3,9 +3,29 @@ from pydoc import locate
 
 from torch import cuda
 
+import numpy as np
+
 from tqdm import tqdm
 
 _print = print
+
+
+class DotDict(dict):
+    def __getattr__(self, key):
+        if key in self:
+            return self[key]
+
+
+def format_working_dir(model_name, data, seed):
+    return "/".join(
+        [
+            data.output_path,
+            model_name,
+            f"labels_{data.labels}",
+            "_".join([data.train or "", data.dev or data.train]),
+            f"seed_{seed}",
+        ]
+    )
 
 
 # Print with datetime
@@ -42,3 +62,19 @@ def log_gpu_memory():
         allocated_memory = cuda.memory_allocated(gpu) / (1024**3)  # Convert to GB
         max_allocated_memory = cuda.max_memory_allocated(gpu) / (1024**3)
         print(f"[GPU-{gpu}]: {allocated_memory:.2f} ({max_allocated_memory:.2f}) GB")
+
+
+def log_model_mean_weights(model):
+    # Access the weights of the model
+    weights = model.parameters()
+
+    # Convert weights to NumPy array
+    weights_np = []
+    for weight in weights:
+        weights_np.append(weight.detach().numpy())
+
+    # Calculate mean and std
+    mean_weights = np.array([np.mean(weight_tensor) for weight_tensor in weights_np])
+    std_weights = np.array([np.std(weight_tensor) for weight_tensor in weights_np])
+
+    print(f"Mean weights {mean_weights:.4f} ({std_weights:.4f})")

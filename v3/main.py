@@ -111,6 +111,7 @@ class Main:
         torch.save(
             lr_scheduler.state_dict(), f"{checkpoint_dir}/lr_scheduler_state.pth"
         )
+        torch.save(self.scaler.state_dict(), f"{checkpoint_dir}/scaler_state.pth")
 
         with open(f"{checkpoint_dir}/dev_metrics.json", "w") as f:
             json.dump(dev_metrics, f)
@@ -189,26 +190,33 @@ class Main:
         for batch_i, batch in enumerate(self.dataloaders["train"]):
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
-            outputs = self.model(**batch)
 
-            loss = BCEFocalLoss(
-                outputs,
-                labels,
-                self.cfg.trainer.loss_gamma,
-                self.cfg.trainer.loss_alpha,
-            )
+            with torch.autocast(
+                device_type=self.cfg.device,
+                dtype=self.cfg.torch_dtype_torch,
+                enabled=self.cfg.use_amp,
+            ):
+                outputs = self.model(**batch)
+
+                loss = BCEFocalLoss(
+                    outputs,
+                    labels,
+                    self.cfg.trainer.loss_gamma,
+                    self.cfg.trainer.loss_alpha,
+                )
 
             batch_losses.append(loss.item())
             loss = loss / self.cfg.trainer.gradient_accumulation_steps
-            loss.backward()
+            self.scaler.scale(loss).backward()
             if (batch_i + 1) % self.cfg.trainer.gradient_accumulation_steps == 0:
                 if self.cfg.trainer.max_grad_norm > 0:
                     torch.nn.utils.clip_grad_norm_(
                         self.model.parameters(), self.cfg.trainer.max_grad_norm
                     )
-                optimizer.step()
+                self.scaler.step(optimizer)
+                self.scaler.update()
                 lr_scheduler.step()
-                optimizer.zero_grad()
+                optimizer.zero_grad(set_to_none=True)
 
                 progress_bar.update(1)
                 progress_bar.set_description(
@@ -252,9 +260,15 @@ class Main:
             },
         )
 
+        self.scaler = torch.cuda.amp.GradScaler(enabled=self.cfg.use_amp)
+
         if self.cfg.resume:
             optimizer.load_state_dict(
                 torch.load(f"{self.cfg.resume}/optimizer_state.pth")
+            )
+
+            self.scaler.load_state_dict(
+                torch.load(f"{self.cfg.resume}/scaler_state.pth")
             )
 
         lr_scheduler = LambdaLR(
@@ -307,7 +321,7 @@ class Main:
                 print("Early stopped training at epoch %d" % epoch)
                 break
 
-            if keyboard.is_pressed('q'):
+            if keyboard.is_pressed("q"):
                 print("Early stopped training at epoch %d" % epoch)
                 break
 
