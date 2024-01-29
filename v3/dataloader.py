@@ -53,6 +53,7 @@ def init_split_dataloader(
         **{"sampler": BalancedLanguageSampler(language_data, **SAMPLER_CNF[split])}
         if use_balancer
         else {"shuffle": True},
+        generator=torch.Generator(device="cuda"),
     )
     print(f"{split} dataloader size: {len(dataloader)} (balancer: {use_balancer})")
 
