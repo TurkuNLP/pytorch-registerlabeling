@@ -2,11 +2,7 @@ from transformers import RobertaForSequenceClassification
 import torch
 import torch.nn as nn
 
-
-class DummyDotDict(dict):
-    def __getattr__(self, key):
-        if key in self:
-            return self[key]
+from .utils import DotDict
 
 
 class PooledRobertaForSequenceClassification(RobertaForSequenceClassification):
@@ -46,7 +42,7 @@ class PooledRobertaForSequenceClassification(RobertaForSequenceClassification):
 
         logits = self.classifier(outputs[0])
 
-        return DummyDotDict(
+        return DotDict(
             {
                 "logits": logits,
                 "hidden_states": outputs.hidden_states,

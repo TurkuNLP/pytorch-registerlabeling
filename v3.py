@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append("venv/lib/python/python3.9/site-packages")
+
 from dataclasses import dataclass, field
 import tempfile
 
@@ -33,7 +37,6 @@ class Data:
 @dataclass
 class Model:
     name: str = "xlm-roberta-base"
-    compile: bool = False
     save: bool = True
     low_cpu_mem_usage: bool = False
     quantize: bool = False
@@ -98,6 +101,7 @@ if __name__ == "__main__":
         choices=["document", "tokens_mean", "tokens_max"],
     )
     parser.add_argument("--torch_dtype", type=str, default="bfloat16")
+    parser.add_argument("--mixed_precision", type=str, default="bfloat16")
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--gpus", type=int, default=1)
     parser.add_argument("--resume", type=str)
@@ -106,7 +110,7 @@ if __name__ == "__main__":
     parser.add_argument("--accelerate", action="store_true")
     parser.add_argument("--accelerate_bf16", action="store_true")
     parser.add_argument("--root_path", default="/scratch/project_2009199")
-    parser.add_argument("--tqdm_mininterval", type=float, default=1)
+    parser.add_argument("--tqdm_mininterval", type=float, default=0.5)
     parser.add_argument("--predict", type=bool, default=True)
     parser.add_argument("--predict_from_checkpoint", action="store_true")
     parser.add_argument("--data", type=Data, default=Data())

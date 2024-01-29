@@ -29,9 +29,7 @@ def optimize_threshold(probs, labels):
     return best_f1_threshold
 
 
-def compute_metrics(
-    logits, labels, split="train", label_scheme=None, return_output=False
-):
+def compute_metrics(logits, labels, split, label_scheme):
     if torch.is_tensor(labels):
         labels = labels.cpu().numpy()
     threshold = optimize_threshold(logits, labels)
@@ -45,11 +43,9 @@ def compute_metrics(
     except:
         roc_auc = 0
 
-    # Compute precision and recall
     precision = precision_score(labels, y_pred, average="micro")
     recall = recall_score(labels, y_pred, average="micro")
 
-    # Compute PR AUC
     try:
         pr_auc = average_precision_score(labels, probs, average="micro")
     except:
@@ -72,10 +68,9 @@ def compute_metrics(
         for key, value in metrics.items()
     }
 
-    if label_scheme:
+    if split == "test":
         print(
             classification_report(labels, y_pred, target_names=label_scheme, digits=4)
         )
-    if return_output:
         return metrics, (labels, y_pred)
     return metrics
