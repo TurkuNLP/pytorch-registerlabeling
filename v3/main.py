@@ -75,6 +75,11 @@ class Main:
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
+        # Init tokenizer
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            cfg.model.name, torch_dtype=cfg.torch_dtype
+        )
+
         # Prepare dataset
         self.dataset = preprocess_data(
             get_dataset(cfg),
@@ -83,11 +88,6 @@ class Main:
             cfg.data.max_length,
             cfg.data.remove_unused_cols,
             cfg.data.no_dynamic_padding,
-        )
-
-        # Init tokenizer
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            cfg.model.name, torch_dtype=cfg.torch_dtype
         )
 
         # Init dataloaders
@@ -111,7 +111,8 @@ class Main:
         torch.save(
             lr_scheduler.state_dict(), f"{checkpoint_dir}/lr_scheduler_state.pth"
         )
-        torch.save(self.scaler.state_dict(), f"{checkpoint_dir}/scaler_state.pth")
+        if self.cfg.use_amp:
+            torch.save(self.scaler.state_dict(), f"{checkpoint_dir}/scaler_state.pth")
 
         with open(f"{checkpoint_dir}/dev_metrics.json", "w") as f:
             json.dump(dev_metrics, f)
@@ -267,9 +268,10 @@ class Main:
                 torch.load(f"{self.cfg.resume}/optimizer_state.pth")
             )
 
-            self.scaler.load_state_dict(
-                torch.load(f"{self.cfg.resume}/scaler_state.pth")
-            )
+            if self.cfg.use_amp:
+                self.scaler.load_state_dict(
+                    torch.load(f"{self.cfg.resume}/scaler_state.pth")
+                )
 
         lr_scheduler = LambdaLR(
             optimizer,
