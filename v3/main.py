@@ -184,7 +184,12 @@ class Main:
             model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
 
         if not self.cfg.model.quantize:
-            model = model.to(self.cfg.device, dtype=self.cfg.torch_dtype_torch)
+            model = model.to(
+                self.cfg.device,
+                dtype=self.cfg.torch_dtype_torch
+                if not self.cfg.use_amp
+                else torch.float32,
+            )
 
         self.model = model
 
