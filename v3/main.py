@@ -48,6 +48,7 @@ from .model import PooledRobertaForSequenceClassification
 class Main:
     def __init__(self, cfg):
         cfg.torch_dtype_torch = get_torch_dtype(cfg.torch_dtype)
+        cfg.torch_dtype = get_torch_dtype(cfg.torch_dtype)
         cfg.label_scheme = get_label_scheme(cfg.data.labels)
         cfg.num_labels = len(cfg.label_scheme)
         cfg.device = torch.device(cfg.device)
