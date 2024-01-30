@@ -439,8 +439,7 @@ class Main:
             print(self._evaluate())
 
         print("Test set evaluation")
-        with torch.autograd.profiler.profile(use_cuda=True) as prof:
-            print(self._evaluate("test"))
+        print(self._evaluate("test", timer=True))
 
     def finetune(self):
         wandb.login()
