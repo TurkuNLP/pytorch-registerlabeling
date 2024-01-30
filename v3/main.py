@@ -366,20 +366,33 @@ class Main:
         if self.cfg.predict:
             self.predict(from_checkpoint=True)
 
-    def _evaluate(self, split="dev"):
+    def _evaluate(self, split="dev", timer=False):
         self.model.eval()
         batch_logits = []
         batch_labels = []
         batch_losses = []
+        data_len = len(self.dataloaders[split])
 
-        progress_bar = trange(len(self.dataloaders[split]))
+        progress_bar = trange(data_len)
         progress_bar.set_description(f"Evaluating {split} split")
 
-        for batch in self.dataloaders[split]:
+        if timer:
+            starter = torch.cuda.Event(enable_timing=True)
+            ender = torch.cuda.Event(enable_timing=True)
+            timings = np.zeros((data_len, 1))
+
+        for batch_i, batch in enumerate(self.dataloaders[split]):
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
             with torch.no_grad():
+                if timer:
+                    starter.record()
                 outputs = self.model(**batch)
+                if timer:
+                    ender.record()
+                    torch.cuda.synchronize()
+                    curr_time = starter.elapsed_time(ender)
+                    timings[batch_i] = curr_time
 
             loss = BCEFocalLoss(
                 outputs,
@@ -392,6 +405,11 @@ class Main:
             batch_losses.append(loss.item())
 
             progress_bar.update(1)
+
+        if timer:
+            mean_syn = np.sum(timings) / data_len / self.cfg.data.test_batch_size
+            std_syn = np.std(timings)
+            print(f"Avg. instance inference time: {mean_syn} ({std_syn})")
 
         metrics = compute_metrics(
             torch.cat(batch_logits, dim=0),
@@ -421,7 +439,8 @@ class Main:
             print(self._evaluate())
 
         print("Test set evaluation")
-        print(self._evaluate("test"))
+        with torch.autograd.profiler.profile(use_cuda=True) as prof:
+            print(self._evaluate("test"))
 
     def finetune(self):
         wandb.login()
