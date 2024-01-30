@@ -389,8 +389,6 @@ class Main:
                     starter.record()
                 outputs = self.model(**batch)
                 if timer:
-                    print(len(batch["input_ids"]))
-                    exit()
                     ender.record()
                     torch.cuda.synchronize()
                     curr_time = starter.elapsed_time(ender)
