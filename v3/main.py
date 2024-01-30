@@ -389,10 +389,12 @@ class Main:
                     starter.record()
                 outputs = self.model(**batch)
                 if timer:
+                    print(len(batch["input_ids"]))
+                    exit()
                     ender.record()
                     torch.cuda.synchronize()
                     curr_time = starter.elapsed_time(ender)
-                    timings[batch_i] = curr_time
+                    timings[batch_i] = curr_time / len(batch["input_ids"])
 
             loss = BCEFocalLoss(
                 outputs,
@@ -407,9 +409,9 @@ class Main:
             progress_bar.update(1)
 
         if timer:
-            mean_syn = np.sum(timings) / data_len / self.cfg.dataloader.test_batch_size
+            mean_syn = np.sum(timings) / data_len
             std_syn = np.std(timings)
-            print(f"Avg. instance inference time: {mean_syn} ({std_syn})")
+            print(f"Avg. instance inference time: {mean_syn:4f} ({std_syn:4f})")
 
         metrics = compute_metrics(
             torch.cat(batch_logits, dim=0),
