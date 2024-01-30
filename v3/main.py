@@ -379,7 +379,7 @@ class Main:
         if timer:
             starter = torch.cuda.Event(enable_timing=True)
             ender = torch.cuda.Event(enable_timing=True)
-            timings = np.zeros((data_len, 1))
+            timings = np.zeros(data_len)
 
         for batch_i, batch in enumerate(self.dataloaders[split]):
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
@@ -407,7 +407,7 @@ class Main:
             progress_bar.update(1)
 
         if timer:
-            mean_syn = np.sum(timings) / data_len
+            mean_syn = np.mean(timings)
             std_syn = np.std(timings)
             print(f"Avg. instance inference time: {mean_syn:4f} ({std_syn:4f})")
 
