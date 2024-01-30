@@ -407,7 +407,7 @@ class Main:
             progress_bar.update(1)
 
         if timer:
-            mean_syn = np.sum(timings) / data_len / self.cfg.data.test_batch_size
+            mean_syn = np.sum(timings) / data_len / self.cfg.dataloader.test_batch_size
             std_syn = np.std(timings)
             print(f"Avg. instance inference time: {mean_syn} ({std_syn})")
 
