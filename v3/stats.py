@@ -6,9 +6,12 @@ import plotly.express as px
 import plotly.graph_objects as go
 import seaborn as sns
 from sklearn.metrics import classification_report
+from sklearn.metrics import multilabel_confusion_matrix
 
 from .data import language_names, small_languages
 from .labels import binarize_labels, get_label_scheme, map_full_names
+
+from .mlctensor import mlctensor
 
 
 class Stats:
@@ -37,21 +40,70 @@ class Stats:
             for label in predicted_labels
         ]
 
-        confusion_matrix_data = np.array(
-            [
+        evalT = mlctensor.mlcTensor(
+            np.asarray(true_labels_binary), np.asarray(predicted_labels_binary)
+        )
+        MT = evalT.computeConfusionTensor(unique=True)
+        RT = evalT.getRecall()
+        PT = evalT.getPrecision()
+
+        # normalized_confusion_matrix_data = RT[:25, :25]
+        normalized_confusion_matrix_data = RT[:25, :25]
+        a = 100
+
+        if a == 1:
+            confusion_matrix_data = np.array(
                 [
-                    sum(a and b for a, b in zip(true_col, pred_col))
-                    for pred_col in zip(*predicted_labels_binary)
+                    [
+                        sum(a and b for a, b in zip(true_col, pred_col))
+                        for pred_col in zip(*predicted_labels_binary)
+                    ]
+                    for true_col in zip(*true_labels_binary)
                 ]
-                for true_col in zip(*true_labels_binary)
-            ]
-        )
+            )
 
-        print(confusion_matrix_data)
+            print(confusion_matrix_data)
 
-        normalized_confusion_matrix_data = (
-            confusion_matrix_data / confusion_matrix_data.sum(axis=1, keepdims=True)
-        )
+            normalized_confusion_matrix_data = (
+                confusion_matrix_data / confusion_matrix_data.sum(axis=1, keepdims=True)
+            )
+
+        elif a == 2:
+            matrices = multilabel_confusion_matrix(
+                predicted_labels_binary, true_labels_binary
+            )
+            macro_confusion_matrix = np.sum(matrices, axis=0)
+
+            print(macro_confusion_matrix)
+            exit()
+        elif a == 3:
+            confusion_matrix = np.zeros(
+                (len(self.labels), len(self.labels)), dtype=float
+            )
+            for true_labels, predicted_labels in zip(
+                true_labels_binary, predicted_labels_binary
+            ):
+                # Jaccardin samankaltaisuus:
+                intersection = np.sum(np.logical_and(true_labels, predicted_labels))
+                union = np.sum(np.logical_or(true_labels, predicted_labels))
+                overlap_factor = intersection / union if union > 0 else 0
+
+                for i, true_label in enumerate(true_labels):
+                    for j, predicted_label in enumerate(predicted_labels):
+                        if true_label and predicted_label:
+                            confusion_matrix[i, j] += overlap_factor  # tässä
+
+            print(confusion_matrix)
+            # Normalize each row
+            row_sums = confusion_matrix.sum(axis=1, keepdims=True)
+            normalized_confusion_matrix = confusion_matrix / row_sums
+
+            # Replace NaNs with 0 (in case of rows that sum up to 0)
+            normalized_confusion_matrix_data = np.nan_to_num(
+                normalized_confusion_matrix
+            )
+
+            print(normalized_confusion_matrix_data)
 
         cubehelix_palette = self.palette(rot=-0.2)
         palette = [mcolors.to_hex(color) for color in cubehelix_palette]
