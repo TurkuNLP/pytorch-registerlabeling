@@ -1,10 +1,8 @@
 from datetime import datetime
 from pydoc import locate
 
-from torch import cuda
-
 import numpy as np
-
+from torch import cuda
 from tqdm import tqdm
 
 _print = print

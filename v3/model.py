@@ -1,6 +1,6 @@
-from transformers import RobertaForSequenceClassification
 import torch
 import torch.nn as nn
+from transformers import RobertaForSequenceClassification
 
 from .utils import DotDict
 

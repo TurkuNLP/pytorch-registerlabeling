@@ -1,26 +1,27 @@
 import csv
 
+import matplotlib.colors as mcolors
 import numpy as np
-from sklearn.metrics import classification_report
 import plotly.express as px
 import plotly.graph_objects as go
+import seaborn as sns
+from sklearn.metrics import classification_report
 
-from .labels import get_label_scheme, binarize_labels, map_full_names
-from .data import small_languages, language_names
+from .data import language_names, small_languages
+from .labels import binarize_labels, get_label_scheme, map_full_names
 
 
 class Stats:
     def __init__(self, cfg):
-        self.source_path = cfg.source_path
-        self.source_file = cfg.source_file
-        self.labels = get_label_scheme(cfg.labels)
-        self.label_scheme = cfg.labels
+        self.cfg = cfg
+        self.labels = get_label_scheme(cfg.label_scheme)
+        self.palette = sns.cubehelix_palette
 
         # Run
         getattr(self, cfg.method)()
 
     def prediction_confusion_matrix(self):
-        with open(f"{self.source_path}/{self.source_file}", "r") as csvfile:
+        with open(f"{self.cfg.input}", "r") as csvfile:
             csv_reader = csv.reader(csvfile, delimiter="\t")
             data = list(csv_reader)
 
@@ -28,10 +29,11 @@ class Stats:
         true_labels, predicted_labels = zip(*data)
 
         true_labels_binary = [
-            binarize_labels(label.split(), self.label_scheme) for label in true_labels
+            binarize_labels(label.split(), self.cfg.label_scheme)
+            for label in true_labels
         ]
         predicted_labels_binary = [
-            binarize_labels(label.split(), self.label_scheme)
+            binarize_labels(label.split(), self.cfg.label_scheme)
             for label in predicted_labels
         ]
 
@@ -51,28 +53,40 @@ class Stats:
             confusion_matrix_data / confusion_matrix_data.sum(axis=1, keepdims=True)
         )
 
+        cubehelix_palette = self.palette(rot=-0.2)
+        palette = [mcolors.to_hex(color) for color in cubehelix_palette]
+
         # Create confusion matrix using Plotly Express
         confusion_matrix_fig = px.imshow(
             normalized_confusion_matrix_data,
-            labels=dict(x="Predicted Labels", y="True Labels"),
+            # labels=dict(x="Predicted Labels", y="True Labels"),
             x=self.labels,
             y=self.labels,
-            color_continuous_scale="Viridis_r",
+            color_continuous_scale=palette,
             title="Confusion Matrix (Percentages)",
             color_continuous_midpoint=0,
             zmin=0,
             zmax=1,
+            text_auto=".2f",
         )
 
-        # Show the confusion matrix
-        confusion_matrix_fig.show()
+        confusion_matrix_fig.update_yaxes(ticksuffix=" ")
+        confusion_matrix_fig.update_layout(
+            margin=go.layout.Margin(l=5, r=5, b=5, t=5),
+            showlegend=False,
+            title=None,
+            coloraxis_showscale=False,
+            font=dict(size=9),
+        )
+        # confusion_matrix_fig.show()
+        confusion_matrix_fig.write_image("output/heatmap.png", scale=10)
 
     def sm_zero_shot(self):
         data = {}
         labels_mapped = [f"{map_full_names[x]} ({x})" for x in self.labels]
 
         for l in small_languages:
-            #if l in ["id"]:
+            # if l in ["id"]:
             #    continue
             with open(f"{self.source_path}/test_{l}.csv", "r") as csvfile:
                 csv_reader = csv.reader(csvfile, delimiter="\t")

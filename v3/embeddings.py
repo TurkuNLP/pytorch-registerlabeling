@@ -1,9 +1,9 @@
 import csv
-
-from tqdm import tqdm
+import os
 
 import numpy as np
 import torch
+from tqdm import tqdm
 
 init_batch_data = lambda: {
     "input_ids": [],
@@ -54,6 +54,7 @@ def extract_doc_embeddings(model, dataset, output_path, device, method):
                     ]
                 )
 
+    os.makedirs(output_path, exist_ok=True)
     dataset.set_format(type="torch")
 
     for split, data in dataset.items():
@@ -74,3 +75,10 @@ def extract_doc_embeddings(model, dataset, output_path, device, method):
         if len(batch_data["input_ids"]):
             model_output_embeddings(batch_data)
             batch_data = init_batch_data()
+
+
+def extract_st_doc_embeddings(model, dataset, output_path):
+    for split, data in dataset.items():
+        for d in data:
+            print(d)
+            exit()

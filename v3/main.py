@@ -1,50 +1,50 @@
-import os
-import random
-import shutil
-from pprint import pprint
 import json
-import csv
-import tempfile
 import math
+import random
+from pprint import pprint
 
 import numpy as np
-
+import torch
+from peft import LoraConfig, TaskType, get_peft_model
+from ray import init as ray_init
+from ray import train, tune
+from ray.air.integrations.wandb import setup_wandb
+from ray.train import RunConfig
+from ray.tune.search.hyperopt import HyperOptSearch
+from sentence_transformers import SentenceTransformer
+from torch.nn.parallel import DataParallel
+from torch.optim.lr_scheduler import LambdaLR
+from tqdm import trange
 from transformers import (
-    AutoTokenizer,
     AutoModelForSequenceClassification,
+    AutoTokenizer,
     BitsAndBytesConfig,
 )
 
-from tqdm import trange
-import torch
-from torch.nn.parallel import DataParallel
-from torch.optim.lr_scheduler import LambdaLR
-
-from peft import get_peft_model, LoraConfig, TaskType
-
-from ray import tune, train
-from ray.tune.search.hyperopt import HyperOptSearch
-from ray import init as ray_init
-from ray.train import RunConfig
-from ray.air.integrations.wandb import setup_wandb
-
 import wandb
 
-from .labels import get_label_scheme, decode_binary_labels
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
-from .utils import (
-    get_torch_dtype,
-    get_linear_modules,
-    log_gpu_memory,
-    format_working_dir,
-)
-from .embeddings import extract_doc_embeddings
-from .metrics import compute_metrics
-from .scheduler import linear_warmup_decay
+from .embeddings import extract_doc_embeddings, extract_st_doc_embeddings
+from .labels import get_label_scheme
 from .loss import BCEFocalLoss
-from .optimizer import create_optimizer
+from .metrics import compute_metrics
 from .model import PooledRobertaForSequenceClassification
+from .optimizer import create_optimizer
+from .save import (
+    init_ray_dir,
+    save_checkpoint,
+    save_model,
+    save_predictions,
+    save_ray_checkpoint,
+)
+from .scheduler import linear_warmup_decay
+from .utils import (
+    format_working_dir,
+    get_linear_modules,
+    get_torch_dtype,
+    log_gpu_memory,
+)
 
 
 class Main:
@@ -55,6 +55,7 @@ class Main:
         cfg.device_str = cfg.device
         cfg.device = torch.device(cfg.device)
         cfg.working_dir = format_working_dir(cfg.model.name, cfg.data, cfg.seed)
+        cfg.working_dir_root = "/".join(cfg.working_dir.split("/")[:-1])
         cfg.wandb_project = cfg.working_dir.split("/", 1)[1].replace("/", ",")
         self.cfg = cfg
 
@@ -101,43 +102,6 @@ class Main:
 
         # Run
         getattr(self, cfg.method)()
-
-    def _save_checkpoint(self, optimizer, lr_scheduler, dev_metrics):
-        checkpoint_dir = f"{self.cfg.working_dir}/best_checkpoint"
-        os.makedirs(self.cfg.working_dir, exist_ok=True)
-        if self.cfg.gpus > 1:
-            self.model.module.save_pretrained(checkpoint_dir)
-        else:
-            self.model.save_pretrained(checkpoint_dir)
-        torch.save(optimizer.state_dict(), f"{checkpoint_dir}/optimizer_state.pth")
-        torch.save(
-            lr_scheduler.state_dict(), f"{checkpoint_dir}/lr_scheduler_state.pth"
-        )
-        if self.cfg.use_amp:
-            torch.save(self.scaler.state_dict(), f"{checkpoint_dir}/scaler_state.pth")
-
-        with open(f"{checkpoint_dir}/dev_metrics.json", "w") as f:
-            json.dump(dev_metrics, f)
-
-    def _save_model(self):
-        shutil.rmtree(f"{self.cfg.working_dir}/best_model", ignore_errors=True)
-        shutil.copytree(
-            f"{self.cfg.working_dir}/best_checkpoint",
-            f"{self.cfg.working_dir}/best_model",
-        )
-
-    def _save_predictions(self, trues, preds):
-        true_labels_str = decode_binary_labels(trues, self.cfg.label_scheme)
-        predicted_labels_str = decode_binary_labels(preds, self.cfg.label_scheme)
-
-        data = list(zip(true_labels_str, predicted_labels_str))
-        out_file = f"{self.cfg.working_dir}/test_{self.cfg.data.test or self.cfg.data.dev or self.cfg.data.train}.csv"
-
-        with open(out_file, "w", newline="") as csvfile:
-            csv_writer = csv.writer(csvfile, delimiter="\t")
-            csv_writer.writerows(data)
-
-        print(f"Predictions saved to {out_file}")
 
     def _wrap_peft(self):
         print("Wrapping PEFT model")
@@ -331,24 +295,21 @@ class Main:
             ):
                 best_score = patience_metric
                 best_epoch = epoch
-                self._save_checkpoint(optimizer, lr_scheduler, dev_metrics)
+                save_checkpoint(
+                    self.cfg.working_dir,
+                    self.model,
+                    optimizer,
+                    lr_scheduler,
+                    self.scaler,
+                    dev_metrics,
+                )
 
             elif epoch - best_epoch > self.cfg.trainer.patience:
                 print("Early stopped training at epoch %d" % epoch)
                 break
 
             if self.cfg.method == "ray_tune":
-                with tempfile.TemporaryDirectory() as temp_checkpoint_dir:
-                    path = os.path.join(temp_checkpoint_dir, "checkpoint.pt")
-                    torch.save((self.model.state_dict(), optimizer.state_dict()), path)
-                    checkpoint = train.Checkpoint.from_directory(temp_checkpoint_dir)
-                    train.report(
-                        {
-                            "loss": dev_metrics["eval_loss"],
-                            "f1": dev_metrics["eval_f1"],
-                        },
-                        checkpoint=checkpoint,
-                    )
+                save_ray_checkpoint(self.model, optimizer, train, dev_metrics)
 
             remaining_patience = f"{self.cfg.trainer.patience - (epoch - best_epoch)}/{self.cfg.trainer.patience}"
             log_gpu_memory()
@@ -361,7 +322,7 @@ class Main:
                 or early_stopping_condition(best_score, best_starting_score)
             )
         ):
-            self._save_model()
+            save_model(self.cfg.working_dir)
 
         if self.cfg.predict:
             self.predict(from_checkpoint=True)
@@ -422,7 +383,7 @@ class Main:
             return metrics
 
         elif split == "test":
-            self._save_predictions(*metrics[1])
+            save_predictions(*metrics[1], self.cfg)
             return metrics[0]
 
     def predict(self, from_checkpoint=False):
@@ -462,8 +423,7 @@ class Main:
             ignore_reinit_error=True, num_cpus=1, _temp_dir=self.cfg.root_path + "/tmp"
         )
         ray_dir = f"{self.cfg.root_path}/tmp/ray/{self.cfg.wandb_project}"
-        shutil.rmtree(ray_dir, ignore_errors=True)
-        os.makedirs(ray_dir, exist_ok=True)
+        init_ray_dir(ray_dir)
 
         tuner = tune.Tuner(
             tune.with_resources(
@@ -496,10 +456,10 @@ class Main:
 
     def hf_finetune(self):
         from transformers import (
+            DataCollatorWithPadding,
+            EarlyStoppingCallback,
             Trainer,
             TrainingArguments,
-            EarlyStoppingCallback,
-            DataCollatorWithPadding,
         )
 
         wandb.login()
@@ -571,9 +531,16 @@ class Main:
         trainer.train()
 
     def extract_doc_embeddings(self):
-        path = "/".join(self.cfg.working_dir.split("/")[:-1]) + "/embeddings"
+        path = self.cfg.working_dir_root + "/embeddings"
         self._init_model()
-        os.makedirs(path, exist_ok=True)
         extract_doc_embeddings(
             self.model, self.dataset, path, self.cfg.device, self.cfg.embeddings
         )
+
+    def extract_st_doc_embeddings(self):
+        path = self.cfg.working_dir_root + "/st_embeddings"
+        self.model = SentenceTransformer(
+            "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+        )
+
+        extract_st_doc_embeddings(self.model, self.dataset, path)

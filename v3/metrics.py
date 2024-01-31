@@ -1,14 +1,14 @@
+import numpy as np
 import torch
 import torch.nn
-import numpy as np
 from sklearn.metrics import (
     accuracy_score,
-    f1_score,
-    roc_auc_score,
-    precision_score,
-    recall_score,
     average_precision_score,
     classification_report,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
 )
 
 sigmoid = torch.nn.Sigmoid()

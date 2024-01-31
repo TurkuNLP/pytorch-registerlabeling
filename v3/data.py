@@ -1,16 +1,13 @@
-from datasets import Dataset, load_dataset
-
 import csv
 import sys
+
+from datasets import Dataset
 
 csv.field_size_limit(sys.maxsize)
 
 from datasets import Dataset, DatasetDict
 
-from .labels import (
-    binarize_labels,
-    normalize_labels,
-)
+from .labels import binarize_labels, normalize_labels
 
 small_languages = [
     "ar",
@@ -95,6 +92,7 @@ def get_dataset(cfg):
             "label_cfg": cfg.data.labels,
             "concat_small": cfg.data.concat_small,
         },
+        cache_dir=cfg.working_dir_root + "/tokens_cache",
     )
 
     splits = {}

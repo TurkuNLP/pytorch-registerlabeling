@@ -1,10 +1,10 @@
 import numpy as np
-from sklearn.metrics import classification_report
 import plotly.express as px
 import plotly.graph_objects as go
+from sklearn.metrics import classification_report
 
-from .labels import get_label_scheme, binarize_labels, map_full_names
-from .data import small_languages, language_names
+from .data import language_names, small_languages
+from .labels import binarize_labels, get_label_scheme, map_full_names
 
 
 class Clustering:
