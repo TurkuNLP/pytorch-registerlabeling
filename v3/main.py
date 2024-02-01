@@ -209,6 +209,7 @@ class Main:
     def _do_train(self, best_score, progress_bar):
         self.model.train()
         epoch = 0
+        batch_i = 0
         best_epoch = 0
         remaining_patience = self.cfg.trainer.patience
         running_loss = 0
@@ -224,12 +225,14 @@ class Main:
             )
         )
         while True:
-            if epoch - best_epoch > self.cfg.trainer.patience:
+            remaining_patience = self.cfg.trainer.patience - (epoch - best_epoch)
+            if not remaining_patience:
                 print("Early stopped!")
                 return best_score
             epoch += 1
             batch_losses = []
-            for batch_i, batch in enumerate(self.dataloaders["train"]):
+            for batch in self.dataloaders["train"]:
+                batch_i += 1
                 batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
                 labels = batch.pop("labels")
 
@@ -250,7 +253,7 @@ class Main:
                 batch_losses.append(loss.item())
                 loss = loss / self.cfg.trainer.gradient_accumulation_steps
                 self.scaler.scale(loss).backward()
-                if (batch_i + 1) % self.cfg.trainer.gradient_accumulation_steps == 0:
+                if batch_i % self.cfg.trainer.gradient_accumulation_steps == 0:
                     if self.cfg.trainer.max_grad_norm > 0:
                         torch.nn.utils.clip_grad_norm_(
                             self.model.parameters(), self.cfg.trainer.max_grad_norm
@@ -268,8 +271,8 @@ class Main:
 
                     running_loss = sum(batch_losses) / len(batch_losses)
 
-                if (batch_i + 1) % eval_step == 0:
-                    print(f"Loss at step {eval_step}: {running_loss}")
+                if batch_i % eval_step == 0:
+                    print(f"Loss at step {batch_i}: {running_loss}")
                     dev_metrics = self._evaluate()
                     pprint(dev_metrics)
                     wandb.log(
@@ -303,11 +306,6 @@ class Main:
                             self.lr_scheduler,
                             self.scaler,
                             dev_metrics,
-                        )
-
-                    else:
-                        remaining_patience = self.cfg.trainer.patience - (
-                            epoch - best_epoch
                         )
 
     def _train(self, config={}):
@@ -381,7 +379,9 @@ class Main:
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
 
-        progress_bar = trange(num_training_steps, mininterval=self.cfg.tqdm_mininterval)
+        progress_bar = trange(
+            num_training_steps, mininterval=self.cfg.tqdm_mininterval, leave=False
+        )
         best_score = best_starting_score
 
         best_score = self._do_train(best_score, progress_bar)
@@ -406,7 +406,7 @@ class Main:
         batch_losses = []
         data_len = len(self.dataloaders[split])
 
-        progress_bar = trange(data_len)
+        progress_bar = trange(data_len, leave=False)
         progress_bar.set_description(f"Evaluating {split} split")
 
         if timer:
