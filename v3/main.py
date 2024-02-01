@@ -65,7 +65,7 @@ class Main:
         if not self.cfg.no_tf32:
             torch.set_float32_matmul_precision("high")
             torch.backends.cudnn.allow_tf32
-            torch.backends.cuda.matmul.allow_tf32 = True
+            # torch.backends.cuda.matmul.allow_tf32 = True
 
         # Make process deterministic
         torch.manual_seed(cfg.seed)
@@ -254,7 +254,8 @@ class Main:
         lr_scheduler = LambdaLR(
             optimizer,
             linear_warmup_decay(
-                math.ceil(num_training_steps * self.cfg.trainer.warmup_ratio),
+                # math.ceil(num_training_steps * self.cfg.trainer.warmup_ratio),
+                num_training_steps * self.cfg.trainer.warmup_ratio,
                 num_training_steps,
             ),
         )
