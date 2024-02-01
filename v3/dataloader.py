@@ -6,7 +6,7 @@ from .sampler import BalancedLanguageSampler
 SAMPLER_CNF = {
     "train": {
         "size": "mean",
-        "lang_cycle": "cycle",
+        "lang_cycle": "random",
     },
     "test": {
         "size": "mean",
