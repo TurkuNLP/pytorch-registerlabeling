@@ -452,7 +452,7 @@ def normalize_labels(labels, label_config):
 
     # This is for testing purposes
     if label_config == "all_2":
-        mapping = mapping.update(map_optional)
+        mapping.update(map_optional)
 
     # Split labels to a list and map
     if type(labels) == str:
