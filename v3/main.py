@@ -225,7 +225,6 @@ class Main:
             )
         )
         while True:
-            remaining_patience = self.cfg.trainer.patience - (epoch - best_epoch)
             if not remaining_patience:
                 print("Early stopped!")
                 return best_score
@@ -272,7 +271,7 @@ class Main:
                     running_loss = sum(batch_losses) / len(batch_losses)
 
                 if batch_i % eval_step == 0:
-                    print(f"Loss at step {batch_i}: {running_loss}")
+                    print(f"Loss at step {batch_i} [E-{epoch}]: {running_loss}")
                     dev_metrics = self._evaluate()
                     pprint(dev_metrics)
                     wandb.log(
@@ -298,7 +297,6 @@ class Main:
                         patience_metric, best_score
                     ):
                         best_score = patience_metric
-                        best_epoch = epoch
                         save_checkpoint(
                             self.cfg,
                             self.model,
@@ -307,6 +305,8 @@ class Main:
                             self.scaler,
                             dev_metrics,
                         )
+                    else:
+                        remaining_patience -= 1
 
     def _train(self, config={}):
         if self.cfg.method == "ray_tune":
