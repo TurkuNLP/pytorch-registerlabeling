@@ -260,8 +260,8 @@ map_normalize = {
 }
 
 map_optional = {
-    "av": "ob",
-    # "ed": "IP",
+    # "av": "ob",
+    "ed": "ob",
     # "fi": "IN",
 }
 
@@ -434,8 +434,10 @@ map_flat = {
 
 
 def get_label_scheme(label_list):
-    if label_list in ["all", "all_2"]:
+    if label_list == "all":
         return labels_all
+    elif label_list == "all_2":
+        return [x for x in labels_all if x not in map_optional.keys()]
     elif label_list in ["all_other"]:
         return labels_all_other
     elif label_list == "all_flat":
