@@ -169,6 +169,9 @@ class Main:
             ):
                 outputs = self.model(**batch)
 
+                print(outputs.logits.shape)
+                print(labels.float().shape)
+
                 loss = BCEFocalLoss(
                     outputs,
                     labels,
