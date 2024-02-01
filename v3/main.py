@@ -258,6 +258,7 @@ class Main:
                             self.scaler,
                             dev_metrics,
                         )
+                        remaining_patience = self.cfg.trainer.patience
                     else:
                         remaining_patience -= 1
 
