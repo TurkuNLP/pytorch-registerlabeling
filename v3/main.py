@@ -296,7 +296,7 @@ class Main:
                 best_score = patience_metric
                 best_epoch = epoch
                 save_checkpoint(
-                    self.cfg.working_dir,
+                    self.cfg,
                     self.model,
                     optimizer,
                     lr_scheduler,
