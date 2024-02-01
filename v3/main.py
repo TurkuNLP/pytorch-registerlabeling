@@ -266,7 +266,7 @@ class Main:
 
                     progress_bar.update(1)
                     progress_bar.set_description(
-                        f"E-{epoch}:{int((batch_i/len(self.dataloaders['train'])* 100))}% ({remaining_patience}/{self.cfg.trainer.patience}), loss: {(sum(batch_losses) / len(batch_losses)):4f}",
+                        f"E-{epoch}:{int((batch_i % eval_step)/eval_step * 100)}% ({remaining_patience}/{self.cfg.trainer.patience}), loss: {(sum(batch_losses) / len(batch_losses)):4f}",
                         refresh=False,
                     )
 
