@@ -58,7 +58,7 @@ class Main:
         cfg.working_dir_root = "/".join(cfg.working_dir.split("/")[:-1])
         cfg.wandb_project = cfg.working_dir.split("/", 1)[1].replace("/", ",")
         self.cfg = cfg
-
+        print(f"Predicting {cfg.num_labels} labels")
         print(f"Working directory: {self.cfg.working_dir}")
 
         # Tf32
@@ -210,7 +210,6 @@ class Main:
         self.model.train()
         epoch = 0
         batch_i = 0
-        best_epoch = 0
         remaining_patience = self.cfg.trainer.patience
         running_loss = 0
         eval_step = (
