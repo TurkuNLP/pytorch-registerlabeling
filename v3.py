@@ -61,8 +61,8 @@ class Trainer:
 @dataclass
 class Dataloader:
     train_batch_size: int = 8
-    dev_batch_size: int = 8
-    test_batch_size: int = 8
+    dev_batch_size: int = 128
+    test_batch_size: int = 128
     balancing_sampler: bool = False
 
 
