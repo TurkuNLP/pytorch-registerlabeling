@@ -260,9 +260,9 @@ map_normalize = {
 }
 
 map_optional = {
-    "av": "OP",
-    "ed": "IP",
-    "fi": "IN",
+    "av": "ob",
+    # "ed": "IP",
+    # "fi": "IN",
 }
 
 map_upper = {
@@ -450,7 +450,7 @@ def normalize_labels(labels, label_config):
     # Normalizer-mapping
     mapping = map_normalize
 
-    # Optionally add some combining to upper categories
+    # This is for testing purposes
     if label_config == "all_2":
         mapping = mapping.update(map_optional)
 
