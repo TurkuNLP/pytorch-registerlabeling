@@ -30,6 +30,7 @@ from .labels import get_label_scheme
 from .loss import BCEFocalLoss
 from .metrics import compute_metrics
 from .model import PooledRobertaForSequenceClassification
+from .modeling_flash_roberta import FlashRobertaForSequenceClassification
 from .optimizer import create_optimizer
 from .save import (
     init_ray_dir,
@@ -126,6 +127,8 @@ class Main:
         model_cls = AutoModelForSequenceClassification
         if self.cfg.model.roberta_pooled:
             model_cls = PooledRobertaForSequenceClassification
+        if self.cfg.model.roberta_flash:
+            model_cls = FlashRobertaForSequenceClassification
 
         model_params = {
             "num_labels": self.cfg.num_labels,
