@@ -155,55 +155,6 @@ class Main:
 
         self.model = model
 
-    def _train_epoch(self, optimizer, lr_scheduler, epoch, progress_bar, patience):
-        self.model.train()
-        batch_losses = []
-        for batch_i, batch in enumerate(self.dataloaders["train"]):
-            batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
-            labels = batch.pop("labels")
-
-            with torch.autocast(
-                device_type=self.cfg.device_str,
-                dtype=self.cfg.torch_dtype_torch,
-                enabled=self.cfg.use_amp,
-            ):
-                outputs = self.model(**batch)
-
-                print(outputs.logits.shape)
-                print(labels.float().shape)
-
-                loss = BCEFocalLoss(
-                    outputs,
-                    labels,
-                    self.cfg.trainer.loss_gamma,
-                    self.cfg.trainer.loss_alpha,
-                )
-
-            batch_losses.append(loss.item())
-            loss = loss / self.cfg.trainer.gradient_accumulation_steps
-            self.scaler.scale(loss).backward()
-            if (batch_i + 1) % self.cfg.trainer.gradient_accumulation_steps == 0:
-                if self.cfg.trainer.max_grad_norm > 0:
-                    torch.nn.utils.clip_grad_norm_(
-                        self.model.parameters(), self.cfg.trainer.max_grad_norm
-                    )
-                self.scaler.step(optimizer)
-                self.scaler.update()
-                lr_scheduler.step()
-                optimizer.zero_grad(set_to_none=True)
-
-                progress_bar.update(1)
-                progress_bar.set_description(
-                    f"E-{epoch}:{int((batch_i/len(self.dataloaders['train'])* 100))}% ({patience}), loss: {(sum(batch_losses) / len(batch_losses)):4f}",
-                    refresh=False,
-                )
-
-        return {
-            "train_loss": sum(batch_losses) / len(batch_losses),
-            "learning_rate": optimizer.param_groups[0]["lr"],
-            "epoch": epoch,
-        }
-
     def _model_has_improved(self, patience_metric, best_score):
         if "loss" in self.cfg.trainer.best_model_metric:
             return patience_metric < best_score
@@ -243,7 +194,8 @@ class Main:
                     enabled=self.cfg.use_amp,
                 ):
                     outputs = self.model(**batch)
-
+                    print(outputs.logits.shape)
+                    print(labels.float().shape)
                     loss = BCEFocalLoss(
                         outputs,
                         labels,
