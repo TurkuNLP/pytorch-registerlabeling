@@ -46,6 +46,7 @@ class Model:
 @dataclass
 class Trainer:
     epochs: int = 30
+    eval_step: 0.25
     learning_rate: float = 1e-5
     weight_decay: float = 0.05
     warmup_ratio: float = 0.01
