@@ -5,16 +5,16 @@ from .sampler import BalancedLanguageSampler
 
 SAMPLER_CNF = {
     "train": {
-        "size": "mean",
-        "lang_cycle": "random",
-    },
-    "test": {
-        "size": "mean",
+        "size": "smallest",
         "lang_cycle": "random",
     },
     "dev": {
         "size": "mean",
-        "lang_cycle": "random",
+        "lang_cycle": "cycle",
+    },
+    "test": {
+        "size": "mean",
+        "lang_cycle": "cycle",
     },
 }
 
