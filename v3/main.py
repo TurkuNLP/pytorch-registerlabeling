@@ -215,7 +215,7 @@ class Main:
         running_loss = 0
         eval_step = (
             len(self.dataloaders["train"])
-            if self.cfg.trainer.eval_step == "epoch"
+            if self.cfg.trainer.eval_step == 0
             else (
                 self.cfg.trainer.eval_step
                 if self.cfg.trainer.eval_step >= 1
