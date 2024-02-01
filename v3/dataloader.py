@@ -10,11 +10,11 @@ SAMPLER_CNF = {
     },
     "test": {
         "size": "mean",
-        "lang_cycle": "cycle",
+        "lang_cycle": "random",
     },
     "dev": {
         "size": "mean",
-        "lang_cycle": "cycle",
+        "lang_cycle": "random",
     },
 }
 
