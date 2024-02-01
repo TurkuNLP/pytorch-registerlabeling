@@ -127,8 +127,6 @@ class Main:
         model_cls = AutoModelForSequenceClassification
         if self.cfg.model.roberta_pooled:
             model_cls = PooledRobertaForSequenceClassification
-        if self.cfg.model.roberta_flash:
-            model_cls = FlashRobertaForSequenceClassification
 
         model_params = {
             "num_labels": self.cfg.num_labels,
