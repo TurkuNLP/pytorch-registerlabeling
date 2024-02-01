@@ -194,8 +194,7 @@ class Main:
                     enabled=self.cfg.use_amp,
                 ):
                     outputs = self.model(**batch)
-                    print(outputs.logits.shape)
-                    print(labels.float().shape)
+
                     loss = BCEFocalLoss(
                         outputs,
                         labels,
@@ -333,9 +332,7 @@ class Main:
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
 
-        progress_bar = trange(
-            num_training_steps, mininterval=self.cfg.tqdm_mininterval, leave=False
-        )
+        progress_bar = trange(num_training_steps, mininterval=self.cfg.tqdm_mininterval)
         best_score = best_starting_score
 
         best_score = self._do_train(best_score, progress_bar)
@@ -360,7 +357,7 @@ class Main:
         batch_losses = []
         data_len = len(self.dataloaders[split])
 
-        progress_bar = trange(data_len, leave=False)
+        progress_bar = trange(data_len)
         progress_bar.set_description(f"Evaluating {split} split")
 
         if timer:
@@ -392,6 +389,8 @@ class Main:
             batch_losses.append(loss.item())
 
             progress_bar.update(1)
+
+        progress_bar.close()
 
         if timer:
             mean_syn = np.mean(timings)
