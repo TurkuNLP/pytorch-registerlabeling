@@ -1,5 +1,4 @@
 import json
-import math
 import random
 from pprint import pprint
 
@@ -9,6 +8,7 @@ from peft import LoraConfig, TaskType, get_peft_model
 from ray import init as ray_init
 from ray import train, tune
 from ray.air.integrations.wandb import WandbLoggerCallback
+from ray.util import inspect_serializability
 from ray.train import RunConfig
 from ray.tune.search.hyperopt import HyperOptSearch
 from sentence_transformers import SentenceTransformer
@@ -20,6 +20,8 @@ from transformers import (
     AutoTokenizer,
     BitsAndBytesConfig,
 )
+
+from pynput.keyboard import Listener, Key
 
 import wandb
 
@@ -100,8 +102,14 @@ class Main:
 
         torch.set_default_device(self.cfg.device)
 
+        with Listener(on_press=self._keyboard_command) as listener:
+            listener.join()
+
         # Run
         getattr(self, cfg.method)()
+
+    def _keyboard_command(key):
+        print(key)
 
     def _wrap_peft(self):
         print("Wrapping PEFT model")
@@ -148,9 +156,11 @@ class Main:
         if not self.cfg.model.quantize:
             model = model.to(
                 self.cfg.device,
-                dtype=self.cfg.torch_dtype_torch
-                if not self.cfg.use_amp
-                else torch.float32,
+                dtype=(
+                    self.cfg.torch_dtype_torch
+                    if not self.cfg.use_amp
+                    else torch.float32
+                ),
             )
 
         self.model = model
@@ -242,7 +252,7 @@ class Main:
                     dtype=self.cfg.torch_dtype_torch,
                     enabled=self.cfg.use_amp,
                 ):
-                    outputs = self.model(**batch)
+                    outputs = self.model(**batch, return_dict=False)
 
                     loss = BCEFocalLoss(
                         outputs,
