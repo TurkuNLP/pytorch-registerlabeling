@@ -1,9 +1,9 @@
+import math
 from datetime import datetime
 from pydoc import locate
 
 import numpy as np
 from torch import cuda
-from tqdm import tqdm
 
 _print = print
 
@@ -71,6 +71,14 @@ def model_save_condition(cfg, best_score, best_starting_score):
                 cfg.trainer.best_model_metric, best_score, best_starting_score
             )
         )
+    )
+
+
+def get_eval_step(data_len, eval_step):
+    return (
+        data_len
+        if eval_step == 0
+        else (eval_step if eval_step >= 1 else math.ceil(eval_step * data_len))
     )
 
 

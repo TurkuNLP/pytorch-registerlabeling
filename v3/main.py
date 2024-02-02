@@ -46,6 +46,7 @@ from .utils import (
     log_gpu_memory,
     model_has_improved,
     model_save_condition,
+    get_eval_step,
 )
 
 
@@ -94,9 +95,7 @@ class Main:
 
         # Init dataloaders
         self.dataloaders = init_dataloaders(
-            self.dataset,
-            cfg.dataloader,
-            self.tokenizer.pad_token_id,
+            self.dataset, cfg.dataloader, self.tokenizer.pad_token_id, cfg.device_str
         )
 
         torch.set_default_device(self.cfg.device)
@@ -162,21 +161,10 @@ class Main:
         batch_i = 0
         remaining_patience = self.cfg.trainer.patience
         running_loss = 0
-        eval_step = (
-            len(self.dataloaders["train"])
-            if self.cfg.trainer.eval_step == 0
-            else (
-                self.cfg.trainer.eval_step
-                if self.cfg.trainer.eval_step >= 1
-                else math.ceil(
-                    self.cfg.trainer.eval_step * len(self.dataloaders["train"])
-                )
-            )
+        eval_step = get_eval_step(
+            len(self.dataloaders["train"]), self.cfg.trainer.eval_step
         )
-        while True:
-            if not remaining_patience:
-                print("Early stopped!")
-                return best_score
+        while remaining_patience > 0:
             epoch += 1
             batch_losses = []
             for batch in self.dataloaders["train"]:
@@ -261,6 +249,7 @@ class Main:
                         remaining_patience = self.cfg.trainer.patience
                     else:
                         remaining_patience -= 1
+        return best_score
 
     def _train(self, config={}):
         self._init_model(

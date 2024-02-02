@@ -20,7 +20,7 @@ SAMPLER_CNF = {
 
 
 def init_split_dataloader(
-    dataset, split, batch_size, tokenizer_pad_token_id, balance_languages
+    dataset, split, batch_size, tokenizer_pad_token_id, balance_languages, device
 ):
     def collate_fn(batch):
         max_length = max(len(example["input_ids"]) for example in batch)
@@ -54,14 +54,14 @@ def init_split_dataloader(
         **{"sampler": BalancedLanguageSampler(language_data, **SAMPLER_CNF[split])}
         if use_balancer
         else {"shuffle": True},
-        generator=torch.Generator(device="cuda"),
+        generator=torch.Generator(device=device),
     )
     print(f"{split} dataloader size: {len(dataloader)} (balancer: {use_balancer})")
 
     return dataloader
 
 
-def init_dataloaders(dataset, cfg, tokenizer_pad_token_id):
+def init_dataloaders(dataset, cfg, tokenizer_pad_token_id, device):
     return {
         split: init_split_dataloader(
             ds,
@@ -69,6 +69,7 @@ def init_dataloaders(dataset, cfg, tokenizer_pad_token_id):
             cfg[f"{split}_batch_size"],
             tokenizer_pad_token_id,
             cfg.balancing_sampler,
+            device,
         )
         for split, ds in dataset.items()
     }
