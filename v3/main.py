@@ -541,7 +541,7 @@ class Main:
         )
 
     def extract_st_doc_embeddings(self):
-        path = self.cfg.working_dir_root + "/st_embeddings"
+        path = self.cfg.root_path
         self.model = SentenceTransformer(
             "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
         )

@@ -79,6 +79,14 @@ def extract_doc_embeddings(model, dataset, output_path, device, method):
 
 def extract_st_doc_embeddings(model, dataset, output_path):
     for split, data in dataset.items():
-        for d in data:
-            print(d)
-            exit()
+        print(f"Extracting from {split}")
+        for d in tqdm(data):
+            with open(f"{output_path}/st_embeddings.tsv", "a", newline="") as tsvfile:
+                writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
+                writer.writerow(
+                    [
+                        d["language"],
+                        d["label_text"],
+                        " ".join([str(x) for x in model.encode(d["text"]).tolist()]),
+                    ]
+                )
