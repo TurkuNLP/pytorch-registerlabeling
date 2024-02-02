@@ -1,7 +1,7 @@
 data:
   train: en-fi-fr-sv
 model:
-  name: facebook/nllb-200-distilled-600m
+  name: facebook/xlm-v-base
 trainer:
   learning_rate: 5e-5
 dataloader:
