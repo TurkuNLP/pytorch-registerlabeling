@@ -26,8 +26,6 @@ def init_split_dataloader(
         max_length = max(len(example["input_ids"]) for example in batch)
         # Pad sequences dynamically to the maximum length in the batch
         for example in batch:
-            print(example)
-            exit()
             pad_length = max_length - len(example["input_ids"])
             for key in example:
                 if key == "input_ids":
@@ -35,7 +33,7 @@ def init_split_dataloader(
                     example[key] = torch.nn.functional.pad(
                         example[key], (0, pad_length), value=tokenizer_pad_token_id
                     )
-                elif key == "attention_mask":
+                elif key in ["attention_mask", "token_type_ids"]:
                     # Use 0 as the padding value for attention_mask
                     example[key] = torch.nn.functional.pad(
                         example[key], (0, pad_length), value=0
