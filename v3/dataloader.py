@@ -26,6 +26,8 @@ def init_split_dataloader(
         max_length = max(len(example["input_ids"]) for example in batch)
         # Pad sequences dynamically to the maximum length in the batch
         for example in batch:
+            print(example)
+            exit()
             pad_length = max_length - len(example["input_ids"])
             for key in example:
                 if key == "input_ids":
@@ -51,9 +53,11 @@ def init_split_dataloader(
         dataset,
         batch_size=batch_size,
         collate_fn=collate_fn,
-        **{"sampler": BalancedLanguageSampler(language_data, **SAMPLER_CNF[split])}
-        if use_balancer
-        else {"shuffle": True},
+        **(
+            {"sampler": BalancedLanguageSampler(language_data, **SAMPLER_CNF[split])}
+            if use_balancer
+            else {"shuffle": True}
+        ),
         generator=torch.Generator(device=device),
     )
     print(f"{split} dataloader size: {len(dataloader)} (balancer: {use_balancer})")
