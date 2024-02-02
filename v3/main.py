@@ -246,8 +246,8 @@ class Main:
                 ):
                     outputs = self.model(**batch, return_dict=False)
 
-                    print(outputs)
-                    exit()
+                    if type(outputs) is tuple:
+                        outputs = outputs[0]
 
                     loss = BCEFocalLoss(
                         outputs,
