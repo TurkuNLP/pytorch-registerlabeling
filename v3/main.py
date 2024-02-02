@@ -135,7 +135,10 @@ class Main:
             model_params["low_cpu_mem_usage"] = True
         if self.cfg.model.quantize:
             model_params["quantization_config"] = BitsAndBytesConfig(
-                load_in_4bit=True, bnb_4bit_use_double_quant=True
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_compute_dtype=torch.bfloat16,
             )
 
         model = model_cls.from_pretrained(
