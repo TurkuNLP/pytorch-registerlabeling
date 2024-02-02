@@ -21,8 +21,6 @@ from transformers import (
     BitsAndBytesConfig,
 )
 
-from pynput.keyboard import Listener, Key
-
 import wandb
 
 from .data import get_dataset, preprocess_data
@@ -102,14 +100,8 @@ class Main:
 
         torch.set_default_device(self.cfg.device)
 
-        with Listener(on_press=self._keyboard_command) as listener:
-            listener.join()
-
         # Run
         getattr(self, cfg.method)()
-
-    def _keyboard_command(key):
-        print(key)
 
     def _wrap_peft(self):
         print("Wrapping PEFT model")
