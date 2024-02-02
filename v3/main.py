@@ -8,7 +8,7 @@ import torch
 from peft import LoraConfig, TaskType, get_peft_model
 from ray import init as ray_init
 from ray import train, tune
-from ray.air.integrations.wandb import setup_wandb
+from ray.air.integrations.wandb import WandbLoggerCallback
 from ray.train import RunConfig
 from ray.tune.search.hyperopt import HyperOptSearch
 from sentence_transformers import SentenceTransformer
@@ -44,6 +44,8 @@ from .utils import (
     get_linear_modules,
     get_torch_dtype,
     log_gpu_memory,
+    model_has_improved,
+    model_save_condition,
 )
 
 
@@ -122,21 +124,20 @@ class Main:
         self.model.print_trainable_parameters()
 
     def _init_model(self, model_path=None):
-        model_cls = AutoModelForSequenceClassification
-        if self.cfg.model.roberta_pooled:
-            model_cls = PooledRobertaForSequenceClassification
-
         model_params = {
             "num_labels": self.cfg.num_labels,
         }
+
+        model_cls = AutoModelForSequenceClassification
+        if self.cfg.model.roberta_pooled:
+            model_cls = PooledRobertaForSequenceClassification
+            model_params["pooling"] = self.cfg.model.roberta_pooled
         if self.cfg.model.low_cpu_mem_usage:
             model_params["low_cpu_mem_usage"] = True
         if self.cfg.model.quantize:
             model_params["quantization_config"] = BitsAndBytesConfig(
                 load_in_4bit=True, bnb_4bit_use_double_quant=True
             )
-        if self.cfg.model.roberta_pooled:
-            model_params["pooling"] = self.cfg.model.roberta_pooled
 
         model = model_cls.from_pretrained(
             self.cfg.model.name if not model_path else model_path, **model_params
@@ -155,12 +156,7 @@ class Main:
 
         self.model = model
 
-    def _model_has_improved(self, patience_metric, best_score):
-        if "loss" in self.cfg.trainer.best_model_metric:
-            return patience_metric < best_score
-        return patience_metric > best_score
-
-    def _do_train(self, best_score, progress_bar):
+    def _training_loop(self, best_score, progress_bar):
         self.model.train()
         epoch = 0
         batch_i = 0
@@ -228,17 +224,20 @@ class Main:
                     dev_metrics = self._evaluate()
                     self.model.train()
                     pprint(dev_metrics)
-                    wandb.log(
-                        {
-                            **dev_metrics,
-                            **{
-                                "train_loss": running_loss,
-                                "learning_rate": self.optimizer.param_groups[0]["lr"],
-                                "step": batch_i + 1,
-                                "epoch": epoch,
-                            },
-                        }
-                    )
+                    if not self.cfg.method == "ray_tune":
+                        wandb.log(
+                            {
+                                **dev_metrics,
+                                **{
+                                    "train_loss": running_loss,
+                                    "learning_rate": self.optimizer.param_groups[0][
+                                        "lr"
+                                    ],
+                                    "step": batch_i + 1,
+                                    "epoch": epoch,
+                                },
+                            }
+                        )
 
                     if self.cfg.method == "ray_tune":
                         save_ray_checkpoint(
@@ -247,8 +246,8 @@ class Main:
 
                     patience_metric = dev_metrics[self.cfg.trainer.best_model_metric]
 
-                    if best_score is False or self._model_has_improved(
-                        patience_metric, best_score
+                    if best_score is False or model_has_improved(
+                        self.cfg.trainer.best_model_metric, patience_metric, best_score
                     ):
                         best_score = patience_metric
                         save_checkpoint(
@@ -264,16 +263,6 @@ class Main:
                         remaining_patience -= 1
 
     def _train(self, config={}):
-        if self.cfg.method == "ray_tune":
-            wandb = setup_wandb(config, project=f"ray_{self.cfg.wandb_project}")
-        else:
-            import wandb
-
-            wandb.init(
-                project=f"finetune_{self.cfg.wandb_project}",
-                config=self.cfg,
-            )
-
         self._init_model(
             self.cfg.resume if (self.cfg.resume and not self.cfg.peft.enable) else None
         )
@@ -337,16 +326,9 @@ class Main:
         progress_bar = trange(num_training_steps, mininterval=self.cfg.tqdm_mininterval)
         best_score = best_starting_score
 
-        best_score = self._do_train(best_score, progress_bar)
+        best_score = self._training_loop(best_score, progress_bar)
 
-        if (
-            self.cfg.model.save
-            and best_score is not False
-            and (
-                not self.cfg.resume
-                or self._model_has_improved(best_score, best_starting_score)
-            )
-        ):
+        if model_save_condition(self.cfg, best_score, best_starting_score):
             save_model(self.cfg.working_dir)
 
         if self.cfg.predict:
@@ -431,6 +413,10 @@ class Main:
 
     def finetune(self):
         wandb.login()
+        wandb.init(
+            project=f"finetune_{self.cfg.wandb_project}",
+            config=self.cfg,
+        )
         self._train()
 
     def ray_tune(self):
@@ -466,6 +452,7 @@ class Main:
             ),
             run_config=RunConfig(
                 name=self.cfg.wandb_project,
+                callbacks=[WandbLoggerCallback(project=self.cfg.wandb_project)],
                 storage_path=ray_dir,
                 local_dir=ray_dir,
             ),

@@ -55,6 +55,25 @@ def get_linear_modules(model):
     return list(linear_modules)
 
 
+def model_has_improved(metric, patience_metric, best_score):
+    if "loss" in metric:
+        return patience_metric < best_score
+    return patience_metric > best_score
+
+
+def model_save_condition(cfg, best_score, best_starting_score):
+    return (
+        cfg.model.save
+        and best_score is not False
+        and (
+            not cfg.resume
+            or model_has_improved(
+                cfg.trainer.best_model_metric, best_score, best_starting_score
+            )
+        )
+    )
+
+
 def log_gpu_memory():
     for gpu in range(cuda.device_count()):
         allocated_memory = cuda.memory_allocated(gpu) / (1024**3)  # Convert to GB
