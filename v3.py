@@ -77,6 +77,8 @@ class Peft:
 @dataclass
 class Ray:
     learning_rate: list = field(default_factory=lambda: [1e-5, 1e-3])
+    loss_alpha: list = field(default_factory=lambda: [0.15, 0.95])
+    loss_gamma: list = field(default_factory=lambda: [1.5, 3.5])
     gpus_per_trial: int = 1
 
 

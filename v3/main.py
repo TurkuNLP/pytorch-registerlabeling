@@ -155,7 +155,72 @@ class Main:
 
         self.model = model
 
-    def _training_loop(self, best_score, progress_bar):
+    def _train(self, config={}):
+        self._init_model(
+            self.cfg.resume if (self.cfg.resume and not self.cfg.peft.enable) else None
+        )
+
+        if self.cfg.peft.enable:
+            if not self.cfg.resume:
+                self._wrap_peft()
+            else:
+                self.model.load_adapter(self.cfg.resume)
+
+        num_training_steps = int(
+            self.cfg.trainer.epochs
+            * len(self.dataloaders["train"])
+            / self.cfg.trainer.gradient_accumulation_steps
+        )
+
+        self.optimizer = create_optimizer(
+            self.model,
+            {
+                "lr": config.get("learning_rate", self.cfg.trainer.learning_rate),
+                "weight_decay": config.get(
+                    "weight_decay", self.cfg.trainer.weight_decay
+                ),
+            },
+        )
+
+        self.scaler = torch.cuda.amp.GradScaler(enabled=self.cfg.use_amp)
+
+        if self.cfg.resume:
+            self.optimizer.load_state_dict(
+                torch.load(f"{self.cfg.resume}/optimizer_state.pth")
+            )
+
+            if self.cfg.use_amp:
+                self.scaler.load_state_dict(
+                    torch.load(f"{self.cfg.resume}/scaler_state.pth")
+                )
+
+        self.lr_scheduler = LambdaLR(
+            self.optimizer,
+            linear_warmup_decay(
+                # math.ceil(num_training_steps * self.cfg.trainer.warmup_ratio),
+                num_training_steps * self.cfg.trainer.warmup_ratio,
+                num_training_steps,
+            ),
+        )
+
+        best_starting_score = False
+
+        if self.cfg.resume:
+            self.lr_scheduler.load_state_dict(
+                torch.load(f"{self.cfg.resume}/lr_scheduler_state.pth")
+            )
+            with open(f"{self.cfg.resume}/model_state.json", "r") as f:
+                loaded_data = json.load(f)
+                best_starting_score = loaded_data[self.cfg.trainer.best_model_metric]
+                print(
+                    f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
+                )
+
+        progress_bar = trange(num_training_steps, mininterval=self.cfg.tqdm_mininterval)
+        best_score = best_starting_score
+
+        ##### TRAINING LOOP STARTS HERE
+
         self.model.train()
         epoch = 0
         batch_i = 0
@@ -249,73 +314,6 @@ class Main:
                         remaining_patience = self.cfg.trainer.patience
                     else:
                         remaining_patience -= 1
-        return best_score
-
-    def _train(self, config={}):
-        self._init_model(
-            self.cfg.resume if (self.cfg.resume and not self.cfg.peft.enable) else None
-        )
-
-        if self.cfg.peft.enable:
-            if not self.cfg.resume:
-                self._wrap_peft()
-            else:
-                self.model.load_adapter(self.cfg.resume)
-
-        num_training_steps = int(
-            self.cfg.trainer.epochs
-            * len(self.dataloaders["train"])
-            / self.cfg.trainer.gradient_accumulation_steps
-        )
-
-        self.optimizer = create_optimizer(
-            self.model,
-            {
-                "lr": config.get("learning_rate", self.cfg.trainer.learning_rate),
-                "weight_decay": config.get(
-                    "weight_decay", self.cfg.trainer.weight_decay
-                ),
-            },
-        )
-
-        self.scaler = torch.cuda.amp.GradScaler(enabled=self.cfg.use_amp)
-
-        if self.cfg.resume:
-            self.optimizer.load_state_dict(
-                torch.load(f"{self.cfg.resume}/optimizer_state.pth")
-            )
-
-            if self.cfg.use_amp:
-                self.scaler.load_state_dict(
-                    torch.load(f"{self.cfg.resume}/scaler_state.pth")
-                )
-
-        self.lr_scheduler = LambdaLR(
-            self.optimizer,
-            linear_warmup_decay(
-                # math.ceil(num_training_steps * self.cfg.trainer.warmup_ratio),
-                num_training_steps * self.cfg.trainer.warmup_ratio,
-                num_training_steps,
-            ),
-        )
-
-        best_starting_score = False
-
-        if self.cfg.resume:
-            self.lr_scheduler.load_state_dict(
-                torch.load(f"{self.cfg.resume}/lr_scheduler_state.pth")
-            )
-            with open(f"{self.cfg.resume}/model_state.json", "r") as f:
-                loaded_data = json.load(f)
-                best_starting_score = loaded_data[self.cfg.trainer.best_model_metric]
-                print(
-                    f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
-                )
-
-        progress_bar = trange(num_training_steps, mininterval=self.cfg.tqdm_mininterval)
-        best_score = best_starting_score
-
-        best_score = self._training_loop(best_score, progress_bar)
 
         if model_save_condition(self.cfg, best_score, best_starting_score):
             save_model(self.cfg.working_dir)
@@ -418,6 +416,8 @@ class Main:
             "learning_rate": tune.quniform(
                 *self.cfg.ray.learning_rate, self.cfg.ray.learning_rate[0]
             ),
+            "loss_gamma": tune.uniform(*self.cfg.ray.loss_gamma),
+            "loss_alpha": tune.uniform(*self.cfg.ray.loss_alpha),
         }
         scheduler = tune.schedulers.ASHAScheduler()
 
