@@ -1,7 +1,7 @@
 data:
   train: en-fi-fr-sv
 model:
-  name: xlm-roberta-base
+  name: microsoft/mdeberta-v3-base
 trainer:
   learning_rate: 5e-5
 dataloader:
