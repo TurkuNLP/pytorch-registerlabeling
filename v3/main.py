@@ -226,6 +226,7 @@ class Main:
                 if batch_i % eval_step == 0:
                     print(f"Loss at step {batch_i} [E-{epoch}]: {running_loss}")
                     dev_metrics = self._evaluate()
+                    self.model.train()
                     pprint(dev_metrics)
                     wandb.log(
                         {
