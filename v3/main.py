@@ -246,6 +246,9 @@ class Main:
                 ):
                     outputs = self.model(**batch, return_dict=False)
 
+                    print(outputs)
+                    exit()
+
                     loss = BCEFocalLoss(
                         outputs,
                         labels,
