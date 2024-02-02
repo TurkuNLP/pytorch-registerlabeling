@@ -1,0 +1,9 @@
+data:
+  train: en-fi-fr-sv
+model:
+  name: xlm-roberta-base
+trainer:
+  learning_rate: 5e-5
+dataloader:
+  balancing_sampler: True
+  test_batch_size: 256
