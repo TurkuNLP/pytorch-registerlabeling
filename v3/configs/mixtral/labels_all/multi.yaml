@@ -5,11 +5,11 @@ model:
   low_cpu_mem_usage: True
 trainer:
   learning_rate: 1e-4
-  gradient_accumulation_steps: 4
+  gradient_accumulation_steps: 1
 peft:
   enable: True
 dataloader:
-  train_batch_size: 2
+  train_batch_size: 1
   dev_batch_size: 4
   test_batch_size: 4
   balancing_sampler: True
