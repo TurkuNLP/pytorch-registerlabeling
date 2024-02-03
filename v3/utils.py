@@ -62,7 +62,7 @@ def model_has_improved(metric, patience_metric, best_score):
 
 
 def model_save_condition(cfg, best_score, best_starting_score):
-    if cfg.model_save:
+    if cfg.model.save:
         if not cfg.resume:
             return True
         if (
