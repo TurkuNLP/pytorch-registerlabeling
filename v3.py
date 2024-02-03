@@ -107,6 +107,7 @@ if __name__ == "__main__":
     parser.add_argument("--torch_dtype", type=str, default="bfloat16")
     parser.add_argument("--set_pad_token", action="store_true")
     parser.add_argument("--use_amp", action="store_true")
+    parser.add_argument("--use_fa2", action="store_true")
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--gpus", type=int, default=1)
     parser.add_argument("--resume", type=str)
@@ -126,7 +127,7 @@ if __name__ == "__main__":
 
     cfg = parser.parse_args()
 
-    print(parser.dump(cfg))
+    print(parser.dump(cfg, format="yaml", skip_default=True))
 
     tempfile.tempdir = cfg.root_path + "/tmp"
 

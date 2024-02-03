@@ -144,6 +144,9 @@ class Main:
                 bnb_4bit_compute_dtype=torch.bfloat16,
             )
 
+        if self.cfg.use_fa2:
+            model_params["_attn_implementation"] = "flash_attention_2"
+
         model = model_cls.from_pretrained(
             self.cfg.model.name if not model_path else model_path, **model_params
         )
