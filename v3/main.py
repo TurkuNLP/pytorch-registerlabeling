@@ -4,7 +4,7 @@ from pprint import pprint
 
 import numpy as np
 import torch
-from peft import LoraConfig, TaskType, get_peft_model
+from peft import LoraConfig, TaskType, get_peft_model, prepare_model_for_kbit_training
 from ray import init as ray_init
 from ray import train, tune
 from ray.air.integrations.wandb import WandbLoggerCallback
@@ -121,7 +121,7 @@ class Main:
             lora_dropout=0.05,
             task_type=TaskType.SEQ_CLS,
         )
-
+        self.model = prepare_model_for_kbit_training(self.model)
         self.model = get_peft_model(self.model, self.lora_config)
         self.model.print_trainable_parameters()
 
@@ -335,13 +335,13 @@ class Main:
                     else:
                         remaining_patience -= 1
 
-        save_model = model_save_condition(self.cfg, best_score, best_starting_score)
+        do_save = model_save_condition(self.cfg, best_score, best_starting_score)
 
-        if save_model:
+        if do_save:
             save_model(self.cfg.working_dir)
 
         if self.cfg.predict:
-            self.predict(from_checkpoint=not save_model)
+            self.predict(from_checkpoint=not do_save)
 
     def _evaluate(self, split="dev", timer=False):
         self.model.eval()
