@@ -62,16 +62,19 @@ def model_has_improved(metric, patience_metric, best_score):
 
 
 def model_save_condition(cfg, best_score, best_starting_score):
-    return (
-        cfg.model.save
-        and best_score is not False
-        and (
-            not cfg.resume
-            or model_has_improved(
+    if cfg.model_save:
+        if not cfg.resume:
+            return True
+        if (
+            best_score is not False
+            and best_starting_score is not False
+            and model_has_improved(
                 cfg.trainer.best_model_metric, best_score, best_starting_score
             )
-        )
-    )
+        ):
+            return True
+
+    return False
 
 
 def get_eval_step(data_len, eval_step):

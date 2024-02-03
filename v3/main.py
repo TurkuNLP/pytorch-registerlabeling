@@ -335,11 +335,13 @@ class Main:
                     else:
                         remaining_patience -= 1
 
-        if model_save_condition(self.cfg, best_score, best_starting_score):
+        save_model = model_save_condition(self.cfg, best_score, best_starting_score)
+
+        if save_model:
             save_model(self.cfg.working_dir)
 
         if self.cfg.predict:
-            self.predict(from_checkpoint=True)
+            self.predict(from_checkpoint=not save_model)
 
     def _evaluate(self, split="dev", timer=False):
         self.model.eval()
