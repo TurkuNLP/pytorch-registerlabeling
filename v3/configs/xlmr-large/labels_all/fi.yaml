@@ -1,0 +1,6 @@
+data:
+  train: fi
+model:
+  name: xlm-roberta-large
+trainer:
+  learning_rate: 1e-4
