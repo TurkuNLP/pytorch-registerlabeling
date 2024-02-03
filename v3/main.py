@@ -174,7 +174,7 @@ class Main:
             else:
                 self.model.load_adapter(self.cfg.resume)
 
-        if self.cfg.set_pad_id:
+        if self.cfg.set_pad_token:
             self.model.config.pad_token_id = self.tokenizer.pad_token_id
 
         num_training_steps = int(
