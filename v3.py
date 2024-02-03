@@ -105,6 +105,7 @@ if __name__ == "__main__":
         choices=["document", "tokens_mean", "tokens_max"],
     )
     parser.add_argument("--torch_dtype", type=str, default="bfloat16")
+    parser.add_argument("--set_pad_token", action="store_true")
     parser.add_argument("--use_amp", action="store_true")
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--gpus", type=int, default=1)

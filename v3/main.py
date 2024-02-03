@@ -83,6 +83,9 @@ class Main:
             torch_dtype=cfg.torch_dtype if not cfg.use_amp else torch.float32,
         )
 
+        if cfg.set_pad_token:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
+
         # Prepare dataset
         self.dataset = preprocess_data(
             get_dataset(cfg),
@@ -170,6 +173,9 @@ class Main:
                 self._wrap_peft()
             else:
                 self.model.load_adapter(self.cfg.resume)
+
+        if self.cfg.set_pad_id:
+            self.model.config.pad_token_id = self.tokenizer.pad_token_id
 
         num_training_steps = int(
             self.cfg.trainer.epochs
