@@ -145,7 +145,7 @@ class Main:
             )
 
         if not (self.cfg.model.quantize or self.cfg.use_amp):
-            model_params["dtype"] = self.cfg.torch_dtype_torch
+            model_params["torch_dtype"] = self.cfg.torch_dtype_torch
 
         if self.cfg.use_fa2:
             model_params["_attn_implementation"] = "flash_attention_2"
