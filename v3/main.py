@@ -148,7 +148,7 @@ class Main:
             model_params["torch_dtype"] = self.cfg.torch_dtype_torch
 
         if self.cfg.use_fa2:
-            model_params["_attn_implementation"] = "flash_attention_2"
+            model_params["_attn_implementation"] = "flash"
 
         model = model_cls.from_pretrained(
             self.cfg.model.name if not model_path else model_path, **model_params
