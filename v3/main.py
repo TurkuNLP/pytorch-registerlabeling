@@ -144,6 +144,9 @@ class Main:
                 bnb_4bit_compute_dtype=torch.bfloat16,
             )
 
+        if not (self.cfg.model.quantize or self.cfg.model.use_amp):
+            model_params["dtype"] = self.cfg.torch_dtype_torch
+
         if self.cfg.use_fa2:
             model_params["_attn_implementation"] = "flash_attention_2"
 
