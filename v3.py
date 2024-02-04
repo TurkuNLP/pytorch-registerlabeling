@@ -97,6 +97,7 @@ if __name__ == "__main__":
             "extract_doc_embeddings",
             "extract_st_doc_embeddings",
             "ray_tune",
+            "setfit_train",
         ],
     )
     parser.add_argument(

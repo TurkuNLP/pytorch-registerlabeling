@@ -49,6 +49,8 @@ from .utils import (
     get_eval_step,
 )
 
+from .setfit_trainer import setfit_train
+
 
 class Main:
     def __init__(self, cfg):
@@ -569,3 +571,6 @@ class Main:
         )
 
         extract_st_doc_embeddings(self.model, self.dataset, path)
+
+    def setfit_train(self):
+        setfit_train(self.dataset)
