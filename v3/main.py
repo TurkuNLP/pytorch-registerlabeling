@@ -566,4 +566,4 @@ class Main:
         extract_st_doc_embeddings(self.model, self.dataset, path)
 
     def setfit_train(self):
-        setfit_train(self.dataset)
+        setfit_train(self.dataset, self.cfg.label_scheme)
