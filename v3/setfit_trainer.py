@@ -12,6 +12,9 @@ def setfit_train(dataset):
     dev_dataset = sample_dataset(
         dataset["dev"], label_column="label_text", num_samples=4
     )
+    test_dataset = sample_dataset(
+        dataset["test"], label_column="label_text", num_samples=4
+    )
 
     model = SetFitModel.from_pretrained(model_id, multi_target_strategy="multi-output")
 
@@ -35,6 +38,6 @@ def setfit_train(dataset):
 
     trainer.train()
 
-    metrics = trainer.evaluate()
+    metrics = trainer.evaluate(test_dataset)
 
     print(metrics)
