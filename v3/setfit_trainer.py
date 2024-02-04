@@ -13,6 +13,7 @@ def setfit_train(dataset):
         evaluation_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
+        report_to=None,
     )
 
     trainer = Trainer(
