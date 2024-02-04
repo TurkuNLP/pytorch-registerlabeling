@@ -259,7 +259,7 @@ class Main:
                     dtype=self.cfg.torch_dtype_torch,
                     enabled=self.cfg.use_amp,
                 ):
-                    outputs = self.model(**batch, return_dict=True)
+                    outputs = self.model(**batch)
 
                     # if type(outputs) is tuple:
                     #    outputs = outputs[0]
