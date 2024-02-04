@@ -11,7 +11,7 @@ def setfit_train(dataset):
         model=model,
         train_dataset=dataset["train"],
         eval_dataset=dataset["dev"],
-        loss_class=CosineSimilarityLoss,
+        # loss_class=CosineSimilarityLoss,
         num_iterations=20,
         column_mapping={"text": "text", "labels": "label"},
     )
