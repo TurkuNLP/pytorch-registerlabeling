@@ -8,8 +8,8 @@ def setfit_train(dataset):
     model = SetFitModel.from_pretrained(model_id, multi_target_strategy="one-vs-rest")
 
     args = TrainingArguments(
-        batch_size=16,
-        num_epochs=4,
+        batch_size=64,
+        num_epochs=1,
         evaluation_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
