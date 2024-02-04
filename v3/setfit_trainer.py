@@ -1,5 +1,5 @@
 from sentence_transformers.losses import CosineSimilarityLoss
-from setfit import SetFitModel, Trainer
+from setfit import SetFitModel, Trainer, TrainingArguments
 
 model_id = "sentence-transformers/distiluse-base-multilingual-cased-v2"
 
@@ -7,12 +7,20 @@ model_id = "sentence-transformers/distiluse-base-multilingual-cased-v2"
 def setfit_train(dataset):
     model = SetFitModel.from_pretrained(model_id, multi_target_strategy="one-vs-rest")
 
+    args = TrainingArguments(
+        batch_size=16,
+        num_epochs=4,
+        evaluation_strategy="epoch",
+        save_strategy="epoch",
+        load_best_model_at_end=True,
+    )
+
     trainer = Trainer(
         model=model,
         train_dataset=dataset["train"],
         eval_dataset=dataset["dev"],
-        # loss_class=CosineSimilarityLoss,
-        num_iterations=20,
+        args=args,
+        metric="accuracy",
         column_mapping={"text": "text", "labels": "label"},
     )
 
