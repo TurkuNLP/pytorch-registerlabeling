@@ -89,14 +89,7 @@ class Main:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
         # Prepare dataset
-        self.dataset = preprocess_data(
-            get_dataset(cfg),
-            self.tokenizer,
-            cfg.seed,
-            cfg.data.max_length,
-            cfg.data.remove_unused_cols,
-            cfg.data.no_dynamic_padding,
-        )
+        self.dataset = preprocess_data(get_dataset(cfg), self.tokenizer, cfg)
 
         # Init dataloaders
         self.dataloaders = init_dataloaders(
