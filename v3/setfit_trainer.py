@@ -9,8 +9,11 @@ def setfit_train(dataset):
     train_dataset = sample_dataset(
         dataset["train"], label_column="label_text", num_samples=8
     )
+    dev_dataset = sample_dataset(
+        dataset["dev"], label_column="label_text", num_samples=8
+    )
 
-    model = SetFitModel.from_pretrained(model_id, multi_target_strategy="one-vs-rest")
+    model = SetFitModel.from_pretrained(model_id, multi_target_strategy="multi-output")
 
     args = TrainingArguments(
         batch_size=64,
@@ -24,7 +27,7 @@ def setfit_train(dataset):
     trainer = Trainer(
         model=model,
         train_dataset=train_dataset,
-        eval_dataset=dataset["dev"],
+        eval_dataset=dev_dataset,
         args=args,
         metric="accuracy",
         column_mapping={"text": "text", "labels": "label"},
