@@ -55,7 +55,7 @@ def setfit_train(dataset, label_scheme):
     model = SetFitModel.from_pretrained(model_id, multi_target_strategy="multi-output")
 
     args = TrainingArguments(
-        batch_size=16,
+        batch_size=64,
         evaluation_strategy="epoch",
         # eval_steps=1,
         # max_steps=1,
