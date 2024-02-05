@@ -16,6 +16,7 @@ from torch.nn.parallel import DataParallel
 from torch.optim.lr_scheduler import LambdaLR
 from tqdm import trange
 from transformers import (
+    AutoModel,
     AutoModelForSequenceClassification,
     AutoTokenizer,
     BitsAndBytesConfig,
@@ -138,6 +139,8 @@ class Main:
         }
 
         model_cls = AutoModelForSequenceClassification
+        if "e5" in self.cfg.model.name:
+            model_cls = AutoModel
         if self.cfg.model.roberta_pooled:
             model_cls = PooledRobertaForSequenceClassification
             model_params["pooling"] = self.cfg.model.roberta_pooled
