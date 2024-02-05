@@ -42,7 +42,7 @@ def setfit_train(dataset, label_scheme):
         }
 
     train_dataset = sample_dataset(
-        dataset["train"], label_column="label_text", num_samples=16
+        dataset["train"], label_column="label_text", num_samples=8
     )
     dev_dataset = sample_dataset(
         dataset["dev"], label_column="label_text", num_samples=100
@@ -57,10 +57,9 @@ def setfit_train(dataset, label_scheme):
     args = TrainingArguments(
         batch_size=16,
         evaluation_strategy="epoch",
-
-        #eval_steps=1,
-        #max_steps=1,
-        num_epochs=1
+        # eval_steps=1,
+        # max_steps=1,
+        num_epochs=1,
         # evaluation_strategy="steps",
         save_strategy="epoch",
         # load_best_model_at_end=True,
