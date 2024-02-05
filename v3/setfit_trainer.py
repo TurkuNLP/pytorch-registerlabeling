@@ -56,7 +56,6 @@ def setfit_train(dataset, label_scheme):
 
     args = TrainingArguments(
         batch_size=16,
-        num_steps=1,
         evaluation_strategy="steps",
         eval_steps=1,
         # evaluation_strategy="steps",
