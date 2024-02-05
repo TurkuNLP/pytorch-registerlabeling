@@ -117,5 +117,8 @@ def average_pool(
 
 
 def convert_embeddings_to_input(outputs, batch):
-    #embeddings = average_pool(outputs.last_hidden_state, batch["attention_mask"])
+    # embeddings = average_pool(outputs.last_hidden_state, batch["attention_mask"])
+    print(outputs.last_hidden_state)
+    print(outputs.last_hidden_state.shape)
+    exit()
     return {"input_ids": outputs.last_hidden_state}
