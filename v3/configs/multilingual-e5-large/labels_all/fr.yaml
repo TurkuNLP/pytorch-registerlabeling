@@ -1,4 +1,5 @@
 train_using_embeddings: 1024
+torch_dtype: float
 data:
   train: fr
   no_dynamic_padding: True
