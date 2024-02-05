@@ -101,6 +101,7 @@ class Cnf:
 class ClassificationModel(nn.Module):
     def __init__(self, input_size=768, num_labels=25):
         super(ClassificationModel, self).__init__()
+        """
         self.config = Cnf(num_labels)
         self.fc1 = nn.Linear(input_size, 512)
         self.bn1 = nn.BatchNorm1d(512)
@@ -109,8 +110,11 @@ class ClassificationModel(nn.Module):
         self.fc3 = nn.Linear(256, num_labels)
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.5)
+        """
+        self.classifier = nn.Linear(input_size, num_labels)
 
     def forward(self, input_ids, labels=None):
+        """
         x = self.fc1(input_ids)
         x = self.bn1(x)  # Applying batch normalization
         x = self.relu(x)
@@ -122,4 +126,6 @@ class ClassificationModel(nn.Module):
         x = self.dropout(x)
 
         x = self.fc3(x)
+        """
+        x = self.classifier(input_ids)
         return DotDict({"logits": x})
