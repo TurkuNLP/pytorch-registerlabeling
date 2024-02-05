@@ -122,4 +122,4 @@ class ClassificationModel(nn.Module):
         x = self.dropout(x)
 
         x = self.fc3(x)
-        return {"logits": x}
+        return DotDict({"logits": x})
