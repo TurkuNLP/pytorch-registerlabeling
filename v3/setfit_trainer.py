@@ -58,6 +58,7 @@ def setfit_train(dataset, label_scheme):
         batch_size=16,
         evaluation_strategy="steps",
         eval_steps=1,
+        max_steps=1,
         # evaluation_strategy="steps",
         # save_strategy="epoch",
         # load_best_model_at_end=True,
