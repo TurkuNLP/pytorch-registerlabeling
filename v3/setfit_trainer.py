@@ -44,7 +44,7 @@ def setfit_train(dataset, label_scheme):
     train_dataset = sample_dataset(
         dataset["train"], label_column="label_text", num_samples=1
     )
-    devn_dataset = sample_dataset(
+    dev_dataset = sample_dataset(
         dataset["dev"], label_column="label_text", num_samples=1
     )
 
