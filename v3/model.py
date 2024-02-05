@@ -99,33 +99,22 @@ class Cnf:
 
 
 class ClassificationModel(nn.Module):
-    def __init__(self, input_size=768, num_labels=25):
+    def __init__(
+        self, input_size=768, num_labels=25, hidden_size=512, dropout_prob=0.1
+    ):
         super(ClassificationModel, self).__init__()
-        """
-        self.config = Cnf(num_labels)
-        self.fc1 = nn.Linear(input_size, 512)
-        self.bn1 = nn.BatchNorm1d(512)
-        self.fc2 = nn.Linear(512, 256)
-        self.bn2 = nn.BatchNorm1d(256)
-        self.fc3 = nn.Linear(256, num_labels)
-        self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(0.5)
-        """
-        self.classifier = nn.Linear(input_size, num_labels)
+        # First linear layer maps from input size to hidden size
+        self.fc1 = nn.Linear(input_size, hidden_size)
+        # Dropout layer with dropout probability
+        self.dropout = nn.Dropout(dropout_prob)
+        # Second linear layer maps from hidden size to number of labels
+        self.fc2 = nn.Linear(hidden_size, num_labels)
 
     def forward(self, input_ids, labels=None):
-        """
-        x = self.fc1(input_ids)
-        x = self.bn1(x)  # Applying batch normalization
-        x = self.relu(x)
+        # Pass input through the first linear layer and then apply ReLU activation
+        x = F.relu(self.fc1(input_ids))
+        # Apply dropout
         x = self.dropout(x)
-
-        x = self.fc2(x)
-        x = self.bn2(x)  # Applying batch normalization
-        x = self.relu(x)
-        x = self.dropout(x)
-
-        x = self.fc3(x)
-        """
-        x = self.classifier(input_ids)
-        return DotDict({"logits": x})
+        # Pass the result through the second linear layer to get logits
+        logits = self.fc2(x)
+        return DotDict({"logits": logits})
