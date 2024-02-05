@@ -2,7 +2,7 @@ train_using_embeddings: 1024
 data:
   train: fr
   no_dynamic_padding: True
-  prefix: "query: "
+  text_prefix: "query: "
 model:
   name: intfloat/multilingual-e5-large
 trainer:
