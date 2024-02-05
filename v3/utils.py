@@ -3,6 +3,7 @@ from datetime import datetime
 from pydoc import locate
 
 import numpy as np
+import torch
 from torch import cuda
 
 _print = print
@@ -106,3 +107,15 @@ def log_model_mean_weights(model):
     std_weights = np.array([np.std(weight_tensor) for weight_tensor in weights_np])
 
     print(f"Mean weights {mean_weights:.4f} ({std_weights:.4f})")
+
+
+def average_pool(
+    last_hidden_states: torch.Tensor, attention_mask: torch.Tensor
+) -> torch.Tensor:
+    last_hidden = last_hidden_states.masked_fill(~attention_mask[..., None].bool(), 0.0)
+    return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
+
+
+def convert_embeddings_to_input(outputs, batch):
+    embeddings = average_pool(outputs.last_hidden_state, batch["attention_mask"])
+    return {"input_ids": embeddings}

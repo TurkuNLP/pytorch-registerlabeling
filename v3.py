@@ -114,6 +114,7 @@ if __name__ == "__main__":
     parser.add_argument("--resume", type=str)
     parser.add_argument("--no_tf32", action="store_true")
     parser.add_argument("--bf16", action="store_true")
+    parser.add_argument("--train_using_embeddings", type=int, default=0)
     parser.add_argument("--root_path", default="/scratch/project_2009199")
     parser.add_argument("--tqdm_mininterval", type=float, default=0.5)
     parser.add_argument("--predict", type=bool, default=True)

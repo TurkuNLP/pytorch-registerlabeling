@@ -25,11 +25,14 @@ import wandb
 
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
-from .embeddings import extract_doc_embeddings, extract_st_doc_embeddings
+from .embeddings import (
+    extract_doc_embeddings,
+    extract_st_doc_embeddings,
+)
 from .labels import get_label_scheme
 from .loss import BCEFocalLoss
 from .metrics import compute_metrics
-from .model import PooledRobertaForSequenceClassification
+from .model import PooledRobertaForSequenceClassification, ClassificationModel
 from .optimizer import create_optimizer
 from .save import (
     init_ray_dir,
@@ -47,6 +50,7 @@ from .utils import (
     model_has_improved,
     model_save_condition,
     get_eval_step,
+    convert_embeddings_to_input,
 )
 
 from .setfit_trainer import setfit_train
@@ -97,6 +101,14 @@ class Main:
         )
 
         torch.set_default_device(self.cfg.device)
+
+        # Using custom embeddings
+
+        if self.cfg.train_using_embeddings:
+            self.classification_model = ClassificationModel(
+                input_size=self.cfg.train_using_embeddings,
+                num_labels=self.cfg.num_labels,
+            )
 
         # Run
         getattr(self, cfg.method)()
@@ -255,6 +267,11 @@ class Main:
                     enabled=self.cfg.use_amp,
                 ):
                     outputs = self.model(**batch)
+
+                    if self.cfg.train_using_embeddings:
+                        outputs = self.classification_model(
+                            **convert_embeddings_to_input(outputs, batch)
+                        )
 
                     # if type(outputs) is tuple:
                     #    outputs = outputs[0]
@@ -558,6 +575,14 @@ class Main:
         )
 
     def extract_st_doc_embeddings(self):
+        path = self.cfg.root_path
+        self.model = SentenceTransformer(
+            "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+        )
+
+        extract_st_doc_embeddings(self.model, self.dataset, path)
+
+    def extract_e5_doc_embeddings(self):
         path = self.cfg.root_path
         self.model = SentenceTransformer(
             "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"

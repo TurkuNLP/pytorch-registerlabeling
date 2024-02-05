@@ -1,0 +1,8 @@
+train_using_embeddings: 1024
+data:
+  train: fr
+  no_dynamic_padding: True
+model:
+  name: intfloat/multilingual-e5-large
+trainer:
+  learning_rate: 5e-5
