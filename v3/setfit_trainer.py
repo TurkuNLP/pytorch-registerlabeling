@@ -52,14 +52,14 @@ def setfit_train(dataset, label_scheme):
         dataset["dev"], label_column="label_text", num_samples=100
     )
 
-    model = SetFitModel.from_pretrained(model_id, multi_target_strategy="multi-output")
+    model = SetFitModel.from_pretrained(model_id, multi_target_strategy="one-vs-rest")
 
     args = TrainingArguments(
-        batch_size=64,
+        batch_size=16,
         evaluation_strategy="epoch",
         # eval_steps=1,
         # max_steps=1,
-        num_epochs=1,
+        num_epochs=3,
         # evaluation_strategy="steps",
         save_strategy="epoch",
         # load_best_model_at_end=True,
