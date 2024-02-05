@@ -43,7 +43,7 @@ language_names = {
 }
 
 
-def split_gen(split, languages, label_cfg, concat_small):
+def split_gen(split, languages, label_cfg, concat_small, prefix=""):
     row_id = 0
     for l in languages.split("-"):
         concat = concat_small and l in small_languages
@@ -64,7 +64,7 @@ def split_gen(split, languages, label_cfg, concat_small):
                             "label": label,
                             "label_text": label_text,
                             "language": "small" if concat else l,
-                            "text": text,
+                            "text": prefix + text,
                             "id": str(row_id),
                             "split": split,
                             "length": len(text),
@@ -91,6 +91,7 @@ def get_dataset(cfg):
             "languages": target,
             "label_cfg": cfg.data.labels,
             "concat_small": cfg.data.concat_small,
+            "prefix": cfg.data.text_prefix,
         },
         cache_dir=cfg.working_dir_root + "/tokens_cache",
     )

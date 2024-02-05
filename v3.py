@@ -32,6 +32,7 @@ class Data:
     concat_small: bool = False
     remove_unused_cols: bool = True
     no_dynamic_padding: bool = False
+    text_prefix: str = ""
 
 
 @dataclass
