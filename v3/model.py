@@ -99,6 +99,16 @@ class Cnf:
         return json.dumps(vars.self)
 
 
+class LogisticRegressionModel(nn.Module):
+    def __init__(self, input_size=768, num_labels=25):
+        super(ClassificationModel, self).__init__()
+        self.linear = nn.Linear(input_size, num_labels)
+
+    def forward(self, input_ids, labels=None):
+        logits = self.linear(input_ids)
+        return DotDict({"logits": logits})
+
+
 class ClassificationModel(nn.Module):
     def __init__(
         self, input_size=768, num_labels=25, hidden_size=512, dropout_prob=0.1

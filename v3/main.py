@@ -33,7 +33,7 @@ from .embeddings import (
 from .labels import get_label_scheme
 from .loss import BCEFocalLoss
 from .metrics import compute_metrics
-from .model import PooledRobertaForSequenceClassification, ClassificationModel
+from .model import PooledRobertaForSequenceClassification, LogisticRegressionModel
 from .optimizer import create_optimizer
 from .save import (
     init_ray_dir,
@@ -106,7 +106,7 @@ class Main:
         # Using custom embeddings
 
         if self.cfg.train_using_embeddings:
-            self.classification_model = ClassificationModel(
+            self.classification_model = LogisticRegressionModel(
                 input_size=self.cfg.train_using_embeddings,
                 num_labels=self.cfg.num_labels,
             )
