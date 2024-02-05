@@ -380,6 +380,10 @@ class Main:
                 if timer:
                     starter.record()
                 outputs = self.model(**batch)
+                if self.cfg.train_using_embeddings:
+                    outputs = self.classification_model(
+                        **convert_embeddings_to_input(outputs, batch)
+                    )
                 if timer:
                     ender.record()
                     torch.cuda.synchronize()
