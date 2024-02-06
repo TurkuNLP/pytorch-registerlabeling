@@ -10,6 +10,7 @@ wandb
 peft
 bitsandbytes
 sentencepiece
+sentence-transformers
 python-dotenv
 wheel
 setuptools
