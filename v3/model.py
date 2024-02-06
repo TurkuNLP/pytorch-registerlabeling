@@ -101,7 +101,7 @@ class Cnf:
 
 class LogisticRegressionModel(nn.Module):
     def __init__(self, input_size=768, num_labels=25):
-        super(ClassificationModel, self).__init__()
+        super(LogisticRegressionModel, self).__init__()
         self.linear = nn.Linear(input_size, num_labels)
 
     def forward(self, input_ids, labels=None):
