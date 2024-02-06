@@ -1,8 +1,10 @@
 datasets
 scikit-learn
 torch
-transformers==4.34.0
-ray[tune]==2.6.3
+transformers
+ray
+google
+protobuf
 accelerate
 wandb
 peft
@@ -12,4 +14,5 @@ python-dotenv
 wheel
 setuptools
 matplotlib
+jsonargparse
 # FLASH_ATTENTION_SKIP_CUDA_BUILD=TRUE pip install flash-attn --no-build-isolation

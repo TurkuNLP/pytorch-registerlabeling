@@ -5,12 +5,6 @@ from pprint import pprint
 import numpy as np
 import torch
 from peft import LoraConfig, TaskType, get_peft_model, prepare_model_for_kbit_training
-from ray import init as ray_init
-from ray import train, tune
-from ray.air.integrations.wandb import WandbLoggerCallback
-from ray.util import inspect_serializability
-from ray.train import RunConfig
-from ray.tune.search.hyperopt import HyperOptSearch
 from sentence_transformers import SentenceTransformer
 from torch.nn.parallel import DataParallel
 from torch.optim.lr_scheduler import LambdaLR
@@ -111,8 +105,19 @@ class Main:
                 num_labels=self.cfg.num_labels,
             )
 
+        self.conditional_imports()
+
         # Run
         getattr(self, cfg.method)()
+
+    def conditional_imports(self):
+        if self.cfg.method == "ray_tune":
+            from ray import init as ray_init
+            from ray import train, tune
+            from ray.air.integrations.wandb import WandbLoggerCallback
+            from ray.util import inspect_serializability
+            from ray.train import RunConfig
+            from ray.tune.search.hyperopt import HyperOptSearch
 
     def _wrap_peft(self):
         print("Wrapping PEFT model")
