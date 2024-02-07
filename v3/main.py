@@ -289,7 +289,10 @@ class Main:
                     if self.cfg.train_using_embeddings:
                         outputs = self.classification_model(
                             **convert_embeddings_to_input(
-                                outputs, batch, self.cfg.model.sentence_transformer
+                                outputs,
+                                batch,
+                                self.cfg.model.sentence_transformer,
+                                self.cfg.device,
                             )
                         )
 
@@ -412,7 +415,10 @@ class Main:
                 if self.cfg.train_using_embeddings:
                     outputs = self.classification_model(
                         **convert_embeddings_to_input(
-                            outputs, batch, self.cfg.model.sentence_transformer
+                            outputs,
+                            batch,
+                            self.cfg.model.sentence_transformer,
+                            self.cfg.device,
                         )
                     )
                 if timer:
