@@ -65,7 +65,7 @@ def setfit_train(dataset, label_scheme):
     dev_dataset = dataset["dev"].rename_column("labels", "label")
     test_dataset = dataset["test"].rename_column("labels", "label")
 
-    train_dataset = few_shot(train_dataset, 8)
+    train_dataset = few_shot(train_dataset, 16)
     dev_dataset = dev_dataset.select(range(100))
     test_dataset = test_dataset
 
