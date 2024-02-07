@@ -32,7 +32,7 @@ def init_split_dataloader(
         if sentence_transformer:
             return {
                 "texts": [x["text"] for x in batch],
-                "labels": torch.stack([x["labels"] for x in batch]),
+                "labels": torch.stack([x["labels"] for x in batch]).to(device),
             }
         max_length = max(len(example["input_ids"]) for example in batch)
         # Pad sequences dynamically to the maximum length in the batch
