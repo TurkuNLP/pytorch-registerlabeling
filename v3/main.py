@@ -272,7 +272,9 @@ class Main:
                 labels = batch.pop("labels")
 
                 if self.cfg.model.sentence_transformer:
-                    labels = [torch.Tensor(x).to(self.cfg.device) for x in labels]
+                    labels = torch.Tensor(
+                        [torch.Tensor(x).to(self.cfg.device) for x in labels]
+                    )
 
                 with torch.autocast(
                     device_type=self.cfg.device_str,
