@@ -89,14 +89,19 @@ class AttDict(dict):
 
 
 class Cnf:
-    def __init__(self, num_labels):
-        self.num_labels = num_labels
+    def __init__(self, output_size):
+        self.num_labels = output_size
 
     def to_dict(self):
         return vars(self)
 
     def to_json_string(self):
-        return json.dumps(vars.self)
+        config_dict = self.to_dict()
+        return json.dumps(config_dict, indent=2, sort_keys=True) + "\n"
+
+    def to_json_file(self, json_file_path):
+        with open(json_file_path, "w", encoding="utf-8") as writer:
+            writer.write(self.to_json_string())
 
 
 class LogisticRegressionModel(nn.Module):
