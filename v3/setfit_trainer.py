@@ -26,6 +26,8 @@ def few_shot(dataset, num):
         .reset_index(drop=True)
     )
 
+    print(pd_dataset)
+
     dataset = Dataset.from_pandas(pd_dataset)
 
     return dataset
