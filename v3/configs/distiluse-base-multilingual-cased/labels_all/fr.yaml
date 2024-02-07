@@ -1,4 +1,4 @@
-train_using_embeddings: 512
+train_using_embeddings: 768
 data:
   train: fr
 model:
