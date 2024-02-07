@@ -89,8 +89,8 @@ class AttDict(dict):
 
 
 class Cnf:
-    def __init__(self, output_size):
-        self.num_labels = output_size
+    def __init__(self, num_labels):
+        self.num_labels = num_labels
 
     def to_dict(self):
         return vars(self)
@@ -102,6 +102,7 @@ class Cnf:
 class LogisticRegressionModel(nn.Module):
     def __init__(self, input_size=768, num_labels=25):
         super(LogisticRegressionModel, self).__init__()
+        self.config = Cnf(num_labels)
         self.linear = nn.Linear(input_size, num_labels)
 
     def forward(self, input_ids, labels=None):
