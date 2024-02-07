@@ -168,8 +168,7 @@ class Main:
                 self.classification_model.load_state_dict(
                     torch.load(f"{model_path}/model_state.pth")
                 )
-                # DEBUG
-                print(self.classification_model.state_dict())
+
         else:
             model = model_cls.from_pretrained(
                 self.cfg.model.name if not model_path else model_path, **model_params
@@ -211,7 +210,11 @@ class Main:
         )
 
         self.optimizer = create_optimizer(
-            self.model,
+            (
+                self.model
+                if not self.cfg.train_using_embeddings
+                else self.classification_model
+            ),
             {
                 "lr": config.get("learning_rate", self.cfg.trainer.learning_rate),
                 "weight_decay": config.get(
@@ -305,7 +308,12 @@ class Main:
                 if batch_i % self.cfg.trainer.gradient_accumulation_steps == 0:
                     if self.cfg.trainer.max_grad_norm > 0:
                         torch.nn.utils.clip_grad_norm_(
-                            self.model.parameters(), self.cfg.trainer.max_grad_norm
+                            (
+                                self.model.parameters()
+                                if not self.cfg.train_using_embeddings
+                                else self.classification_model.parameters
+                            ),
+                            self.cfg.trainer.max_grad_norm,
                         )
                     self.scaler.step(self.optimizer)
                     self.scaler.update()
