@@ -168,6 +168,8 @@ class Main:
                 self.classification_model.load_state_dict(
                     torch.load(f"{model_path}/model_state.pth")
                 )
+                # DEBUG
+                print(self.classification_model.state_dict())
         else:
             model = model_cls.from_pretrained(
                 self.cfg.model.name if not model_path else model_path, **model_params
