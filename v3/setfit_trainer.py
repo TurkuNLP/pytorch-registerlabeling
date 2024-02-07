@@ -69,10 +69,16 @@ def setfit_train(dataset, label_scheme):
     dev_dataset = dev_dataset.select(range(100))
     test_dataset = test_dataset
 
-    model = SetFitModel.from_pretrained(model_id, multi_target_strategy="multi-output")
+    # model = SetFitModel.from_pretrained(model_id, multi_target_strategy="multi-output")
+    model = SetFitModel.from_pretrained(
+        model_id,
+        multi_target_strategy="one-vs-rest",
+        use_differentiable_head=True,
+        head_params={"out_features": len(label_scheme)},
+    )
 
     args = TrainingArguments(
-        #batch_size=16,
+        # batch_size=16,
         evaluation_strategy="steps",
         eval_steps=500,
         num_epochs=1,
