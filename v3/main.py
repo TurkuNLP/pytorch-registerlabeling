@@ -107,14 +107,6 @@ class Main:
 
         torch.set_default_device(self.cfg.device)
 
-        # Using custom embeddings
-
-        if self.cfg.train_using_embeddings:
-            self.classification_model = LogisticRegressionModel(
-                input_size=self.cfg.train_using_embeddings,
-                num_labels=self.cfg.num_labels,
-            )
-
         # Run
         getattr(self, cfg.method)()
 
@@ -172,6 +164,16 @@ class Main:
             model = model_cls.from_pretrained(
                 self.cfg.model.name if not model_path else model_path, **model_params
             )
+
+        # Using custom embeddings
+        if self.cfg.train_using_embeddings:
+            self.classification_model = LogisticRegressionModel(
+                input_size=self.cfg.train_using_embeddings,
+                num_labels=self.cfg.num_labels,
+            )
+
+            if model_path:
+                model.load_state_dict(torch.load(f"{model_path}/model_state.pth"))
 
         if self.cfg.gpus > 1:
             model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
@@ -359,14 +361,14 @@ class Main:
                             self.cfg,
                             (
                                 self.model
-                                if not self.cfg.model.sentence_transformer
+                                if not self.cfg.train_using_embeddings
                                 else self.classification_model
                             ),
                             self.optimizer,
                             self.lr_scheduler,
                             self.scaler,
                             dev_metrics,
-                            self.cfg.model.sentence_transformer,
+                            self.cfg.train_using_embeddings,
                         )
                         remaining_patience = self.cfg.trainer.patience
                     else:
@@ -376,6 +378,7 @@ class Main:
 
         if do_save:
             save_model(self.cfg.working_dir)
+            print(f"Model saved to {self.cfg.working_dir}")
 
         if self.cfg.predict:
             self.predict(from_checkpoint=not do_save)

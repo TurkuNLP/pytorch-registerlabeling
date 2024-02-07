@@ -10,11 +10,11 @@ from .labels import decode_binary_labels
 
 
 def save_checkpoint(
-    cfg, model, optimizer, lr_scheduler, scaler, dev_metrics, sentence_transformer
+    cfg, model, optimizer, lr_scheduler, scaler, dev_metrics, custom_model
 ):
     checkpoint_dir = f"{cfg.working_dir}/best_checkpoint"
     os.makedirs(cfg.working_dir, exist_ok=True)
-    if not sentence_transformer:
+    if not custom_model:
         if cfg.gpus > 1:
             model.module.save_pretrained(checkpoint_dir)
         else:
