@@ -151,22 +151,17 @@ class Main:
         if self.cfg.use_fa2:
             model_params["attn_implementation"] = "flash_attention_2"
 
-        # Using custom embeddings
         if self.cfg.train_using_embeddings:
-            model = model_cls.from_pretrained(self.cfg.model.name)
             self.classification_head = LogisticRegressionModel(
                 input_size=self.cfg.train_using_embeddings,
                 num_labels=self.cfg.num_labels,
                 torch_dtype=self.cfg.torch_dtype_torch,
             ).to(self.cfg.torch_dtype_torch)
 
-            if model_path:
-                self.model.load_state_dict(torch.load(f"{model_path}/model_state.pth"))
-
-        else:
-            model = model_cls.from_pretrained(
-                self.cfg.model.name if not model_path else model_path, **model_params
-            )
+          
+        model = model_cls.from_pretrained(
+            self.cfg.model.name if not model_path else model_path, **model_params
+        )
 
         if self.cfg.gpus > 1:
             model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
