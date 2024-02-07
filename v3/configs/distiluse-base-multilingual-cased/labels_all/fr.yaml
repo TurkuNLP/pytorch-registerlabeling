@@ -3,6 +3,5 @@ data:
   train: fr
 model:
   name: sentence-transformers/distiluse-base-multilingual-cased-v2
-  sentence_transformer: True
 trainer:
   learning_rate: 5e-5
