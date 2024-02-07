@@ -51,12 +51,7 @@ def init_split_dataloader(
                     )
 
         return {
-            key: (
-                torch.stack([example[key] for example in batch])
-                if key in ["input_ids", "attention_mask", "token_type_ids"]
-                else [example[key] for example in batch]
-            )
-            for key in batch[0]
+            key: (torch.stack([example[key] for example in batch])) for key in batch[0]
         }
 
     language_data = [sample["language"] for sample in dataset]
