@@ -1,7 +1,6 @@
 train_using_embeddings: 768
 data:
   train: fr
-  remove_unused_cols: False
 model:
   name: kev216/sentence-embedding-LaBSE
 trainer:
