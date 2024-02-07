@@ -157,6 +157,7 @@ class Main:
             self.classification_model = LogisticRegressionModel(
                 input_size=self.cfg.train_using_embeddings,
                 num_labels=self.cfg.num_labels,
+                torch_dtype=self.cfg.torch_dtype_torch,
             )
 
             if model_path:

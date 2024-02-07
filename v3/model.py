@@ -105,12 +105,13 @@ class Cnf:
 
 
 class LogisticRegressionModel(nn.Module):
-    def __init__(self, input_size=768, num_labels=25):
+    def __init__(self, input_size=768, num_labels=25, torch_dtype=torch.float32):
         super(LogisticRegressionModel, self).__init__()
         self.config = Cnf(num_labels)
         self.linear = nn.Linear(input_size, num_labels)
 
     def forward(self, input_ids, labels=None):
+        input_ids = input_ids.to(self.torch_dtype)
         logits = self.linear(input_ids)
         return DotDict({"logits": logits})
 
