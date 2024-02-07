@@ -41,19 +41,21 @@ def setfit_train(dataset, label_scheme):
             f"accuracy": accuracy,
         }
 
-    train_dataset = sample_dataset(
-        dataset["train"], label_column="label_text", num_samples=8
-    )
-    dev_dataset = dataset["dev"]
-    test_dataset = dataset["test"]
+    train_dataset = dataset["train"].rename_column("label", "labels")
+    dev_dataset = dataset["dev"].rename_column("label", "labels")
+    test_dataset = dataset["test"].rename_column("label", "labels")
+
+    train_dataset = sample_dataset(train_dataset, label_column="labels", num_samples=8)
+    dev_dataset = dev_dataset.select(range(100))
+    test_dataset = test_dataset.select(range(100))
 
     model = SetFitModel.from_pretrained(model_id, multi_target_strategy="multi-output")
 
     args = TrainingArguments(
         batch_size=16,
         evaluation_strategy="steps",
-        eval_steps=500,
-        num_epochs=3,
+        eval_steps=20,
+        num_epochs=1,
         save_strategy="epoch",
         # load_best_model_at_end=True,
         report_to="none",
