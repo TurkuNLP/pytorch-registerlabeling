@@ -357,11 +357,16 @@ class Main:
                         best_score = patience_metric
                         save_checkpoint(
                             self.cfg,
-                            self.model,
+                            (
+                                self.model
+                                if not self.cfg.model.sentence_transformer
+                                else self.classification_model
+                            ),
                             self.optimizer,
                             self.lr_scheduler,
                             self.scaler,
                             dev_metrics,
+                            self.cfg.model.sentence_transformer,
                         )
                         remaining_patience = self.cfg.trainer.patience
                     else:

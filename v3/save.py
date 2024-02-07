@@ -9,13 +9,18 @@ import torch
 from .labels import decode_binary_labels
 
 
-def save_checkpoint(cfg, model, optimizer, lr_scheduler, scaler, dev_metrics):
+def save_checkpoint(
+    cfg, model, optimizer, lr_scheduler, scaler, dev_metrics, sentence_transformer
+):
     checkpoint_dir = f"{cfg.working_dir}/best_checkpoint"
     os.makedirs(cfg.working_dir, exist_ok=True)
-    if cfg.gpus > 1:
-        model.module.save_pretrained(checkpoint_dir)
+    if not sentence_transformer:
+        if cfg.gpus > 1:
+            model.module.save_pretrained(checkpoint_dir)
+        else:
+            model.save_pretrained(checkpoint_dir)
     else:
-        model.save_pretrained(checkpoint_dir)
+        torch.save(model.state_dict(), f"{checkpoint_dir}/model_state.pth")
     torch.save(optimizer.state_dict(), f"{checkpoint_dir}/optimizer_state.pth")
     torch.save(lr_scheduler.state_dict(), f"{checkpoint_dir}/lr_scheduler_state.pth")
     if cfg.use_amp:
