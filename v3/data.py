@@ -109,15 +109,16 @@ def get_dataset(cfg):
 
 def preprocess_data(dataset, tokenizer, cfg):
     dataset = dataset.shuffle(seed=cfg.seed)
-    dataset = dataset.map(
-        lambda example: tokenizer(
-            example["text"],
-            truncation=True,
-            max_length=cfg.data.max_length,
-            padding="max_length" if cfg.data.no_dynamic_padding else False,
-        ),
-        batched=True,
-    )
+    if not cfg.model.sentence_transformer:
+        dataset = dataset.map(
+            lambda example: tokenizer(
+                example["text"],
+                truncation=True,
+                max_length=cfg.data.max_length,
+                padding="max_length" if cfg.data.no_dynamic_padding else False,
+            ),
+            batched=True,
+        )
     if cfg.data.remove_unused_cols:
         dataset = dataset.remove_columns(
             ["label_text", "text", "id", "split", "length"]
