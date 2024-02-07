@@ -28,30 +28,31 @@ def init_split_dataloader(
     device,
 ):
     def collate_fn(batch):
-        max_length = max(len(example["input_ids"]) for example in batch)
-        # Pad sequences dynamically to the maximum length in the batch
-        for example in batch:
-            pad_length = max_length - len(example["input_ids"])
-            for key in example:
-                if key == "input_ids":
-                    # Use tokenizer.pad_token_id as the padding value for input_ids
-                    example[key] = torch.nn.functional.pad(
-                        example[key], (0, pad_length), value=tokenizer_pad_token_id
-                    )
-                elif key in ["attention_mask", "token_type_ids"]:
-                    # Use 0 as the padding value for attention_mask
-                    example[key] = torch.nn.functional.pad(
-                        example[key], (0, pad_length), value=0
-                    )
+        if "input_ids" in batch[0]:
+            max_length = max(len(example["input_ids"]) for example in batch)
+            # Pad sequences dynamically to the maximum length in the batch
+            for example in batch:
+                pad_length = max_length - len(example["input_ids"])
+                for key in example:
+                    if key == "input_ids":
+                        # Use tokenizer.pad_token_id as the padding value for input_ids
+                        example[key] = torch.nn.functional.pad(
+                            example[key], (0, pad_length), value=tokenizer_pad_token_id
+                        )
+                    elif key in ["attention_mask", "token_type_ids"]:
+                        # Use 0 as the padding value for attention_mask
+                        example[key] = torch.nn.functional.pad(
+                            example[key], (0, pad_length), value=0
+                        )
 
-        return {
-            key: (
-                (torch.stack([example[key] for example in batch]))
-                if key in ["input_ids", "attention_mask", "token_type_ids"]
-                else [example[key] for example in batch]
-            )
-            for key in batch[0]
-        }
+            return {
+                key: (
+                    (torch.stack([example[key] for example in batch]))
+                    if key in ["input_ids", "attention_mask", "token_type_ids"]
+                    else [example[key] for example in batch]
+                )
+                for key in batch[0]
+            }
 
     language_data = [sample["language"] for sample in dataset]
     dataset = dataset.remove_columns(["language"])
