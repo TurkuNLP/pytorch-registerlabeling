@@ -67,14 +67,14 @@ def setfit_train(dataset, label_scheme):
 
     train_dataset = few_shot(train_dataset, 8)
     dev_dataset = dev_dataset.select(range(100))
-    test_dataset = test_dataset.select(range(100))
+    test_dataset = test_dataset
 
     model = SetFitModel.from_pretrained(model_id, multi_target_strategy="multi-output")
 
     args = TrainingArguments(
         batch_size=16,
         evaluation_strategy="steps",
-        eval_steps=20,
+        eval_steps=500,
         num_epochs=1,
         save_strategy="epoch",
         # load_best_model_at_end=True,
