@@ -11,7 +11,7 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
-model_id = "sentence-transformers/distiluse-base-multilingual-cased-v2"
+model_id = "smart-tribune/sentence-transformers-multilingual-e5-large"
 
 
 def few_shot(dataset, num):
@@ -65,8 +65,8 @@ def setfit_train(dataset, label_scheme):
     dev_dataset = dataset["dev"].rename_column("labels", "label")
     test_dataset = dataset["test"].rename_column("labels", "label")
 
-    train_dataset = few_shot(train_dataset, 16)
-    dev_dataset = few_shot(dev_dataset, 16)
+    train_dataset = few_shot(train_dataset, 8)
+    dev_dataset = few_shot(dev_dataset, 8)
     test_dataset = test_dataset
 
     # model = SetFitModel.from_pretrained(model_id, multi_target_strategy="multi-output")
