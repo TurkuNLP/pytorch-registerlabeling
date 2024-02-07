@@ -26,14 +26,8 @@ def init_split_dataloader(
     tokenizer_pad_token_id,
     balance_languages,
     device,
-    sentence_transformer,
 ):
     def collate_fn(batch):
-        if sentence_transformer:
-            return {
-                "texts": [x["text"] for x in batch],
-                "labels": torch.stack([x["labels"] for x in batch]).to(device),
-            }
         max_length = max(len(example["input_ids"]) for example in batch)
         # Pad sequences dynamically to the maximum length in the batch
         for example in batch:
@@ -74,9 +68,7 @@ def init_split_dataloader(
     return dataloader
 
 
-def init_dataloaders(
-    dataset, cfg, tokenizer_pad_token_id, device, sentence_transformer
-):
+def init_dataloaders(dataset, cfg, tokenizer_pad_token_id, device):
     return {
         split: init_split_dataloader(
             ds,
@@ -85,7 +77,6 @@ def init_dataloaders(
             tokenizer_pad_token_id,
             cfg.balancing_sampler,
             device,
-            sentence_transformer,
         )
         for split, ds in dataset.items()
     }

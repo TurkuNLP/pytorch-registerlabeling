@@ -11,7 +11,6 @@ from ray.air.integrations.wandb import WandbLoggerCallback
 from ray.util import inspect_serializability
 from ray.train import RunConfig
 from ray.tune.search.hyperopt import HyperOptSearch
-from sentence_transformers import SentenceTransformer
 from torch.nn.parallel import DataParallel
 from torch.optim.lr_scheduler import LambdaLR
 from tqdm import trange
@@ -102,7 +101,6 @@ class Main:
             cfg.dataloader,
             self.tokenizer.pad_token_id,
             cfg.device_str,
-            cfg.model.sentence_transformer,
         )
 
         torch.set_default_device(self.cfg.device)
@@ -156,17 +154,9 @@ class Main:
         if self.cfg.use_fa2:
             model_params["attn_implementation"] = "flash_attention_2"
 
-        if self.cfg.model.sentence_transformer:
-            model = SentenceTransformer(
-                self.cfg.model.name if not model_path else model_path
-            )
-        else:
-            model = model_cls.from_pretrained(
-                self.cfg.model.name if not model_path else model_path, **model_params
-            )
-
         # Using custom embeddings
         if self.cfg.train_using_embeddings:
+            self.model = model_cls.from_pretrained(self.cfg.model.name)
             self.classification_model = LogisticRegressionModel(
                 input_size=self.cfg.train_using_embeddings,
                 num_labels=self.cfg.num_labels,
@@ -176,6 +166,10 @@ class Main:
                 self.classification_model.load_state_dict(
                     torch.load(f"{model_path}/model_state.pth")
                 )
+        else:
+            model = model_cls.from_pretrained(
+                self.cfg.model.name if not model_path else model_path, **model_params
+            )
 
         if self.cfg.gpus > 1:
             model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
@@ -274,8 +268,7 @@ class Main:
             batch_losses = []
             for batch in self.dataloaders["train"]:
                 batch_i += 1
-                if not self.cfg.model.sentence_transformer:
-                    batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
+                batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
                 labels = batch.pop("labels")
 
                 with torch.autocast(
@@ -283,19 +276,11 @@ class Main:
                     dtype=self.cfg.torch_dtype_torch,
                     enabled=self.cfg.use_amp,
                 ):
-                    if self.cfg.model.sentence_transformer:
-                        outputs = self.model.encode(batch["texts"])
-                    else:
-                        outputs = self.model(**batch)
+                    outputs = self.model(**batch)
 
                     if self.cfg.train_using_embeddings:
                         outputs = self.classification_model(
-                            **convert_embeddings_to_input(
-                                outputs,
-                                batch,
-                                self.cfg.model.sentence_transformer,
-                                self.cfg.device,
-                            )
+                            **convert_embeddings_to_input(outputs, batch)
                         )
 
                     # if type(outputs) is tuple:
@@ -402,26 +387,15 @@ class Main:
             timings = np.zeros(data_len)
 
         for batch_i, batch in enumerate(self.dataloaders[split]):
-            if not self.cfg.model.sentence_transformer:
-                batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
+            batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
             with torch.no_grad():
                 if timer:
                     starter.record()
-                if self.cfg.model.sentence_transformer:
-                    outputs = self.model.encode(
-                        batch["texts"]
-                    )  # ST takes lists of texts
-                else:
-                    outputs = self.model(**batch)
+                outputs = self.model(**batch)
                 if self.cfg.train_using_embeddings:
                     outputs = self.classification_model(
-                        **convert_embeddings_to_input(
-                            outputs,
-                            batch,
-                            self.cfg.model.sentence_transformer,
-                            self.cfg.device,
-                        )
+                        **convert_embeddings_to_input(outputs, batch)
                     )
                 if timer:
                     ender.record()
