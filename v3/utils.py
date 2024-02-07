@@ -120,6 +120,6 @@ def convert_embeddings_to_input(outputs, batch, sentence_transformer):
     embeddings = (
         average_pool(outputs.last_hidden_state, batch["attention_mask"])
         if not sentence_transformer
-        else torch.Tensor(outputs)
+        else outputs
     )
     return {"input_ids": embeddings}

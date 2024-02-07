@@ -282,9 +282,7 @@ class Main:
                     enabled=self.cfg.use_amp,
                 ):
                     if self.cfg.model.sentence_transformer:
-                        outputs = self.model.encode(
-                            batch["texts"]
-                        )  # ST takes lists of texts
+                        outputs = self.model.encode(batch["texts"])
                     else:
                         outputs = self.model(**batch)
 
