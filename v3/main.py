@@ -156,7 +156,7 @@ class Main:
 
         # Using custom embeddings
         if self.cfg.train_using_embeddings:
-            self.model = model_cls.from_pretrained(self.cfg.model.name)
+            model = model_cls.from_pretrained(self.cfg.model.name)
             self.classification_model = LogisticRegressionModel(
                 input_size=self.cfg.train_using_embeddings,
                 num_labels=self.cfg.num_labels,
