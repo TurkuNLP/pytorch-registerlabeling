@@ -173,7 +173,9 @@ class Main:
             )
 
             if model_path:
-                model.load_state_dict(torch.load(f"{model_path}/model_state.pth"))
+                self.classification_model.load_state_dict(
+                    torch.load(f"{model_path}/model_state.pth")
+                )
 
         if self.cfg.gpus > 1:
             model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))

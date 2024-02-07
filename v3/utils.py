@@ -122,4 +122,5 @@ def convert_embeddings_to_input(outputs, batch, sentence_transformer, device):
         if not sentence_transformer
         else torch.Tensor(outputs).to(device)
     )
+
     return {"input_ids": embeddings}
