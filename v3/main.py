@@ -8,9 +8,10 @@ from peft import LoraConfig, TaskType, get_peft_model, prepare_model_for_kbit_tr
 from ray import init as ray_init
 from ray import train, tune
 from ray.air.integrations.wandb import WandbLoggerCallback
-from ray.util import inspect_serializability
 from ray.train import RunConfig
 from ray.tune.search.hyperopt import HyperOptSearch
+from ray.util import inspect_serializability
+from sentence_transformers import SentenceTransformer
 from torch.nn.parallel import DataParallel
 from torch.optim.lr_scheduler import LambdaLR
 from tqdm import trange
@@ -25,14 +26,11 @@ import wandb
 
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
-from .embeddings import (
-    extract_doc_embeddings,
-    extract_st_doc_embeddings,
-)
+from .embeddings import extract_doc_embeddings, extract_st_doc_embeddings
 from .labels import get_label_scheme
 from .loss import BCEFocalLoss
 from .metrics import compute_metrics
-from .model import PooledRobertaForSequenceClassification, LogisticRegressionModel
+from .model import LogisticRegressionModel, PooledRobertaForSequenceClassification
 from .optimizer import create_optimizer
 from .save import (
     init_ray_dir,
@@ -42,18 +40,17 @@ from .save import (
     save_ray_checkpoint,
 )
 from .scheduler import linear_warmup_decay
+from .setfit_trainer import setfit_train
 from .utils import (
+    convert_embeddings_to_input,
     format_working_dir,
+    get_eval_step,
     get_linear_modules,
     get_torch_dtype,
     log_gpu_memory,
     model_has_improved,
     model_save_condition,
-    get_eval_step,
-    convert_embeddings_to_input,
 )
-
-from .setfit_trainer import setfit_train
 
 
 class Main:
@@ -163,6 +160,7 @@ class Main:
             )
 
             if model_path:
+                print(f"Loading classification model from {model_path}/model_state.pth")
                 self.classification_model.load_state_dict(
                     torch.load(f"{model_path}/model_state.pth")
                 )
