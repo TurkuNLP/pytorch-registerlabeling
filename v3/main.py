@@ -160,6 +160,9 @@ class Main:
                 torch_dtype=self.cfg.torch_dtype_torch,
             ).to(self.cfg.torch_dtype_torch)
 
+            # DEBUG
+            print(self.classification_model.state_dict())
+
             if model_path:
                 print(f"Loading classification model from {model_path}/model_state.pth")
                 self.classification_model.load_state_dict(
@@ -360,7 +363,6 @@ class Main:
                             self.lr_scheduler,
                             self.scaler,
                             dev_metrics,
-                            self.cfg.train_using_embeddings,
                         )
                         remaining_patience = self.cfg.trainer.patience
                     else:
