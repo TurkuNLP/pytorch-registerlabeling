@@ -20,6 +20,7 @@ def save_checkpoint(
         else:
             model.save_pretrained(checkpoint_dir)
     else:
+        os.makedirs(checkpoint_dir, exist_ok=True)
         torch.save(model.state_dict(), f"{checkpoint_dir}/model_state.pth")
     torch.save(optimizer.state_dict(), f"{checkpoint_dir}/optimizer_state.pth")
     torch.save(lr_scheduler.state_dict(), f"{checkpoint_dir}/lr_scheduler_state.pth")
@@ -43,9 +44,7 @@ def save_predictions(trues, preds, cfg):
     predicted_labels_str = decode_binary_labels(preds, cfg.label_scheme)
 
     data = list(zip(true_labels_str, predicted_labels_str))
-    out_file = (
-        f"{cfg.working_dir}/test_{cfg.data.test or cfg.data.dev or cfg.data.train}.csv"
-    )
+    out_file = f"{cfg.working_dir}/test_{cfg.data.test or cfg.data.dev or cfg.data.train}_{cfg.trainer.learning_rate}.csv"
 
     with open(out_file, "w", newline="") as csvfile:
         csv_writer = csv.writer(csvfile, delimiter="\t")
