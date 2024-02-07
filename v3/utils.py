@@ -121,5 +121,5 @@ def convert_embeddings_to_input(outputs, batch, cfg):
     if not cfg.model.sentence_transformer:
         embeddings = average_pool(outputs.last_hidden_state, batch["attention_mask"])
     else:
-        embeddings = torch.Tensor(output)
+        embeddings = torch.Tensor(outputs)
     return {"input_ids": embeddings}
