@@ -86,7 +86,7 @@ def setfit_train(dataset, label_scheme):
         train_dataset=train_dataset,
         eval_dataset=dev_dataset,
         args=args,
-        metric=compute_metrics,
+        metric="accuracy",
         column_mapping={"text": "text", "label": "label"},
     )
 
