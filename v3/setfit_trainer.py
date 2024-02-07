@@ -78,7 +78,7 @@ def setfit_train(dataset, label_scheme):
     )
 
     args = TrainingArguments(
-        # batch_size=16,
+        batch_size=8,
         evaluation_strategy="steps",
         eval_steps=500,
         num_epochs=1,
