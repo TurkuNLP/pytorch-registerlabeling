@@ -253,8 +253,10 @@ class Main:
         best_score = best_starting_score
 
         ##### TRAINING LOOP STARTS HERE
-
-        self.model.train()
+        if self.cfg.train_using_embeddings:
+            self.classification_model.train()
+        else:
+            self.model.train()
         epoch = 0
         batch_i = 0
         remaining_patience = self.cfg.trainer.patience
@@ -316,7 +318,10 @@ class Main:
                 if batch_i % eval_step == 0:
                     print(f"Loss at step {batch_i} [E-{epoch}]: {running_loss}")
                     dev_metrics = self._evaluate()
-                    self.model.train()
+                    if self.cfg.train_using_embeddings:
+                        self.classification_model.train()
+                    else:
+                        self.model.train()
                     pprint(dev_metrics)
                     if not self.cfg.method == "ray_tune":
                         wandb.log(
@@ -371,7 +376,10 @@ class Main:
             self.predict(from_checkpoint=not do_save)
 
     def _evaluate(self, split="dev", timer=False):
-        self.model.eval()
+        if self.cfg.train_using_embeddings:
+            self.classification_model.eval()
+        else:
+            self.model.eval()
         batch_logits = []
         batch_labels = []
         batch_losses = []
