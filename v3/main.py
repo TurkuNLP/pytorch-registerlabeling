@@ -135,7 +135,7 @@ class Main:
         }
 
         model_cls = AutoModelForSequenceClassification
-        if "e5" in self.cfg.model.name:
+        if self.cfg.train_using_embeddings:
             model_cls = AutoModel
         if self.cfg.model.roberta_pooled:
             model_cls = PooledRobertaForSequenceClassification
