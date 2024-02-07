@@ -66,7 +66,7 @@ def setfit_train(dataset, label_scheme):
     test_dataset = dataset["test"].rename_column("labels", "label")
 
     train_dataset = few_shot(train_dataset, 16)
-    dev_dataset = dev_dataset.select(range(100))
+    dev_dataset = few_shot(dev_dataset, 16)
     test_dataset = test_dataset
 
     # model = SetFitModel.from_pretrained(model_id, multi_target_strategy="multi-output")
