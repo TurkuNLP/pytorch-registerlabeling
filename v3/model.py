@@ -109,6 +109,7 @@ class LogisticRegressionModel(nn.Module):
         super(LogisticRegressionModel, self).__init__()
         self.config = Cnf(num_labels)
         self.linear = nn.Linear(input_size, num_labels)
+        self.torch_dtype = torch_dtype
 
     def forward(self, input_ids, labels=None):
         input_ids = input_ids.to(self.torch_dtype)
