@@ -47,7 +47,7 @@ def setfit_train(dataset, label_scheme):
     dev_dataset = dataset["dev"]
     test_dataset = dataset["test"]
 
-    model = SetFitModel.from_pretrained(model_id, multi_target_strategy="one-vs-rest")
+    model = SetFitModel.from_pretrained(model_id, multi_target_strategy="multi-output")
 
     args = TrainingArguments(
         batch_size=16,
