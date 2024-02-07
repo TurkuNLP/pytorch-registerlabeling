@@ -119,6 +119,4 @@ def average_pool(
 
 def convert_embeddings_to_input(outputs, batch):
     embeddings = average_pool(outputs.last_hidden_state, batch["attention_mask"])
-    # normalize embeddings
-    embeddings = F.normalize(embeddings, p=2, dim=1)
     return {"input_ids": embeddings}
