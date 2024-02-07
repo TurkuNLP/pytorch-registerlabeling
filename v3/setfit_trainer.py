@@ -51,7 +51,8 @@ def setfit_train(dataset, label_scheme):
 
     args = TrainingArguments(
         batch_size=16,
-        evaluation_strategy="epoch",
+        evaluation_strategy="steps",
+        eval_steps=500,
         num_epochs=3,
         save_strategy="epoch",
         # load_best_model_at_end=True,
