@@ -22,6 +22,7 @@ def save_checkpoint(
     else:
         os.makedirs(checkpoint_dir, exist_ok=True)
         torch.save(model.state_dict(), f"{checkpoint_dir}/model_state.pth")
+        model.config.to_json_file(f"{checkpoint_dir}/config.json")
     torch.save(optimizer.state_dict(), f"{checkpoint_dir}/optimizer_state.pth")
     torch.save(lr_scheduler.state_dict(), f"{checkpoint_dir}/lr_scheduler_state.pth")
     if cfg.use_amp:
