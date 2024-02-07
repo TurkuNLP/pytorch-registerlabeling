@@ -1,0 +1,10 @@
+train_using_embeddings: 1024
+torch_dtype: float
+data:
+  train: en-fi-fr-sv
+  no_dynamic_padding: True
+  text_prefix: "query: "
+model:
+  name: intfloat/multilingual-e5-large
+trainer:
+  learning_rate: 3e-5
