@@ -1,0 +1,8 @@
+train_using_embeddings: 1024
+data:
+  train: en
+  text_prefix: "query: "
+model:
+  name: intfloat/multilingual-e5-large
+trainer:
+  learning_rate: 3e-5
