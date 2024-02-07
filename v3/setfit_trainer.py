@@ -44,23 +44,15 @@ def setfit_train(dataset, label_scheme):
     train_dataset = sample_dataset(
         dataset["train"], label_column="label_text", num_samples=8
     )
-    dev_dataset = sample_dataset(
-        dataset["dev"], label_column="label_text", num_samples=100
-    )
-
-    test_dataset = sample_dataset(
-        dataset["dev"], label_column="label_text", num_samples=100
-    )
+    dev_dataset = dataset["dev"]
+    test_dataset = dataset["test"]
 
     model = SetFitModel.from_pretrained(model_id, multi_target_strategy="one-vs-rest")
 
     args = TrainingArguments(
         batch_size=16,
         evaluation_strategy="epoch",
-        # eval_steps=1,
-        # max_steps=1,
         num_epochs=3,
-        # evaluation_strategy="steps",
         save_strategy="epoch",
         # load_best_model_at_end=True,
         report_to="none",

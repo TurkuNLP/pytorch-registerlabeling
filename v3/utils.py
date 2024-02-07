@@ -116,6 +116,10 @@ def average_pool(
     return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
 
 
-def convert_embeddings_to_input(outputs, batch):
-    embeddings = average_pool(outputs.last_hidden_state, batch["attention_mask"])
+def convert_embeddings_to_input(outputs, batch, sentence_transformer):
+    embeddings = (
+        average_pool(outputs.last_hidden_state, batch["attention_mask"])
+        if not sentence_transformer
+        else torch.Tensor(outputs)
+    )
     return {"input_ids": embeddings}

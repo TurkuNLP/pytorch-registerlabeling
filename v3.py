@@ -42,6 +42,7 @@ class Model:
     low_cpu_mem_usage: bool = False
     quantize: bool = False
     roberta_pooled: str = None
+    sentence_transformer: bool = False
 
 
 @dataclass
