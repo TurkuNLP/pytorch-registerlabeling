@@ -108,12 +108,18 @@ class LogisticRegressionModel(nn.Module):
     def __init__(self, input_size=768, num_labels=25, torch_dtype=torch.float32):
         super(LogisticRegressionModel, self).__init__()
         self.config = Cnf(num_labels)
-        self.linear = nn.Linear(input_size, num_labels)
+        self.dense = nn.Linear(input_size, input_size)
+        classifier_dropout = 0.1
+        self.dropout = nn.Dropout(classifier_dropout)
+        self.out_proj = nn.Linear(input_size, num_labels)
         self.torch_dtype = torch_dtype
 
     def forward(self, input_ids, labels=None):
-        input_ids = input_ids.to(self.torch_dtype)
-        logits = self.linear(input_ids)
+        x = self.dropout(x)
+        x = self.dense(x)
+        x = torch.tanh(x)
+        x = self.dropout(x)
+        logits = self.out_proj(x)
         return DotDict({"logits": logits})
 
 
@@ -137,3 +143,31 @@ class ClassificationModel(nn.Module):
         # Pass the result through the second linear layer to get logits
         logits = self.fc2(x)
         return DotDict({"logits": logits})
+
+
+class GeneralClassificationHead(nn.Module):
+    def __init__(self, config, pooling):
+        super().__init__()
+        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
+        classifier_dropout = (
+            config.classifier_dropout
+            if config.classifier_dropout is not None
+            else config.hidden_dropout_prob
+        )
+        print(f"Classifier dropout: {classifier_dropout}")
+        self.dropout = nn.Dropout(classifier_dropout)
+        self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
+        self.pooling = pooling
+
+    def forward(self, features, **kwargs):
+        if self.pooling == "max":
+            x, _ = features.max(dim=1)  # max pooling across the sequence dimension
+        else:
+            x = features.mean(dim=1)  # mean pooling across the sequence dimension
+        x = self.dropout(x)
+        x = self.dense(x)
+        x = torch.tanh(x)
+        x = self.dropout(x)
+        logits = self.out_proj(x)
+
+        return logits
