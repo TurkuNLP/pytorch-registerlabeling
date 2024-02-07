@@ -450,7 +450,7 @@ class Main:
             return metrics
 
         elif split == "test":
-            save_predictions(*metrics[1], self.cfg)
+            save_predictions(*metrics[1], metrics[0], self.cfg)
             return metrics[0]
 
     def predict(self, from_checkpoint=False):

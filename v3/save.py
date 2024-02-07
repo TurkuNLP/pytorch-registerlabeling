@@ -39,18 +39,23 @@ def save_model(working_dir):
     )
 
 
-def save_predictions(trues, preds, cfg):
+def save_predictions(trues, preds, metrics, cfg):
     true_labels_str = decode_binary_labels(trues, cfg.label_scheme)
     predicted_labels_str = decode_binary_labels(preds, cfg.label_scheme)
 
     data = list(zip(true_labels_str, predicted_labels_str))
-    out_file = f"{cfg.working_dir}/test_{cfg.data.test or cfg.data.dev or cfg.data.train}_{cfg.trainer.learning_rate}.csv"
+    out_file = f"{cfg.working_dir}/test_predictions_{cfg.data.test or cfg.data.dev or cfg.data.train}_{cfg.trainer.learning_rate}.csv"
+    out_file_metrics = f"{cfg.working_dir}/test_metrics_{cfg.data.test or cfg.data.dev or cfg.data.train}_{cfg.trainer.learning_rate}.json"
 
     with open(out_file, "w", newline="") as csvfile:
         csv_writer = csv.writer(csvfile, delimiter="\t")
         csv_writer.writerows(data)
 
+    with open(out_file_metrics, "w") as f:
+        json.dump(metrics, f)
+
     print(f"Predictions saved to {out_file}")
+    print(f"Metrics saved to {out_file_metrics}")
 
 
 def save_ray_checkpoint(model, optimizer, train, dev_metrics):
