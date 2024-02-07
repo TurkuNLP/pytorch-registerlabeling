@@ -115,7 +115,7 @@ class LogisticRegressionModel(nn.Module):
         self.torch_dtype = torch_dtype
 
     def forward(self, input_ids, labels=None):
-        x = self.dropout(x)
+        x = self.dropout(input_ids)
         x = self.dense(x)
         x = torch.tanh(x)
         x = self.dropout(x)

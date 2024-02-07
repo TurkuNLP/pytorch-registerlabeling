@@ -154,20 +154,14 @@ class Main:
         # Using custom embeddings
         if self.cfg.train_using_embeddings:
             model = model_cls.from_pretrained(self.cfg.model.name)
-            self.classification_model = LogisticRegressionModel(
+            self.classification_head = LogisticRegressionModel(
                 input_size=self.cfg.train_using_embeddings,
                 num_labels=self.cfg.num_labels,
                 torch_dtype=self.cfg.torch_dtype_torch,
             ).to(self.cfg.torch_dtype_torch)
 
-            # DEBUG
-            print(self.classification_model.state_dict())
-
             if model_path:
-                print(f"Loading classification model from {model_path}/model_state.pth")
-                self.classification_model.load_state_dict(
-                    torch.load(f"{model_path}/model_state.pth")
-                )
+                self.model.load_state_dict(torch.load(f"{model_path}/model_state.pth"))
 
         else:
             model = model_cls.from_pretrained(
@@ -210,11 +204,7 @@ class Main:
         )
 
         self.optimizer = create_optimizer(
-            (
-                self.model
-                if not self.cfg.train_using_embeddings
-                else self.classification_model
-            ),
+            self.model,
             {
                 "lr": config.get("learning_rate", self.cfg.trainer.learning_rate),
                 "weight_decay": config.get(
@@ -261,10 +251,7 @@ class Main:
         best_score = best_starting_score
 
         ##### TRAINING LOOP STARTS HERE
-        if self.cfg.train_using_embeddings:
-            self.classification_model.train()
-        else:
-            self.model.train()
+        self.model.train()
         epoch = 0
         batch_i = 0
         remaining_patience = self.cfg.trainer.patience
@@ -288,7 +275,7 @@ class Main:
                     outputs = self.model(**batch)
 
                     if self.cfg.train_using_embeddings:
-                        outputs = self.classification_model(
+                        outputs = self.classification_head(
                             **convert_embeddings_to_input(outputs, batch)
                         )
 
@@ -308,11 +295,7 @@ class Main:
                 if batch_i % self.cfg.trainer.gradient_accumulation_steps == 0:
                     if self.cfg.trainer.max_grad_norm > 0:
                         torch.nn.utils.clip_grad_norm_(
-                            (
-                                self.model.parameters()
-                                if not self.cfg.train_using_embeddings
-                                else self.classification_model.parameters()
-                            ),
+                            self.model.parameters(),
                             self.cfg.trainer.max_grad_norm,
                         )
                     self.scaler.step(self.optimizer)
@@ -331,10 +314,7 @@ class Main:
                 if batch_i % eval_step == 0:
                     print(f"Loss at step {batch_i} [E-{epoch}]: {running_loss}")
                     dev_metrics = self._evaluate()
-                    if self.cfg.train_using_embeddings:
-                        self.classification_model.train()
-                    else:
-                        self.model.train()
+                    self.model.train()
                     pprint(dev_metrics)
                     if not self.cfg.method == "ray_tune":
                         wandb.log(
@@ -364,11 +344,7 @@ class Main:
                         best_score = patience_metric
                         save_checkpoint(
                             self.cfg,
-                            (
-                                self.model
-                                if not self.cfg.train_using_embeddings
-                                else self.classification_model
-                            ),
+                            self.model,
                             self.optimizer,
                             self.lr_scheduler,
                             self.scaler,
@@ -388,10 +364,7 @@ class Main:
             self.predict(from_checkpoint=not do_save)
 
     def _evaluate(self, split="dev", timer=False):
-        if self.cfg.train_using_embeddings:
-            self.classification_model.eval()
-        else:
-            self.model.eval()
+        self.model.eval()
         batch_logits = []
         batch_labels = []
         batch_losses = []
@@ -413,7 +386,7 @@ class Main:
                     starter.record()
                 outputs = self.model(**batch)
                 if self.cfg.train_using_embeddings:
-                    outputs = self.classification_model(
+                    outputs = self.classification_head(
                         **convert_embeddings_to_input(outputs, batch)
                     )
                 if timer:
