@@ -41,9 +41,9 @@ def setfit_train(dataset, label_scheme):
             f"accuracy": accuracy,
         }
 
-    train_dataset = dataset["train"].rename_column("label", "labels")
-    dev_dataset = dataset["dev"].rename_column("label", "labels")
-    test_dataset = dataset["test"].rename_column("label", "labels")
+    train_dataset = dataset["train"].rename_column("labels", "label")
+    dev_dataset = dataset["dev"].rename_column("labels", "label")
+    test_dataset = dataset["test"].rename_column("labels", "label")
 
     train_dataset = sample_dataset(train_dataset, label_column="labels", num_samples=8)
     dev_dataset = dev_dataset.select(range(100))
@@ -67,7 +67,7 @@ def setfit_train(dataset, label_scheme):
         eval_dataset=dev_dataset,
         args=args,
         metric=compute_metrics,
-        column_mapping={"text": "text", "labels": "label"},
+        column_mapping={"text": "text", "label": "label"},
     )
 
     trainer.train()
