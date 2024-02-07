@@ -311,7 +311,7 @@ class Main:
                             (
                                 self.model.parameters()
                                 if not self.cfg.train_using_embeddings
-                                else self.classification_model.parameters
+                                else self.classification_model.parameters()
                             ),
                             self.cfg.trainer.max_grad_norm,
                         )

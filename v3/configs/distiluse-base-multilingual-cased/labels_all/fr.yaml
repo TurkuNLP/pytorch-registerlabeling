@@ -1,7 +1,6 @@
 train_using_embeddings: 512
 data:
   train: fr
-  remove_unused_cols: False
 model:
   name: sentence-transformers/distiluse-base-multilingual-cased-v2
   sentence_transformer: True
