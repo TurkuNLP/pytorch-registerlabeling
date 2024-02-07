@@ -1,5 +1,6 @@
 from setfit import SetFitModel, Trainer, TrainingArguments, sample_dataset
-
+from datasets import Dataset
+import pandas as pd
 from sklearn.metrics import (
     accuracy_score,
     average_precision_score,
@@ -11,6 +12,21 @@ from sklearn.metrics import (
 )
 
 model_id = "sentence-transformers/distiluse-base-multilingual-cased-v2"
+
+
+def few_shot(dataset, num):
+    def sample_group(group, random_state=42):
+        n = min(len(group), num)
+        return group.sample(n, random_state=random_state)
+
+    dataset = Dataset.from_pandas(
+        pd.DataFrame(dataset)
+        .groupby(["language", "label_text"])
+        .apply(sample_group)
+        .reset_index(drop=True)
+    )
+
+    return dataset
 
 
 def setfit_train(dataset, label_scheme):
@@ -45,7 +61,7 @@ def setfit_train(dataset, label_scheme):
     dev_dataset = dataset["dev"].rename_column("labels", "label")
     test_dataset = dataset["test"].rename_column("labels", "label")
 
-    train_dataset = sample_dataset(train_dataset, label_column="label", num_samples=8)
+    train_dataset = few_shot(train_dataset, 8)
     dev_dataset = dev_dataset.select(range(100))
     test_dataset = test_dataset.select(range(100))
 
