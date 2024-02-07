@@ -19,12 +19,14 @@ def few_shot(dataset, num):
         n = min(len(group), num)
         return group.sample(n, random_state=random_state)
 
-    dataset = Dataset.from_pandas(
+    pd_dataset = (
         pd.DataFrame(dataset)
         .groupby(["language", "label_text"])
         .apply(sample_group)
         .reset_index(drop=True)
     )
+
+    dataset = Dataset.from_pandas(pd_dataset)
 
     return dataset
 
