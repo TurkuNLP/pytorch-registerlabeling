@@ -456,6 +456,7 @@ class Main:
 
         check = inspect_serializability(self)
         print(check)
+        exit()
         wandb.login()
         self.cfg.tqdm_mininterval = 10
         self.cfg.model.save = False
