@@ -158,14 +158,9 @@ class Main:
                 torch_dtype=self.cfg.torch_dtype_torch,
             ).to(self.cfg.torch_dtype_torch)
 
-        if not self.cfg.model.sentence_transformer:
-            model = model_cls.from_pretrained(
-                self.cfg.model.name if not model_path else model_path, **model_params
-            )
-        else:
-            model = SentenceTransformer(
-                self.cfg.model.name if not model_path else model_path
-            )
+        model = model_cls.from_pretrained(
+            self.cfg.model.name if not model_path else model_path, **model_params
+        )
 
         if self.cfg.gpus > 1:
             model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
@@ -264,15 +259,8 @@ class Main:
             for batch in self.dataloaders["train"]:
                 batch_i += 1
 
-                batch = (
-                    {k: v.to(self.cfg.device) for k, v in batch.items()}
-                    if not self.cfg.model.sentence_transformer
-                    else {k: v for k, v in batch.items() if k in ["text", "labels"]}
-                )
+                batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
                 labels = batch.pop("labels")
-
-                if self.cfg.model.sentence_transformer:
-                    labels = torch.stack(labels)
 
                 with torch.autocast(
                     device_type=self.cfg.device_str,
@@ -280,15 +268,11 @@ class Main:
                     enabled=self.cfg.use_amp,
                 ):
 
-                    outputs = (
-                        self.model(**batch)
-                        if not self.cfg.model.sentence_transformer
-                        else self.model.encode(batch["text"])
-                    )
+                    outputs = self.model(**batch)
 
                     if self.cfg.train_using_embeddings:
                         outputs = self.classification_head(
-                            **convert_embeddings_to_input(outputs, batch, self.cfg)
+                            **convert_embeddings_to_input(outputs, batch)
                         )
 
                     # if type(outputs) is tuple:
@@ -391,24 +375,16 @@ class Main:
             timings = np.zeros(data_len)
 
         for batch_i, batch in enumerate(self.dataloaders[split]):
-            batch = (
-                {k: v.to(self.cfg.device) for k, v in batch.items()}
-                if not self.cfg.model.sentence_transformer
-                else {k: v for k, v in batch.items() if k in ["text", "labels"]}
-            )
+            batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
             with torch.no_grad():
                 if timer:
                     starter.record()
-                outputs = (
-                    self.model(**batch)
-                    if not self.cfg.model.sentence_transformer
-                    else self.model.encode(batch["text"])
-                )
+                outputs = self.model(**batch)
 
                 if self.cfg.train_using_embeddings:
                     outputs = self.classification_head(
-                        **convert_embeddings_to_input(outputs, batch, self.cfg)
+                        **convert_embeddings_to_input(outputs, batch)
                     )
                 if timer:
                     ender.record()
