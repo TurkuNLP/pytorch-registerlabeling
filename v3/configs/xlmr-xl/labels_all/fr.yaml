@@ -1,0 +1,10 @@
+data:
+  train: fr
+model:
+  name: facebook/xlm-roberta-xl
+trainer:
+  learning_rate: 5e-5
+peft:
+  enable: True
+dataloader:
+  train_batch_size: 8
