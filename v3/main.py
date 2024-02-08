@@ -476,7 +476,7 @@ class Main:
         tuner = tune.Tuner(
             tune.with_resources(
                 tune.with_parameters(self._train_TEMP),
-                resources={"cpu": 1, "gpu": self.cfg.ray.gpus_per_trial},
+                # resources={"cpu": 1, "gpu": self.cfg.ray.gpus_per_trial},
             ),
             tune_config=tune.TuneConfig(
                 metric="loss",
