@@ -14,7 +14,7 @@ from ray.util import inspect_serializability
 from sentence_transformers import SentenceTransformer
 from torch.nn.parallel import DataParallel
 from torch.optim.lr_scheduler import LambdaLR
-from tqdm import trange
+from tqdm import trange, tqdm
 from transformers import (
     AutoModel,
     AutoModelForSequenceClassification,
@@ -244,7 +244,9 @@ class Main:
                     f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
                 )
 
-        progress_bar = trange(num_training_steps, mininterval=self.cfg.tqdm_mininterval)
+        progress_bar = tqdm(
+            range(num_training_steps), mininterval=self.cfg.tqdm_mininterval
+        )
         best_score = best_starting_score
 
         ##### TRAINING LOOP STARTS HERE
@@ -369,7 +371,7 @@ class Main:
         batch_losses = []
         data_len = len(self.dataloaders[split])
 
-        progress_bar = trange(data_len)
+        progress_bar = tqdm(range(data_len))
         progress_bar.set_description(f"Evaluating {split} split")
 
         if timer:
