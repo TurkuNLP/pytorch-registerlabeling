@@ -177,6 +177,171 @@ class Main:
 
         self.model = model
 
+    def _train_TEMP(self, config={}):
+        self._init_model(
+            self.cfg.resume if (self.cfg.resume and not self.cfg.peft.enable) else None
+        )
+
+        if self.cfg.peft.enable:
+            if not self.cfg.resume:
+                self._wrap_peft()
+            else:
+                self.model.load_adapter(self.cfg.resume)
+
+        if self.cfg.set_pad_token:
+            self.model.config.pad_token_id = self.tokenizer.pad_token_id
+
+        num_training_steps = int(
+            self.cfg.trainer.epochs
+            * len(self.dataloaders["train"])
+            / self.cfg.trainer.gradient_accumulation_steps
+        )
+
+        self.optimizer = create_optimizer(
+            self.model,
+            {
+                "lr": config.get("learning_rate", self.cfg.trainer.learning_rate),
+                "weight_decay": config.get(
+                    "weight_decay", self.cfg.trainer.weight_decay
+                ),
+            },
+        )
+
+        if self.cfg.resume:
+            self.optimizer.load_state_dict(
+                torch.load(f"{self.cfg.resume}/optimizer_state.pth")
+            )
+
+        self.lr_scheduler = LambdaLR(
+            self.optimizer,
+            linear_warmup_decay(
+                # math.ceil(num_training_steps * self.cfg.trainer.warmup_ratio),
+                num_training_steps * self.cfg.trainer.warmup_ratio,
+                num_training_steps,
+            ),
+        )
+
+        best_starting_score = False
+
+        if self.cfg.resume:
+            self.lr_scheduler.load_state_dict(
+                torch.load(f"{self.cfg.resume}/lr_scheduler_state.pth")
+            )
+            with open(f"{self.cfg.resume}/model_state.json", "r") as f:
+                loaded_data = json.load(f)
+                best_starting_score = loaded_data[self.cfg.trainer.best_model_metric]
+                print(
+                    f"Previous best {self.cfg.trainer.best_model_metric} was {best_score}"
+                )
+
+        progress_bar = trange(num_training_steps, mininterval=self.cfg.tqdm_mininterval)
+        best_score = best_starting_score
+
+        ##### TRAINING LOOP STARTS HERE
+        self.model.train()
+        epoch = 0
+        batch_i = 0
+        remaining_patience = self.cfg.trainer.patience
+        running_loss = 0
+        eval_step = get_eval_step(
+            len(self.dataloaders["train"]), self.cfg.trainer.eval_step
+        )
+        while remaining_patience > 0:
+            epoch += 1
+            batch_losses = []
+            for batch in self.dataloaders["train"]:
+                batch_i += 1
+
+                batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
+                labels = batch.pop("labels")
+
+                outputs = self.model(**batch)
+
+                if self.cfg.train_using_embeddings:
+                    outputs = self.classification_head(
+                        **convert_embeddings_to_input(outputs, batch)
+                    )
+
+                loss = BCEFocalLoss(
+                    outputs,
+                    labels,
+                    self.cfg.trainer.loss_gamma,
+                    self.cfg.trainer.loss_alpha,
+                )
+
+                batch_losses.append(loss.item())
+                loss = loss / self.cfg.trainer.gradient_accumulation_steps
+                loss.backward()
+                if batch_i % self.cfg.trainer.gradient_accumulation_steps == 0:
+                    if self.cfg.trainer.max_grad_norm > 0:
+                        torch.nn.utils.clip_grad_norm_(
+                            self.model.parameters(),
+                            self.cfg.trainer.max_grad_norm,
+                        )
+                    self.optimizer.step()
+                    self.lr_scheduler.step()
+                    self.optimizer.zero_grad()
+
+                    progress_bar.update(1)
+                    progress_bar.set_description(
+                        f"E-{epoch}:{int((batch_i % eval_step)/eval_step * 100)}% ({remaining_patience}/{self.cfg.trainer.patience}), loss: {(sum(batch_losses) / len(batch_losses)):4f}",
+                        refresh=False,
+                    )
+
+                    running_loss = sum(batch_losses) / len(batch_losses)
+
+                if batch_i % eval_step == 0:
+                    print(f"Loss at step {batch_i} [E-{epoch}]: {running_loss}")
+                    dev_metrics = self._evaluate()
+                    self.model.train()
+                    pprint(dev_metrics)
+                    if not self.cfg.method == "ray_tune":
+                        wandb.log(
+                            {
+                                **dev_metrics,
+                                **{
+                                    "train_loss": running_loss,
+                                    "learning_rate": self.optimizer.param_groups[0][
+                                        "lr"
+                                    ],
+                                    "step": batch_i + 1,
+                                    "epoch": epoch,
+                                },
+                            }
+                        )
+
+                    else:
+                        save_ray_checkpoint(
+                            self.model, self.optimizer, train, dev_metrics
+                        )
+
+                    patience_metric = dev_metrics[self.cfg.trainer.best_model_metric]
+
+                    if best_score is False or model_has_improved(
+                        self.cfg.trainer.best_model_metric, patience_metric, best_score
+                    ):
+                        best_score = patience_metric
+                        save_checkpoint(
+                            self.cfg,
+                            self.model,
+                            self.optimizer,
+                            self.lr_scheduler,
+                            self.scaler,
+                            dev_metrics,
+                        )
+                        remaining_patience = self.cfg.trainer.patience
+                    else:
+                        remaining_patience -= 1
+
+        do_save = model_save_condition(self.cfg, best_score, best_starting_score)
+
+        if do_save:
+            save_model(self.cfg.working_dir)
+            print(f"Model saved to {self.cfg.working_dir}")
+
+        if self.cfg.predict:
+            self.predict(from_checkpoint=not do_save)
+
     def _train(self, config={}):
         self._init_model(
             self.cfg.resume if (self.cfg.resume and not self.cfg.peft.enable) else None
@@ -327,7 +492,7 @@ class Main:
                             }
                         )
 
-                    if self.cfg.method == "ray_tune":
+                    else:
                         save_ray_checkpoint(
                             self.model, self.optimizer, train, dev_metrics
                         )
@@ -472,7 +637,7 @@ class Main:
 
         tuner = tune.Tuner(
             tune.with_resources(
-                tune.with_parameters(self._train),
+                tune.with_parameters(self._train_TEMP),
                 resources={"cpu": 1, "gpu": self.cfg.ray.gpus_per_trial},
             ),
             tune_config=tune.TuneConfig(
