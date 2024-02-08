@@ -17,6 +17,7 @@ os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
 os.environ["HF_DATASETS_CACHE"] = ".hf/datasets_cache"
 os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY", "")
 os.environ["WANDB_WATCH"] = "all"
+os.environ["RAY_PICKLE_VERBOSE_DEBUG"] = "2"
 
 
 @dataclass

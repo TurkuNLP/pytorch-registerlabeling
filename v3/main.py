@@ -197,8 +197,6 @@ class Main:
             / self.cfg.trainer.gradient_accumulation_steps
         )
 
-        return
-
         self.optimizer = create_optimizer(
             self.model,
             {
