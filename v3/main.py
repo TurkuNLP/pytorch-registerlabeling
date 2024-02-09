@@ -161,8 +161,8 @@ class Main:
             self.cfg.model.name if not model_path else model_path, **model_params
         )
 
-        # if self.cfg.gpus > 1:
-        #    model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
+        if self.cfg.gpus > 1:
+            model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
 
         if not self.cfg.model.quantize:
             model = model.to(
@@ -508,6 +508,7 @@ class Main:
         )
         print("Best trial final validation f1: {}".format(best_result.metrics["f1"]))
 
+    """
     def hf_finetune(self):
         from transformers import (
             DataCollatorWithPadding,
@@ -583,6 +584,7 @@ class Main:
         )
 
         trainer.train()
+    """
 
     def extract_doc_embeddings(self):
         path = self.cfg.working_dir_root + "/embeddings"
