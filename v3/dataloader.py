@@ -62,7 +62,7 @@ def init_split_dataloader(
             if use_balancer
             else {"shuffle": True}
         ),
-        generator=torch.Generator(device=device),
+        #generator=torch.Generator(device=device),
     )
     print(f"{split} dataloader size: {len(dataloader)} (balancer: {use_balancer})")
 
