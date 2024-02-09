@@ -177,7 +177,7 @@ class Main:
 
         self.model = model
 
-    def _train_TEMP(self, config={}):
+    def _train_TEMP(self):
         return 1
 
     def _train(self, config={}):
@@ -456,10 +456,7 @@ class Main:
 
     def ray_tune(self):
 
-        def test():
-            return 1
-
-        check = inspect_serializability(test)
+        check = inspect_serializability(self._train_TEMP)
         print(check)
         exit()
         wandb.login()
