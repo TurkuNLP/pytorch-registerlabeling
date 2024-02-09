@@ -18,7 +18,6 @@ os.environ["HF_DATASETS_CACHE"] = ".hf/datasets_cache"
 os.environ["WANDB_API_KEY"] = os.getenv("WANDB_API_KEY", "")
 os.environ["WANDB_WATCH"] = "all"
 os.environ["WANDB_DATA_DIR"] = ".wandb"
-os.environ["RAY_PICKLE_VERBOSE_DEBUG"] = "2"
 
 
 @dataclass
@@ -138,7 +137,7 @@ if __name__ == "__main__":
     tempfile.tempdir = cfg.root_path + "/tmp"
 
     # Explicitly choose n GPUs
-    os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(str(x) for x in range(cfg.gpus))
+    # os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(str(x) for x in range(cfg.gpus))
 
     from v3.main import Main
 
