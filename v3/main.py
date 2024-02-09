@@ -70,7 +70,7 @@ class Main:
         if not self.cfg.no_tf32:
             torch.set_float32_matmul_precision("high")
             torch.backends.cudnn.allow_tf32
-        """
+
         # Make process deterministic
         torch.manual_seed(cfg.seed)
         np.random.seed(cfg.seed)
@@ -78,7 +78,7 @@ class Main:
         torch.cuda.manual_seed_all(cfg.seed)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
-
+        """
         # Init tokenizer
         self.tokenizer = AutoTokenizer.from_pretrained(
             cfg.model.name,
@@ -98,9 +98,9 @@ class Main:
             self.tokenizer.pad_token_id,
             cfg.device_str,
         )
-
-        torch.set_default_device(self.cfg.device)
         """
+        torch.set_default_device(self.cfg.device)
+
         # Run
         getattr(self, cfg.method)()
 
