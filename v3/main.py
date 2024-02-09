@@ -456,7 +456,10 @@ class Main:
 
     def ray_tune(self):
 
-        check = inspect_serializability(self._train_TEMP)
+        def test():
+            return 1
+
+        check = inspect_serializability(test)
         print(check)
         exit()
         wandb.login()
