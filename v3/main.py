@@ -78,13 +78,13 @@ class Main:
         torch.cuda.manual_seed_all(cfg.seed)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
-        """
+
         # Init tokenizer
         self.tokenizer = AutoTokenizer.from_pretrained(
             cfg.model.name,
             torch_dtype=cfg.torch_dtype if not cfg.use_amp else torch.float32,
         )
-
+        """
         if cfg.set_pad_token:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
