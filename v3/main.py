@@ -84,13 +84,13 @@ class Main:
             cfg.model.name,
             torch_dtype=cfg.torch_dtype if not cfg.use_amp else torch.float32,
         )
-        """
+
         if cfg.set_pad_token:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
         # Prepare dataset
         self.dataset = preprocess_data(get_dataset(cfg), self.tokenizer, cfg)
-
+        """
         # Init dataloaders
         self.dataloaders = init_dataloaders(
             self.dataset,
