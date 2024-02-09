@@ -373,10 +373,10 @@ class Main:
         progress_bar = tqdm(range(data_len))
         progress_bar.set_description(f"Evaluating {split} split")
 
-        if timer:
-            starter = torch.cuda.Event(enable_timing=True)
-            ender = torch.cuda.Event(enable_timing=True)
-            timings = np.zeros(data_len)
+        # if timer:
+        #    starter = torch.cuda.Event(enable_timing=True)
+        #    ender = torch.cuda.Event(enable_timing=True)
+        #    timings = np.zeros(data_len)
 
         for batch_i, batch in enumerate(self.dataloaders[split]):
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
@@ -390,11 +390,11 @@ class Main:
                     outputs = self.classification_head(
                         **convert_embeddings_to_input(outputs, batch)
                     )
-                if timer:
-                    ender.record()
-                    torch.cuda.synchronize()
-                    curr_time = starter.elapsed_time(ender)
-                    timings[batch_i] = curr_time / len(batch["input_ids"])
+                # if timer:
+                #    ender.record()
+                #    torch.cuda.synchronize()
+                #    curr_time = starter.elapsed_time(ender)
+                #    timings[batch_i] = curr_time / len(batch["input_ids"])
 
             loss = BCEFocalLoss(
                 outputs,
@@ -410,10 +410,10 @@ class Main:
 
         progress_bar.close()
 
-        if timer:
-            mean_syn = np.mean(timings)
-            std_syn = np.std(timings)
-            print(f"Avg. instance inference time: {mean_syn:4f} ({std_syn:4f})")
+        # if timer:
+        #   mean_syn = np.mean(timings)
+        #    std_syn = np.std(timings)
+        #    print(f"Avg. instance inference time: {mean_syn:4f} ({std_syn:4f})")
 
         metrics = compute_metrics(
             torch.cat(batch_logits, dim=0),
