@@ -382,8 +382,8 @@ class Main:
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
             with torch.no_grad():
-                if timer:
-                    starter.record()
+                # if timer:
+                #    starter.record()
                 outputs = self.model(**batch)
 
                 if self.cfg.train_using_embeddings:
