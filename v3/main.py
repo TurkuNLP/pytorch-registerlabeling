@@ -70,7 +70,7 @@ class Main:
         if not self.cfg.no_tf32:
             torch.set_float32_matmul_precision("high")
             torch.backends.cudnn.allow_tf32
-
+        """
         # Make process deterministic
         torch.manual_seed(cfg.seed)
         np.random.seed(cfg.seed)
@@ -100,11 +100,10 @@ class Main:
         )
 
         torch.set_default_device(self.cfg.device)
-
+        """
         # Run
         getattr(self, cfg.method)()
 
-    """
     def _wrap_peft(self):
         print("Wrapping PEFT model")
 
@@ -176,6 +175,9 @@ class Main:
             )
 
         self.model = model
+
+    def _train_TEMP(self):
+        return 1
 
     def _train(self, config={}):
         self._init_model(
@@ -450,10 +452,6 @@ class Main:
             config=self.cfg,
         )
         self._train()
-    """
-
-    def _train_TEMP(self):
-        return 1
 
     def ray_tune(self):
 
