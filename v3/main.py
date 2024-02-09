@@ -364,6 +364,7 @@ class Main:
             self.predict(from_checkpoint=not do_save)
 
     def _evaluate(self, split="dev", timer=False):
+        """
         self.model.eval()
         batch_logits = []
         batch_labels = []
@@ -428,6 +429,7 @@ class Main:
         elif split == "test":
             save_predictions(*metrics[1], metrics[0], self.cfg)
             return metrics[0]
+        """
 
     def predict(self, from_checkpoint=False):
         model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint or self.cfg.predict_from_checkpoint else 'model'}"
