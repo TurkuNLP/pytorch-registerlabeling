@@ -177,9 +177,6 @@ class Main:
 
         self.model = model
 
-    def _train_TEMP(self):
-        return 1
-
     def _train(self, config={}):
         self._init_model(
             self.cfg.resume if (self.cfg.resume and not self.cfg.peft.enable) else None
@@ -454,6 +451,9 @@ class Main:
         )
         self._train()
     """
+
+    def _train_TEMP(self):
+        return 1
 
     def ray_tune(self):
 
