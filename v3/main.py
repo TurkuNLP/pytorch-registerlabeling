@@ -104,6 +104,7 @@ class Main:
         # Run
         getattr(self, cfg.method)()
 
+    """
     def _wrap_peft(self):
         print("Wrapping PEFT model")
 
@@ -452,6 +453,7 @@ class Main:
             config=self.cfg,
         )
         self._train()
+    """
 
     def ray_tune(self):
 
@@ -508,7 +510,6 @@ class Main:
         )
         print("Best trial final validation f1: {}".format(best_result.metrics["f1"]))
 
-    """
     def hf_finetune(self):
         from transformers import (
             DataCollatorWithPadding,
@@ -584,7 +585,6 @@ class Main:
         )
 
         trainer.train()
-    
 
     def extract_doc_embeddings(self):
         path = self.cfg.working_dir_root + "/embeddings"
@@ -611,4 +611,3 @@ class Main:
 
     def setfit_train(self):
         setfit_train(self.dataset, self.cfg.label_scheme)
-    """
