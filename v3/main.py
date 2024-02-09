@@ -584,7 +584,7 @@ class Main:
         )
 
         trainer.train()
-    """
+    
 
     def extract_doc_embeddings(self):
         path = self.cfg.working_dir_root + "/embeddings"
@@ -611,3 +611,4 @@ class Main:
 
     def setfit_train(self):
         setfit_train(self.dataset, self.cfg.label_scheme)
+    """
