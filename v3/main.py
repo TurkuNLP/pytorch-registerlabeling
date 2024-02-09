@@ -455,9 +455,6 @@ class Main:
 
     def ray_tune(self):
 
-        check = inspect_serializability(self._train_TEMP)
-        print(check)
-        exit()
         wandb.login()
         self.cfg.tqdm_mininterval = 10
         self.cfg.model.save = False
