@@ -8,7 +8,6 @@ from peft import LoraConfig, TaskType, get_peft_model, prepare_model_for_kbit_tr
 from ray import init as ray_init
 from ray import train, tune
 from ray.air.integrations.wandb import WandbLoggerCallback
-from ray.train import RunConfig
 from ray.tune.search.hyperopt import HyperOptSearch
 from ray.util import inspect_serializability
 from sentence_transformers import SentenceTransformer
@@ -491,7 +490,7 @@ class Main:
                 num_samples=20,
                 search_alg=HyperOptSearch(metric="loss", mode="min"),
             ),
-            run_config=RunConfig(
+            run_config=train.RunConfig(
                 name=self.cfg.wandb_project,
                 callbacks=[WandbLoggerCallback(project=self.cfg.wandb_project)],
                 storage_path=ray_dir,
