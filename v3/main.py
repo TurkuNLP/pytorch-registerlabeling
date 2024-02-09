@@ -90,7 +90,7 @@ class Main:
 
         # Prepare dataset
         self.dataset = preprocess_data(get_dataset(cfg), self.tokenizer, cfg)
-        """
+
         # Init dataloaders
         self.dataloaders = init_dataloaders(
             self.dataset,
@@ -98,7 +98,7 @@ class Main:
             self.tokenizer.pad_token_id,
             cfg.device_str,
         )
-        """
+
         torch.set_default_device(self.cfg.device)
 
         # Run
