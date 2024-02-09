@@ -161,8 +161,8 @@ class Main:
             self.cfg.model.name if not model_path else model_path, **model_params
         )
 
-        if self.cfg.gpus > 1:
-            model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
+        # if self.cfg.gpus > 1:
+        #    model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
 
         if not self.cfg.model.quantize:
             model = model.to(
@@ -364,7 +364,6 @@ class Main:
             self.predict(from_checkpoint=not do_save)
 
     def _evaluate(self, split="dev", timer=False):
-        """
         self.model.eval()
         batch_logits = []
         batch_labels = []
@@ -374,28 +373,28 @@ class Main:
         progress_bar = tqdm(range(data_len))
         progress_bar.set_description(f"Evaluating {split} split")
 
-        # if timer:
-        #    starter = torch.cuda.Event(enable_timing=True)
-        #    ender = torch.cuda.Event(enable_timing=True)
-        #    timings = np.zeros(data_len)
+        if timer:
+            starter = torch.cuda.Event(enable_timing=True)
+            ender = torch.cuda.Event(enable_timing=True)
+            timings = np.zeros(data_len)
 
         for batch_i, batch in enumerate(self.dataloaders[split]):
             batch = {k: v.to(self.cfg.device) for k, v in batch.items()}
             labels = batch.pop("labels")
             with torch.no_grad():
-                # if timer:
-                #    starter.record()
+                if timer:
+                    starter.record()
                 outputs = self.model(**batch)
 
                 if self.cfg.train_using_embeddings:
                     outputs = self.classification_head(
                         **convert_embeddings_to_input(outputs, batch)
                     )
-                # if timer:
-                #    ender.record()
-                #    torch.cuda.synchronize()
-                #    curr_time = starter.elapsed_time(ender)
-                #    timings[batch_i] = curr_time / len(batch["input_ids"])
+                if timer:
+                    ender.record()
+                    torch.cuda.synchronize()
+                    curr_time = starter.elapsed_time(ender)
+                    timings[batch_i] = curr_time / len(batch["input_ids"])
 
             loss = BCEFocalLoss(
                 outputs,
@@ -411,10 +410,10 @@ class Main:
 
         progress_bar.close()
 
-        # if timer:
-        #   mean_syn = np.mean(timings)
-        #    std_syn = np.std(timings)
-        #    print(f"Avg. instance inference time: {mean_syn:4f} ({std_syn:4f})")
+        if timer:
+            mean_syn = np.mean(timings)
+            std_syn = np.std(timings)
+            print(f"Avg. instance inference time: {mean_syn:4f} ({std_syn:4f})")
 
         metrics = compute_metrics(
             torch.cat(batch_logits, dim=0),
@@ -429,7 +428,6 @@ class Main:
         elif split == "test":
             save_predictions(*metrics[1], metrics[0], self.cfg)
             return metrics[0]
-        """
 
     def predict(self, from_checkpoint=False):
         model_path = f"{self.cfg.working_dir}/best_{'checkpoint' if from_checkpoint or self.cfg.predict_from_checkpoint else 'model'}"
@@ -457,7 +455,7 @@ class Main:
 
     def ray_tune(self):
 
-        check = inspect_serializability(self)
+        check = inspect_serializability(self._train_TEMP)
         print(check)
         exit()
         wandb.login()
