@@ -176,9 +176,6 @@ class Main:
 
         self.model = model
 
-    def _train_TEMP(self):
-        return 1
-
     def _train(self, config={}):
         self._init_model(
             self.cfg.resume if (self.cfg.resume and not self.cfg.peft.enable) else None
@@ -477,7 +474,7 @@ class Main:
 
         tuner = tune.Tuner(
             tune.with_resources(
-                tune.with_parameters(self._train_TEMP),
+                tune.with_parameters(self._train),
                 resources={"cpu": 1, "gpu": self.cfg.ray.gpus_per_trial},
             ),
             tune_config=tune.TuneConfig(
