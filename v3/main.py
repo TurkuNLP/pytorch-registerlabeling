@@ -96,7 +96,6 @@ class Main:
             self.dataset,
             cfg.dataloader,
             self.tokenizer.pad_token_id,
-            cfg.device_str,
         )
 
         torch.set_default_device(self.cfg.device)
