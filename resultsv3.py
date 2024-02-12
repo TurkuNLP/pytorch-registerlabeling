@@ -7,7 +7,14 @@ import numpy as np
 f1s = []
 pr_aucs = []
 
-with open(f"v3/configs/{sys.argv[1]}") as f:
+model = sys.argv[1]
+labels = sys.argv[2]
+targets = sys.argv[3]
+
+if targets == "4":
+
+
+with open(f"v3/configs/{model}/labels_{labels}/") as f:
     for line in f:
         if line.startswith("#="):
 

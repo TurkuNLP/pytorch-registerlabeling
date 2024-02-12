@@ -19,12 +19,7 @@ SAMPLER_CNF = {
 }
 
 
-def init_split_dataloader(
-    dataset,
-    split,
-    tokenizer_pad_token_id,
-    cfg,
-):
+def init_split_dataloader(dataset, split, tokenizer_pad_token_id, cfg, device):
     def collate_fn(batch):
         if "input_ids" in batch[0]:
             max_length = max(len(example["input_ids"]) for example in batch)
@@ -65,19 +60,15 @@ def init_split_dataloader(
             if use_balancer
             else {"shuffle": True}
         ),
+        generator=torch.Generator(device=device),
     )
     print(f"{split} dataloader size: {len(dataloader)} (balancer: {use_balancer})")
 
     return dataloader
 
 
-def init_dataloaders(dataset, cfg, tokenizer_pad_token_id):
+def init_dataloaders(dataset, cfg, tokenizer_pad_token_id, device):
     return {
-        split: init_split_dataloader(
-            ds,
-            split,
-            tokenizer_pad_token_id,
-            cfg,
-        )
+        split: init_split_dataloader(ds, split, tokenizer_pad_token_id, cfg, device)
         for split, ds in dataset.items()
     }

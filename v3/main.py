@@ -93,9 +93,7 @@ class Main:
 
         # Init dataloaders
         self.dataloaders = init_dataloaders(
-            self.dataset,
-            cfg.dataloader,
-            self.tokenizer.pad_token_id,
+            self.dataset, cfg.dataloader, self.tokenizer.pad_token_id, cfg.device
         )
 
         torch.set_default_device(self.cfg.device)
