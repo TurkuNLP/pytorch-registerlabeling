@@ -67,6 +67,7 @@ class Dataloader:
     dev_batch_size: int = 128
     test_batch_size: int = 128
     balancing_sampler: bool = False
+    pad_direction: str = "right"
 
 
 @dataclass
