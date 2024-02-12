@@ -22,10 +22,8 @@ SAMPLER_CNF = {
 def init_split_dataloader(
     dataset,
     split,
-    batch_size,
     tokenizer_pad_token_id,
-    balance_languages,
-    device,
+    cfg,
 ):
     def collate_fn(batch):
         if "input_ids" in batch[0]:
@@ -33,32 +31,34 @@ def init_split_dataloader(
             # Pad sequences dynamically to the maximum length in the batch
             for example in batch:
                 pad_length = max_length - len(example["input_ids"])
+                pad_conf = (
+                    (0, pad_length) if cfg.pad_direction == "right" else (pad_length, 0)
+                )
                 for key in example:
                     if key == "input_ids":
                         # Use tokenizer.pad_token_id as the padding value for input_ids
                         example[key] = torch.nn.functional.pad(
-                            example[key], (0, pad_length), value=tokenizer_pad_token_id
+                            example[key], pad_conf, value=tokenizer_pad_token_id
                         )
                     elif key in ["attention_mask", "token_type_ids"]:
                         # Use 0 as the padding value for attention_mask
                         example[key] = torch.nn.functional.pad(
-                            example[key], (0, pad_length), value=0
+                            example[key], pad_conf, value=0
                         )
 
         batch = {
-            key: torch.stack([example[key] for example in batch]).to(device)
-            for key in batch[0]
+            key: torch.stack([example[key] for example in batch]) for key in batch[0]
         }
 
         return batch
 
     language_data = [sample["language"] for sample in dataset]
     dataset = dataset.remove_columns(["language"])
-    use_balancer = balance_languages and len(set(language_data)) > 1
+    use_balancer = cfg.balance_languages and len(set(language_data)) > 1
     print(f"Languages: {set(language_data)}")
     dataloader = DataLoader(
         dataset,
-        batch_size=batch_size,
+        batch_size=cfg[f"{split}_batch_size"],
         collate_fn=collate_fn,
         **(
             {"sampler": BalancedLanguageSampler(language_data, **SAMPLER_CNF[split])}
@@ -76,10 +76,8 @@ def init_dataloaders(dataset, cfg, tokenizer_pad_token_id, device):
         split: init_split_dataloader(
             ds,
             split,
-            cfg[f"{split}_batch_size"],
             tokenizer_pad_token_id,
-            cfg.balancing_sampler,
-            device,
+            cfg,
         )
         for split, ds in dataset.items()
     }
