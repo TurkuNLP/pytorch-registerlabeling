@@ -45,9 +45,12 @@ def init_split_dataloader(
                             example[key], (0, pad_length), value=0
                         )
 
-        return {
-            key: torch.stack([example[key] for example in batch]) for key in batch[0]
+        batch = {
+            key: torch.stack([example[key] for example in batch]).to(device)
+            for key in batch[0]
         }
+
+        return batch
 
     language_data = [sample["language"] for sample in dataset]
     dataset = dataset.remove_columns(["language"])
@@ -62,7 +65,6 @@ def init_split_dataloader(
             if use_balancer
             else {"shuffle": True}
         ),
-        generator=torch.Generator(device=device),
     )
     print(f"{split} dataloader size: {len(dataloader)} (balancer: {use_balancer})")
 
