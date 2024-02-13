@@ -19,7 +19,6 @@ small_languages = [
     "jp",
     "no",
     "pt",
-    "tr",
     "ur",
     "zh",
 ]
