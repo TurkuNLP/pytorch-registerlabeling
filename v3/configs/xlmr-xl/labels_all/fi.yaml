@@ -12,3 +12,6 @@ dataloader:
   train_batch_size: 4
   test_batch_size: 64
   train_batch_size: 64
+#42 {'f1': 0.794572591587517, 'f1_th05': 0.7873689659635046, 'precision': 0.7943570265870863, 'recall': 0.7947882736156352, 'pr_auc': 0.864586000447274, 'roc_auc': 0.8898279073454392, 'accuracy': 0.6899116689911668, 'threshold': 0.5999999999999999}
+
+# Note: the above was with batch 1 and accumulation 8
