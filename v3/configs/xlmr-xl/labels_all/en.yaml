@@ -1,0 +1,12 @@
+data:
+  train: en
+model:
+  name: facebook/xlm-roberta-xl
+trainer:
+  learning_rate: 1e-4
+  gradient_accumulation_steps: 4
+  best_model_metric: eval_f1
+peft:
+  enable: True
+dataloader:
+  train_batch_size: 4
