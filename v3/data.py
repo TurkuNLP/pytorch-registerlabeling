@@ -5,7 +5,7 @@ from datasets import Dataset
 
 csv.field_size_limit(sys.maxsize)
 
-from datasets import Dataset, DatasetDict
+from datasets import Dataset, DatasetDict, concatenate_datasets
 
 from .labels import binarize_labels, normalize_labels
 
@@ -102,6 +102,14 @@ def get_dataset(cfg):
     if dev:
         splits["dev"] = make_generator("dev", dev)
     splits["test"] = make_generator("test", test)
+
+    if cfg.data.test_all_data:
+        train_to_test = make_generator("train", test)
+        dev_to_test = make_generator("dev", test)
+
+        splits["test"] = concatenate_datasets(
+            [splits["test"], train_to_test, dev_to_test]
+        )
 
     return DatasetDict(splits)
 

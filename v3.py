@@ -34,6 +34,7 @@ class Data:
     remove_unused_cols: bool = True
     no_dynamic_padding: bool = False
     text_prefix: str = ""
+    test_all_data = False
 
 
 @dataclass
