@@ -10,3 +10,5 @@ peft:
 dataloader:
   train_batch_size: 2
   balancing_sampler: True
+
+#42 {'f1': 0.7769702201122141, 'f1_th05': 0.7712841521028114, 'precision': 0.7746832828421922, 'recall': 0.7792706998649445, 'pr_auc': 0.8410998974819173, 'roc_auc': 0.8802953037531149, 'accuracy': 0.6016479894528675, 'threshold': 0.5499999999999999}
