@@ -1,7 +1,7 @@
 train_using_embeddings: 1024
 torch_dtype: float
 data:
-  train: en-fi-fr-sv
+  train: en-fi-fr-sv-tr
   no_dynamic_padding: True
   text_prefix: "query: "
 model:
