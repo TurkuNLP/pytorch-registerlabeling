@@ -7,4 +7,4 @@ data:
 model:
   name: intfloat/multilingual-e5-large
 trainer:
-  learning_rate: 3e-5
+  learning_rate: 1e-5

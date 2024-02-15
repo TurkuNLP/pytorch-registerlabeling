@@ -11,8 +11,6 @@ from .utils import DotDict
 class PooledRobertaForSequenceClassification(RobertaForSequenceClassification):
     def __init__(self, config, pooling):
         super().__init__(config)
-        # You can add any additional customization if needed
-
         self.classifier = PooledRobertaClassificationHead(config, pooling)
 
     def forward(
@@ -170,4 +168,25 @@ class GeneralClassificationHead(nn.Module):
         x = self.dropout(x)
         logits = self.out_proj(x)
 
+        return logits
+
+
+class SentenceTransformerClassifier(nn.Module):
+    def __init__(self, base_model, num_labels):
+        super(SentenceTransformerClassifier, self).__init__()
+        self.base_model = base_model
+        self.classifier = nn.Linear(base_model.config.hidden_size, num_labels)
+
+    def average_pool(
+        last_hidden_states: torch.Tensor, attention_mask: torch.Tensor
+    ) -> torch.Tensor:
+        last_hidden = last_hidden_states.masked_fill(
+            ~attention_mask[..., None].bool(), 0.0
+        )
+        return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
+
+    def forward(self, input_ids, attention_mask):
+        outputs = self.base_model(input_ids=input_ids, attention_mask=attention_mask)
+        pooled_output = self.average_pool(outputs.last_hidden_state, attention_mask)
+        logits = self.classifier(pooled_output)
         return logits

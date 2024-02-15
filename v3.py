@@ -131,6 +131,7 @@ if __name__ == "__main__":
     parser.add_argument("--peft", type=Peft, default=Peft())
     parser.add_argument("--ray", type=Ray, default=Ray())
     parser.add_argument("--config", "-c", action=ActionConfigFile)
+    parser.add_argument("--temp_test", action="store_true")
 
     cfg = parser.parse_args()
 

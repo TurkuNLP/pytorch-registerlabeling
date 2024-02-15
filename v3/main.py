@@ -29,7 +29,11 @@ from .embeddings import extract_doc_embeddings, extract_st_doc_embeddings
 from .labels import get_label_scheme
 from .loss import BCEFocalLoss
 from .metrics import compute_metrics
-from .model import LogisticRegressionModel, PooledRobertaForSequenceClassification
+from .model import (
+    LogisticRegressionModel,
+    PooledRobertaForSequenceClassification,
+    SentenceTransformerClassifier,
+)
 from .optimizer import create_optimizer
 from .save import (
     init_ray_dir,
@@ -172,6 +176,9 @@ class Main:
             )
 
         self.model = model
+
+        if self.cfg.temp_test:
+            self.model = SentenceTransformerClassifier(model, self.cfg.num_labels)
 
     def _train(self, config={}):
         self._init_model(
