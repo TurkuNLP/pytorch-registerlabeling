@@ -137,7 +137,7 @@ def setfit_train(dataset, label_scheme):
         # metric=compute_metrics,
         # compute_metrics=compute_metrics,
         column_mapping={"text": "text", "label": "label"},
-        callbacks=[EvaluateCallback()],
+        # callbacks=[EvaluateCallback()],
     )
 
     trainer.train()
