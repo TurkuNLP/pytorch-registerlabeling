@@ -4,9 +4,9 @@ model:
   name: facebook/xlm-roberta-xl
 trainer:
   learning_rate: 1e-4
-  gradient_accumulation_steps: 4
+  gradient_accumulation_steps: 8
 peft:
   enable: True
 dataloader:
-  train_batch_size: 2
+  train_batch_size: 1
   balancing_sampler: True
