@@ -99,7 +99,7 @@ def setfit_train(dataset, label_scheme):
         eval_dataset=dev_dataset,
         args=args,
         metric="f1",
-        metric_kwargs={"avarage": "micro"},
+        metric_kwargs={"average": "micro"},
         # metric=compute_metrics,
         # compute_metrics=compute_metrics,
         column_mapping={"text": "text", "label": "label"},
