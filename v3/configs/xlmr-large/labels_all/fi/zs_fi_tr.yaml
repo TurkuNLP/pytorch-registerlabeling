@@ -1,6 +1,5 @@
 data:
   train: en-fr-sv
-  dev: en-fr-sv
 model:
   name: xlm-roberta-large
 trainer:
