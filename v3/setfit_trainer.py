@@ -1,6 +1,15 @@
-from setfit import SetFitModel, Trainer, TrainingArguments, sample_dataset
+from setfit import (
+    SetFitModel,
+    Trainer,
+    TrainingArguments,
+    sample_dataset,
+)
+import torch
+import torch.nn
+from transformers import TrainerCallback
 from datasets import Dataset
 import pandas as pd
+import numpy as np
 from sklearn.metrics import (
     accuracy_score,
     average_precision_score,
@@ -11,7 +20,38 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
+sigmoid = torch.nn.Sigmoid()
+
 model_id = "smart-tribune/sentence-transformers-multilingual-e5-large"
+
+
+def optimize_threshold(probs, labels):
+    probs = sigmoid(torch.Tensor(probs)).float().cpu().numpy()
+    best_f1 = 0
+    best_f1_threshold = 0.5
+    for th in np.arange(0.3, 0.7, 0.05):
+        y_pred = np.zeros(probs.shape)
+        y_pred[np.where(probs >= th)] = 1
+        f1 = f1_score(y_true=labels, y_pred=y_pred, average="micro")
+        if f1 > best_f1:
+            best_f1 = f1
+            best_f1_threshold = th
+
+    return best_f1_threshold
+
+
+class EvaluateCallback(TrainerCallback):
+
+    def on_evaluate(
+        self,
+        args: TrainingArguments,
+        state: TrainerState,
+        control: TrainerControl,
+        model: SetFitModel,
+        **kwargs,
+    ):
+        train_embeddings = model.encode(train_dataset["text"])
+        eval_embeddings = model.encode(eval_dataset["text"])
 
 
 def few_shot(dataset, num):
@@ -54,11 +94,11 @@ def setfit_train(dataset, label_scheme):
         )
         return {
             f"f1": f1_score(y_true=labels, y_pred=y_pred, average="micro"),
-            f"precision": precision,
-            f"recall": recall,
-            f"pr_auc": pr_auc,
-            f"roc_auc": roc_auc,
-            f"accuracy": accuracy,
+            # f"precision": precision,
+            # f"recall": recall,
+            # f"pr_auc": pr_auc,
+            # f"roc_auc": roc_auc,
+            # f"accuracy": accuracy,
         }
 
     train_dataset = dataset["train"].rename_column("labels", "label")
@@ -66,7 +106,7 @@ def setfit_train(dataset, label_scheme):
     test_dataset = dataset["test"].rename_column("labels", "label")
 
     train_dataset = few_shot(train_dataset, 8)
-    dev_dataset = few_shot(dev_dataset, 4)
+    dev_dataset = few_shot(dev_dataset, 2)
     test_dataset = test_dataset
 
     # model = SetFitModel.from_pretrained(model_id, multi_target_strategy="multi-output")
@@ -80,7 +120,7 @@ def setfit_train(dataset, label_scheme):
     args = TrainingArguments(
         batch_size=8,
         evaluation_strategy="steps",
-        eval_steps=500,
+        eval_steps=100,
         num_epochs=1,
         save_strategy="epoch",
         # load_best_model_at_end=True,
@@ -93,7 +133,9 @@ def setfit_train(dataset, label_scheme):
         eval_dataset=dev_dataset,
         args=args,
         metric=compute_metrics,
+        compute_metrics=compute_metrics,
         column_mapping={"text": "text", "label": "label"},
+        callbacks=[EvaluateCallback()],
     )
 
     trainer.train()
