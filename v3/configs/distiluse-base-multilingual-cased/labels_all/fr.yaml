@@ -1,7 +1,0 @@
-train_using_embeddings: 768
-data:
-  train: fr
-model:
-  name: sentence-transformers/distiluse-base-multilingual-cased-v2
-trainer:
-  learning_rate: 5e-5

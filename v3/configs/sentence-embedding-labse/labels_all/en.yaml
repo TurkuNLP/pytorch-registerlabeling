@@ -1,7 +1,0 @@
-train_using_embeddings: 768
-data:
-  train: en
-model:
-  name: kev216/sentence-embedding-LaBSE
-trainer:
-  learning_rate: 5e-5

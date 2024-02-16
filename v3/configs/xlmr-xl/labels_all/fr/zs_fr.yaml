@@ -1,0 +1,13 @@
+data:
+  train: en-fi-sv-tr
+model:
+  name: facebook/xlm-roberta-xl
+trainer:
+  learning_rate: 1e-4
+  gradient_accumulation_steps: 8
+peft:
+  enable: True
+dataloader:
+  train_batch_size: 1
+  balancing_sampler: True
+# 42 {'f1': 0.7588290407082354, 'f1_th05': 0.7519057883392041, 'precision': 0.7673537259754825, 'recall': 0.7504916792738275, 'pr_auc': 0.8379700841927298, 'roc_auc': 0.8658972568422844, 'accuracy': 0.5598075818495117, 'threshold': 0.5499999999999999}
