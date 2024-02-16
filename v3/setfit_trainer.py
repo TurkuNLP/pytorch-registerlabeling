@@ -132,8 +132,10 @@ def setfit_train(dataset, label_scheme):
         train_dataset=train_dataset,
         eval_dataset=dev_dataset,
         args=args,
-        metric=compute_metrics,
-        compute_metrics=compute_metrics,
+        metric="f1",
+        metric_kwargs={"avarage": "micro"},
+        # metric=compute_metrics,
+        # compute_metrics=compute_metrics,
         column_mapping={"text": "text", "label": "label"},
         callbacks=[EvaluateCallback()],
     )
