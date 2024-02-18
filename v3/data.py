@@ -131,6 +131,6 @@ def preprocess_data(dataset, tokenizer, cfg):
             ["label_text", "text", "id", "split", "length"]
         )
     dataset = dataset.rename_column("label", "labels")
-    if not cfg.method == "setfit_train":
+    if not "setfit" in cfg.method:
         dataset.set_format("torch", device=cfg.device)
     return dataset
