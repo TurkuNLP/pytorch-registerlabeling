@@ -88,7 +88,7 @@ def setfit_train(dataset, label_scheme, method):
 
     args = TrainingArguments(
         batch_size=8,
-        evaluation_strategy="steps",
+        # evaluation_strategy="steps",
         # eval_steps=100,
         # num_epochs=1,
         save_strategy="epoch",
