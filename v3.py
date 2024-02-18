@@ -103,6 +103,7 @@ if __name__ == "__main__":
             "extract_st_doc_embeddings",
             "ray_tune",
             "setfit_train",
+            "setfit_predict",
         ],
     )
     parser.add_argument(
