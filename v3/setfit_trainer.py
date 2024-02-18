@@ -89,11 +89,12 @@ def setfit_train(dataset, label_scheme, method):
     args = TrainingArguments(
         batch_size=8,
         evaluation_strategy="steps",
-        eval_steps=100,
-        num_epochs=1,
+        # eval_steps=100,
+        # num_epochs=1,
         save_strategy="epoch",
         # load_best_model_at_end=True,
         report_to="none",
+        max_steps=1000,
     )
 
     trainer = Trainer(
