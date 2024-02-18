@@ -1,11 +1,26 @@
+from dataclasses import dataclass
+
 from jsonargparse import ArgumentParser
+
+
+@dataclass
+class Data:
+    train: str = None
+    dev: str = None
+    test: str = None
+    labels: str = "all"
+    concat_small: bool = False
+    text_prefix: str = ""
+    test_all_data: bool = False
+
 
 if __name__ == "__main__":
     parser = ArgumentParser()
 
     parser.add_argument("--input", "-i")
     parser.add_argument("--method", "-m")
-    parser.add_argument("--label_scheme", "-l", default="all")
+    parser.add_argument("--working_dir_root", default=".")
+    parser.add_argument("--data", type=Data, default=Data())
 
     cfg = parser.parse_args()
 

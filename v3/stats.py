@@ -2,26 +2,203 @@ import csv
 
 import matplotlib.colors as mcolors
 import numpy as np
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.io as pio
 import seaborn as sns
+from datasets import concatenate_datasets
 from sklearn.metrics import classification_report
-from sklearn.metrics import multilabel_confusion_matrix
 
-from .data import language_names, small_languages
-from .labels import binarize_labels, get_label_scheme, map_full_names
+from .data import get_dataset, language_names, small_languages
+from .labels import (
+    binarize_labels,
+    get_label_scheme,
+    labels_all_hierarchy,
+    map_full_names,
+)
 
-from .mlctensor import mlctensor
+pio.kaleido.scope.mathjax = None  # a fix for .pdf files
 
 
 class Stats:
     def __init__(self, cfg):
         self.cfg = cfg
-        self.labels = get_label_scheme(cfg.label_scheme)
-        self.palette = sns.cubehelix_palette
+        self.labels = get_label_scheme(cfg.data.labels)
+        self.palette = sns.color_palette("Blues")
+        self.palette[0] = (1, 1, 1)
+        self.template = "plotly_white"
 
         # Run
         getattr(self, cfg.method)()
+
+    def stacked_bars(self):
+        data = get_dataset(self.cfg)
+        data = concatenate_datasets([data["train"], data["dev"], data["test"]])
+        df = pd.DataFrame(data)[["label_text", "language"]]
+        df["label_text"] = df["label_text"].str.split(" ")
+
+        redundant_parents = [
+            x for x in labels_all_hierarchy.keys() if len(labels_all_hierarchy[x]) > 1
+        ]
+
+        # Filtering out redundant parents
+        df["label_text"] = df["label_text"].apply(
+            lambda labels: [label for label in labels if label not in redundant_parents]
+        )
+
+        # Explode
+        df = df.explode("label_text")
+
+        label_to_category = {
+            label: category
+            for category, labels in labels_all_hierarchy.items()
+            for label in labels
+        }
+
+        subcategory_counts = (
+            df.groupby(["label_text", "language"])
+            .size()
+            .unstack(fill_value=0)
+            .to_dict(orient="index")
+        )
+
+        # Adding a "total" key to each dict item
+        for label, lang_counts in subcategory_counts.items():
+            subcategory_counts[label]["total"] = sum(lang_counts.values())
+
+        category_counts = {
+            key: {"total": 0, "subcategories": {}}
+            for key in labels_all_hierarchy.keys()
+        }
+
+        xgenre_counts = {}
+
+        for key in subcategory_counts.keys():
+            total = subcategory_counts[key].pop("total")
+            category = label_to_category[key]
+            category_counts[category]["subcategories"][key] = {
+                "val": total,
+                "lang": subcategory_counts[key],
+            }
+            category_counts[category]["total"] += total
+
+        # Sort categories
+        category_counts_sorted = dict(
+            sorted(category_counts.items(), key=lambda x: x[1]["total"], reverse=True)
+        )
+
+        # Sort labels
+        for key, val in category_counts_sorted.items():
+            sorted_subcategories = dict(
+                sorted(
+                    category_counts[key]["subcategories"].items(),
+                    key=lambda x: x[1]["val"],
+                    reverse=True,
+                )
+            )
+            category_counts[key]["subcategories"] = sorted_subcategories
+
+        data = category_counts_sorted
+
+        subcategories = []
+        langs = {"en": [], "fi": [], "fr": [], "sv": [], "tr": []}
+        lang_full_names = {
+            "en": "English",
+            "sv": "Swedish",
+            "fi": "Finnish",
+            "fr": "French",
+            "tr": "Turkish",
+        }
+
+        shapes = []  # List to store shapes for horizontal lines
+
+        # Counter to keep track of subcategory index
+        subcat_index = 0
+
+        for region in data.values():
+            print(region)
+            for subcat, details in region["subcategories"].items():
+                print(map_full_names.get(subcat, subcat))
+                subcategories.append(map_full_names.get(subcat, subcat))
+                for lang, count in details["lang"].items():
+                    langs[lang].append(count)
+                subcat_index += 1
+
+            print(subcat_index)
+            # Adding a horizontal line at the end of each main category
+            shapes.append(
+                {
+                    "type": "line",
+                    "x0": 0,
+                    "y0": subcat_index - 0.5,
+                    "x1": 1,
+                    "y1": subcat_index - 0.5,
+                    "xref": "paper",
+                    # "yref": "y",
+                    "line": {
+                        "color": "#aaaaaa",
+                        "width": 0.5,
+                    },
+                }
+            )
+
+        # Creating the plot
+        fig = go.Figure()
+        color_i = 0
+        print(subcategories)
+        for lang, counts in langs.items():
+            fig.add_trace(
+                go.Bar(
+                    name=lang_full_names[lang],
+                    y=subcategories,
+                    x=counts,
+                    orientation="h",
+                    marker_color=sns.color_palette("Blues", n_colors=6).as_hex()[
+                        color_i + 1
+                    ],
+                )
+            )
+            color_i += 1
+
+        annotations = []
+        current_index = 0
+        for region_name, region in data.items():
+            region_length = len(region["subcategories"])
+            annotations.append(
+                go.layout.Annotation(
+                    x=0.99,  # Adjust as needed for proper alignment
+                    y=current_index + region_length - 1 - ((region_length - 1) / 2),
+                    xref="paper",
+                    yref="y",
+                    text="<b style='font-weight:400;color:black'>"
+                    + map_full_names.get(region_name, region_name)
+                    + "</b>",
+                    showarrow=False,
+                    # bgcolor="white",
+                    opacity=0.8,
+                )
+            )
+            current_index += region_length
+
+        width = 900
+        height = width / 1.618
+
+        fig.update_layout(
+            annotations=annotations,
+            width=width,
+            height=height,
+            margin=go.layout.Margin(l=5, r=5, b=5, t=5, pad=4),
+            yaxis=dict(autorange="reversed"),
+            template=self.template,
+            barmode="stack",
+            shapes=shapes[:-1],  # Adding shapes to the layout
+            legend_traceorder="normal",
+        )
+        fig.update_yaxes(ticksuffix="  ")
+
+        fig.show()
+        fig.write_image("output/stacked.pdf")
 
     def prediction_confusion_matrix(self):
         with open(f"{self.cfg.input}", "r") as csvfile:
@@ -40,82 +217,52 @@ class Stats:
             for label in predicted_labels
         ]
 
-        evalT = mlctensor.mlcTensor(
-            np.asarray(true_labels_binary), np.asarray(predicted_labels_binary)
-        )
-        MT = evalT.computeConfusionTensor(unique=True)
-        RT = evalT.getRecall()
-        PT = evalT.getPrecision()
+        confusion_matrix = np.zeros((len(self.labels), len(self.labels)), dtype=float)
 
-        # normalized_confusion_matrix_data = RT[:25, :25]
-        normalized_confusion_matrix_data = RT[:25, :25]
-        a = 100
+        def get_combined(T, P):
+            T_ = np.array(T) & (~np.array(P) & 1)  # FN
+            P_ = np.array(P) & (~np.array(T) & 1)  # FP
 
-        if a == 1:
-            confusion_matrix_data = np.array(
-                [
-                    [
-                        sum(a and b for a, b in zip(true_col, pred_col))
-                        for pred_col in zip(*predicted_labels_binary)
-                    ]
-                    for true_col in zip(*true_labels_binary)
-                ]
-            )
+            sumP = np.sum(P) or 1
+            sumT = np.sum(T) or 1
+            sumP_ = np.sum(P_) or 1
 
-            print(confusion_matrix_data)
+            if all(T_ == P_):
+                M = np.diag(T)
 
-            normalized_confusion_matrix_data = (
-                confusion_matrix_data / confusion_matrix_data.sum(axis=1, keepdims=True)
-            )
+            if all(T_ == 0) and any(P_ == 1):
+                M = (np.outer(T, P_) + sumT * np.diag(T)) / sumP
 
-        elif a == 2:
-            matrices = multilabel_confusion_matrix(
-                predicted_labels_binary, true_labels_binary
-            )
-            macro_confusion_matrix = np.sum(matrices, axis=0)
+            if all(P_ == 0) and any(T_ == 1):
+                M = np.outer(T_, P) / sumP + np.diag(P)
 
-            print(macro_confusion_matrix)
-            exit()
-        elif a == 3:
-            confusion_matrix = np.zeros(
-                (len(self.labels), len(self.labels)), dtype=float
-            )
-            for true_labels, predicted_labels in zip(
-                true_labels_binary, predicted_labels_binary
-            ):
-                # Jaccardin samankaltaisuus:
-                intersection = np.sum(np.logical_and(true_labels, predicted_labels))
-                union = np.sum(np.logical_or(true_labels, predicted_labels))
-                overlap_factor = intersection / union if union > 0 else 0
+            if any(T_ == 1) and any(P_ == 1):
+                M = np.outer(T_, P_) / sumP_ + np.diag(T & P)
 
-                for i, true_label in enumerate(true_labels):
-                    for j, predicted_label in enumerate(predicted_labels):
-                        if true_label and predicted_label:
-                            confusion_matrix[i, j] += overlap_factor  # tässä
+            return M
 
-            print(confusion_matrix)
-            # Normalize each row
-            row_sums = confusion_matrix.sum(axis=1, keepdims=True)
-            normalized_confusion_matrix = confusion_matrix / row_sums
+        for true_labels, predicted_labels in zip(
+            true_labels_binary, predicted_labels_binary
+        ):
+            T = np.array(true_labels)
+            P = np.array(predicted_labels)
+            M = get_combined(T, P)
 
-            # Replace NaNs with 0 (in case of rows that sum up to 0)
-            normalized_confusion_matrix_data = np.nan_to_num(
-                normalized_confusion_matrix
-            )
+            confusion_matrix += M
 
-            print(normalized_confusion_matrix_data)
+        row_sums = confusion_matrix.sum(axis=1, keepdims=True)
+        normalized_confusion_matrix = confusion_matrix / row_sums
 
-        cubehelix_palette = self.palette(rot=-0.2)
-        palette = [mcolors.to_hex(color) for color in cubehelix_palette]
+        normalized_confusion_matrix_data = np.nan_to_num(normalized_confusion_matrix)
 
-        # Create confusion matrix using Plotly Express
+        palette = [mcolors.to_hex(color) for color in self.palette]
+
         confusion_matrix_fig = px.imshow(
             normalized_confusion_matrix_data,
-            # labels=dict(x="Predicted Labels", y="True Labels"),
             x=self.labels,
             y=self.labels,
             color_continuous_scale=palette,
-            title="Confusion Matrix (Percentages)",
+            title="Confusion Matrix",
             color_continuous_midpoint=0,
             zmin=0,
             zmax=1,
@@ -130,7 +277,7 @@ class Stats:
             coloraxis_showscale=False,
             font=dict(size=9),
         )
-        # confusion_matrix_fig.show()
+
         confusion_matrix_fig.write_image("output/heatmap.png", scale=10)
 
     def sm_zero_shot(self):
@@ -163,9 +310,9 @@ class Stats:
                 rep = {k: v for k, v in rep.items() if k in self.labels}
 
                 language_data = {
-                    f"{map_full_names[k]} ({k})": v["f1-score"]
-                    if v["f1-score"] != 0
-                    else 0.005
+                    f"{map_full_names[k]} ({k})": (
+                        v["f1-score"] if v["f1-score"] != 0 else 0.005
+                    )
                     for k, v in rep.items()
                     if v["support"] >= 20
                 }

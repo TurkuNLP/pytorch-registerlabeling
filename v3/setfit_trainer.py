@@ -39,7 +39,7 @@ def few_shot(dataset, num):
     return dataset
 
 
-def setfit_train(dataset, label_scheme):
+def setfit_train(dataset, label_scheme, method):
 
     def compute_metrics(y_pred, labels):
         try:
@@ -66,6 +66,9 @@ def setfit_train(dataset, label_scheme):
             # f"roc_auc": roc_auc,
             # f"accuracy": accuracy,
         }
+
+    if method == "predict":
+        model_id = "./checkpoints/step_19588"
 
     train_dataset = dataset["train"].rename_column("labels", "label")
     dev_dataset = dataset["dev"].rename_column("labels", "label")
@@ -105,8 +108,9 @@ def setfit_train(dataset, label_scheme):
         column_mapping={"text": "text", "label": "label"},
         # callbacks=[EvaluateCallback()],
     )
+    if method != "predict":
 
-    trainer.train()
+        trainer.train()
 
     metrics = trainer.evaluate(test_dataset)
 
