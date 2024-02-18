@@ -82,6 +82,7 @@ def setfit_train(dataset, label_scheme, method):
     model = SetFitModel.from_pretrained(
         model_id,
         multi_target_strategy="one-vs-rest",
+        load_best_model_at_end=True,
         # use_differentiable_head=True,
         # head_params={"out_features": len(label_scheme)},
     )
@@ -95,7 +96,7 @@ def setfit_train(dataset, label_scheme, method):
         evaluation_strategy="no",
         # load_best_model_at_end=True,
         report_to="none",
-        max_steps=1000,
+        max_steps=100,
     )
 
     trainer = Trainer(
@@ -113,6 +114,7 @@ def setfit_train(dataset, label_scheme, method):
     if method != "predict":
 
         trainer.train()
+        model._save_pretrained("./setfit")
 
     metrics = trainer.evaluate(test_dataset)
 
