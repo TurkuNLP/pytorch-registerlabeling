@@ -82,7 +82,6 @@ def setfit_train(dataset, label_scheme, method):
     model = SetFitModel.from_pretrained(
         model_id,
         multi_target_strategy="one-vs-rest",
-        load_best_model_at_end=True,
         # use_differentiable_head=True,
         # head_params={"out_features": len(label_scheme)},
     )
