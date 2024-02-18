@@ -95,7 +95,7 @@ def setfit_train(dataset, label_scheme, method):
         evaluation_strategy="no",
         # load_best_model_at_end=True,
         report_to="none",
-        max_steps=1000,
+        # max_steps=1000,
     )
 
     trainer = Trainer(
