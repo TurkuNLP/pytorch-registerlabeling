@@ -66,7 +66,7 @@ def setfit_train(dataset, label_scheme, method):
         }
 
     if method == "predict":
-        model_id = "./checkpoints/step_19588"
+        model_id = "./checkpoints/step_1000"
     else:
         model_id = "smart-tribune/sentence-transformers-multilingual-e5-large"
 
