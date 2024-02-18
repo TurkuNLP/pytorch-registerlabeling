@@ -17,8 +17,6 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 
-model_id = "smart-tribune/sentence-transformers-multilingual-e5-large"
-
 
 def few_shot(dataset, num):
     def sample_group(group, random_state=42):
@@ -69,6 +67,8 @@ def setfit_train(dataset, label_scheme, method):
 
     if method == "predict":
         model_id = "./checkpoints/step_19588"
+    else:
+        model_id = "smart-tribune/sentence-transformers-multilingual-e5-large"
 
     train_dataset = dataset["train"].rename_column("labels", "label")
     dev_dataset = dataset["dev"].rename_column("labels", "label")
