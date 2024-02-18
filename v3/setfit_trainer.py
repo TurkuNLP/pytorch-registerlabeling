@@ -92,6 +92,7 @@ def setfit_train(dataset, label_scheme, method):
         # eval_steps=100,
         # num_epochs=1,
         save_strategy="epoch",
+        evaluation_strategy="no",
         # load_best_model_at_end=True,
         report_to="none",
         max_steps=1000,

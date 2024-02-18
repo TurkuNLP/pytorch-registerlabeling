@@ -6,3 +6,4 @@ trainer:
   learning_rate: 5e-5
 dataloader:
   balancing_sampler: True
+#42 {'f1': 0.750112215453671, 'f1_th05': 0.7346227369841449, 'precision': 0.7645751633986928, 'recall': 0.7361862806796727, 'pr_auc': 0.8227859900393657, 'roc_auc': 0.85906602390457, 'accuracy': 0.5909935004642526, 'threshold': 0.5999999999999999}
