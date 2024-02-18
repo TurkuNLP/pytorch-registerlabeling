@@ -74,7 +74,7 @@ def setfit_train(dataset, label_scheme, method):
     dev_dataset = dataset["dev"].rename_column("labels", "label")
     test_dataset = dataset["test"].rename_column("labels", "label")
 
-    train_dataset = few_shot(train_dataset, 8)
+    train_dataset = few_shot(train_dataset, 16)
     dev_dataset = few_shot(dev_dataset, 2)
     test_dataset = test_dataset
 
@@ -95,7 +95,7 @@ def setfit_train(dataset, label_scheme, method):
         evaluation_strategy="no",
         # load_best_model_at_end=True,
         report_to="none",
-        max_steps=100,
+        max_steps=1000,
     )
 
     trainer = Trainer(
