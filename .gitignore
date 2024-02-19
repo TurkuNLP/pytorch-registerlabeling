@@ -18,3 +18,5 @@ results
 log
 wandb
 checkpoints
+tokens_cache
+instruction_based
