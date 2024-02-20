@@ -1,6 +1,5 @@
 import json
 import random
-from pprint import pprint
 
 import numpy as np
 import torch
@@ -316,7 +315,7 @@ class Main:
                     print(f"Loss at step {batch_i} [E-{epoch}]: {running_loss}")
                     dev_metrics = self._evaluate()
                     self.model.train()
-                    pprint(dev_metrics)
+                    print(dev_metrics)
                     if not self.cfg.method == "ray_tune":
                         wandb.log(
                             {
