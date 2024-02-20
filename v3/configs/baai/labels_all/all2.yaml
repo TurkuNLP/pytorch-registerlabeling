@@ -1,10 +1,10 @@
 data:
   train: en-fi-fr-sv-tr
+  max_length: 4096
 model:
-  name: BAAI/bge-m3
+  name: BAAI/bge-m3-retromae
 trainer:
   learning_rate: 3e-5
 dataloader:
   balancing_sampler: True
-
-# 
+#
