@@ -1,6 +1,5 @@
 data:
   train: en-fi-fr-sv-tr
-  max_length: 4096
 model:
   name: BAAI/bge-m3-retromae
 trainer:
