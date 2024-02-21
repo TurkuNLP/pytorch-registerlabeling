@@ -25,5 +25,5 @@ else
   # Actual job script starts here
   source venv/bin/activate
   shift
-  python3 v3.py "$@"
+  srun python3 v3.py "$@"
 fi
