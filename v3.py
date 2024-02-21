@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append("venv/lib/python/python3.9/site-packages")
+sys.path.append("venv/lib/python3.9/site-packages")
 
 from dataclasses import dataclass, field
 import tempfile

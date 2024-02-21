@@ -1,7 +1,7 @@
 data:
   train: en-fi-fr-sv-tr
 model:
-  name: BAAI/bge-m3-unsupervised
+  name: BAAI/bge-m3-retromae
 trainer:
   learning_rate: 3e-5
 dataloader:
