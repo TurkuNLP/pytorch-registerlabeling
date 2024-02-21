@@ -1,4 +1,5 @@
 import csv
+from itertools import combinations
 
 import matplotlib.colors as mcolors
 import numpy as np
@@ -16,6 +17,7 @@ from .labels import (
     get_label_scheme,
     labels_all_hierarchy,
     map_full_names,
+    map_xgenre,
 )
 
 pio.kaleido.scope.mathjax = None  # a fix for .pdf files
@@ -32,7 +34,7 @@ class Stats:
         # Run
         getattr(self, cfg.method)()
 
-    def stacked_bars(self):
+    def get_dataframe(self, cfg):
         data = get_dataset(self.cfg)
         data = concatenate_datasets([data["train"], data["dev"], data["test"]])
         df = pd.DataFrame(data)[["label_text", "language"]]
@@ -46,7 +48,9 @@ class Stats:
         df["label_text"] = df["label_text"].apply(
             lambda labels: [label for label in labels if label not in redundant_parents]
         )
+        return df
 
+    def get_ordered_data(self, df, reverse=True):
         # Explode
         df = df.explode("label_text")
 
@@ -77,15 +81,22 @@ class Stats:
         for key in subcategory_counts.keys():
             total = subcategory_counts[key].pop("total")
             category = label_to_category[key]
+            xgenre = map_xgenre[key]
             category_counts[category]["subcategories"][key] = {
                 "val": total,
+                "xgenre": xgenre,
                 "lang": subcategory_counts[key],
             }
+            if xgenre not in xgenre_counts:
+                xgenre_counts[xgenre] = 0
+            xgenre_counts[xgenre] += total
             category_counts[category]["total"] += total
 
         # Sort categories
         category_counts_sorted = dict(
-            sorted(category_counts.items(), key=lambda x: x[1]["total"], reverse=True)
+            sorted(
+                category_counts.items(), key=lambda x: x[1]["total"], reverse=reverse
+            )
         )
 
         # Sort labels
@@ -94,12 +105,19 @@ class Stats:
                 sorted(
                     category_counts[key]["subcategories"].items(),
                     key=lambda x: x[1]["val"],
-                    reverse=True,
+                    reverse=reverse,
                 )
             )
-            category_counts[key]["subcategories"] = sorted_subcategories
+        category_counts[key]["subcategories"] = sorted_subcategories
 
         data = category_counts_sorted
+
+        return data
+
+    def stacked_bars(self):
+        df = self.get_dataframe(self.cfg)
+
+        data = self.get_ordered_data(df)
 
         subcategories = []
         langs = {"en": [], "fi": [], "fr": [], "sv": [], "tr": []}
@@ -366,3 +384,144 @@ class Stats:
         )
         fig.update_yaxes(ticksuffix=" ")
         fig.show()
+
+    def sankey_plot(self):
+        df = self.get_dataframe(self.cfg)
+
+        data = self.get_ordered_data(df)
+        # colors = px.colors.sequential.Agsunset
+
+        # Initialize lists for source, target, value, labels, and positions
+        source = []
+        target = []
+        value = []
+        label = []
+        x_pos = []
+        y_pos = []
+
+        palette = sns.cubehelix_palette(rot=-0.2, n_colors=20).as_hex()[1:]
+        palette2 = sns.cubehelix_palette(rot=-0.3, n_colors=20).as_hex()[1:]
+
+        # Define a color scheme for main categories
+        # Define a color scheme for main categories and rightmost column nodes
+        main_category_colors = {
+            main_source: palette[i] for i, main_source in enumerate(data.keys())
+        }
+
+        rightmost_node_colors = {}
+        color_counter = 0
+        for main_source, sub_data in data.items():
+            for sub_source, sub_details in sub_data["subcategories"].items():
+                xgenre = sub_details["xgenre"]
+                if xgenre not in rightmost_node_colors:
+                    rightmost_node_colors[xgenre] = palette2[color_counter]
+                    color_counter += 1
+
+        # Initialize a list for link colors
+        link_colors = []
+
+        # Initialize a list for link colors
+        link_colors = []
+
+        # Function to incrementally assign x and y positions
+        def assign_positions(label_name, x_value, y_increment, current_y):
+            if label_name not in label:
+                label.append(label_name)
+                x_pos.append(x_value)
+                y_position = min(
+                    current_y * y_increment, 0.95
+                )  # Ensure y doesn't exceed 0.95
+                y_pos.append(y_position)
+                return current_y + 1
+            return current_y
+
+        # Initialize current_y counters for main sources and subcategories
+        current_y_main = 1
+        current_y_sub = 1
+
+        # Populate the source, target, value, and label lists
+        y_increment_main = 0.8 / (len(data) + 1)  # Increment for main sources
+        y_increment_sub = 0.8 / (
+            sum(len(sub_data["subcategories"]) for sub_data in data.values()) + 1
+        )  # Increment for subcategories
+
+        for main_source, sub_data in data.items():
+            current_y_main = assign_positions(
+                main_source, 0.05, y_increment_main, current_y_main
+            )
+
+            if (
+                len(sub_data["subcategories"]) == 1
+                and main_source in sub_data["subcategories"]
+            ):
+                xgenre = sub_data["subcategories"][main_source]["xgenre"]
+                current_y_sub = assign_positions(
+                    xgenre, 0.95, y_increment_sub, current_y_sub
+                )
+                source.append(label.index(main_source))
+                target.append(label.index(xgenre))
+                value.append(sub_data["subcategories"][main_source]["val"])
+                link_colors.append(rightmost_node_colors[xgenre])
+            else:
+                for sub_source, sub_details in sub_data["subcategories"].items():
+                    current_y_sub = assign_positions(
+                        sub_source, 0.5, y_increment_sub, current_y_sub
+                    )
+                    source.append(label.index(main_source))
+                    target.append(label.index(sub_source))
+                    value.append(sub_details["val"])
+
+                    xgenre = sub_details["xgenre"]
+                    current_y_sub = assign_positions(
+                        xgenre, 0.95, y_increment_sub, current_y_sub
+                    )
+                    source.append(label.index(sub_source))
+                    target.append(label.index(xgenre))
+                    value.append(sub_details["val"])
+                    link_colors.append(main_category_colors[main_source])
+
+                    # Link from subcategory (middle column) to rightmost column
+                    xgenre = sub_details["xgenre"]
+                    link_colors.append(rightmost_node_colors[xgenre])
+
+        # Create the Sankey diagram
+        fig = go.Figure(
+            data=[
+                go.Sankey(
+                    arrangement="snap",
+                    node=dict(
+                        label=[
+                            '<span style="paint-order:stroke;stroke-width:0px;stroke:white;">'
+                            + map_full_names.get(x, x)
+                            + "</span>"
+                            for x in label
+                        ],
+                        x=x_pos,
+                        y=y_pos,
+                        thickness=1,
+                        pad=15,
+                        color="white",
+                        line=dict(color="white", width=0.001),
+                    ),
+                    link=dict(
+                        source=source, target=target, value=value, color=link_colors
+                    ),
+                )
+            ]
+        )
+        width = 1000
+        height = width / 1.618
+
+        # Set the layout
+        fig.update_layout(
+            template=self.template,
+            width=width,
+            height=height,
+            margin=go.layout.Margin(l=5, r=5, b=15, t=5),
+            # paper_bgcolor="rgba(0,0,0,0)",
+            # plot_bgcolor="rgba(0,0,0,0)",
+        )
+
+        # Show the figure
+        fig.show()
+        fig.write_image("output/sankey.pdf")
