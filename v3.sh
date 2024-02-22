@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --mem=8G
+#SBATCH --mem=4G
 #SBATCH --gres=gpu:a100:1
-#SBATCH --cpus-per-task=5
+#SBATCH --cpus-per-task=4
 #SBATCH --partition=gpusmall
-#SBATCH --time=6:00:00
+#SBATCH --time=4:00:00
 #SBATCH --account=project_2009199
 
 
