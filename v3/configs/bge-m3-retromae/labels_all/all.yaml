@@ -1,6 +1,6 @@
 data:
   train: en-fi-fr-sv-tr
-  max_size: 2048
+  max_length: 1024
 model:
   name: BAAI/bge-m3-retromae
 trainer:
