@@ -5,9 +5,9 @@ model:
   name: BAAI/bge-m3-retromae
 trainer:
   learning_rate: 3e-5
-  gradient_accumulation_steps: 2
+  gradient_accumulation_steps: 4
 dataloader:
   balancing_sampler: True
-  train_batch_size: 4
+  train_batch_size: 2
   dev_batch_size: 64
   test_batch_size: 64
