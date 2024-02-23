@@ -1,0 +1,9 @@
+data:
+  train: en-fi-fr-tr
+  labels: upper
+model:
+  name: xlm-roberta-large
+trainer:
+  learning_rate: 3e-5
+dataloader:
+  balancing_sampler: True
