@@ -1,14 +1,14 @@
 data:
   train: en-fi-fr-sv-tr
-  max_length: 2048
+  max_length: 1024
 model:
   name: BAAI/bge-m3-retromae
 trainer:
   learning_rate: 3e-5
-  gradient_accumulation_steps: 8
+  #gradient_accumulation_steps: 8
 dataloader:
   balancing_sampler: True
-  train_batch_size: 1
+  #train_batch_size: 1
   dev_batch_size: 32
   test_batch_size: 32
 # 42 {'f1': 0.7685018210105724, 'f1_th05': 0.7537182919845852, 'precision': 0.7865518239722061, 'recall': 0.7512616660905634, 'pr_auc': 0.8468332962139273, 'roc_auc': 0.8672128152329959, 'accuracy': 0.5949901120632828, 'threshold': 0.5999999999999999}
