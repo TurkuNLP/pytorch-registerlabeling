@@ -1,4 +1,8 @@
-import deepl
+from transformers import (
+    AutoModel,
+    AutoModelForSeq2SeqLM,
+    AutoTokenizer,
+)
 
 import csv
 import os
@@ -6,14 +10,6 @@ import sys
 from tqdm import tqdm
 
 csv.field_size_limit(sys.maxsize)
-
-LANG_MAP = {
-    "en": "EN-GB",
-    "fi": "FI",
-    "fr": "FR",
-    "sv": "SV",
-    "tr": "TR",
-}
 
 
 class Augment:
@@ -32,18 +28,33 @@ class Augment:
 
             for row in tqdm(rows):
 
-                auth_key = self.cfg.deepl_auth_key
-                translator = deepl.Translator(auth_key)
+                src_lang = self.cfg.source
+                tgt_lang = self.cfg.target
+                model_name = f"Helsinki-NLP/opus-mt-{src_lang}-{tgt_lang}"
 
-                translation = translator.translate_text(
-                    row[1], target_lang=LANG_MAP[self.cfg.target]
+                # Load tokenizer and model
+                tokenizer = AutoTokenizer.from_pretrained(model_name)
+                model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+                # Your input text
+                text = row[1]
+
+                # Tokenize input
+                input_ids = tokenizer.encode(
+                    text, return_tensors="pt", truncation=True, max_length=512
                 )
 
-                back_translation = translator.translate_text(
-                    str(translation), target_lang=LANG_MAP[self.cfg.source]
-                )
+                # Generate translation
+                outputs = model.generate(input_ids)
 
-                with open(
-                    f"data/{self.cfg.source}/train_aug.tsv", "a", encoding="utf-8"
-                ) as outfile:
-                    outfile.write(f"{row[0]}\t{back_translation}\n")
+                # Decode and print the translation
+                translated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+                print(translated_text)
+
+                exit()
+
+                # with open(
+                #    f"data/{self.cfg.source}/train_aug.tsv", "a", encoding="utf-8"
+                # ) as outfile:
+                #    outfile.write(f"{row[0]}\t{back_translation}\n")
