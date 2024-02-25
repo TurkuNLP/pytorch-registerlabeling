@@ -27,8 +27,6 @@ class Augment:
         input_ids = tokenizer.encode(
             text,
             return_tensors="pt",
-            truncation=True,
-            max_length=512,
         )
 
         input_ids = input_ids.to("cuda")

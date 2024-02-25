@@ -35,6 +35,7 @@ class Data:
     no_dynamic_padding: bool = False
     text_prefix: str = ""
     test_all_data: bool = False
+    use_augmented_data: bool = False
 
 
 @dataclass

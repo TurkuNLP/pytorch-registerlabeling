@@ -111,6 +111,10 @@ def get_dataset(cfg):
             [splits["test"], train_to_test, dev_to_test]
         )
 
+    if cfg.data.use_augmented_data:
+        augmented_to_train = make_generator("train_aug", train)
+        splits["train"] = concatenate_datasets([splits["train"], augmented_to_train])
+
     return DatasetDict(splits)
 
 
