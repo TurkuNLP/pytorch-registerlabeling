@@ -65,11 +65,7 @@ class Augment:
                     translation, back_tokenizer, back_model
                 )
 
-                print(back_translation)
-
-                exit()
-
-                # with open(
-                #    f"data/{self.cfg.source}/train_aug.tsv", "a", encoding="utf-8"
-                # ) as outfile:
-                #    outfile.write(f"{row[0]}\t{back_translation}\n")
+                with open(
+                    f"data/{self.cfg.source}/train_aug.tsv", "a", encoding="utf-8"
+                ) as outfile:
+                    outfile.write(f"{row[0]}\t{back_translation}\n")
