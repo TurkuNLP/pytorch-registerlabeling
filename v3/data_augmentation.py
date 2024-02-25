@@ -31,6 +31,8 @@ class Augment:
             max_length=512,
         )
 
+        input_ids = input_ids.to("cuda")
+
         # Generate translation
         outputs = model.generate(input_ids)
 
