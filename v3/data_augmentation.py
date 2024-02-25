@@ -15,7 +15,7 @@ class Augment:
 
     def back_translate(self):
 
-        model_name = "jbochi/madlad400-3b-mt"
+        model_name = "google/umt5-xl"
         model = T5ForConditionalGeneration.from_pretrained(
             model_name, device_map="auto"
         )
