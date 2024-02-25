@@ -37,7 +37,7 @@ class Augment:
                 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
                 # Your input text
-                text = row[1]
+                text = " ".join(row[1].split(" ")[:300])
 
                 # Tokenize input
                 input_ids = tokenizer.encode(
@@ -45,9 +45,6 @@ class Augment:
                     return_tensors="pt",
                     truncation=True,
                     max_length=512,
-                    num_beams=4,
-                    early_stopping=True,
-                    no_repeat_ngram_size=2,
                 )
 
                 # Generate translation
