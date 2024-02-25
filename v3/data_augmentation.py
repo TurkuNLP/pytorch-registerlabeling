@@ -6,6 +6,14 @@ import sys
 
 csv.field_size_limit(sys.maxsize)
 
+LANG_MAP = {
+    "en": "EN-GB",
+    "fi": "FI",
+    "fr": "FR",
+    "sv": "SV",
+    "tr": "TR",
+}
+
 
 class Augment:
     def __init__(self, cfg):
@@ -26,8 +34,14 @@ class Augment:
                 auth_key = self.cfg.deepl_auth_key
                 translator = deepl.Translator(auth_key)
 
-                result = translator.translate_text(row[1], target_lang="EN-GB")
-                print(result)
+                translation = translator.translate_text(
+                    row[1], target_lang=LANG_MAP[self.cfg.target]
+                )
+                back_translation = translator.translate_text(
+                    translation, target_lang=LANG_MAP[self.cfg.source]
+                )
+
+                print(back_translation)
                 """
                 with open(
                     f"data/{self.cfg.source}/train_aug.tsv", "a", encoding="utf-8"
