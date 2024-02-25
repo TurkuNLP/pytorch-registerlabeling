@@ -1,6 +1,7 @@
-from transformers import T5ForConditionalGeneration, T5Tokenizer
+import deepl
 
 import csv
+import os
 import sys
 
 csv.field_size_limit(sys.maxsize)
@@ -15,20 +16,6 @@ class Augment:
 
     def back_translate(self):
 
-        model_name = "jbochi/madlad400-3b-mt"
-        model = T5ForConditionalGeneration.from_pretrained(
-            model_name, device_map="auto"
-        )
-        tokenizer = T5Tokenizer.from_pretrained(model_name)
-
-        def iterate_in_batches(lst, batch_size):
-            for i in range(0, len(lst), batch_size):
-                yield lst[i : i + batch_size]
-
-        # with open(
-        #    f"data/{self.cfg.source}/train_aug.tsv", "w", encoding="utf-8"
-        # ) as outfile:
-
         with open(f"data/{self.cfg.source}/train.tsv", "r") as f:
             # Parse the tsv file into a list of lists
             rows = [line.strip().split("\t") for line in f]
@@ -36,21 +23,17 @@ class Augment:
 
             for row in rows:
                 print(row[1])
+                auth_key = self.cfg.deepl_auth_key
+                translator = deepl.Translator(auth_key)
 
-                text = f"<2{self.cfg.target}> {row[1]}"
-                input_ids = tokenizer(
-                    text, return_tensors="pt", max_length=2048, truncation=True
-                ).input_ids.to(model.device)
-                outputs = model.generate(input_ids=input_ids)
-
-                translation = tokenizer.decode(outputs[0], skip_special_tokens=True)
-                print("translation:\n==========")
-                print(translation)
+                result = translator.translate_text(row[1], target_lang="EN")
+                print(result)
+                """
                 with open(
                     f"data/{self.cfg.source}/train_aug.tsv", "a", encoding="utf-8"
                 ) as outfile:
                     outfile.write(f"{row[0]}\t{back_translated}\n")
-
+                """
                 exit()
 
             exit()
