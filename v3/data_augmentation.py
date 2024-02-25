@@ -26,7 +26,7 @@ class Augment:
                 auth_key = self.cfg.deepl_auth_key
                 translator = deepl.Translator(auth_key)
 
-                result = translator.translate_text(row[1], target_lang="EN")
+                result = translator.translate_text(row[1], target_lang="EN-GB")
                 print(result)
                 """
                 with open(
