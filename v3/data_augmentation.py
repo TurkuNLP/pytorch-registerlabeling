@@ -35,6 +35,7 @@ class Augment:
             rows = [row for row in rows if len(row) > 1 and row[0] and row[1]]
 
             for row in rows:
+                print(row[1])
 
                 text = f"<2{self.cfg.target}> {row[1]}"
                 input_ids = tokenizer(text, return_tensors="pt").input_ids.to(
