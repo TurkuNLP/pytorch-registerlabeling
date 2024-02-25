@@ -41,7 +41,13 @@ class Augment:
 
                 # Tokenize input
                 input_ids = tokenizer.encode(
-                    text, return_tensors="pt", truncation=True, max_length=512
+                    text,
+                    return_tensors="pt",
+                    truncation=True,
+                    max_length=512,
+                    num_beams=4,
+                    early_stopping=True,
+                    no_repeat_ngram_size=2,
                 )
 
                 # Generate translation
