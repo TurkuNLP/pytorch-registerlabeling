@@ -1,4 +1,4 @@
-from transformers import MarianMTModel, MarianTokenizer
+from transformers import T5ForConditionalGeneration, T5Tokenizer
 
 import csv
 import sys
@@ -13,19 +13,13 @@ class Augment:
         # Run
         getattr(self, cfg.method)()
 
-    def get_model_and_tokenizer(self, model_name):
-        target_tokenizer = MarianTokenizer.from_pretrained(model_name)
-        target_model = MarianMTModel.from_pretrained(model_name)
-
-        return target_tokenizer, target_model
-
     def back_translate(self):
-        source_tokenizer, source_model = self.get_model_and_tokenizer(
-            f"Helsinki-NLP/opus-mt-{self.cfg.source}-{self.cfg.target}"
+
+        model_name = "jbochi/madlad400-3b-mt"
+        model = T5ForConditionalGeneration.from_pretrained(
+            model_name, device_map="auto"
         )
-        target_tokenizer, target_model = self.get_model_and_tokenizer(
-            f"Helsinki-NLP/opus-mt-{self.cfg.target}-{self.cfg.source}"
-        )
+        tokenizer = T5Tokenizer.from_pretrained(model_name)
 
         def iterate_in_batches(lst, batch_size):
             for i in range(0, len(lst), batch_size):
@@ -39,6 +33,26 @@ class Augment:
             # Parse the tsv file into a list of lists
             rows = [line.strip().split("\t") for line in f]
             rows = [row for row in rows if len(row) > 1 and row[0] and row[1]]
+
+            for row in rows:
+
+                text = f"<2{self.target}> {row[1]}"
+                input_ids = tokenizer(text, return_tensors="pt").input_ids.to(
+                    model.device
+                )
+                outputs = model.generate(input_ids=input_ids)
+
+                translation = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+                print(translation)
+                with open(
+                    f"data/{self.cfg.source}/train_aug.tsv", "a", encoding="utf-8"
+                ) as outfile:
+                    outfile.write(f"{row[0]}\t{back_translated}\n")
+
+                exit()
+
+            exit()
 
             for batch in iterate_in_batches(rows, 8):
 

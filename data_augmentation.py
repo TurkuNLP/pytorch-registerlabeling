@@ -1,6 +1,12 @@
 from dataclasses import dataclass
 
+import os
+
 from jsonargparse import ArgumentParser
+
+os.environ["HF_HOME"] = ".hf/hf_home"
+os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
+os.environ["HF_DATASETS_CACHE"] = ".hf/datasets_cache"
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -12,6 +18,6 @@ if __name__ == "__main__":
 
     print(parser.dump(cfg))
 
-    from v3.augment import Augment
+    from v3.data_augmentation import Augment
 
     Augment(cfg)
