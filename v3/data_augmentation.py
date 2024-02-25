@@ -44,7 +44,7 @@ class Augment:
                 outputs = model.generate(input_ids=input_ids)
 
                 translation = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
+                print("translation:\n==========")
                 print(translation)
                 with open(
                     f"data/{self.cfg.source}/train_aug.tsv", "a", encoding="utf-8"
