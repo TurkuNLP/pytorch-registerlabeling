@@ -19,6 +19,26 @@ class Augment:
         # Run
         getattr(self, cfg.method)()
 
+    def translate(self, text, tokenizer, model):
+        # Your input text
+        text = " ".join(text.split(" ")[:300])
+
+        # Tokenize input
+        input_ids = tokenizer.encode(
+            text,
+            return_tensors="pt",
+            truncation=True,
+            max_length=512,
+        )
+
+        # Generate translation
+        outputs = model.generate(input_ids)
+
+        # Decode and print the translation
+        translated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+        return translated_text
+
     def back_translate(self):
 
         with open(f"data/{self.cfg.source}/train.tsv", "r") as f:
@@ -31,29 +51,19 @@ class Augment:
                 src_lang = self.cfg.source
                 tgt_lang = self.cfg.target
                 model_name = f"Helsinki-NLP/opus-mt-{src_lang}-{tgt_lang}"
+                back_model_name = f"Helsinki-NLP/opus-mt-{tgt_lang}-{src_lang}"
 
                 # Load tokenizer and model
                 tokenizer = AutoTokenizer.from_pretrained(model_name)
                 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
-                # Your input text
-                text = " ".join(row[1].split(" ")[:300])
+                back_tokenizer = AutoTokenizer.from_pretrained(back_model_name)
+                back_model = AutoModelForSeq2SeqLM.from_pretrained(back_model_name)
 
-                # Tokenize input
-                input_ids = tokenizer.encode(
-                    text,
-                    return_tensors="pt",
-                    truncation=True,
-                    max_length=512,
-                )
+                translation = self.translate(row[1], tokenizer, model)
+                back_translation = self.translate(row[1], back_tokenizer, back_model)
 
-                # Generate translation
-                outputs = model.generate(input_ids)
-
-                # Decode and print the translation
-                translated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-                print(translated_text)
+                print(back_translation)
 
                 exit()
 
