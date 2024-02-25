@@ -39,7 +39,7 @@ class Augment:
 
                 text = f"<2{self.cfg.target}> {row[1]}"
                 input_ids = tokenizer(
-                    text, return_tensors="pt", max_length=2048
+                    text, return_tensors="pt", max_length=2048, truncation=True
                 ).input_ids.to(model.device)
                 outputs = model.generate(input_ids=input_ids)
 
