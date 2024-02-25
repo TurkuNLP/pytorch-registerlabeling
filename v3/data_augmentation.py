@@ -37,6 +37,7 @@ class Augment:
                 translation = translator.translate_text(
                     row[1], target_lang=LANG_MAP[self.cfg.target]
                 )
+                print(translation)
                 back_translation = translator.translate_text(
                     translation, target_lang=LANG_MAP[self.cfg.source]
                 )
