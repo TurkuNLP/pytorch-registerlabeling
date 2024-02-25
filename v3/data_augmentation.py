@@ -61,7 +61,9 @@ class Augment:
                 back_model = AutoModelForSeq2SeqLM.from_pretrained(back_model_name)
 
                 translation = self.translate(row[1], tokenizer, model)
-                back_translation = self.translate(row[1], back_tokenizer, back_model)
+                back_translation = self.translate(
+                    translation, back_tokenizer, back_model
+                )
 
                 print(back_translation)
 
