@@ -24,6 +24,5 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
 else
   # Actual job script starts here
   source venv/bin/activate
-  shift
-  srun python3 v3.py "$@"
+  srun python3 "$@"
 fi
