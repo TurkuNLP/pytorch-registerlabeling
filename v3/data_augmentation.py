@@ -55,10 +55,12 @@ class Augment:
 
                 # Load tokenizer and model
                 tokenizer = AutoTokenizer.from_pretrained(model_name)
-                model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+                model = AutoModelForSeq2SeqLM.from_pretrained(model_name).to("cuda")
 
                 back_tokenizer = AutoTokenizer.from_pretrained(back_model_name)
-                back_model = AutoModelForSeq2SeqLM.from_pretrained(back_model_name)
+                back_model = AutoModelForSeq2SeqLM.from_pretrained(back_model_name).to(
+                    "cuda"
+                )
 
                 translation = self.translate(row[1], tokenizer, model)
                 back_translation = self.translate(
