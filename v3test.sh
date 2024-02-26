@@ -26,4 +26,9 @@ else
   # Actual job script starts here
   source venv/bin/activate
   srun python3 "$@"
+  # Reconstruct log file path
+  LOG_FILE="logs/${SLURM_JOB_NAME}-${SLURM_JOB_ID}.log"
+
+  # Ensure you replace "my@email.com" with the actual recipient's email address
+  mail -s "Job $SLURM_JOB_NAME Ended id=$SLURM_JOB_ID" pytorchregisterlabeling@gmail.com < "$LOG_FILE"
 fi
