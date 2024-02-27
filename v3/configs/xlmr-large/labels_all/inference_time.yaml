@@ -2,7 +2,7 @@ method: predict
 timer: True
 save_predictions: False
 data:
-  test: en-fi-fr-sv-tr
+  train: en-fi-fr-sv-tr
   use_inference_time_test_data: True
 model:
   name: xlm-roberta-large
