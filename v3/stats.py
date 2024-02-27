@@ -298,31 +298,25 @@ class Stats:
 
         confusion_matrix_fig.write_image("output/heatmap.png", scale=10)
 
-    def focal_loss_configuration_heatmap(self):
+    def heatmap(self, data):
         # Data for the heatmap
-        confusion_matrix_data = np.array(
-            [
-                [0.7557777533604367, 0.752711533565306, 0.7479257914040522],
-                [0.7334222495810677, 0.7582355845349766, 0.75156109860728],
-                [0.7634568756494631, 0.763710514077201, 0.7624217118997911],
-            ]
-        )
+        confusion_matrix_data = data["data"]
 
         # Axis labels
-        x_labels = [1, 2, 3]
-        y_labels = [0.25, 0.5, 0.75]
+        x_labels = data["x_labels"]
+        y_labels = data["y_labels"]
 
         # Create heatmap
         fig = px.imshow(
             confusion_matrix_data,
-            labels=dict(x="Gamma", y="Alpha", color="Value"),
+            labels=data["labels"],
             x=x_labels,
             y=y_labels,
             aspect="auto",
             color_continuous_scale=[mcolors.to_hex(color) for color in self.palette],
-            title=None,
-            text_auto=".4f",
-            range_color=[0.72, 0.765],
+            title=data.get("title", None),
+            text_auto=data["text_auto"],
+            range_color=data["range_color"],
         )
 
         fig.update_yaxes(ticksuffix=" ")
@@ -331,14 +325,54 @@ class Stats:
             showlegend=False,
             title=None,
             coloraxis_showscale=False,
-            font=dict(size=20),
+            font=data["font"],
         )
 
         fig.update_xaxes(side="top", tickvals=x_labels)
         fig.update_yaxes(side="left", tickvals=y_labels)
 
         # Show plot
-        fig.write_image("output/focal_heatmap.png", scale=10)
+        fig.write_image(f"output/{data['output']}", scale=data.get("scale", 10))
+
+    def focal_loss_configuration_heatmap(self):
+        self.heatmap(
+            {
+                "data": np.array(
+                    [
+                        [0.7557777533604367, 0.752711533565306, 0.7479257914040522],
+                        [0.7334222495810677, 0.7582355845349766, 0.75156109860728],
+                        [0.7634568756494631, 0.763710514077201, 0.7624217118997911],
+                    ]
+                ),
+                "x_labels": [1, 2, 3],
+                "y_labels": [0.25, 0.5, 0.75],
+                "labels": {"x": "Gamma", "y": "Alpha", "color": "Value"},
+                "text_auto": ".4f",
+                "range_color": [0.72, 0.765],
+                "font": {"size": 20},
+                "output": "focal_heatmap.png",
+            }
+        )
+
+    def inference_time_heatmap(self):
+        self.heatmap(
+            {
+                "data": np.array(
+                    [
+                        [17.052708, 0.752711533565306, 0.7479257914040522],
+                        [0.7334222495810677, 0.7582355845349766, 0.75156109860728],
+                        [0.7634568756494631, 0.763710514077201, 0.7624217118997911],
+                    ]
+                ),
+                "x_labels": ["xlmr-large", "xlmr-xl", "bge", "?"],
+                "y_labels": ["All", "Upper", "XGENRE"],
+                "labels": {"x": "Gamma", "y": "Alpha", "color": "Value"},
+                "text_auto": ".4f",
+                "range_color": [0.72, 0.765],
+                "font": {"size": 20},
+                "output": "focal_heatmap.png",
+            }
+        )
 
     def sm_zero_shot(self):
         data = {}
