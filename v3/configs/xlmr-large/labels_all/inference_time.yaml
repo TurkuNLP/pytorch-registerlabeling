@@ -9,3 +9,4 @@ model:
 dataloader:
   balancing_sampler: True
   test_batch_size: 1
+# 17.052708

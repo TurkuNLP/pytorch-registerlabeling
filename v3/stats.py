@@ -359,18 +359,18 @@ class Stats:
             {
                 "data": np.array(
                     [
-                        [17.052708, 0.752711533565306, 0.7479257914040522],
-                        [18.166394, 0.7582355845349766, 0.75156109860728],
-                        [0.7634568756494631, 0.763710514077201, 0.7624217118997911],
+                        [17.052708, 0, 22.289936, 0],
+                        [18.166394, 0, 0, 0],
+                        [0, 0, 0, 0],
                     ]
                 ),
-                "x_labels": ["xlmr-large", "xlmr-xl", "bge", "?"],
+                "x_labels": ["xlmr-large", "xlmr-xl", "bge", "fourth model"],
                 "y_labels": ["All", "Upper", "XGENRE"],
-                "labels": {"x": "Gamma", "y": "Alpha", "color": "Value"},
+                "labels": {"x": "Model", "y": "Label taxonomy", "color": "Value"},
                 "text_auto": ".4f",
-                "range_color": [0.72, 0.765],
+                "range_color": [0, 30],
                 "font": {"size": 20},
-                "output": "focal_heatmap.png",
+                "output": "inference_time_heatmap.png",
             }
         )
 
