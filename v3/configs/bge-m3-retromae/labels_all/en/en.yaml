@@ -1,3 +1,16 @@
+data:
+  train: en
+  max_length: 2048
+model:
+  name: BAAI/bge-m3-retromae
+trainer:
+  learning_rate: 3e-5
+  gradient_accumulation_steps: 8
+dataloader:
+  balancing_sampler: True
+  train_batch_size: 1
+  dev_batch_size: 16
+  test_batch_size: 16
 #m42 {'f1': 0.7146884468449479, 'f1_th05': 0.7043754629961527, 'precision': 0.68921185019564, 'recall': 0.7421208141825345, 'pr_auc': 0.7921054203423251, 'roc_auc': 0.857220109103949, 'accuracy': 0.47622531089978054, 'threshold': 0.5499999999999999}
 #m43 {'f1': 0.7166595654026418, 'f1_th05': 0.7082464730692781, 'precision': 0.6980701390329944, 'recall': 0.7362661413876121, 'pr_auc': 0.7942874801607644, 'roc_auc': 0.8549626105423684, 'accuracy': 0.48625770717943356, 'threshold': 0.5499999999999999}
 #m44 {'f1': 0.7146542962132861, 'f1_th05': 0.7010479218179676, 'precision': 0.6823090320975367, 'recall': 0.7502188662727074, 'pr_auc': 0.7930216451180753, 'roc_auc': 0.8606626603516839, 'accuracy': 0.4657748981084753, 'threshold': 0.5499999999999999}
