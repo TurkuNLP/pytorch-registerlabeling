@@ -426,7 +426,8 @@ class Main:
             return metrics
 
         elif split == "test":
-            save_predictions(*metrics[1], metrics[0], self.cfg)
+            if self.cfg.save_predictions:
+                save_predictions(*metrics[1], metrics[0], self.cfg)
             return metrics[0]
 
     def predict(self, from_checkpoint=False):
@@ -443,7 +444,7 @@ class Main:
             print(self._evaluate())
 
         print("Test set evaluation")
-        print(self._evaluate("test", timer=True))
+        print(self._evaluate("test", timer=self.cfg.timer))
 
     def finetune(self):
         wandb.login()

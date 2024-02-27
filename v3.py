@@ -126,6 +126,8 @@ if __name__ == "__main__":
     parser.add_argument("--root_path", default="/scratch/project_2009199")
     parser.add_argument("--tqdm_mininterval", type=float, default=0.5)
     parser.add_argument("--predict", type=bool, default=True)
+    parser.add_argument("--save_predictions", type=bool, default=True)
+    parser.add_argument("--timer", type=bool, default=False)
     parser.add_argument("--predict_from_checkpoint", action="store_true")
     parser.add_argument("--data", type=Data, default=Data())
     parser.add_argument("--model", type=Model, default=Model())
