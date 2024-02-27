@@ -1,11 +1,9 @@
 data:
   train: en-fi-fr-sv-tr
-  max_length: 1024
 model:
   name: google/umt5-xl
-  quantize: True
 trainer:
-  learning_rate: 3e-4
+  learning_rate: 1e-4
   gradient_accumulation_steps: 8
 peft:
   enable: True
