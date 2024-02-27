@@ -115,14 +115,13 @@ def get_dataset(cfg):
         augmented_to_train = make_generator("train_aug", train)
         splits["train"] = concatenate_datasets([splits["train"], augmented_to_train])
 
-    if cfg.data.use_inference_time_test_data:
-        splits["test"] = splits["test"].shuffle(seed=cfg.seed)[:1000]
-
     return DatasetDict(splits)
 
 
 def preprocess_data(dataset, tokenizer, cfg):
     dataset = dataset.shuffle(seed=cfg.seed)
+    if cfg.data.use_inference_time_test_data:
+        dataset["test"] = dataset["test"].select(range(1000))
     if not cfg.model.sentence_transformer:
         dataset = dataset.map(
             lambda example: tokenizer(
