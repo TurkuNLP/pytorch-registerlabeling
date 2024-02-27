@@ -36,11 +36,12 @@ class Data:
     text_prefix: str = ""
     test_all_data: bool = False
     use_augmented_data: bool = False
+    use_inference_time_test_data: bool = False
 
 
 @dataclass
 class Model:
-    name: str = "xlm-roberta-base"
+    name: str = "xlm-roberta-large"
     save: bool = True
     low_cpu_mem_usage: bool = False
     quantize: bool = False

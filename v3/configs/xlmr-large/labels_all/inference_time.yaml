@@ -1,0 +1,8 @@
+data:
+  test: en-fi-fr-sv-tr
+  use_inference_time_test_data: True
+model:
+  name: xlm-roberta-large
+dataloader:
+  balancing_sampler: True
+  test_batch_size: 1

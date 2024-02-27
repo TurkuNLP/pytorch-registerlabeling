@@ -115,6 +115,9 @@ def get_dataset(cfg):
         augmented_to_train = make_generator("train_aug", train)
         splits["train"] = concatenate_datasets([splits["train"], augmented_to_train])
 
+    if cfg.data.use_inference_time_test_data:
+        splits["test"] = splits["test"].shuffle(seed=cfg.seed)[:1000]
+
     return DatasetDict(splits)
 
 
