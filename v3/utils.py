@@ -17,15 +17,16 @@ class DotDict(dict):
 
 
 def format_working_dir(model_name, data, seed):
-    return "/".join(
-        [
-            data.output_path,
-            model_name,
-            f"labels_{data.labels}",
-            "_".join([data.train or "", data.dev or data.train]),
-            f"seed_{seed}",
-        ]
-    )
+    conf = [
+        data.output_path,
+        model_name,
+        f"labels_{data.labels}",
+        "_".join([data.train or "", data.dev or data.train]),
+        f"seed_{seed}",
+    ]
+    if data.use_fold:
+        conf.append(f"fold_{data.use_fold}")
+    return "/".join(conf)
 
 
 # Print with datetime

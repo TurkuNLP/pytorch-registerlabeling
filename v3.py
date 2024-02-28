@@ -22,7 +22,7 @@ os.environ["WANDB_DATA_DIR"] = ".wandb"
 
 @dataclass
 class Data:
-    train: str = None
+    train: str = "en-fi-fr-sv-tr"
     dev: str = None
     test: str = None
     labels: str = "all"
@@ -37,6 +37,7 @@ class Data:
     test_all_data: bool = False
     use_augmented_data: bool = False
     use_inference_time_test_data: bool = False
+    use_fold: int = 0
 
 
 @dataclass
