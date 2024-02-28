@@ -3,7 +3,7 @@ data:
 model:
   name: google/umt5-xl
 trainer:
-  learning_rate: 3e-4
+  learning_rate: 7e-4
   gradient_accumulation_steps: 8
 peft:
   enable: True

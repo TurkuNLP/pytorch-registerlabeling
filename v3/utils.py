@@ -26,6 +26,8 @@ def format_working_dir(model_name, data, seed):
     ]
     if data.use_fold:
         conf.append(f"fold_{data.use_fold}")
+    if data.output_suffix:
+        conf.append(data.output_suffix)
     return "/".join(conf)
 
 

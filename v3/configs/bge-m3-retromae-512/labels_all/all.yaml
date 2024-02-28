@@ -1,0 +1,10 @@
+data:
+  train: en-fi-fr-sv-tr
+  max_length: 512
+  output_suffix: "512"
+model:
+  name: BAAI/bge-m3-retromae
+trainer:
+  learning_rate: 3e-5
+dataloader:
+  balancing_sampler: True

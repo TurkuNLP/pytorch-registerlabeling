@@ -27,6 +27,7 @@ class Data:
     test: str = None
     labels: str = "all"
     output_path: str = "output"
+    output_suffix: str = None
     source_path: str = "data"
     max_length: int = 512
     return_tensors: str = "pt"

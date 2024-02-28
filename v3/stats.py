@@ -114,6 +114,42 @@ class Stats:
 
         return data
 
+    def heatmap(self, data):
+        # Data for the heatmap
+        confusion_matrix_data = data["data"]
+
+        # Axis labels
+        x_labels = data["x_labels"]
+        y_labels = data["y_labels"]
+
+        # Create heatmap
+        fig = px.imshow(
+            confusion_matrix_data,
+            labels=data["labels"],
+            x=x_labels,
+            y=y_labels,
+            aspect="auto",
+            color_continuous_scale=[mcolors.to_hex(color) for color in self.palette],
+            title=data.get("title", None),
+            text_auto=data["text_auto"],
+            range_color=data["range_color"],
+        )
+
+        fig.update_yaxes(ticksuffix=" ")
+        fig.update_layout(
+            margin=go.layout.Margin(l=5, r=5, b=5, t=5),
+            showlegend=False,
+            title=None,
+            coloraxis_showscale=False,
+            font=data["font"],
+        )
+
+        fig.update_xaxes(side="top", tickvals=x_labels)
+        fig.update_yaxes(side="left", tickvals=y_labels)
+
+        # Show plot
+        fig.write_image(f"output/{data['output']}", scale=data.get("scale", 10))
+
     def stacked_bars(self):
         df = self.get_dataframe(self.cfg)
 
@@ -227,11 +263,11 @@ class Stats:
         true_labels, predicted_labels = zip(*data)
 
         true_labels_binary = [
-            binarize_labels(label.split(), self.cfg.label_scheme)
+            binarize_labels(label.split(), self.cfg.data.labels)
             for label in true_labels
         ]
         predicted_labels_binary = [
-            binarize_labels(label.split(), self.cfg.label_scheme)
+            binarize_labels(label.split(), self.cfg.data.labels)
             for label in predicted_labels
         ]
 
@@ -295,44 +331,8 @@ class Stats:
             coloraxis_showscale=False,
             font=dict(size=9),
         )
-
-        confusion_matrix_fig.write_image("output/heatmap.png", scale=10)
-
-    def heatmap(self, data):
-        # Data for the heatmap
-        confusion_matrix_data = data["data"]
-
-        # Axis labels
-        x_labels = data["x_labels"]
-        y_labels = data["y_labels"]
-
-        # Create heatmap
-        fig = px.imshow(
-            confusion_matrix_data,
-            labels=data["labels"],
-            x=x_labels,
-            y=y_labels,
-            aspect="auto",
-            color_continuous_scale=[mcolors.to_hex(color) for color in self.palette],
-            title=data.get("title", None),
-            text_auto=data["text_auto"],
-            range_color=data["range_color"],
-        )
-
-        fig.update_yaxes(ticksuffix=" ")
-        fig.update_layout(
-            margin=go.layout.Margin(l=5, r=5, b=5, t=5),
-            showlegend=False,
-            title=None,
-            coloraxis_showscale=False,
-            font=data["font"],
-        )
-
-        fig.update_xaxes(side="top", tickvals=x_labels)
-        fig.update_yaxes(side="left", tickvals=y_labels)
-
-        # Show plot
-        fig.write_image(f"output/{data['output']}", scale=data.get("scale", 10))
+        name = self.cfg.input.split("/")[-1].split(".")[0]
+        confusion_matrix_fig.write_image(f"output/heatmap_{name}.png", scale=10)
 
     def focal_loss_configuration_heatmap(self):
         self.heatmap(
