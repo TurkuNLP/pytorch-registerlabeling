@@ -12,6 +12,7 @@ class Data:
     concat_small: bool = False
     text_prefix: str = ""
     test_all_data: bool = False
+    scores: str = ""
 
 
 if __name__ == "__main__":

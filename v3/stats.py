@@ -11,6 +11,11 @@ import seaborn as sns
 from datasets import concatenate_datasets
 from sklearn.metrics import classification_report
 
+from scipy.stats import friedmanchisquare
+from scipy.stats import wilcoxon
+from statsmodels.stats.multitest import multipletests
+import scikit_posthocs as sp
+
 from .data import get_dataset, language_names, small_languages
 from .labels import (
     binarize_labels,
@@ -330,6 +335,9 @@ class Stats:
             title=None,
             coloraxis_showscale=False,
             font=dict(size=9),
+            autosize=False,
+            width=500,
+            height=500,
         )
         name = self.cfg.input.split("/")[-1].split(".")[0]
         confusion_matrix_fig.write_image(f"output/heatmap_{name}.png", scale=10)
@@ -601,3 +609,157 @@ class Stats:
         # Show the figure
         fig.show()
         fig.write_image("output/sankey.pdf")
+
+    def compare_models(self):
+
+        def benjamini_hochberg_correction(p_values, Q=0.05):
+            """
+            Applies the Benjamini-Hochberg correction for controlling the FDR.
+
+            Parameters:
+            - p_values: A list or array of p-values from multiple hypothesis tests.
+            - Q: The desired False Discovery Rate level.
+
+            Returns:
+            - A boolean array indicating which tests are significant after correction.
+            """
+            m = len(p_values)  # Total number of tests
+            sorted_p_values = np.array(p_values)
+            sorted_indices = np.argsort(sorted_p_values)
+            sorted_p_values = sorted_p_values[sorted_indices]
+
+            # Calculate BH critical values
+            bh_critical_values = (np.arange(1, m + 1) / m) * Q
+
+            # Find the largest p-value where p < BH critical value
+            significant_mask = sorted_p_values < bh_critical_values
+            max_significant = np.max(np.where(significant_mask, sorted_indices, 0))
+
+            # Mark p-values as significant accordingly
+            is_significant = np.arange(m) <= max_significant
+
+            # Return to original ordering
+            return is_significant[np.argsort(sorted_indices)]
+
+        def holm_bonferroni_correction(p_values):
+            """
+            Applies the Holm-Bonferroni correction to a list of p-values.
+
+            Parameters:
+            - p_values: A list or array of p-values from multiple hypothesis tests.
+
+            Returns:
+            - A boolean array indicating which tests are significant after correction.
+            """
+            m = len(p_values)  # Total number of tests
+            sorted_indices = np.argsort(p_values)  # Sort indices
+            sorted_p_values = np.array(p_values)[sorted_indices]  # Sorted p-values
+
+            # Calculate Holm-Bonferroni adjusted p-values
+            adjusted_p_values = (m - np.arange(m)) * sorted_p_values
+
+            # Ensure monotonicity of the adjusted p-values
+            for i in range(m - 1):
+                adjusted_p_values[i + 1] = max(
+                    adjusted_p_values[i], adjusted_p_values[i + 1]
+                )
+
+            # Reorder to the original order of tests and check against alpha
+            reordered_adjusted_p_values = adjusted_p_values[np.argsort(sorted_indices)]
+            significant = reordered_adjusted_p_values < 0.05
+
+            return significant
+
+        # F1 scores for each model across three experiments
+        # data = np.array(
+        #    [
+        #        [0.48931116389548696, 0.5089058524173029, 0.5272727272727273],  # xlmr-l
+        #        [0.5409429280397021, 0.5206349206349207, 0.56047197640118],  # xlmr-xl
+        #        [0.56, 0.5513196480938416, 0.5382830626450116],  # bge-m3-retromae
+        #    ]
+        # )
+        models = ["xlmr-large", "xlmr-xl", "bge-m3-retromae-2048"]
+        scores = []
+        import re, ast
+
+        for model in models:
+            scores.append([])
+            for lang in small_languages:
+
+                with open(
+                    f"v3/configs/{model}/labels_all/small_languages/{lang}.yaml"
+                ) as f:
+                    for line in f:
+                        if line.startswith(f"#z"):
+
+                            dict_str = re.search(r"\{.*\}", line).group()
+                            result_dict = ast.literal_eval(dict_str)
+
+                            f1 = result_dict["f1"]
+                            pr_auc = result_dict["pr_auc"]
+
+                            scores[-1].append(f1)
+
+        data = np.array(scores)
+
+        # Calculate the number of models
+        n_models = data.shape[0]
+
+        print(n_models)
+
+        # Calculate the number of pairwise comparisons
+        n_comparisons = (n_models * (n_models - 1)) / 2
+
+        print(n_comparisons)
+
+        # Adjusted alpha level for Bonferroni correction
+        alpha_corrected = 0.05 / n_comparisons
+
+        # Perform all pairwise Wilcoxon signed-rank tests
+        p_values = []
+        comparisons = []
+        for i, j in combinations(range(n_models), 2):
+            stat, p = wilcoxon(data[i], data[j])
+            comparisons.append((i, j))
+            p_values.append(p)
+
+        # Apply Bonferroni correction and determine significance
+        significant_differences = np.array(p_values) < alpha_corrected
+
+        # Print results
+        print("Bonferroni correction results ")
+        for (i, j), p, significant in zip(
+            comparisons, p_values, significant_differences
+        ):
+            print(
+                f"Model {i+1} vs Model {j+1}: p-value = {p}, significant: {significant}"
+            )
+
+        ben = benjamini_hochberg_correction(p_values)
+
+        print("Benjamini hochberg correction results: ")
+        print(ben)
+
+        # significant = holm_bonferroni_correction(p_values)
+        # print("Holm-Bonferroni correction results:", significant)
+
+        exit()
+
+        scores = [float(x) for x in self.cfg.data.scores.split(",")]
+
+        print(scores)
+
+        # Perform the Wilcoxon signed-rank test
+        stat, p = wilcoxon(scores)
+        print(f"Statistics={stat}, p={p}")
+
+        p_vals = [0.01, 0.04, 0.03, 0.05, 0.001]
+        alpha = 0.05
+
+        # Apply Bonferroni correction
+        reject, pvals_corrected, _, _ = multipletests(
+            p_vals, alpha=alpha, method="bonferroni"
+        )
+
+        print(f"Adjusted p-values: {pvals_corrected}")
+        print(f"Reject null hypothesis: {reject}")
