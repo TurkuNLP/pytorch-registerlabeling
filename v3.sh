@@ -3,7 +3,7 @@
 #SBATCH --gres=gpu:a100:1
 #SBATCH --cpus-per-task=4
 #SBATCH --partition=gpusmall
-#SBATCH --time=8:00:00
+#SBATCH --time=12:00:00
 #SBATCH --account=project_2009199
 
 
