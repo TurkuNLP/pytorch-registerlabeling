@@ -449,7 +449,7 @@ class Main:
     def finetune(self):
         wandb.login()
         wandb.init(
-            project=f"finetune_{self.cfg.wandb_project}",
+            project=f"finetune_{self.cfg.wandb_project[:100]}",
             config=self.cfg,
         )
         self._train()
