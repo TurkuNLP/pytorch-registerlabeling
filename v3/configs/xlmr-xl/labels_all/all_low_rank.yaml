@@ -8,8 +8,8 @@ trainer:
   gradient_accumulation_steps: 4
 peft:
   enable: True
-    lora_rank: 16
-    lora_alpha: 32
+  lora_rank: 16
+  lora_alpha: 32
 dataloader:
   train_batch_size: 2
   balancing_sampler: True
