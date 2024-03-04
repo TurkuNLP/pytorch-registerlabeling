@@ -118,6 +118,7 @@ class Main:
             target_modules=target_modules,
             lora_dropout=0.05,
             task_type=TaskType.SEQ_CLS,
+            use_dora=True,
         )
         self.model = prepare_model_for_kbit_training(self.model)
         self.model = get_peft_model(self.model, self.lora_config)
