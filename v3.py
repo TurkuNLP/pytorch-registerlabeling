@@ -104,6 +104,7 @@ if __name__ == "__main__":
             "hf_finetune",
             "predict",
             "extract_doc_embeddings",
+            "extract_keywords",
             "extract_st_doc_embeddings",
             "ray_tune",
             "setfit_train",

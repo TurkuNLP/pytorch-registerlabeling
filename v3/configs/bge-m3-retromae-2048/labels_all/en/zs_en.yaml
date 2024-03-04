@@ -3,6 +3,7 @@ data:
 model:
   name: BAAI/bge-m3-retromae
 trainer:
-  learning_rate: 5e-5
+  learning_rate: 3e-5
 dataloader:
   balancing_sampler: True
+#z42 {'f1': 0.6381887615930169, 'f1_th05': 0.6332198259553538, 'precision': 0.6363141862489121, 'recall': 0.6400744145327205, 'pr_auc': 0.6566550738151286, 'roc_auc': 0.8049070188518391, 'accuracy': 0.42574981711777615, 'threshold': 0.5499999999999999}
