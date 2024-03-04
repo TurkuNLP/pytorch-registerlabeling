@@ -1,5 +1,5 @@
 data:
-  train: sv
+  train: tr
   max_length: 2048
 model:
   name: BAAI/bge-m3-retromae
