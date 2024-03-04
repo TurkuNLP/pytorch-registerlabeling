@@ -1,0 +1,15 @@
+data:
+  train: en-fi-fr-sv-tr
+  output_suffix: "rank_16"
+model:
+  name: facebook/xlm-roberta-xl
+trainer:
+  learning_rate: 1e-4
+  gradient_accumulation_steps: 4
+peft:
+  enable: True
+    lora_rank: 16
+    lora_alpha: 32
+dataloader:
+  train_batch_size: 2
+  balancing_sampler: True
