@@ -557,7 +557,6 @@ def decode_binary_labels(data, label_scheme):
 
 # Function to convert hierarchical labels into flat representation
 def flatten_labels(example):
-    print(example)
     labels = example.split()  # Split each example into individual labels
     mapped_simple = []
     for label in labels:

@@ -8,12 +8,16 @@
 
 
 if [[ -z "$SLURM_JOB_ID" ]]; then
-  # Check if the first argument is a number (for GPUs), else default to 1
-  if [[ $1 =~ ^[0-9]+$ ]]; then
-    NUM_GPUS="$1"
-    shift  # Remove the GPU count from the arguments
+  PARTITION="gpusmall"
+  if [[ $1 == "m" ]]; then
+    NUM_GPUS=4
+    PARTITION="gpumedium"
+    shift
+  elif [[ $1 == "2" ]]; then
+    NUM_GPUS=2
+    shift 
   else
-    NUM_GPUS=1  # Default to 1 GPU
+    NUM_GPUS=1 
   fi
 
   # Set the dynamic GPU requirement
@@ -21,7 +25,7 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
   DYNAMIC_JOBNAME="$1"
   shift  # Shift command-line arguments to remove the first one
   # Submit the job to slurm with the dynamic job name and capture the output
-  JOB_SUBMISSION_OUTPUT=$(sbatch --job-name="$DYNAMIC_JOBNAME" --gres="$GRES_GPU"  -o "logs/${DYNAMIC_JOBNAME}-%j.log" "$0" "$@")
+  JOB_SUBMISSION_OUTPUT=$(sbatch --job-name="$DYNAMIC_JOBNAME" --gres="$GRES_GPU" --partition="$PARTITION" -o "logs/${DYNAMIC_JOBNAME}-%j.log" "$0" "$@")
   echo "Submission output: $JOB_SUBMISSION_OUTPUT"
   # Extract the job ID from the submission output
   JOB_ID=$(echo "$JOB_SUBMISSION_OUTPUT" | grep -oP 'Submitted batch job \K\d+')

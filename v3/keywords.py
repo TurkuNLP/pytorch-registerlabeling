@@ -246,6 +246,7 @@ def analyze_keywords(path):
     )
 
     print(df.head(10))
+    wi = 0
 
     keywords = {}
 
@@ -262,10 +263,16 @@ def analyze_keywords(path):
         # Group the DataFrame by language
         label_groups = language_group.groupby("label_flat")
         for category, label_group in label_groups:
-            print(f"## {category} ##")
+            print(f"Label: {category}\n==========")
             keywords[language][category] = {}
+            cat_wi = 0
             for _, row in label_group.iterrows():
                 for word in json.loads(row["words"]):
+                    wi += 1
+                    cat_wi += 1
+
+                    # if " " in word[0]:
+                    #    continue
 
                     if word[0] in keywords[language][category]:
                         keywords[language][category][word[0]].append(word[1])
@@ -280,10 +287,13 @@ def analyze_keywords(path):
                     reverse=True,
                 )
             ]
-            top_words = keywords[language][category][:10]
+            top_words = keywords[language][category][:20]
             bottom_words = keywords[language][category][-10:]
-            print("TOP WORDS\n======")
-            print(top_words)
-            print("BOTTOM WORDS\n======")
-            print(bottom_words)
+            # print("TOP WORDS\n======")
+            print([x[0] for x in top_words])
+            # print("BOTTOM WORDS\n======")
+            # print(bottom_words)
             print()
+            print(f"{cat_wi} sanaa")
+            print()
+    print(wi)
