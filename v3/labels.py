@@ -133,6 +133,40 @@ labels_all_hierarchy = {
     "IP": ["ds", "ed", "oe"],
 }
 
+map_all_hierarchy_flat = {
+    "MT": "MT",
+    "LY": "LY",
+    "SP": "SP",
+    "it": "SP_it",
+    "os": "SP_os",
+    "ID": "ID",
+    "NA": "NA",
+    "ne": "NA_ne",
+    "sr": "NA_sr",
+    "nb": "NA_nb",
+    "on": "NA_on",
+    "HI": "HI",
+    "re": "HI_re",
+    "oh": "HI_oh",
+    "IN": "IN",
+    "en": "IN_en",
+    "ra": "IN_ra",
+    "dtp": "IN_dtp",
+    "fi": "IN_fi",
+    "lt": "IN_lt",
+    "oi": "IN_oi",
+    "OP": "OP",
+    "rv": "OP_rv",
+    "ob": "OP_ob",
+    "rs": "OP_rs",
+    "av": "OP_av",
+    "oo": "OP_oo",
+    "IP": "IP",
+    "ds": "IP_ds",
+    "ed": "IP_ed",
+    "oe": "IP_oe",
+}
+
 map_full_names = {
     "MT": "Machine translated",
     "LY": "Lyrical",
@@ -519,3 +553,19 @@ def decode_binary_labels(data, label_scheme):
         )
         for binary_row in data
     ]
+
+
+# Function to convert hierarchical labels into flat representation
+def flatten_labels(example):
+    print(example)
+    labels = example.split()  # Split each example into individual labels
+    mapped_simple = []
+    for label in labels:
+        if not (
+            label in map_upper_lower
+            # Check if any of the subcategories of the current label are in the list
+            and any(element in labels for element in map_upper_lower[label])
+        ):
+            mapped_simple.append(label)
+
+    return [map_all_hierarchy_flat[x] for x in mapped_simple]

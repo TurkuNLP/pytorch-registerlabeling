@@ -105,6 +105,7 @@ if __name__ == "__main__":
             "predict",
             "extract_doc_embeddings",
             "extract_keywords",
+            "analyze_keywords",
             "extract_st_doc_embeddings",
             "ray_tune",
             "setfit_train",
@@ -139,7 +140,7 @@ if __name__ == "__main__":
     parser.add_argument("--peft", type=Peft, default=Peft())
     parser.add_argument("--ray", type=Ray, default=Ray())
     parser.add_argument("--config", "-c", action=ActionConfigFile)
-    parser.add_argument("--temp_test", action="store_true")
+    parser.add_argument("--no_data", action="store_true")
 
     cfg = parser.parse_args()
 

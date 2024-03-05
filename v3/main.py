@@ -25,6 +25,7 @@ import wandb
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
 from .embeddings import extract_doc_embeddings, extract_st_doc_embeddings
+from .keywords import extract_keywords, analyze_keywords
 from .labels import get_label_scheme
 from .loss import BCEFocalLoss
 from .metrics import compute_metrics
@@ -82,24 +83,26 @@ class Main:
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
-        # Init tokenizer
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            cfg.model.name,
-            torch_dtype=cfg.torch_dtype if not cfg.use_amp else torch.float32,
-        )
+        if not cfg.no_data:
 
-        if cfg.set_pad_token:
-            self.tokenizer.pad_token = self.tokenizer.eos_token
+            # Init tokenizer
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                cfg.model.name,
+                torch_dtype=cfg.torch_dtype if not cfg.use_amp else torch.float32,
+            )
 
-        # Prepare dataset
-        self.dataset = preprocess_data(get_dataset(cfg), self.tokenizer, cfg)
+            if cfg.set_pad_token:
+                self.tokenizer.pad_token = self.tokenizer.eos_token
 
-        # Init dataloaders
-        self.dataloaders = init_dataloaders(
-            self.dataset, cfg.dataloader, self.tokenizer.pad_token_id, cfg.device
-        )
+            # Prepare dataset
+            self.dataset = preprocess_data(get_dataset(cfg), self.tokenizer, cfg)
 
-        torch.set_default_device(self.cfg.device)
+            # Init dataloaders
+            self.dataloaders = init_dataloaders(
+                self.dataset, cfg.dataloader, self.tokenizer.pad_token_id, cfg.device
+            )
+
+            torch.set_default_device(self.cfg.device)
 
         # Run
         getattr(self, cfg.method)()
@@ -589,6 +592,18 @@ class Main:
         extract_doc_embeddings(
             self.model, self.dataset, path, self.cfg.device, self.cfg.embeddings
         )
+
+    def extract_keywords(self):
+        path = self.cfg.working_dir_root + "/embeddings"
+        self._init_model()
+        extract_keywords(
+            self.model, self.tokenizer, self.dataset, path, self.cfg.device
+        )
+
+    def analyze_keywords(self):
+        path = self.cfg.working_dir_root + "/embeddings"
+
+        analyze_keywords(path)
 
     def extract_st_doc_embeddings(self):
         path = self.cfg.root_path
