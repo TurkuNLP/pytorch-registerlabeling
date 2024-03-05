@@ -119,7 +119,6 @@ def cosine_similarity(vec1, vec2):
 
 
 def compute_cosine_similarities(batch_data, i, special_tokens):
-    print(batch_data["tokens"][i])
 
     word_embeddings = pool_embeddings_for_words(
         batch_data["token_embeddings"][i],
@@ -199,8 +198,6 @@ def get_batch_embeddings(batch_data, model, tokenizer, device, output_path):
                     json.dumps(cosine_similarities),
                 ]
             )
-
-    exit()
 
 
 def extract_keywords(model, tokenizer, dataset, path, device):
