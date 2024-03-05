@@ -180,8 +180,8 @@ class Main:
 
         self.model = model
 
-        if self.cfg.temp_test:
-            self.model = SentenceTransformerClassifier(model, self.cfg.num_labels)
+        # if self.cfg.temp_test:
+        #    self.model = SentenceTransformerClassifier(model, self.cfg.num_labels)
 
     def _train(self, config={}):
         self._init_model(
