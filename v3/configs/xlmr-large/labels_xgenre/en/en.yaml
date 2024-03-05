@@ -1,0 +1,7 @@
+data:
+  train: en
+  labels: xgenre
+model:
+  name: xlm-roberta-large
+trainer:
+  learning_rate: 3e-5

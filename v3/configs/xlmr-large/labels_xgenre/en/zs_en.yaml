@@ -1,7 +1,8 @@
 data:
-  train: en-fi-sv-tr
+  train: fi-fr-sv-tr
+  labels: xgenre
 model:
-  name: BAAI/bge-m3-retromae
+  name: xlm-roberta-large
 trainer:
   learning_rate: 3e-5
 dataloader:
