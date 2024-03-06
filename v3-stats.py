@@ -13,6 +13,8 @@ class Data:
     text_prefix: str = ""
     test_all_data: bool = False
     scores: str = ""
+    use_fold: bool = False
+    use_augmented_data: bool = False
 
 
 if __name__ == "__main__":

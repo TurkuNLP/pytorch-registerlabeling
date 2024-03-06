@@ -127,6 +127,10 @@ class Main:
         self.model = get_peft_model(self.model, self.lora_config)
         self.model.print_trainable_parameters()
 
+    def _maybe_wrap_parallel(self):
+        if self.cfg.gpus > 1:
+            self.model = DataParallel(self.model, device_ids=list(range(self.cfg.gpus)))
+
     def _init_model(self, model_path=None):
         model_params = {
             "num_labels": self.cfg.num_labels,
@@ -165,9 +169,6 @@ class Main:
             self.cfg.model.name if not model_path else model_path, **model_params
         )
 
-        if self.cfg.gpus > 1:
-            model = DataParallel(model, device_ids=list(range(self.cfg.gpus)))
-
         if not self.cfg.model.quantize:
             model = model.to(
                 self.cfg.device,
@@ -193,6 +194,8 @@ class Main:
                 self._wrap_peft()
             else:
                 self.model.load_adapter(self.cfg.resume)
+
+        self._maybe_wrap_parallel()
 
         if self.cfg.set_pad_token:
             self.model.config.pad_token_id = self.tokenizer.pad_token_id
@@ -442,6 +445,8 @@ class Main:
             self.model.load_adapter(model_path)
         else:
             self._init_model(model_path)
+
+        self._maybe_wrap_parallel()
 
         if self.cfg.data.dev or self.cfg.method == "finetune":
             print("Final dev set evaluation")
