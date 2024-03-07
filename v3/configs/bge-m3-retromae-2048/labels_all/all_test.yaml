@@ -3,7 +3,7 @@ data:
   max_length: 2048
   output_suffix: "full"
 model:
-  name: BAAI/bge-m3
+  name: BAAI/bge-m3-unsupervised
 trainer:
   learning_rate: 3e-5
   gradient_accumulation_steps: 8
