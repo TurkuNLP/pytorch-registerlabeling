@@ -81,6 +81,7 @@ class Peft:
     lora_rank: int = 128
     lora_alpha: int = 256
     target_modules: str = "linear"
+    use_dora: bool = False
 
 
 @dataclass
