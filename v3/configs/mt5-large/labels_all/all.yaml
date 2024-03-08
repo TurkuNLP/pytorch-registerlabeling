@@ -10,3 +10,5 @@ peft:
 dataloader:
   train_batch_size: 4
   balancing_sampler: True
+  dev_batch_size: 32
+  test_batch_size: 32
