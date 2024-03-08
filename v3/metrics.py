@@ -76,7 +76,7 @@ def compute_metrics(logits, labels, split, label_scheme):
             labels, y_pred, target_names=label_scheme, digits=4, output_dict=True
         )
         metrics["label_scores"] = {
-            key: val for key, val in cl_report_dict if key in label_scheme
+            key: val for key, val in cl_report_dict.items() if key in label_scheme
         }
         return metrics, (labels, y_pred)
     return metrics
