@@ -4,11 +4,9 @@ model:
   name: google/mt5-large
 trainer:
   learning_rate: 5e-5
-  gradient_accumulation_steps: 2
-peft:
-  enable: True
+  gradient_accumulation_steps: 1
 dataloader:
-  train_batch_size: 4
+  train_batch_size: 8
   balancing_sampler: True
   dev_batch_size: 32
   test_batch_size: 32
