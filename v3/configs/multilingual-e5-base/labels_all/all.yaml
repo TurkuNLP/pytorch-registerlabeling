@@ -1,0 +1,7 @@
+data:
+  train: en-fi-fr-sv-tr
+  text_prefix: "query: "
+model:
+  name: intfloat/multilingual-e5-base
+trainer:
+  learning_rate: 5e-5

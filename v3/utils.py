@@ -1,4 +1,6 @@
+import ast
 import math
+import re
 from datetime import datetime
 from pydoc import locate
 
@@ -125,3 +127,8 @@ def convert_embeddings_to_input(outputs, batch):
     return {
         "input_ids": average_pool(outputs.last_hidden_state, batch["attention_mask"])
     }
+
+
+def parse_result_line(line):
+    dict_str = re.search(r"\{.*\}", line).group()
+    return ast.literal_eval(dict_str)

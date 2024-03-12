@@ -121,7 +121,7 @@ class Main:
             target_modules=target_modules,
             lora_dropout=0.05,
             task_type=TaskType.SEQ_CLS,
-            use_dora=cfg.peft.use_dora,
+            use_dora=self.cfg.peft.use_dora,
         )
         self.model = prepare_model_for_kbit_training(self.model)
         self.model = get_peft_model(self.model, self.lora_config)
@@ -523,7 +523,6 @@ class Main:
             TrainingArguments,
         )
 
-        wandb.login()
         self._init_model()
 
         loss_gamma = self.cfg.trainer.loss_gamma
