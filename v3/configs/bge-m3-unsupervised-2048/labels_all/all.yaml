@@ -4,7 +4,7 @@ data:
 model:
   name: BAAI/bge-m3-unsupervised
 trainer:
-  learning_rate: 3e-5
+  learning_rate: 5e-5
   gradient_accumulation_steps: 8
 dataloader:
   balancing_sampler: True
