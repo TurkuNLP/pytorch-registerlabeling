@@ -6,7 +6,8 @@
 #SBATCH --partition=gpusmall
 #SBATCH --time=12:00:00
 #SBATCH --account=project_2009199
-
+#SBATCH --mail-user=pytorchregisterlabeling@gmail.com 
+#SBATCH --mail-type=ALL
 
 if [[ -z "$SLURM_JOB_ID" ]]; then
   PARTITION="gpusmall"

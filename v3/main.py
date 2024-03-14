@@ -24,7 +24,11 @@ import wandb
 
 from .data import get_dataset, preprocess_data
 from .dataloader import init_dataloaders
-from .embeddings import extract_doc_embeddings, extract_st_doc_embeddings
+from .dataloader_hf import (
+    custom_train_dataloader,
+    custom_eval_dataloader,
+    custom_test_dataloader,
+)
 from .keywords import extract_keywords, analyze_keywords
 from .labels import get_label_scheme
 from .loss import BCEFocalLoss
@@ -545,6 +549,21 @@ class Main:
                 loss = BCEFocalLoss(outputs, labels, loss_gamma, loss_alpha)
 
                 return (loss, outputs) if return_outputs else loss
+
+            if self.cfg.dataloader.balancing_sampler:
+
+                def get_train_dataloader(self):
+                    return custom_train_dataloader(self)
+
+                def get_eval_dataloader(self, eval_dataset=None):
+                    return custom_eval_dataloader(
+                        self, self.cfg.dataloader.dev_batch_size
+                    )
+
+                def get_test_dataloader(self, test_dataset=None):
+                    return custom_test_dataloader(
+                        self, self.cfg.dataloader.test_batch_size, self.dataset["test"]
+                    )
 
         trainer = MultiLabelTrainer(
             model=self.model,
