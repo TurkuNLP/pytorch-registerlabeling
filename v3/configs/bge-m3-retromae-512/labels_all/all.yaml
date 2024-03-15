@@ -6,6 +6,8 @@ model:
   name: BAAI/bge-m3-retromae
 trainer:
   learning_rate: 3e-5
+  loss_alpha: 0.5
+  loss_gamma: 1
 dataloader:
   balancing_sampler: True
 # 42 {'f1': 0.7591693878655578, 'f1_th05': 0.751594776414721, 'precision': 0.7927656367746797, 'recall': 0.728304891135034, 'pr_auc': 0.8375101801585604, 'roc_auc': 0.8563033984418381, 'accuracy': 0.5878707976268952, 'threshold': 0.5999999999999999}
