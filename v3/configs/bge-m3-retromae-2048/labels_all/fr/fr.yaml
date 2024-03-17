@@ -6,6 +6,8 @@ model:
 trainer:
   learning_rate: 5e-5
   gradient_accumulation_steps: 8
+  loss_gamma: 1
+  loss_alpha: 0.5
 dataloader:
   balancing_sampler: True
   train_batch_size: 1
