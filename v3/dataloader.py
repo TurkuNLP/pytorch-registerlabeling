@@ -49,7 +49,9 @@ def init_split_dataloader(dataset, split, tokenizer_pad_token_id, cfg, device):
 
     language_data = [sample["language"] for sample in dataset]
     dataset = dataset.remove_columns(["language"])
-    use_balancer = cfg.balancing_sampler and len(set(language_data)) > 1
+    use_balancer = (
+        cfg.balancing_sampler and len(set(language_data)) > 1 and split != "test"
+    )
     print(f"Languages: {set(language_data)}")
     dataloader = DataLoader(
         dataset,
