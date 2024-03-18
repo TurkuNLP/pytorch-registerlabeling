@@ -4,9 +4,15 @@ data:
 model:
   name: BAAI/bge-m3-retromae
 trainer:
-  learning_rate: 6e-5
+  learning_rate: 3e-5
+  gradient_accumulation_steps: 8
+  loss_gamma: 1
+  loss_alpha: 0.5
 dataloader:
   balancing_sampler: True
+  train_batch_size: 1
+  dev_batch_size: 16
+  test_batch_size: 16
 #42 {'f1': 0.7598866190988174, 'f1_th05': 0.7532610087631034, 'precision': 0.75753205752816, 'recall': 0.7622558632049573, 'pr_auc': 0.8311043071523874, 'roc_auc': 0.8707562101734786, 'accuracy': 0.556699446834665, 'threshold': 0.5499999999999999}
 #43 {'f1': 0.7550171410962596, 'f1_th05': 0.7433181866971984, 'precision': 0.7413949617974128, 'recall': 0.7691492701302778, 'pr_auc': 0.8297632711844518, 'roc_auc': 0.8731764435715207, 'accuracy': 0.5434081130915795, 'threshold': 0.5499999999999999}
 #44 {'f1': 0.7536810291382517, 'f1_th05': 0.744472320993448, 'precision': 0.7429717341482047, 'recall': 0.7647035697436704, 'pr_auc': 0.826241839810407, 'roc_auc': 0.8711354389103199, 'accuracy': 0.5424861708666256, 'threshold': 0.5499999999999999}

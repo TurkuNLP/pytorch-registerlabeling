@@ -4,8 +4,14 @@ data:
 model:
   name: BAAI/bge-m3-retromae
 trainer:
-  learning_rate: 6e-5
+  learning_rate: 3e-5
+  gradient_accumulation_steps: 8
+  loss_gamma: 1
+  loss_alpha: 0.5
 dataloader:
   balancing_sampler: True
+  train_batch_size: 1
+  dev_batch_size: 16
+  test_batch_size: 16
 #43 {'f1': 0.7682131013087046, 'f1_th05': 0.7562106105572044, 'precision': 0.7513078049801214, 'recall': 0.7858966875820809, 'pr_auc': 0.8470064464250269, 'roc_auc': 0.882107267193536, 'accuracy': 0.573112545607634, 'threshold': 0.5499999999999999}
 #44 {'f1': 0.7631989387067281, 'f1_th05': 0.7527493681056561, 'precision': 0.7488741908246552, 'recall': 0.7780823920751544, 'pr_auc': 0.8438413010065251, 'roc_auc': 0.878191291950851, 'accuracy': 0.5707269155206287, 'threshold': 0.5499999999999999}
