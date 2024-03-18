@@ -1,5 +1,6 @@
 from torch import nn
 from torch.optim import AdamW
+from transformers import Adafactor
 
 
 def get_parameter_names(model, forbidden_layer_types):

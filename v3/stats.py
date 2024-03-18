@@ -1,29 +1,37 @@
 import csv
 from itertools import combinations
-
+import re, ast
 import matplotlib.colors as mcolors
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
+import plotly.colors as colors
 import seaborn as sns
 from datasets import concatenate_datasets
 from sklearn.metrics import classification_report
-
+from transformers import AutoTokenizer
 from scipy.stats import friedmanchisquare
 from scipy.stats import wilcoxon
 from statsmodels.stats.multitest import multipletests
 import scikit_posthocs as sp
+from scipy.stats import friedmanchisquare
+from scipy.stats import ttest_rel
+from scipy.stats import chi2
+from sklearn.metrics import f1_score
 
-from .data import get_dataset, language_names, small_languages
+from .data import get_dataset, language_names, small_languages, preprocess_data
 from .labels import (
     binarize_labels,
     get_label_scheme,
     labels_all_hierarchy,
+    labels_all_flat,
     map_full_names,
     map_xgenre,
 )
+
+from .utils import parse_result_line
 
 pio.kaleido.scope.mathjax = None  # a fix for .pdf files
 
@@ -39,20 +47,28 @@ class Stats:
         # Run
         getattr(self, cfg.method)()
 
-    def get_dataframe(self, cfg):
+    def get_dataframe(
+        self, remove_redundant_parents=False, cols=["label_text", "language"]
+    ):
         data = get_dataset(self.cfg)
         data = concatenate_datasets([data["train"], data["dev"], data["test"]])
-        df = pd.DataFrame(data)[["label_text", "language"]]
+        df = pd.DataFrame(data)[cols] if cols else pd.DataFrame(data)
         df["label_text"] = df["label_text"].str.split(" ")
 
-        redundant_parents = [
-            x for x in labels_all_hierarchy.keys() if len(labels_all_hierarchy[x]) > 1
-        ]
+        if remove_redundant_parents:
 
-        # Filtering out redundant parents
-        df["label_text"] = df["label_text"].apply(
-            lambda labels: [label for label in labels if label not in redundant_parents]
-        )
+            redundant_parents = [
+                x
+                for x in labels_all_hierarchy.keys()
+                if len(labels_all_hierarchy[x]) > 1
+            ]
+
+            # Filtering out redundant parents
+            df["label_text"] = df["label_text"].apply(
+                lambda labels: [
+                    label for label in labels if label not in redundant_parents
+                ]
+            )
         return df
 
     def get_ordered_data(self, df, reverse=True):
@@ -105,7 +121,7 @@ class Stats:
         )
 
         # Sort labels
-        for key, val in category_counts_sorted.items():
+        for key in category_counts_sorted.keys():
             sorted_subcategories = dict(
                 sorted(
                     category_counts[key]["subcategories"].items(),
@@ -113,7 +129,7 @@ class Stats:
                     reverse=reverse,
                 )
             )
-        category_counts[key]["subcategories"] = sorted_subcategories
+            category_counts[key]["subcategories"] = sorted_subcategories
 
         data = category_counts_sorted
 
@@ -153,10 +169,10 @@ class Stats:
         fig.update_yaxes(side="left", tickvals=y_labels)
 
         # Show plot
-        fig.write_image(f"output/{data['output']}", scale=data.get("scale", 10))
+        fig.write_image(f"output/{data['output']}", scale=3)
 
     def stacked_bars(self):
-        df = self.get_dataframe(self.cfg)
+        df = self.get_dataframe(True)
 
         data = self.get_ordered_data(df)
 
@@ -216,6 +232,7 @@ class Stats:
                     marker_color=sns.color_palette("Blues", n_colors=6).as_hex()[
                         color_i + 1
                     ],
+                    # marker_color=colors.qualitative.Plotly[(color_i + 1) - 1],
                 )
             )
             color_i += 1
@@ -258,6 +275,172 @@ class Stats:
 
         fig.show()
         fig.write_image("output/stacked.pdf")
+
+    def label_distribution(self):
+        df = self.get_dataframe(True)
+        # Converting each list in 'label_text' to a set to remove duplicates
+        df["label_text"] = df["label_text"].apply(lambda x: [y.lower() for y in x])
+        df["label_text"] = df["label_text"].apply(set)
+        # Calculate the number of labels per example
+        num_labels_per_example = df["label_text"].apply(len)
+
+        # Calculate the frequency of each label count
+        label_count_freq = num_labels_per_example.value_counts().sort_index()
+
+        print(label_count_freq)
+
+        # Assuming df is your DataFrame and 'label_text' is the column with label lists
+        df_filtered = df[
+            num_labels_per_example == 2
+        ]  # Filter for examples with exactly 2 labels
+
+        # Generate a Series of sorted tuples for each pair of labels
+        label_pairs = df_filtered["label_text"].apply(
+            lambda labels: tuple(sorted(labels))
+        )
+
+        # Count the frequency of each unique pair
+        common_pairs_freq = label_pairs.value_counts()
+
+        # Display the most common combinations
+        print(
+            common_pairs_freq.head(50)
+        )  # Adjust the number in head() to see more or fewer top combinations
+
+    def co_occurrence_heatmap(self):
+        df = self.get_dataframe(True)
+        df["label_text"] = (
+            df["label_text"].apply(lambda x: [y.lower() for y in x]).apply(set)
+        )
+
+        total_occurrences = df["label_text"].explode().value_counts()
+
+        label_data = list(
+            df["label_text"].apply(
+                lambda x: [list(x) for x in list(combinations(x, 2))]
+            )
+        )
+
+        connections = [list(sorted(item)) for sublist in label_data for item in sublist]
+        labels_all_flat = sorted(set(total_occurrences.index))
+
+        # Create a DataFrame to count occurrences
+        co_occurrence_matrix = pd.DataFrame(
+            0, index=labels_all_flat, columns=labels_all_flat
+        )
+
+        # Counting occurrences for each pair
+        for pair in connections:
+            co_occurrence_matrix.loc[pair[0], pair[1]] += 1
+            co_occurrence_matrix.loc[
+                pair[1], pair[0]
+            ] += 1  # For bidirectional relationship
+
+        # Normalize the counts by the sum of occurrences for the labels in each pair
+        for label1 in labels_all_flat:
+            for label2 in labels_all_flat:
+                total = total_occurrences[label1] + total_occurrences[label2]
+                co_occurrence_matrix.loc[label1, label2] = (
+                    (co_occurrence_matrix.loc[label1, label2] / total)
+                    if total > 0
+                    else 0
+                )
+
+        # Order labels based on their total occurrences
+        ordered_labels = total_occurrences.sort_values(ascending=False).index.tolist()
+        print(total_occurrences.sort_values(ascending=False))
+        co_occurrence_matrix = co_occurrence_matrix.loc[ordered_labels, ordered_labels]
+
+        # Mask the upper left triangle of the DataFrame for the triangular heatmap
+        mask = np.triu(np.ones_like(co_occurrence_matrix, dtype=bool))
+        triangular_df = co_occurrence_matrix.mask(mask)
+
+        palette = [mcolors.to_hex(color) for color in self.palette]
+
+        fig = px.imshow(
+            triangular_df,
+            x=[map_full_names.get(x, x) for x in ordered_labels],
+            y=[map_full_names.get(x, x) for x in ordered_labels],
+            color_continuous_scale=palette,
+            template=self.template,
+            text_auto=".2f",
+        )
+        fig.update_xaxes(showgrid=False)
+        fig.update_yaxes(showgrid=False)
+        fig.update_yaxes(ticksuffix=" ")
+        fig.update_layout(
+            margin=go.layout.Margin(l=5, r=5, b=5, t=5),
+            showlegend=False,
+            template=self.template,
+            title=None,
+            coloraxis_showscale=False,
+            font=dict(size=6),
+            autosize=False,
+            width=500,
+            height=500,
+        )
+
+        fig.write_image(f"output/heatmap_co_occurrences.png", scale=4)
+
+    def text_lengths(self):
+
+        language_full_names = {
+            "en": "English",
+            "fi": "Finnish",
+            "fr": "French",
+            "sv": "Swedish",
+            "tr": "Turkish",
+        }
+
+        dataset = get_dataset(self.cfg)
+        tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-large")
+        dataset = dataset.map(
+            lambda example: tokenizer(example["text"]),
+            batched=True,
+        )
+
+        dataset = concatenate_datasets(
+            [dataset["train"], dataset["dev"], dataset["test"]]
+        )
+
+        data = [(len(x["input_ids"]), x["language"]) for x in dataset]
+
+        over_8k = sum([1 if x[0] > 8192 else 0 for x in data])
+        print(over_8k)
+
+        print(f"Excluded {over_8k/len(data)} texts.")
+
+        data = [x for x in data if x[0] <= 8192]
+
+        # Organize data by language
+        text_lengths_by_language = {"en": [], "fi": [], "fr": [], "sv": [], "tr": []}
+        for length, language in data:
+            text_lengths_by_language[language].append(length)
+
+        # Create a box plot for each language
+        fig = go.Figure()
+        lang_i = 0
+        for lang, lengths in text_lengths_by_language.items():
+            full_name = language_full_names[lang]  # Convert code to full name
+            fig.add_trace(
+                go.Box(
+                    y=lengths,
+                    name=full_name,
+                    # marker_color=sns.color_palette("Blues", n_colors=6).as_hex()[
+                    #    lang_i + 1
+                    # ],
+                )
+            )
+            lang_i += 1
+
+        fig.update_layout(
+            title=None,
+            showlegend=False,
+            template=self.template,
+            margin=go.layout.Margin(l=5, r=5, b=5, t=5),
+        )
+
+        fig.write_image(f"output/text_lengths.pdf")
 
     def prediction_confusion_matrix(self):
         with open(f"{self.cfg.input}", "r") as csvfile:
@@ -340,7 +523,7 @@ class Stats:
             height=500,
         )
         name = self.cfg.input.split("/")[-1].split(".")[0]
-        confusion_matrix_fig.write_image(f"output/heatmap_{name}.png", scale=10)
+        confusion_matrix_fig.write_image(f"output/heatmap_{name}.png", scale=4)
 
     def focal_loss_configuration_heatmap(self):
         self.heatmap(
@@ -483,8 +666,9 @@ class Stats:
         x_pos = []
         y_pos = []
 
-        palette = sns.cubehelix_palette(rot=-0.2, n_colors=20).as_hex()[1:]
-        palette2 = sns.cubehelix_palette(rot=-0.3, n_colors=20).as_hex()[1:]
+        palette = sns.color_palette("Blues", n_colors=12).as_hex()[1:]
+        palette2 = sns.color_palette("PuBu", n_colors=12).as_hex()[3:]
+        # palette2 = sns.cubehelix_palette(rot=-0.3, n_colors=20).as_hex()[1:]
 
         # Define a color scheme for main categories
         # Define a color scheme for main categories and rightmost column nodes
@@ -545,7 +729,7 @@ class Stats:
                 source.append(label.index(main_source))
                 target.append(label.index(xgenre))
                 value.append(sub_data["subcategories"][main_source]["val"])
-                link_colors.append(rightmost_node_colors[xgenre])
+                link_colors.append(main_category_colors[main_source])
             else:
                 for sub_source, sub_details in sub_data["subcategories"].items():
                     current_y_sub = assign_positions(
@@ -610,77 +794,9 @@ class Stats:
         fig.show()
         fig.write_image("output/sankey.pdf")
 
-    def compare_models(self):
-
-        def benjamini_hochberg_correction(p_values, Q=0.05):
-            """
-            Applies the Benjamini-Hochberg correction for controlling the FDR.
-
-            Parameters:
-            - p_values: A list or array of p-values from multiple hypothesis tests.
-            - Q: The desired False Discovery Rate level.
-
-            Returns:
-            - A boolean array indicating which tests are significant after correction.
-            """
-            m = len(p_values)  # Total number of tests
-            sorted_p_values = np.array(p_values)
-            sorted_indices = np.argsort(sorted_p_values)
-            sorted_p_values = sorted_p_values[sorted_indices]
-
-            # Calculate BH critical values
-            bh_critical_values = (np.arange(1, m + 1) / m) * Q
-
-            # Find the largest p-value where p < BH critical value
-            significant_mask = sorted_p_values < bh_critical_values
-            max_significant = np.max(np.where(significant_mask, sorted_indices, 0))
-
-            # Mark p-values as significant accordingly
-            is_significant = np.arange(m) <= max_significant
-
-            # Return to original ordering
-            return is_significant[np.argsort(sorted_indices)]
-
-        def holm_bonferroni_correction(p_values):
-            """
-            Applies the Holm-Bonferroni correction to a list of p-values.
-
-            Parameters:
-            - p_values: A list or array of p-values from multiple hypothesis tests.
-
-            Returns:
-            - A boolean array indicating which tests are significant after correction.
-            """
-            m = len(p_values)  # Total number of tests
-            sorted_indices = np.argsort(p_values)  # Sort indices
-            sorted_p_values = np.array(p_values)[sorted_indices]  # Sorted p-values
-
-            # Calculate Holm-Bonferroni adjusted p-values
-            adjusted_p_values = (m - np.arange(m)) * sorted_p_values
-
-            # Ensure monotonicity of the adjusted p-values
-            for i in range(m - 1):
-                adjusted_p_values[i + 1] = max(
-                    adjusted_p_values[i], adjusted_p_values[i + 1]
-                )
-
-            # Reorder to the original order of tests and check against alpha
-            reordered_adjusted_p_values = adjusted_p_values[np.argsort(sorted_indices)]
-            significant = reordered_adjusted_p_values < 0.05
-
-            return significant
-
-        # F1 scores for each model across three experiments
-        # data = np.array(
-        #    [
-        #        [0.48931116389548696, 0.5089058524173029, 0.5272727272727273],  # xlmr-l
-        #        [0.5409429280397021, 0.5206349206349207, 0.56047197640118],  # xlmr-xl
-        #        [0.56, 0.5513196480938416, 0.5382830626450116],  # bge-m3-retromae
-        #    ]
-        # )
+    def compare_zero_shots(self):
         models = ["xlmr-large", "xlmr-xl", "bge-m3-retromae-2048"]
         scores = []
-        import re, ast
 
         for model in models:
             scores.append([])
@@ -691,75 +807,194 @@ class Stats:
                 ) as f:
                     for line in f:
                         if line.startswith(f"#z"):
-
                             dict_str = re.search(r"\{.*\}", line).group()
                             result_dict = ast.literal_eval(dict_str)
-
-                            f1 = result_dict["f1"]
-                            pr_auc = result_dict["pr_auc"]
-
-                            scores[-1].append(f1)
+                            scores[-1].append(result_dict["f1"])
 
         data = np.array(scores)
 
+        print(data)
+
         # Calculate the number of models
         n_models = data.shape[0]
-
-        print(n_models)
 
         # Calculate the number of pairwise comparisons
         n_comparisons = (n_models * (n_models - 1)) / 2
 
         print(n_comparisons)
 
-        # Adjusted alpha level for Bonferroni correction
-        alpha_corrected = 0.05 / n_comparisons
-
         # Perform all pairwise Wilcoxon signed-rank tests
         p_values = []
         comparisons = []
         for i, j in combinations(range(n_models), 2):
+            print(i, j)
             stat, p = wilcoxon(data[i], data[j])
-            comparisons.append((i, j))
+            comparisons.append(f"{models[i]} vs. {models[j]}")
             p_values.append(p)
 
-        # Apply Bonferroni correction and determine significance
-        significant_differences = np.array(p_values) < alpha_corrected
+        # Apply Holm-Bonferroni correction
+        _, result, _, _ = multipletests(p_values, alpha=0.05, method="holm")
 
-        # Print results
-        print("Bonferroni correction results ")
-        for (i, j), p, significant in zip(
-            comparisons, p_values, significant_differences
-        ):
+        for test, res in zip(comparisons, result):
+            print(f"{test}: {res}")
+
+    def compare_class_results(self):
+
+        languages = ["en", "fi", "fr", "sv", "tr"]
+        symbols = ["=", "m", "z"]
+
+        lang_scores = {
+            lang: {cl: [[], [], []] for cl in self.labels} for lang in languages
+        }
+
+        cl_data = {cl: [[], [], []] for cl in self.labels}
+
+        for lang in ["en", "fi", "fr", "sv", "tr"]:
+
+            with open(f"v3/configs/xlmr-large/labels_all/{lang}/{lang}.yaml") as f:
+                for line in f:
+                    for i, s in enumerate(symbols):
+                        if line.startswith(f"#{s}"):
+                            result_dict = parse_result_line(line)
+                            if "label_scores" not in result_dict:
+                                continue
+                            for label, value in result_dict["label_scores"].items():
+                                lang_scores[lang][label][i].append(value["f1-score"])
+                                cl_data[label][i].append(value["f1-score"])
+
+            print(f"\n----- {lang} -----\n")
+
+            for label, label_data in lang_scores[lang].items():
+                print(f"\t{label}\n=======")
+                data = np.array(label_data)
+
+                t_stat, p_value_t_test = ttest_rel(label_data[0], label_data[1])
+                print(f"\t\t {p_value_t_test}")
+                try:
+                    stat, p = wilcoxon(label_data[0], label_data[1])
+                    print(f"\t\t {p}")
+                except:
+                    print("(no wilcoxon)")
+                continue
+        print("\n\n\n\n\n")
+        for cl, cl_d in cl_data.items():
+            data = np.array(cl_d)
             print(
-                f"Model {i+1} vs Model {j+1}: p-value = {p}, significant: {significant}"
+                f"{cl}\n======\nF1-scores: \n Mono: {np.mean(cl_d[0]):.2f}, Multi: {np.mean(cl_d[1]):.2f}, ZS: {np.mean(cl_d[2]):.2f}"
             )
+            print()
 
-        ben = benjamini_hochberg_correction(p_values)
+            # Calculate the number of models
+            n_models = data.shape[0]
 
-        print("Benjamini hochberg correction results: ")
-        print(ben)
+            # Calculate the number of pairwise comparisons
+            n_comparisons = (n_models * (n_models - 1)) / 2
 
-        # significant = holm_bonferroni_correction(p_values)
-        # print("Holm-Bonferroni correction results:", significant)
+            # Perform all pairwise Wilcoxon signed-rank tests
+            p_values = []
+            comparisons = []
+            full_symbols = ["Mono", "Multi", "ZS"]
+            for i, j in combinations(range(n_models), 2):
+                if not (np.any(data[i]) or np.any(data[j])):
+                    continue
+                stat, p = wilcoxon(data[i], data[j])
+                comparisons.append(f"{full_symbols[i]} vs. {full_symbols[j]}")
+                p_values.append(p)
+            if p_values:
+                # Apply Holm-Bonferroni correction
+                _, result, _, _ = multipletests(p_values, alpha=0.05, method="holm")
+                print("\tP-values:\n\t---------")
+                for test, res in zip(comparisons, result):
+                    print(f"\t\t{test}: {res:.4f}")
 
-        exit()
+    def compare_class_results_mcnemar(self):
 
-        scores = [float(x) for x in self.cfg.data.scores.split(",")]
+        def process_test_and_compare(list1, list2):
+            num_labels = len(list1[0][0])
+            results = {}
 
-        print(scores)
+            for label_index in range(num_labels):
+                a = b = c = d = 0
+                true_labels_list, preds_model_1, preds_model_2 = [], [], []
 
-        # Perform the Wilcoxon signed-rank test
-        stat, p = wilcoxon(scores)
-        print(f"Statistics={stat}, p={p}")
+                for (true_labels, pred1), (_, pred2) in zip(list1, list2):
+                    t = true_labels[label_index]
+                    p1, p2 = pred1[label_index], pred2[label_index]
+                    true_labels_list.append(t)
+                    preds_model_1.append(p1)
+                    preds_model_2.append(p2)
 
-        p_vals = [0.01, 0.04, 0.03, 0.05, 0.001]
-        alpha = 0.05
+                    if p1 == t and p2 == t:
+                        d += 1
+                    elif p1 == t and p2 != t:
+                        c += 1
+                    elif p1 != t and p2 == t:
+                        b += 1
+                    else:
+                        a += 1
 
-        # Apply Bonferroni correction
-        reject, pvals_corrected, _, _ = multipletests(
-            p_vals, alpha=alpha, method="bonferroni"
-        )
+                test_statistic = (abs(b - c) - 1) ** 2 / (b + c) if (b + c) > 0 else 0
+                p_value = 1 - chi2.cdf(test_statistic, 1)
 
-        print(f"Adjusted p-values: {pvals_corrected}")
-        print(f"Reject null hypothesis: {reject}")
+                # Calculate F1 scores for each model
+                f1_model_1 = f1_score(true_labels_list, preds_model_1, zero_division=0)
+                f1_model_2 = f1_score(true_labels_list, preds_model_2, zero_division=0)
+                results[f"{self.labels[label_index]}"] = [
+                    p_value,
+                    test_statistic,
+                    f1_model_1,
+                    f1_model_2,
+                ]
+
+            return results
+
+        languages = ["en", "fi", "fr", "sv", "tr"]
+        bin_lab = lambda x: binarize_labels(x.split(), self.cfg.data.labels)
+
+        get_labels = lambda csvfile: [
+            [bin_lab(x[0]), bin_lab(x[1])]
+            for x in list(csv.reader(csvfile, delimiter="\t"))
+        ]
+
+        for lang in languages:
+            print()
+            print(f"=== {lang} ===")
+            print()
+            with open(
+                f"output/xlm-roberta-large/labels_all/preds/{lang}_mono.csv", "r"
+            ) as csvfile:
+                mono = get_labels(csvfile)
+
+            with open(
+                f"output/xlm-roberta-large/labels_all/preds/{lang}_multi.csv", "r"
+            ) as csvfile:
+                multi = get_labels(csvfile)
+
+            with open(
+                f"output/xlm-roberta-large/labels_all/preds/{lang}_zero.csv", "r"
+            ) as csvfile:
+                zero = get_labels(csvfile)
+
+            adjusted_results = process_test_and_compare(mono, multi)
+
+            for key, value in adjusted_results.items():
+                print(
+                    f"  {key}: Mono: {value[2]:.2f}, Multi: {value[3]:.2f}, P-value: {value[0]:.4f}"
+                )
+
+            # for mo, mu in zip(mono, multi):
+
+            """
+            # Perform McNemar's test for each label
+            results = {}
+            for label_index in range(true_labels.shape[1]):
+                test_statistic, p_value = mcnemar_test(
+                    true_labels[:, label_index],
+                    predictions_model_1[:, label_index],
+                    predictions_model_2[:, label_index],
+                )
+                results[f"Label {label_index}"] = {
+                    "Test Statistic": test_statistic,
+                    "P-value": p_value,
+                }
+            """
