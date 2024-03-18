@@ -21,3 +21,5 @@ checkpoints
 tokens_cache
 instruction_based
 predictions
+.wandb
+hf_results
