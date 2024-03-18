@@ -1,9 +1,10 @@
 data:
   train: fi-fr-sv-tr
+  max_length: 2048
 model:
   name: BAAI/bge-m3-retromae
 trainer:
-  learning_rate: 3e-5
+  learning_rate: 6e-5
 dataloader:
   balancing_sampler: True
 #z42 {'f1': 0.7756160830090791, 'f1_th05': 0.7671688857743518, 'precision': 0.7670881436686824, 'recall': 0.7843357691587034, 'pr_auc': 0.8476649031543813, 'roc_auc': 0.8823400077409742, 'accuracy': 0.5989285714285715, 'threshold': 0.5499999999999999}
