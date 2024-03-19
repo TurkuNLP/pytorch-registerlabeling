@@ -21,7 +21,9 @@ small_languages = [
 ]
 
 
-def gen(languages, split, label_scheme):
+def gen(languages, split, label_scheme, ignore):
+    if ignore:
+        yield {}
 
     for l in languages:
         with open(
@@ -44,18 +46,20 @@ def gen(languages, split, label_scheme):
 
 
 def get_dataset(cfg, tokenizer):
-    generate = lambda split: Dataset.from_generator(
+    generate = lambda split, ignore: Dataset.from_generator(
         gen,
         cache_dir="./hf_results/tokens_cache",
         gen_kwargs={
             "languages": dict(cfg)[split].split("-"),
             "split": split,
             "label_scheme": cfg.labels,
+            "ignore": ignore,
         },
     )
-    splits = {"train": [], "dev": [], "test": []}
-    for s in ["train", "dev", "test"] if cfg.method == "train" else ["test"]:
-        splits[s] = generate(s)
+    splits = {}
+    for s in ["train", "dev", "test"]:
+        ignore = True if s != "test" and cfg.method == "test"
+        splits[s] = generate(s, ignore)
 
     dataset = DatasetDict(splits).shuffle(seed=cfg.seed)
 
