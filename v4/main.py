@@ -1,4 +1,5 @@
 import numpy as np
+import glob
 import shutil
 import random
 import torch
@@ -112,6 +113,7 @@ def run(cfg):
         ),
         args=TrainingArguments(
             output_dir=output_dir,
+            overwrite_output_dir=True,
             num_train_epochs=30,
             per_device_train_batch_size=cfg.train_batch_size,
             per_device_eval_batch_size=cfg.eval_batch_size,
@@ -133,9 +135,10 @@ def run(cfg):
     )
 
     if cfg.method == "train":
-        if cfg.overwrite:
-            shutil.rmtree(f"{output_dir}/*", ignore_errors=True)
         trainer.train()
+        for dir_path in glob.glob(f"{output_dir}/checkpoint*"):
+            shutil.rmtree(dir_path, ignore_errors=True)
+        shutil.rmtree(f"{output_dir}/runs", ignore_errors=True)
         trainer.save_model()
         print("Evaluating on dev set...")
         print(trainer.evaluate(dataset["dev"]))
