@@ -20,9 +20,12 @@ from transformers import (
     TrainingArguments,
 )
 
+from peft import LoraConfig, get_peft_model
+
 from .data import get_dataset
 from .dataloader import balanced_dataloader
 from .labels import label_schemes
+from .utils import get_linear_modules
 
 
 def run(cfg):
@@ -38,7 +41,9 @@ def run(cfg):
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     label_scheme = label_schemes[cfg.labels]
     output_dir = f"{cfg.root}/hf_output/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}"
-    model_path = output_dir if cfg.method == "test" else cfg.model_name
+    model_path = (
+        cfg.model_name if cfg.method == "train" and not cfg.peft else output_dir
+    )
     dataset = get_dataset(cfg, tokenizer)
 
     class MultiLabelTrainer(Trainer):
@@ -123,10 +128,27 @@ def run(cfg):
 
         return metrics
 
-    trainer = MultiLabelTrainer(
-        model=AutoModelForSequenceClassification.from_pretrained(
+    model = (
+        AutoModelForSequenceClassification.from_pretrained(
             model_path, num_labels=len(label_scheme), torch_dtype=torch.bfloat16
         ),
+    )
+
+    if cfg.peft:
+
+        model = get_peft_model(
+            model,
+            LoraConfig(
+                r=128,
+                lora_alpha=256,
+                target_modules=get_linear_modules(model),
+                lora_dropout=0.1,
+                bias="none",
+            ),
+        )
+
+    trainer = MultiLabelTrainer(
+        model=model,
         args=TrainingArguments(
             output_dir=output_dir,
             overwrite_output_dir=True,
@@ -156,9 +178,7 @@ def run(cfg):
             shutil.rmtree(dir_path, ignore_errors=True)
         trainer.save_model()
         shutil.rmtree(f"{output_dir}/runs", ignore_errors=True)
-        print("Evaluating on dev set...")
-        print(trainer.evaluate(dataset["dev"]))
 
     print("Evaluating on test set...")
     cfg.method = "test"
-    print(trainer.evaluate(dataset["test"]))
+    print(trainer.predict(dataset["test"]))

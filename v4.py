@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--root", "-ro", default="/scratch/project_2009056")
     parser.add_argument("--path_suffix", "-ps", default="")
-    parser.add_argument("--overwrite", "-ov", action="store_true")
+    parser.add_argument("--peft", "-pe", action="store_true")
     parser.add_argument("--method", "-me", default="train")
     parser.add_argument("--labels", "-l", default="all")
     parser.add_argument("--train", "-tr", default="")
