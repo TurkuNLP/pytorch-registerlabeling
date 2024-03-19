@@ -40,9 +40,6 @@ def run(cfg):
     model_path = output_dir if cfg.method == "test" else cfg.model_name
     dataset = get_dataset(cfg, tokenizer)
 
-    print(dataset["test"][0:10])
-    exit()
-
     class MultiLabelTrainer(Trainer):
         def __init__(self, *args, **kwargs):
             super(MultiLabelTrainer, self).__init__(*args, **kwargs)
