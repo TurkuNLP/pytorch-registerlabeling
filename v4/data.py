@@ -58,7 +58,7 @@ def get_dataset(cfg, tokenizer):
     )
     splits = {}
     for s in ["train", "dev", "test"]:
-        ignore = True if s != "test" and cfg.method == "test"
+        ignore = True if s != "test" and cfg.method == "test" else False
         splits[s] = generate(s, ignore)
 
     dataset = DatasetDict(splits).shuffle(seed=cfg.seed)
