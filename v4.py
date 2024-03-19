@@ -9,12 +9,15 @@ os.environ["WANDB_DISABLED"] = "true"
 
 if __name__ == "__main__":
     parser = ArgumentParser()
+    parser.add_argument("--root", "-ro", default="/scratch/project_2009056")
+    parser.add_argument("--path_suffix", "-ps", default="")
+    parser.add_argument("--overwrite", "-ov", action="store_true")
     parser.add_argument("--method", "-me", default="train")
     parser.add_argument("--labels", "-l", default="all")
-    parser.add_argument("--train", "-tr", default="fi")
-    parser.add_argument("--dev", "-de", default="fi")
-    parser.add_argument("--test", "-te", default="fi")
-    parser.add_argument("--model", "-mo", default="BAAI/bge-m3-retromae")
+    parser.add_argument("--train", "-tr", default="")
+    parser.add_argument("--dev", "-de", default="")
+    parser.add_argument("--test", "-te", default="")
+    parser.add_argument("--model_name", "-mn", default="BAAI/bge-m3-retromae")
     parser.add_argument("--max_length", "-ml", type=int, default=512)
     parser.add_argument("--learning_rate", "-lr", type=float, default=1e-5)
     parser.add_argument("--train_batch_size", "-tb", type=int, default=8)
@@ -25,6 +28,12 @@ if __name__ == "__main__":
     parser.add_argument("--loss_gamma", "-lg", type=int, default=1)
 
     cfg = parser.parse_args()
+
+    if not cfg.train:
+        print("--train missing.")
+        exit()
+    cfg.dev = cfg.train if not cfg.dev else cfg.dev
+    cfg.test = cfg.dev if not cfg.test else cfg.test
 
     print(parser.dump(cfg))
 

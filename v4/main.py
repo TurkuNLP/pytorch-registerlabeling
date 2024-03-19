@@ -1,4 +1,5 @@
 import numpy as np
+import shutil
 import random
 import torch
 import torch.nn.functional as F
@@ -32,8 +33,10 @@ def run(cfg):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-    tokenizer = AutoTokenizer.from_pretrained(cfg.model)
+    tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     labels = label_schemes[cfg.labels]
+    output_dir = f"{cfg.root}/hf_output/{cfg.model_name}/labels_{cfg.labels}/{cfg.train}_{cfg.test}/{cfg.seed}"
+    model_path = output_dir if cfg.method == "test" else cfg.model_name
     dataset = get_dataset(cfg, tokenizer)
 
     class MultiLabelTrainer(Trainer):
@@ -105,10 +108,10 @@ def run(cfg):
 
     trainer = MultiLabelTrainer(
         model=AutoModelForSequenceClassification.from_pretrained(
-            cfg.model, num_labels=len(labels), torch_dtype=torch.bfloat16
+            model_path, num_labels=len(labels), torch_dtype=torch.bfloat16
         ),
         args=TrainingArguments(
-            output_dir="./hf_results",
+            output_dir=output_dir,
             num_train_epochs=30,
             per_device_train_batch_size=cfg.train_batch_size,
             per_device_eval_batch_size=cfg.eval_batch_size,
@@ -129,8 +132,13 @@ def run(cfg):
         callbacks=[EarlyStoppingCallback(early_stopping_patience=5)],
     )
 
-    trainer.train()
-    print("Evaluating on dev set...")
-    print(trainer.evaluate(dataset["dev"]))
+    if cfg.method == "train":
+        if cfg.overwrite:
+            shutil.rmtree(f"{output_dir}/*", ignore_errors=True)
+        trainer.train()
+        trainer.save_model()
+        print("Evaluating on dev set...")
+        print(trainer.evaluate(dataset["dev"]))
+
     print("Evaluating on test set...")
     print(trainer.evaluate(dataset["test"]))
