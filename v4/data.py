@@ -46,7 +46,7 @@ def gen(languages, split, label_scheme):
 def get_dataset(cfg, tokenizer):
     generate = lambda split: Dataset.from_generator(
         gen,
-        cache_dir="./tokens_cache",
+        cache_dir="./hf_results/tokens_cache",
         gen_kwargs={
             "languages": dict(cfg)[split],
             "split": split,
