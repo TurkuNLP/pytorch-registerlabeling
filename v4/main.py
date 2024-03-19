@@ -10,6 +10,7 @@ from sklearn.metrics import (
     average_precision_score,
     f1_score,
     precision_recall_fscore_support,
+    classification_report,
 )
 from transformers import (
     AutoModelForSequenceClassification,
@@ -35,7 +36,7 @@ def run(cfg):
     torch.backends.cudnn.benchmark = False
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
-    labels = label_schemes[cfg.labels]
+    label_scheme = label_schemes[cfg.labels]
     output_dir = f"{cfg.root}/hf_output/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}"
     model_path = output_dir if cfg.method == "test" else cfg.model_name
     dataset = get_dataset(cfg, tokenizer)
@@ -98,18 +99,33 @@ def run(cfg):
         accuracy = accuracy_score(labels, binary_predictions)
         pr_auc = average_precision_score(labels, predictions, average="micro")
 
-        return {
-            "accuracy": accuracy,
+        metrics = {
+            "f1": f1,
             "precision": precision,
             "recall": recall,
-            "f1": f1,
+            "accuracy": accuracy,
             "pr_auc": pr_auc,
-            "best_threshold": best_threshold,
+            "threshold": best_threshold,
         }
+
+        if cfg.method == "test":
+
+            cl_report_dict = classification_report(
+                labels,
+                binary_predictions,
+                target_names=label_scheme,
+                digits=4,
+                output_dict=True,
+            )
+            metrics["label_scores"] = {
+                key: val for key, val in cl_report_dict.items() if key in label_scheme
+            }
+
+        return metrics
 
     trainer = MultiLabelTrainer(
         model=AutoModelForSequenceClassification.from_pretrained(
-            model_path, num_labels=len(labels), torch_dtype=torch.bfloat16
+            model_path, num_labels=len(label_scheme), torch_dtype=torch.bfloat16
         ),
         args=TrainingArguments(
             output_dir=output_dir,
@@ -128,8 +144,8 @@ def run(cfg):
             load_best_model_at_end=True,
             save_total_limit=2,
         ),
-        train_dataset=dataset["train"] if cfg.method == "train" else [],
-        eval_dataset=dataset["dev"] if cfg.method == "train" else [],
+        train_dataset=dataset.get("train", []),
+        eval_dataset=dataset.get("dev", []),
         compute_metrics=compute_metrics,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
     )
@@ -144,4 +160,5 @@ def run(cfg):
         print(trainer.evaluate(dataset["dev"]))
 
     print("Evaluating on test set...")
+    cfg.method = "test"
     print(trainer.evaluate(dataset["test"]))
