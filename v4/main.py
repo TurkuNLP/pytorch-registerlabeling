@@ -128,10 +128,8 @@ def run(cfg):
 
         return metrics
 
-    model = (
-        AutoModelForSequenceClassification.from_pretrained(
-            model_path, num_labels=len(label_scheme), torch_dtype=torch.bfloat16
-        ),
+    model = AutoModelForSequenceClassification.from_pretrained(
+        model_path, num_labels=len(label_scheme), torch_dtype=torch.bfloat16
     )
 
     if cfg.peft:
