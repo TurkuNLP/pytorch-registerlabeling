@@ -36,9 +36,12 @@ def run(cfg):
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     labels = label_schemes[cfg.labels]
-    output_dir = f"{cfg.root}/hf_output/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.test}/seed_{cfg.seed}"
+    output_dir = f"{cfg.root}/hf_output/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}"
     model_path = output_dir if cfg.method == "test" else cfg.model_name
     dataset = get_dataset(cfg, tokenizer)
+
+    print(dataset["test"][0:10])
+    exit()
 
     class MultiLabelTrainer(Trainer):
         def __init__(self, *args, **kwargs):
