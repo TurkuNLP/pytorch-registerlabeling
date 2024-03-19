@@ -39,6 +39,7 @@ def gen(languages, split, label_scheme):
                 yield {
                     "label": binarize_labels(normalized_labels, label_scheme),
                     "text": ro[1],
+                    "language": l,
                 }
 
 
