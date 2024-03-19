@@ -36,7 +36,7 @@ def run(cfg):
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     labels = label_schemes[cfg.labels]
-    output_dir = f"{cfg.root}/hf_output/{cfg.model_name}/labels_{cfg.labels}/{cfg.train}_{cfg.test}/{cfg.seed}"
+    output_dir = f"{cfg.root}/hf_output/{cfg.model_name}{("_"+cfg.path_suffix) if cfg.path_suffix else ""}/labels_{cfg.labels}/{cfg.train}_{cfg.test}/seed_{cfg.seed}"
     model_path = output_dir if cfg.method == "test" else cfg.model_name
     dataset = get_dataset(cfg, tokenizer)
 
@@ -138,8 +138,8 @@ def run(cfg):
         trainer.train()
         for dir_path in glob.glob(f"{output_dir}/checkpoint*"):
             shutil.rmtree(dir_path, ignore_errors=True)
-        shutil.rmtree(f"{output_dir}/runs", ignore_errors=True)
         trainer.save_model()
+        shutil.rmtree(f"{output_dir}/runs", ignore_errors=True)
         print("Evaluating on dev set...")
         print(trainer.evaluate(dataset["dev"]))
 

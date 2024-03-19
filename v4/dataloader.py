@@ -20,10 +20,6 @@ class BalancedLanguageSampler(Sampler):
         self.epoch_size = dataset_size * len(self.indices_per_language)
         self.cycle = lang_cycle
 
-        print(
-            f"Sampler epoch size [criterion: {size}, cycle: {lang_cycle}]: {self.epoch_size}"
-        )
-
     def _create_indices_per_language(self):
         indices_per_language = {lang: [] for lang in set(self.language_data)}
         for idx, lang in enumerate(self.language_data):
