@@ -129,7 +129,7 @@ def run(cfg):
         train_dataset=dataset["train"],
         eval_dataset=dataset["dev"],
         compute_metrics=compute_metrics,
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=5)],
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
     )
 
     if cfg.method == "train":
