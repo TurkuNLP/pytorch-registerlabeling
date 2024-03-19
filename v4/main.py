@@ -128,8 +128,8 @@ def run(cfg):
             load_best_model_at_end=True,
             save_total_limit=2,
         ),
-        train_dataset=dataset["train"],
-        eval_dataset=dataset["dev"],
+        train_dataset=dataset["train"] if cfg.method == "train" else [],
+        eval_dataset=dataset["dev"] if cfg.method == "train" else [],
         compute_metrics=compute_metrics,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
     )
