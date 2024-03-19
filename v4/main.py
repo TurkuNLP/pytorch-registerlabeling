@@ -105,7 +105,7 @@ def run(cfg):
 
     trainer = MultiLabelTrainer(
         model=AutoModelForSequenceClassification.from_pretrained(
-            cfg.model, num_labels=len(labels), torch_dtype=torch.float16
+            cfg.model, num_labels=len(labels), torch_dtype=torch.bfloat16
         ),
         args=TrainingArguments(
             output_dir="./hf_results",
