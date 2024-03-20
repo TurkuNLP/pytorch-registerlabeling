@@ -19,7 +19,7 @@ if __name__ == "__main__":
     parser.add_argument("--test", "-te", default="")
     parser.add_argument("--model_name", "-mn", default="BAAI/bge-m3-retromae")
     parser.add_argument("--max_length", "-ml", type=int, default=512)
-    parser.add_argument("--learning_rate", "-lr", type=float, default=1e-5)
+    parser.add_argument("--learning_rate", "-lr", type=float, default=3e-5)
     parser.add_argument("--train_batch_size", "-tb", type=int, default=8)
     parser.add_argument("--eval_batch_size", "-eb", type=int, default=8)
     parser.add_argument("--seed", "-se", type=int, default=42)
