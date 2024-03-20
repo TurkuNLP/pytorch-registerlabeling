@@ -158,13 +158,14 @@ def normalize_labels(labels, label_config):
     return sorted(list(set(filter(None, labels))))
 
 
-def binarize_labels(labels, label_scheme):
-    label_scheme = labels_all if label_scheme == "all" else labels_upper
+def binarize_labels(labels, label_scheme_name):
+    label_scheme = label_schemes[label_scheme_name]
 
     return [1 if scheme_label in labels else 0 for scheme_label in label_scheme]
 
 
-def decode_binary_labels(data, label_scheme):
+def decode_binary_labels(data, label_scheme_name):
+    label_scheme = label_schemes[label_scheme_name]
     return [
         " ".join([label_scheme[i] for i, bin_val in enumerate(bin) if bin_val == 1])
         for bin in data
