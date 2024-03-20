@@ -1,16 +1,20 @@
-import numpy as np
+import csv
 import glob
-import shutil
+import json
 import random
+import shutil
+
+import numpy as np
 import torch
 import torch.nn.functional as F
+from peft import LoraConfig, get_peft_model
 from scipy.special import expit as sigmoid
 from sklearn.metrics import (
     accuracy_score,
     average_precision_score,
+    classification_report,
     f1_score,
     precision_recall_fscore_support,
-    classification_report,
 )
 from transformers import (
     AutoModelForSequenceClassification,
@@ -20,11 +24,9 @@ from transformers import (
     TrainingArguments,
 )
 
-from peft import LoraConfig, get_peft_model
-
 from .data import get_dataset
 from .dataloader import balanced_dataloader
-from .labels import label_schemes
+from .labels import decode_binary_labels, label_schemes
 from .utils import get_linear_modules
 
 
@@ -126,6 +128,22 @@ def run(cfg):
                 key: val for key, val in cl_report_dict.items() if key in label_scheme
             }
 
+            true_labels_str = decode_binary_labels(labels, cfg.labels)
+            predicted_labels_str = decode_binary_labels(binary_predictions, cfg.labels)
+
+            data = list(zip(true_labels_str, predicted_labels_str))
+
+            with open(
+                f"{output_dir}/predictions_{cfg.test}", "w", newline=""
+            ) as csvfile:
+                csv_writer = csv.writer(csvfile, delimiter="\t")
+                csv_writer.writerows(data)
+
+            with open(f"{output_dir}/metrics_{cfg.test}", "w") as f:
+                json.dump(metrics, f)
+
+            print(metrics)
+
         return metrics
 
     model = AutoModelForSequenceClassification.from_pretrained(
@@ -177,6 +195,10 @@ def run(cfg):
         trainer.save_model()
         shutil.rmtree(f"{output_dir}/runs", ignore_errors=True)
 
-    print("Evaluating on test set...")
+    print("Predicting..")
     cfg.method = "test"
-    print(trainer.predict(dataset["test"]))
+    for language in cfg.test.split("-"):
+        print(f"-- {language} --")
+        trainer.predict(
+            dataset["test"].filter(lambda example: example["language"] == language)
+        )
