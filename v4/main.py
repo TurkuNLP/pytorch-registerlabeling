@@ -41,6 +41,7 @@ def run(cfg):
     torch.backends.cudnn.benchmark = False
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
+    test_language = ""
     label_scheme = label_schemes[cfg.labels]
     output_dir = f"{cfg.root}/hf_output/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}"
     model_path = (
@@ -134,12 +135,12 @@ def run(cfg):
             data = list(zip(true_labels_str, predicted_labels_str))
 
             with open(
-                f"{output_dir}/predictions_{cfg.test}", "w", newline=""
+                f"{output_dir}/predictions_{test_language}.tsv", "w", newline=""
             ) as csvfile:
                 csv_writer = csv.writer(csvfile, delimiter="\t")
                 csv_writer.writerows(data)
 
-            with open(f"{output_dir}/metrics_{cfg.test}", "w") as f:
+            with open(f"{output_dir}/metrics_{test_language}.json", "w") as f:
                 json.dump(metrics, f)
 
             print(metrics)
@@ -197,8 +198,10 @@ def run(cfg):
 
     print("Predicting..")
     cfg.method = "test"
+
     for language in cfg.test.split("-"):
         print(f"-- {language} --")
+        test_language = language
         trainer.predict(
             dataset["test"].filter(lambda example: example["language"] == language)
         )
