@@ -14,7 +14,6 @@ gemini.py
 google.py
 tmp
 logs
-results
 log
 wandb
 checkpoints
