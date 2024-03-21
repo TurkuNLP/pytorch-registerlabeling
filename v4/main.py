@@ -187,6 +187,7 @@ def run(cfg):
             save_strategy="epoch",
             logging_strategy="epoch",
             gradient_accumulation_steps=cfg.grad_acc_steps,
+            eval_accumulation_steps=8,
             metric_for_best_model="eval_loss",
             load_best_model_at_end=True,
             save_total_limit=2,
@@ -194,8 +195,6 @@ def run(cfg):
         train_dataset=dataset.get("train", []),
         eval_dataset=dataset.get("dev", []),
         compute_metrics=compute_metrics,
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
-        preprocess_logits_for_metrics=lambda logits, labels: (logits[0], labels),
     )
 
     if cfg.method == "train":
