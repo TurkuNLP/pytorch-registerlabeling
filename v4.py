@@ -17,6 +17,7 @@ if __name__ == "__main__":
     parser.add_argument("--train", "-tr", default="")
     parser.add_argument("--dev", "-de", default="")
     parser.add_argument("--test", "-te", default="")
+    parser.add_argument("--text_prefix", "-tp", default="")
     parser.add_argument("--model_name", "-mn", default="BAAI/bge-m3-retromae")
     parser.add_argument("--max_length", "-ml", type=int, default=512)
     parser.add_argument("--learning_rate", "-lr", type=float, default=3e-5)

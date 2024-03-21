@@ -21,7 +21,7 @@ small_languages = [
 ]
 
 
-def gen(languages, split, label_scheme):
+def gen(languages, split, label_scheme, text_prefix):
     for l in languages:
         with open(
             f"data/{l}/{split if l not in small_languages else l}.tsv",
@@ -37,7 +37,7 @@ def gen(languages, split, label_scheme):
 
                 yield {
                     "label": binarize_labels(normalized_labels, label_scheme),
-                    "text": ro[1],
+                    "text": text_prefix + ro[1],
                     "language": l,
                 }
 
@@ -50,6 +50,7 @@ def get_dataset(cfg, tokenizer):
             "languages": dict(cfg)[split].split("-"),
             "split": split,
             "label_scheme": cfg.labels,
+            "text_prefix": cfg.text_prefix,
         },
     )
     splits = {}
