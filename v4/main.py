@@ -195,6 +195,7 @@ def run(cfg):
         eval_dataset=dataset.get("dev", []),
         compute_metrics=compute_metrics,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
+        preprocess_logits_for_metrics=lambda logits, labels: (logits[0], labels),
     )
 
     if cfg.method == "train":
