@@ -1,13 +1,14 @@
 import csv
 import glob
 import json
+import os
 import random
 import shutil
 
 import numpy as np
 import torch
 import torch.nn.functional as F
-from peft import LoraConfig, get_peft_model
+from peft import LoraConfig, get_peft_model, PeftConfig, PeftModel
 from scipy.special import expit as sigmoid
 from sklearn.metrics import (
     accuracy_score,
@@ -41,12 +42,11 @@ def run(cfg):
     torch.backends.cudnn.benchmark = False
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
-    test_language = ""
+    test_language = ""  # This will be set when iterating test languages
     label_scheme = label_schemes[cfg.labels]
-    output_dir = f"{cfg.root}/hf_output/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}"
-    model_path = (
-        cfg.model_name if cfg.method == "train" and not cfg.peft else output_dir
-    )
+    dir_structure = f"{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}"
+    model_output_dir = f"{cfg.model_output}/hf_output/{dir_structure}"
+    results_output_dir = f"results/{dir_structure}"  # Save results in the repo
     dataset = get_dataset(cfg, tokenizer)
 
     class MultiLabelTrainer(Trainer):
@@ -134,40 +134,48 @@ def run(cfg):
 
             data = list(zip(true_labels_str, predicted_labels_str))
 
+            os.makedirs(results_output_dir, exist_ok=True)
+
             with open(
-                f"{output_dir}/predictions_{test_language}.tsv", "w", newline=""
+                f"{results_output_dir}/predictions_{test_language}.tsv", "w", newline=""
             ) as csvfile:
                 csv_writer = csv.writer(csvfile, delimiter="\t")
                 csv_writer.writerows(data)
 
-            with open(f"{output_dir}/metrics_{test_language}.json", "w") as f:
+            with open(f"{results_output_dir}/metrics_{test_language}.json", "w") as f:
                 json.dump(metrics, f)
 
             print(metrics)
 
         return metrics
 
+    base_model_path = (
+        model_output_dir if cfg.method != "train" and not cfg.peft else cfg.model_name
+    )
+
     model = AutoModelForSequenceClassification.from_pretrained(
-        model_path, num_labels=len(label_scheme), torch_dtype=torch.bfloat16
+        base_model_path, num_labels=len(label_scheme), torch_dtype=torch.bfloat16
     )
 
     if cfg.peft:
-
-        model = get_peft_model(
-            model,
-            LoraConfig(
-                r=128,
-                lora_alpha=256,
-                target_modules=get_linear_modules(model),
-                lora_dropout=0.1,
-                bias="none",
-            ),
-        )
+        if cfg.method == "train":
+            model = get_peft_model(
+                model,
+                LoraConfig(
+                    r=128,
+                    lora_alpha=256,
+                    target_modules=get_linear_modules(model),
+                    lora_dropout=0.1,
+                    bias="none",
+                ),
+            )
+        else:
+            model = PeftModel.from_pretrained(model, model_output_dir)
 
     trainer = MultiLabelTrainer(
         model=model,
         args=TrainingArguments(
-            output_dir=output_dir,
+            output_dir=model_output_dir,
             overwrite_output_dir=True,
             num_train_epochs=30,
             per_device_train_batch_size=cfg.train_batch_size,
@@ -191,10 +199,10 @@ def run(cfg):
 
     if cfg.method == "train":
         trainer.train()
-        for dir_path in glob.glob(f"{output_dir}/checkpoint*"):
+        for dir_path in glob.glob(f"{model_output_dir}/checkpoint*"):
             shutil.rmtree(dir_path, ignore_errors=True)
         trainer.save_model()
-        shutil.rmtree(f"{output_dir}/runs", ignore_errors=True)
+        shutil.rmtree(f"{model_output_dir}/runs", ignore_errors=True)
 
     print("Predicting..")
     cfg.method = "test"
