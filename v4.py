@@ -1,6 +1,6 @@
 import os
 
-from jsonargparse import ArgumentParser
+from jsonargparse import ArgumentParser, ActionConfigFile
 
 os.environ["HF_HOME"] = ".hf/hf_home"
 os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
@@ -27,6 +27,7 @@ if __name__ == "__main__":
     parser.add_argument("--grad_acc_steps", "-ga", type=int, default=1)
     parser.add_argument("--loss_alpha", "-la", type=float, default=0.5)
     parser.add_argument("--loss_gamma", "-lg", type=int, default=1)
+    parser.add_argument("--config", "-c", action=ActionConfigFile)
 
     cfg = parser.parse_args()
 
