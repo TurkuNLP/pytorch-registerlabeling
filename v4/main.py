@@ -192,6 +192,8 @@ def run(cfg):
             load_best_model_at_end=True,
             save_total_limit=2,
             bf16=True,
+            tf32=True,
+            group_by_length=True,
         ),
         train_dataset=dataset.get("train", []),
         eval_dataset=dataset.get("dev", []),
