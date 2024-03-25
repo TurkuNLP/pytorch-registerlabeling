@@ -1,0 +1,6 @@
+model_output: /scratch/project_2009056
+train: en-fi-fr-sv-tr
+test: en-fi-fr-sv-tr-ar-ca-es-fa-hi-id-jp-no-pt-ur-zh
+model_name: intfloat/multilingual-e5-large
+learning_rate: 5.0e-05
+train_batch_size: 8

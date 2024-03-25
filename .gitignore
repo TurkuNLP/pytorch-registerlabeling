@@ -22,3 +22,6 @@ instruction_based
 predictions
 .wandb
 hf_results
+token.json
+credentials.json
+models

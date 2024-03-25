@@ -45,7 +45,7 @@ def run(cfg):
     test_language = ""  # This will be set when iterating test languages
     label_scheme = label_schemes[cfg.labels]
     dir_structure = f"{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}"
-    model_output_dir = f"{cfg.model_output}/hf_output/{dir_structure}"
+    model_output_dir = f"{cfg.model_output}/{dir_structure}"
     results_output_dir = f"results/{dir_structure}"  # Save results in the repo
     dataset = get_dataset(cfg, tokenizer)
 

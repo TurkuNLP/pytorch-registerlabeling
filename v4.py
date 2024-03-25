@@ -9,7 +9,7 @@ os.environ["WANDB_DISABLED"] = "true"
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("--model_output", "-mo", default="/scratch/project_2009056")
+    parser.add_argument("--model_output", "-mo", default="models")
     parser.add_argument("--path_suffix", "-ps", default="")
     parser.add_argument("--peft", "-pe", action="store_true")
     parser.add_argument("--method", "-me", default="train")
