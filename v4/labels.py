@@ -139,7 +139,7 @@ map_lower_upper = {
 }
 
 
-def normalize_labels(labels, label_config):
+def normalize_labels(labels, label_scheme_name):
     if type(labels) == str:
         labels = (labels or "").split()
 
@@ -152,7 +152,7 @@ def normalize_labels(labels, label_config):
             labels.append(map_lower_upper[label])
 
     # Further map to upper
-    if label_config == "upper":
+    if label_scheme_name == "upper":
         labels = [x for x in labels if x.isupper()]
 
     return sorted(list(set(filter(None, labels))))

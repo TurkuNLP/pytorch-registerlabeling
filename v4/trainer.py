@@ -8,7 +8,7 @@ import shutil
 import numpy as np
 import torch
 import torch.nn.functional as F
-from peft import LoraConfig, get_peft_model, PeftConfig, PeftModel
+from peft import LoraConfig, get_peft_model, PeftModel
 from scipy.special import expit as sigmoid
 from sklearn.metrics import (
     accuracy_score,
@@ -25,10 +25,23 @@ from transformers import (
     TrainingArguments,
 )
 
-from .data import get_dataset
-from .dataloader import balanced_dataloader
+from .data import get_dataset, balanced_dataloader
 from .labels import decode_binary_labels, label_schemes
-from .utils import get_linear_modules
+
+
+def get_linear_modules(model):
+    print("Getting linear module names")
+    print(model)
+
+    linear_modules = set()
+
+    for name, module in model.named_modules():
+        name = name.lower()
+        if "attention" in name and "self" in name and "Linear" in str(type(module)):
+            linear_modules.add(name.split(".")[-1])
+
+    print(f"Found linear modules: {linear_modules}")
+    return list(linear_modules)
 
 
 def run(cfg):

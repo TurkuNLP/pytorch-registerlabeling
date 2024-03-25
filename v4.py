@@ -39,6 +39,12 @@ if __name__ == "__main__":
 
     print(parser.dump(cfg))
 
-    from v4 import main
+    if cfg.method == "train":
+        from v4 import trainer
 
-    main.run(cfg)
+        trainer.run(cfg)
+
+    elif cfg.method == "results":
+        from v4 import results
+
+        results.run(cfg)
