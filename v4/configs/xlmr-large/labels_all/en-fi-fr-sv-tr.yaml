@@ -1,4 +1,3 @@
-model_output: /scratch/project_2009056
 train: en-fi-fr-sv-tr
 test: en-fi-fr-sv-tr-ar-ca-es-fa-hi-id-jp-no-pt-ur-zh
 model_name: xlm-roberta-large
