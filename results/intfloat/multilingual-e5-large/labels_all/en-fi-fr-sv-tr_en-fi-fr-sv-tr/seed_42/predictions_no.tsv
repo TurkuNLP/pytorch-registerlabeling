@@ -1,23 +1,23 @@
 HI re	HI re
 IP ds	IP ds
 IN fi	HI
-HI OP av	HI
+HI OP av	HI IN
 OP av	IP ds
-IN dtp	HI IN
+IN dtp	IN
 MT	MT
-IN dtp	IP ds
-IP ed	NA IP
-IP ed	HI
+IN dtp	IN IP ds
+IP ed	NA IP ne
+IP ed	nb
 IN IP dtp ds	IP ds
 IN dtp	IN dtp
-OP ob	OP rv
+OP ob	NA OP nb rv
 IP ds	IP ds
 NA ne	NA ne
 IN fi	IN IP
 IN	NA nb
-IP ed	NA
+IP ed	NA IP nb
 NA ne	NA ne
-IP ds	IP ds
+IP ds	IN IP
 NA ne nb	NA nb
 NA nb	NA OP nb rv
 MT	MT
@@ -26,18 +26,18 @@ IN dtp	MT IP ds
 MT	MT
 IN en	IN en
 IN en	IN en
-IN fi	IP ds
+IN fi	IN IP ds
 MT	MT
 IP ds	IP ds
 IP ds	IP ds
 HI	MT
 IP ds	IP ds
-NA nb	IN dtp
+NA nb	NA IN dtp
 NA ne	NA ne
 ID	ID
-NA sr	NA nb
+NA sr	NA sr nb
 MT	MT
-IN	IN dtp
+IN	IN IP dtp
 MT	MT
 IP ds	IP ds
 IP ds	IP ds
@@ -46,15 +46,15 @@ NA nb	NA nb
 NA ne	IN lt
 NA ne	NA ne
 IP ds	IP ds
-NA IP ds	IN
-IN dtp	IN
+NA IP ds	IN IP
+IN dtp	IN IP
 IN	IN
-OP rv	
+OP rv	IN
 IP ds	IP ds
-NA ne	OP
+NA ne	OP IP
 IN	IP
 IN dtp	IP ds
-NA	NA
+NA	NA IN
 IP ds	IP ds
 IP ds	IP ds
 IN IP ds	IP ds
@@ -70,7 +70,7 @@ IN	IN dtp
 IN IP dtp ds	IP ds
 OP rv	IP ds
 HI re	HI re
-NA	NA IP
+NA	IN IP
 MT	MT
 IP ds	IP ds
 MT	MT
@@ -78,7 +78,7 @@ IP ds	IP ds
 IN	IN dtp
 HI re	HI re
 IP ed	IP ds
-IN dtp	NA IN
+IN dtp	NA
 MT	MT
 OP ob	NA nb
 IN IP dtp ds	IP ds
@@ -88,46 +88,46 @@ ID NA sr	NA sr
 IN en	IN en
 MT	IP
 ID	ID
-NA sr	NA
-MT	IP ds
+NA sr	NA ne
+MT	IN
 NA nb	NA nb
 OP av	IN dtp
-IN fi	IN
+IN fi	IN dtp
 IN	MT
 IN IP dtp ds	IP ds
 IN	IP ds
-NA nb	NA IP
+NA nb	NA ne
 NA ne	NA ne
 IP ds	IP ds
 IN IP dtp ds	IP ds
 ID NA nb	NA nb
-IP ds	OP
+IP ds	OP rv
 NA ne	NA ne
-IN dtp	IN
-IN dtp fi	IN
+IN dtp	IN IP
+IN dtp fi	IN IP dtp
 IN	IN dtp
 IN IP dtp ds	IP ds
 IP ds	IP ds
 IP ds	IP ds
 OP rv	OP rv
 IN lt	IN lt
-HI	IN IP ds
+HI	IN IP
 IN	IP ds
-IN dtp	IN
+IN dtp	IN en
 IP ds	IP ds
-IN dtp fi	IN
-HI re	IN dtp
-IN IP dtp ds	IN dtp
+IN dtp fi	IP ds
+HI re	NA IN dtp
+IN IP dtp ds	IN en dtp
 NA sr	NA sr
 IP ds	IP ds
 IP ds ed	IP ds
 IN IP dtp ds	IP ds
 MT	MT
-IN dtp	IN dtp
+IN dtp	IN en dtp
 NA nb	NA nb
 NA ne	NA ne
 HI re	HI re
-NA ne	IP
+NA ne	OP IP
 OP rs	NA nb
 IN IP dtp ds	IN lt
-HI re	IP
+HI re	
