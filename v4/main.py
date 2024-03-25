@@ -154,7 +154,7 @@ def run(cfg):
     )
 
     model = AutoModelForSequenceClassification.from_pretrained(
-        base_model_path, num_labels=len(label_scheme), torch_dtype=torch.bfloat16
+        base_model_path, num_labels=len(label_scheme)
     )
 
     if cfg.peft:
@@ -191,6 +191,7 @@ def run(cfg):
             metric_for_best_model="eval_loss",
             load_best_model_at_end=True,
             save_total_limit=2,
+            bf16=True,
         ),
         train_dataset=dataset.get("train", []),
         eval_dataset=dataset.get("dev", []),
