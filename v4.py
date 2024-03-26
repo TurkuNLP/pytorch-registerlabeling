@@ -19,9 +19,11 @@ if __name__ == "__main__":
     parser.add_argument("--config", "-c", action=ActionConfigFile)
 
     # Data
-    parser.add_argument("--train", "-t", default="")
-    parser.add_argument("--dev", "-d", default="")
-    parser.add_argument("--test", "-te", default="")
+    parser.add_argument("--train", "-t", default="en-fi-fr-sv-tr")
+    parser.add_argument("--dev", "-d", default="en-fi-fr-sv-tr")
+    parser.add_argument(
+        "--test", "-te", default="en-fi-fr-sv-tr-ar-ca-es-fa-hi-id-jp-no-pt-ur-zh"
+    )
     parser.add_argument("--text_prefix", default="")
     parser.add_argument("--labels", default="all")
 
