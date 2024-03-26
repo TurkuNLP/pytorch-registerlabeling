@@ -8,7 +8,7 @@ import shutil
 import numpy as np
 import torch
 import torch.nn.functional as F
-from peft import LoraConfig, get_peft_model, PeftModel
+from peft import LoraConfig, get_peft_model, PeftModel, TaskType
 from scipy.special import expit as sigmoid
 from sklearn.metrics import (
     accuracy_score,
@@ -179,6 +179,7 @@ def run(cfg):
                     lora_dropout=0.1,
                     bias="none",
                     use_dora=True,
+                    task_type=TaskType.SEQ_CLS,
                 ),
             )
         else:
