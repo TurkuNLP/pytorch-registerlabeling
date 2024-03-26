@@ -30,17 +30,16 @@ from .labels import decode_binary_labels, label_schemes
 
 
 def get_linear_modules(model):
-    print("Getting linear module names")
-    print(model)
 
     linear_modules = set()
 
     for name, module in model.named_modules():
         name = name.lower()
+        print(name, end=", ")
         if "attention" in name and "self" in name and "Linear" in str(type(module)):
             linear_modules.add(name.split(".")[-1])
 
-    print(f"Found linear modules: {linear_modules}")
+    print(f"\nFound linear modules: {linear_modules}")
     return list(linear_modules)
 
 
@@ -55,7 +54,7 @@ def run(cfg):
     torch.backends.cudnn.benchmark = False
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
-    test_language = ""  # This will be set when iterating test languages
+    test_language = ""  # Used when predicting
     label_scheme = label_schemes[cfg.labels]
     dir_structure = f"{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}"
     model_output_dir = f"{cfg.model_output}/{dir_structure}"
@@ -175,11 +174,12 @@ def run(cfg):
             model = get_peft_model(
                 model,
                 LoraConfig(
-                    r=128,
-                    lora_alpha=256,
+                    r=64,
+                    lora_alpha=128,
                     target_modules=get_linear_modules(model),
                     lora_dropout=0.1,
                     bias="none",
+                    use_dora=True,
                 ),
             )
         else:
