@@ -10,6 +10,61 @@ labels_structure = {
     "IP": ["ds", "ed"],
 }
 
+
+map_xgenre = {
+    ### 1. MACHINE TRANSLATED
+    "MT": "Other",
+    ### 2. LYRICAL
+    "LY": "Prose/Lyrical",
+    ### 3. SPOKEN
+    "SP": "Other",
+    "sp": "Other",
+    # Interview
+    "it": "Other",
+    ### 4. INTERACTIVE DISCUSSION
+    "ID": "Forum",
+    ### 5. NARRATIVE
+    "NA": "Prose/Lyrical",  # Or Opinion/Argumentation
+    # News report
+    "ne": "News",
+    # Sports report
+    "sr": "News",
+    # Narrative blog
+    "nb": "Opinion/Argumentation",
+    ### 6. HOW-TO or INSTRUCTIONS
+    "HI": "Instruction",
+    # Recipe
+    "re": "Instruction",
+    ### 7. INFORMATIONAL DESCRIPTION
+    "IN": "Information/Explanation",
+    # Encyclopedia article
+    "en": "Information/Explanation",
+    # Research article
+    "ra": "Information/Explanation",
+    # Description of a thing or person
+    "dtp": "Information/Explanation",
+    # Faq
+    "fi": "Instruction",  # ???
+    # Legal terms and conditions
+    "lt": "Legal",
+    ### 8. OPINION
+    "OP": "Opinion/Argumentation",
+    # Review
+    "rv": "Opinion/Argumentation",
+    # Opinion blog
+    "ob": "Opinion/Argumentation",
+    # Denominational religious blog / sermon
+    "rs": "Prose/Lyrical",  # ???
+    # Advice
+    "av": "Opinion/Argumentation",  # ??? Or Instruction?
+    ### 9. INFORMATIONAL PERSUASION
+    "IP": "Promotion",
+    # Description with intent to sell
+    "ds": "Promotion",
+    # News & opinion blog or editorial
+    "ed": "Opinion/Argumentation",  # ???
+}
+
 labels_all = [k for k in labels_structure.keys()] + [
     item for row in labels_structure.values() for item in row
 ]
@@ -151,9 +206,26 @@ def normalize_labels(labels, label_scheme_name):
         if label in map_lower_upper and map_lower_upper[label] not in labels:
             labels.append(map_lower_upper[label])
 
-    # Further map to upper
+    # Upper labels
     if label_scheme_name == "upper":
         labels = [x for x in labels if x.isupper()]
+
+    # XGENRE labels
+    if label_scheme_name == "xgenre":
+
+        print(f"orig: {labels}")
+
+        # First, remove upper category if lower present
+        mapped_simple = []
+        for label in labels:
+            if not label in labels_structure:
+                if any(x in labels for x in labels_structure[label]):
+                    mapped_simple.append(label)
+
+        # Then, map
+        labels = [map_xgenre[label] for label in mapped_simple]
+
+        print(f"xgenre: {labels}")
 
     return sorted(list(set(filter(None, labels))))
 

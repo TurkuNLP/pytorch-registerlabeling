@@ -170,6 +170,7 @@ def run(cfg):
 
     if cfg.peft:
         if cfg.method == "train":
+            print("Using LoRa")
             model = get_peft_model(
                 model,
                 LoraConfig(
