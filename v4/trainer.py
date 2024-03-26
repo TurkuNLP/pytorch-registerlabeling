@@ -174,8 +174,8 @@ def run(cfg):
             model = get_peft_model(
                 model,
                 LoraConfig(
-                    r=128,
-                    lora_alpha=256,
+                    r=cfg.lora_rank,
+                    lora_alpha=cfg.lora_alpha,
                     target_modules=get_linear_modules(model),
                     lora_dropout=0.1,
                     bias="none",
