@@ -63,6 +63,7 @@ map_xgenre = {
     "ds": "Promotion",
     # News & opinion blog or editorial
     "ed": "Opinion/Argumentation",  # ???
+    "": "",
 }
 
 labels_all = [k for k in labels_structure.keys()] + [
@@ -71,10 +72,14 @@ labels_all = [k for k in labels_structure.keys()] + [
 
 labels_upper = [x for x in labels_all if x.isupper()]
 
+labels_xgenre = list(sorted(set(map_xgenre.values())))
+
 label_schemes = {
     "all": labels_all,
     "upper": labels_upper,
+    "xgenre": labels_xgenre,
 }
+
 
 map_normalize = {
     # Our categories, upper
@@ -212,20 +217,17 @@ def normalize_labels(labels, label_scheme_name):
 
     # XGENRE labels
     if label_scheme_name == "xgenre":
-
-        print(f"orig: {labels}")
-
         # First, remove upper category if lower present
         mapped_simple = []
         for label in labels:
-            if not label in labels_structure:
-                if any(x in labels for x in labels_structure[label]):
-                    mapped_simple.append(label)
+            if not (
+                label in labels_structure
+                and any(x in labels for x in labels_structure[label])
+            ):
+                mapped_simple.append(label)
 
         # Then, map
         labels = [map_xgenre[label] for label in mapped_simple]
-
-        print(f"xgenre: {labels}")
 
     return sorted(list(set(filter(None, labels))))
 
