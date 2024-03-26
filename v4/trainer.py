@@ -35,7 +35,6 @@ def get_linear_modules(model):
 
     for name, module in model.named_modules():
         name = name.lower()
-        print(name, end=", ")
         if "attention" in name and "self" in name and "Linear" in str(type(module)):
             linear_modules.add(name.split(".")[-1])
 
