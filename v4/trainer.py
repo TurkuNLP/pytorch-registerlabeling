@@ -174,12 +174,11 @@ def run(cfg):
             model = get_peft_model(
                 model,
                 LoraConfig(
-                    r=64,
-                    lora_alpha=128,
+                    r=128,
+                    lora_alpha=256,
                     target_modules=get_linear_modules(model),
                     lora_dropout=0.1,
                     bias="none",
-                    use_dora=True,
                     task_type=TaskType.SEQ_CLS,
                 ),
             )

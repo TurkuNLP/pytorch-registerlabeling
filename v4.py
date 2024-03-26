@@ -1,4 +1,5 @@
 import os
+from pydoc import locate
 
 from jsonargparse import ArgumentParser, ActionConfigFile
 
@@ -14,6 +15,7 @@ if __name__ == "__main__":
     parser.add_argument("--peft", "-pe", action="store_true")
     parser.add_argument("--method", "-me", default="train")
     parser.add_argument("--labels", "-l", default="all")
+    parser.add_argument("--device", "-dv", default="cuda")
     parser.add_argument("--train", "-tr", default="")
     parser.add_argument("--dev", "-de", default="")
     parser.add_argument("--test", "-te", default="")
@@ -39,12 +41,4 @@ if __name__ == "__main__":
 
     print(parser.dump(cfg))
 
-    if cfg.method == "train":
-        from v4 import trainer
-
-        trainer.run(cfg)
-
-    elif cfg.method == "results":
-        from v4 import results
-
-        results.run(cfg)
+    locate(f"v4.{cfg.method}").run(cfg)
