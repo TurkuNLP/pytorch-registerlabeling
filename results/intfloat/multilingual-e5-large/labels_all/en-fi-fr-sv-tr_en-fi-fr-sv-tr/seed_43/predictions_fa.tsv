@@ -4,65 +4,65 @@ IP ds	IP ds
 HI IP ds	IP ds
 HI	HI
 NA ne	NA ne
-IN dtp	IN IP dtp ds
-MT	MT NA sr
-IN IP dtp ds	IP ds
+IN dtp	IN dtp
+MT	MT
+IN IP dtp ds	IN IP dtp ds
 IP ed	OP IP ob ed
-OP rv	OP IP ds
-IN OP av	IN IP dtp
-NA OP ne sr	NA ne
+OP rv	IP ds
+IN OP av	IN dtp
+NA OP ne sr	NA ne sr
 IN dtp	IP ds
-NA ne	NA IP ne
+NA ne	OP
 NA ne	NA ne
-HI IP ds	IN IP dtp
+HI IP ds	IN dtp
 OP	OP rs
 NA ne sr	NA ne sr
 NA ne	NA ne
 NA sr	NA sr
 IN dtp	IP ds
-IN OP dtp av	OP IP ds
+IN OP dtp av	OP IP av ds
 IP ds	IP ds
-OP IP ds	IN IP ds
+OP IP ds	OP IP ds
 SP OP IP ed	NA ne
 IP ds	IP ds
-NA sr	NA sr
-OP av	HI OP av
+NA sr	SP NA sr
+OP av	OP av
 OP IP ds	IP ds
 IP ds	IP ds
 LY	LY NA nb
 NA ne	NA ne
-IN dtp	IN IP dtp
+IN dtp	IN dtp
 IN IP dtp ds	IP ds
-NA OP ne	NA IP ne
+NA OP ne	NA ne
 IP ed	NA sr
 IN en	IN dtp
 NA ne	NA ne
 LY IN dtp	IN en
-HI	HI IN
+HI	HI
 NA ne	NA ne
 NA OP ne	NA ne
 OP IP ds	IP ds
 NA ne	NA ne
-HI IP ds	IN IP dtp ds
+HI IP ds	HI IN dtp
 OP ob	OP IP ob ed
 IN OP dtp av	IN dtp
 NA ne	NA ne
 OP av	HI OP av
 IN OP dtp av	IN OP av
 NA ne	NA ne
-IP ds	IN IP dtp
-OP IP av ds	HI IN av
+IP ds	IN
+OP IP av ds	HI IN OP av
 NA ne	NA ne
 OP IP av ds	IP ds
 IN dtp	IN dtp
-LY	IP ds
+LY	LY
 IP ds	IP ds
 IP ds	OP rs
 NA ne	NA ne
 IP ds	IP ds
 IN OP dtp	IN dtp
-NA sr	NA ne sr
-IN IP dtp ds	IN IP ds
+NA sr	NA sr
+IN IP dtp ds	IP ds
 HI	HI
 MT	NA sr
 NA ne	NA ne

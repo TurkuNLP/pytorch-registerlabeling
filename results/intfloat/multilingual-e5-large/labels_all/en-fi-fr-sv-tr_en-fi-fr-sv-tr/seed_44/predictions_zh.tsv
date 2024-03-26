@@ -4,10 +4,10 @@ IP ds	IP ds
 IP ds	IP ds
 IP	IN dtp
 NA OP	ID
-IP ds	IP ds
-OP rv	ID OP rv
-IP ds	IN IP
-NA	NA
+IP ds	OP IP ds
+OP rv	OP rv
+IP ds	IP
+NA	MT
 IP ds	IP ds
 NA	NA
 NA	NA
@@ -16,10 +16,10 @@ LY NA OP	OP
 NA	NA ne
 NA OP	NA ne
 IN lt	IN lt
-IN dtp	IN IP
+IN dtp	IN
 IN	HI IN
 NA ne	NA ne
-IP ds	IP
+IP ds	IN IP dtp
 OP ob	NA ne
 NA ne	IN
 ID	ID
@@ -27,41 +27,41 @@ MT	IP ds
 IN lt	IN lt
 IP ed	IN
 MT	IP ds
-IN	IN OP
+IN	IN
 NA	NA nb
 IP ds	IP ds
 NA	
-IN dtp	HI IN
-IP ds	IP ds
+IN dtp	HI IN dtp
+IP ds	IN IP ds
 IN	HI
 NA	NA
-IN	IP
+IN	OP
 IN	IN
 IN IP lt	IN dtp
-IP ds	OP IP rv ds
-IN	IN IP lt ds
-IN dtp	
+IP ds	OP rv
+IN	IN
+IN dtp	IN
 NA	IP ds
 NA ne	NA ne
 IP ds	IP ds
 IN lt	IN lt
 NA ne	NA ne
 IP ds	OP IP rv ds
-IP ds	NA IP nb
+IP ds	NA OP nb
 NA ne	NA ne
+IP ds	IN IP dtp ds
+IN ra	IN OP
 IP ds	IP ds
-IN ra	ne
-IP ds	HI IN IP
 LY	
-IP	HI IN
-HI	NA OP
+IP	IN
+HI	OP
 MT	
 IN	HI
 IP ds	IP ds
 IN lt	IN lt
 IP ds	OP IP ds
 IP	IP ds
-OP ob	OP IP ob ed
+OP ob	OP ob
 OP av	OP av
 IN dtp	IN
 IP ds	IP ds
@@ -70,49 +70,49 @@ HI IP ds	HI IP ds
 IP	IN dtp
 NA	NA
 OP rv	OP rv
-HI	IN dtp
-IP ds	IN IP
+HI	IN
+IP ds	IN
 OP IP ds	IP ds
 OP	IN dtp
 NA	NA
-NA	NA IP
-NA	NA ne
+NA	IP
+NA	NA OP
 IP ds	IP ds
 NA IP ds	NA
 IN fi	ID
 IP ds	IP ds
-IN	IP ds
+IN	IN
 NA	NA nb
-IP ds	IN IP ds
-IN lt	NA IN ne
-NA nb	NA nb
+IP ds	IN IP dtp ds
+IN lt	IN
+NA nb	NA OP nb
 IP ds	IP ds
 IP ds	OP IP rv ds
 NA HI IN	HI OP av
-IN lt	NA IN ne
+IN lt	IN
 IP ds	IP ds
-NA	NA nb
+NA	NA
 IP ds	IP ds
-NA nb	HI IN
+NA nb	HI
 OP rv	OP rv
 NA	NA nb
-IN	HI
+IN	
 ID IP ds	OP
-IN lt	NA ne
-NA IN OP ne dtp av	
-NA	NA OP
-IP ds	IN IP dtp ds
-IN dtp	IN IP
-IN	IP ds
-IP	IN
-IN	HI IN
 IN lt	NA IN ne
+NA IN OP ne dtp av	
+NA	OP ob
+IP ds	IN IP ds
+IN dtp	IN
+IN	HI
+IP	IN
+IN	HI
+IN lt	IN
 IP ds	IP ds
-IP ds	OP IP rv ds
+IP ds	OP rv
 IP ds	IP ds
 ID	ID
-OP ob	OP
-NA	NA OP
+OP ob	OP ob
+NA	OP
 NA	NA
 IP ds	IP ds
 IP ds	IP ds
@@ -121,7 +121,7 @@ IP	IP ds
 OP rv	OP rv
 NA	NA
 IP ds	IP ds
-NA	NA
+NA	
 IN lt	IN lt
 IN	HI
 NA	NA
@@ -131,7 +131,7 @@ NA nb	NA nb
 IP ds	OP rv
 IP ds	IP ds
 IP ds	NA ne
-IN ra	IN
+IN ra	IN ra
 NA	NA
 ID	ID
 IP ds	IP ds
@@ -142,27 +142,27 @@ IN	IN
 IP ds	IP ds
 NA	NA nb
 OP rv	IP ds
-IP ds	NA OP IP
+IP ds	OP rv
 IP ds	IP ds
-NA sr	NA ne sr
-IN	IN OP
-NA	NA ne
+NA sr	NA sr
+IN	IN
+NA	NA OP ob
 NA ne	NA ne
 HI IN IP fi lt ds	HI IN
-IP ds	IN
-NA nb	NA IN dtp
-IN lt	IN lt
+IP ds	IP ds
+NA nb	NA IN ne
+IN lt	IN
 NA ne	NA ne
 IP ds	IP ds
 NA	NA nb
-NA sr	NA ne sr
+NA sr	NA sr
 NA ne	NA ne
-IN ra	IN dtp
-NA	NA
+IN ra	IN
+NA	
 HI	HI IN
-NA	IN dtp
-IN	OP
-HI	IP
+NA	NA IN
+IN	ID OP
+HI	
 IN IP lt	IN
 NA	NA
 HI	HI IN
@@ -172,57 +172,57 @@ IP ds	IP ds
 NA	NA
 IP ds	IP ds
 IP ds	IP ds
-OP rv	HI IP
+OP rv	HI IP ds
 IP ds	OP av
 IP ds	OP IP rv ds
 IP ds	IP ds
-IN lt	NA IN ne
-LY NA	LY ID
+IN lt	IN lt
+LY NA	OP
 NA ne	NA ne
 NA ne	NA ne
 NA IP ds	NA ne
-IP ds	OP IP ds
+IP ds	OP rv
 ID	ID
-OP rv	OP IP rv ds
+OP rv	OP rv
 IN ra	IN
 IP ds	IP ds
 IP ds	IP ds
 ID	ID
-IP	OP
+IP	IP
 IP ds	IP ds
 IN dtp	IN dtp
 IP ds	IP ds
 NA ne	NA ne
-IN lt	NA IN ne
-NA	NA ne
+IN lt	IN
+NA	NA OP ob
 IP ds	IP ds
 IP ds	IP ds
 IP ds	OP rv
 NA ne	NA ne
 IP ds	IP ds
-IP	IN IP dtp ds
-OP	NA
+IP	IP ds
+OP	OP
 NA sr	NA sr
-IN	IN dtp
+IN	IN
 IP ds	IP ds
 NA	NA nb
-IN	NA IN
+IN	NA IN ne
 OP av	HI OP av
 IN dtp	IN
-IN dtp	IN
-MT	ID
-OP av	HI OP av
+IN dtp	HI IN
+MT	OP
+OP av	HI OP
 OP rv	
 MT	HI IP
 NA	NA nb
-NA	IP ds
+NA	OP IP ds
 NA OP ne av	OP
 IP ds	NA IP ne
-IP ds	OP av
-NA sr	NA OP sr
+IP ds	HI OP av
+NA sr	NA sr
 NA nb	SP NA it
 NA nb	NA nb
-OP rv	NA nb
+OP rv	NA OP rv
 IP ds	IP ds
 OP rv	ID
 IN	IN
@@ -233,14 +233,14 @@ IN IP ra	IN
 IN	IN
 IN dtp	IN
 IP ds	IP ds
-IN	IN
-OP rv	NA OP ne
-NA nb	NA nb
+IN	
+OP rv	NA OP
+NA nb	NA OP nb
 IP ds	IP ds
-NA	NA IN dtp
-NA	LY NA
+NA	IN dtp
+NA	LY
 IP ds	IP ds
-IN OP fi rv	ID
+IN OP fi rv	ID OP rv
 IP ds	IP ds
 NA	NA IN dtp
 IP	IP ds
@@ -250,68 +250,68 @@ IP ds	IP ds
 IP ds	MT IP ds
 IP ed	NA ne
 IP ds	IP ds
-IP	IN IP
-NA ne	IN
+IP	IP
+NA ne	
 ID OP rv	ID
-IN lt	IN dtp
-IP ds	OP IP av
-OP ob	NA OP ne
-SP	SP OP IP
+IN lt	IN
+IP ds	OP
+OP ob	OP ob
+SP	OP IP
 IP ds	IP ds
-IP ds	OP IP ds
-NA HI nb	HI OP av
+IP ds	IP ds
+NA HI nb	HI OP
 NA	NA nb
 OP ob	IN
-IP ds	IN IP ds
-IP ds	NA OP IP
+IP ds	IP ds
+IP ds	OP rv
 IP ds	IP ds
 IN en	IN en
-HI	IN
-NA ne	NA IP ne
-OP av	OP rv av
+HI	HI IN
+NA ne	NA ne
+OP av	OP rv
 IP	IP ds
 NA	IP ds
 NA	NA
 IP ds	IP ds
-IN	IN dtp
+IN	IN
 IN ra	IN
 NA	NA
 NA	NA
 IP ds	IP ds
-HI	HI IN
-NA nb	NA IN
+HI	IN
+NA nb	IN
 NA ne	NA ne
-NA nb	SP NA
-IN fi	HI IN
+NA nb	NA IN
+IN fi	
 IP ds	IP ds
-HI	
+HI	IN
 IN	IN
 IN lt	IN lt
 IP ds	IP ds
 IP ds	IP ds
 IP ds	IP
-IN	NA IN
-NA	IP ds
+IN	IN
+NA	OP IP rv ds
 IN OP IP fi ds	IP ds
-IN dtp	IN dtp
+IN dtp	IN
 IP	IP ds
 NA ne	NA ne
 IP ds	NA ne
 OP rv	IP ds
 NA IP ds	IN IP dtp ds
 NA	NA
-NA ne	NA IP ds
-NA	NA IN dtp
+NA ne	IP
+NA	NA IN
 IP ds	IP ds
 IN dtp	IN dtp
 NA	NA
-NA sr	NA ne
+NA sr	NA ne sr
 IP ds	NA ne
-IP ds	IP ds
+IP ds	IP
 IN dtp	IN
 NA	NA nb
 IP	IP ds
-NA	NA
-OP av	OP IP av ds
+NA	NA OP nb
+OP av	OP IP ds
 NA ne	NA ne
-ID IN dtp	IN
+ID IN dtp	
