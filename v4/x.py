@@ -57,7 +57,7 @@ def predict(dataset, model):
     for threshold in np.arange(0.3, 0.7, 0.05):
         binary_predictions = probs > threshold
 
-        f1 = f1_score(labels[:100], binary_predictions, average="micro")
+        f1 = f1_score(labels, binary_predictions, average="micro")
 
         if f1 > best_f1:
             best_f1 = f1
@@ -69,12 +69,13 @@ def predict(dataset, model):
 
 
 def run(cfg):
+    sample_size = 1000
     dir_structure = f"{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}"
     model_output_dir = f"{cfg.model_output}/{dir_structure}"
     label_scheme = label_schemes[cfg.labels]
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
 
-    dataset = get_dataset(cfg, tokenizer)["test"][:500]
+    dataset = get_dataset(cfg, tokenizer)["test"][:sample_size]
 
     model = AutoModelForSequenceClassification.from_pretrained(
         model_output_dir, num_labels=len(label_scheme)
@@ -82,33 +83,76 @@ def run(cfg):
 
     probs, binary_predictions, best_threshold = predict(dataset, model)
 
-    # Calculate uncertainty measure for each label based on the best threshold
-    uncertainty_measure = np.abs(probs - best_threshold)
+    method = "entropy"
 
-    # Now, `uncertainty_measure` contains the uncertainty for each label of each example,
-    # with smaller values indicating higher uncertainty.
+    if method == "threshold":
 
-    # If you want to aggregate this to get a single uncertainty value per example, you could take the mean or max, etc.
-    # Here's an example of taking the mean uncertainty across all labels for each example:
-    example_uncertainty = np.mean(uncertainty_measure, axis=1)
+        # Calculate uncertainty measure for each label based on the best threshold
+        uncertainty_measure = np.abs(probs - best_threshold)
 
-    print(example_uncertainty)
+        # Now, `uncertainty_measure` contains the uncertainty for each label of each example,
+        # with smaller values indicating higher uncertainty.
+
+        # If you want to aggregate this to get a single uncertainty value per example, you could take the mean or max, etc.
+        # Here's an example of taking the mean uncertainty across all labels for each example:
+        example_uncertainty = np.mean(uncertainty_measure, axis=1)
+
+        print(example_uncertainty)
+
+    elif method == "entropy":
+
+        # Assuming `probs` is your array of label probabilities
+        def binary_entropy(probs):
+            # Ensure no log(0) issue; clip probabilities to avoid log(0). Adjust the epsilon if needed.
+            epsilon = 1e-9
+            probs = np.clip(probs, epsilon, 1 - epsilon)
+
+            # Calculate the entropy for each label
+            entropy = -(probs * np.log(probs) + (1 - probs) * np.log(1 - probs))
+
+            return entropy
+
+        # Calculate the entropy for each label in your predictions
+        label_entropies = binary_entropy(probs)
+
+        # To get an uncertainty measure per example, you can take the mean entropy across all labels for each example
+        example_uncertainty = np.mean(label_entropies, axis=1)
+
+        print(example_uncertainty)
 
     mean_uncertainty = np.mean(example_uncertainty)
     std_uncertainty = np.std(example_uncertainty)
 
-    # You can adjust the multiplier for the standard deviation based on how conservative you want to be
-    # A larger multiplier will result in discarding fewer examples, being more conservative
-    factor = 1  # This can be adjusted
-    uncertainty_threshold = mean_uncertainty + factor * std_uncertainty
+    method = "std"
 
-    # Determine which examples exceed the uncertainty threshold
-    high_uncertainty_indices = example_uncertainty > uncertainty_threshold
+    if method == "std":
 
-    # Print out how many examples are considered too uncertain
-    print(
-        f"Number of examples considered too uncertain: {np.sum(high_uncertainty_indices)}"
-    )
+        # You can adjust the multiplier for the standard deviation based on how conservative you want to be
+        # A larger multiplier will result in discarding fewer examples, being more conservative
+        factor = 1  # This can be adjusted
+        uncertainty_threshold = mean_uncertainty + factor * std_uncertainty
+
+        # Determine which examples exceed the uncertainty threshold
+        high_uncertainty_indices = example_uncertainty > uncertainty_threshold
+
+        # Print out how many examples are considered too uncertain
+        print(
+            f"Number of examples considered too uncertain: {np.sum(high_uncertainty_indices)}"
+        )
+    elif method == "percentile":
+        percentile = 75  # This means we discard the top 25% most uncertain examples
+        uncertainty_threshold_percentile = np.percentile(
+            example_uncertainty, percentile
+        )
+
+        # Determine which examples exceed the uncertainty percentile threshold
+        high_uncertainty_indices = (
+            example_uncertainty > uncertainty_threshold_percentile
+        )
+
+        print(
+            f"Number of examples considered too uncertain (percentile approach): {np.sum(high_uncertainty_indices)}"
+        )
 
     indices_to_keep = ~high_uncertainty_indices
 

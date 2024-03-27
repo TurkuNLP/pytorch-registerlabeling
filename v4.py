@@ -53,4 +53,6 @@ if __name__ == "__main__":
 
     print(parser.dump(cfg))
 
+    method = cfg.method if cfg.method != "test" else "train"
+
     locate(f"v4.{cfg.method}").run(cfg)
