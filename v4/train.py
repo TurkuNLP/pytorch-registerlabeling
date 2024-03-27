@@ -52,12 +52,16 @@ def run(cfg):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-    tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     test_language = ""  # Used when predicting
     label_scheme = label_schemes[cfg.labels]
-    dir_structure = f"{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}"
+    dir_structure = f"{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
     model_output_dir = f"{cfg.model_output}/{dir_structure}"
-    results_output_dir = f"results/{dir_structure}"  # Save results in the repo
+    results_output_dir = f"results/{dir_structure}"
+
+    print(f"This run saves models to {model_output_dir}")
+    print(f"Results are logged to {results_output_dir}")
+
+    tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     dataset = get_dataset(cfg, tokenizer)
 
     class MultiLabelTrainer(Trainer):

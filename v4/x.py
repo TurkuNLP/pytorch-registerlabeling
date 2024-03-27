@@ -116,7 +116,7 @@ def run(cfg):
     selected_indices = np.where(indices_to_keep)[0]
 
     # Use the `select()` function to keep only the desired examples in the dataset
-    filtered_dataset = Dataset.from_dict(dataset).select(selected_indices.tolist())
+    filtered_dataset = Dataset.from_dict(dataset).select(selected_indices.tolist())[:]
 
     probs, binary_predictions, best_threshold = predict(filtered_dataset, model)
 

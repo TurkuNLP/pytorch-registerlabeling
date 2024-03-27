@@ -26,6 +26,8 @@ if __name__ == "__main__":
     )
     parser.add_argument("--text_prefix", default="")
     parser.add_argument("--labels", default="all")
+    parser.add_argument("--use_fold", type=int, default=0)
+    parser.add_argument("--num_folds", type=int, default=10)
 
     # Trainer
     parser.add_argument("--learning_rate", "-lr", type=float, default=5e-5)

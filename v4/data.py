@@ -5,7 +5,8 @@ csv.field_size_limit(sys.maxsize)
 from itertools import cycle
 
 import numpy as np
-from datasets import Dataset, DatasetDict
+from datasets import Dataset, DatasetDict, concatenate_datasets
+from skmultilearn.model_selection import IterativeStratification
 from torch.utils.data import DataLoader, Sampler
 from transformers.trainer_utils import seed_worker
 
@@ -129,9 +130,31 @@ def get_dataset(cfg, tokenizer):
         },
     )
     splits = {}
-    include_splits = ["train", "dev", "test"] if cfg.method == "train" else ["test"]
-    for s in include_splits:
-        splits[s] = generate(s)
+
+    if cfg.use_fold:
+        data_to_be_folded = list(
+            concatenate_datasets([generate("train"), generate("dev")]).shuffle(
+                seed=cfg.seed
+            )
+        )
+
+        y = np.array([x["label"] for x in data_to_be_folded])
+        k_fold_fn = IterativeStratification(n_splits=cfg.num_folds, order=1)
+
+        train_fold, dev_fold = list(k_fold_fn.split(list(range(len(y))), y))[
+            cfg.use_fold - 1
+        ]
+
+        splits["train"] = Dataset.from_list(
+            [data_to_be_folded[int(i)] for i in train_fold]
+        )
+        splits["dev"] = Dataset.from_list([data_to_be_folded[int(i)] for i in dev_fold])
+        splits["test"] = generate("test")
+
+    else:
+        include_splits = ["train", "dev", "test"] if cfg.method == "train" else ["test"]
+        for s in include_splits:
+            splits[s] = generate(s)
 
     dataset = DatasetDict(splits).shuffle(seed=cfg.seed)
 
