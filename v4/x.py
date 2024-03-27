@@ -38,7 +38,7 @@ def predict(dataset, model):
 
             # Ensure batch tensors are on the right device (e.g., CPU or GPU)
             batch = {
-                k: v.to("cpu") for k, v in batch.items()
+                k: v.to("cuda") for k, v in batch.items()
             }  # Replace 'cpu' with 'cuda' if using a GPU
 
             # Forward pass through the model
@@ -69,13 +69,13 @@ def predict(dataset, model):
 
 
 def run(cfg):
-    sample_size = 1000
+    # sample_size = 1000
     dir_structure = f"{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}"
     model_output_dir = f"{cfg.model_output}/{dir_structure}"
     label_scheme = label_schemes[cfg.labels]
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
 
-    dataset = get_dataset(cfg, tokenizer)["test"][:sample_size]
+    dataset = get_dataset(cfg, tokenizer)["test"]
 
     model = AutoModelForSequenceClassification.from_pretrained(
         model_output_dir, num_labels=len(label_scheme)
@@ -109,7 +109,7 @@ def run(cfg):
 
             # Calculate the entropy for each label
             entropy = -(probs * np.log(probs) + (1 - probs) * np.log(1 - probs))
-            
+
             return entropy
 
         # Calculate the entropy for each label in your predictions
