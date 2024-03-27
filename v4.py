@@ -55,4 +55,4 @@ if __name__ == "__main__":
 
     method = cfg.method if cfg.method != "test" else "train"
 
-    locate(f"v4.{cfg.method}").run(cfg)
+    locate(f"v4.{method}").run(cfg)
