@@ -109,7 +109,7 @@ def run(cfg):
 
             # Calculate the entropy for each label
             entropy = -(probs * np.log(probs) + (1 - probs) * np.log(1 - probs))
-
+            
             return entropy
 
         # Calculate the entropy for each label in your predictions
