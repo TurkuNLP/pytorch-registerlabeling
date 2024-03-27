@@ -65,7 +65,7 @@ def predict(dataset, model):
             best_f1 = f1
             best_threshold = threshold
 
-    print(f1)
+    print(best_f1)
 
     return probs, probs > best_threshold, best_threshold
 
