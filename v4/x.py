@@ -74,7 +74,7 @@ def run(cfg):
     label_scheme = label_schemes[cfg.labels]
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
 
-    dataset = get_dataset(cfg, tokenizer)["test"][:50]
+    dataset = get_dataset(cfg, tokenizer)["test"][:500]
 
     model = AutoModelForSequenceClassification.from_pretrained(
         model_output_dir, num_labels=len(label_scheme)
