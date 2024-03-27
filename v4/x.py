@@ -24,6 +24,8 @@ def predict(dataset, model):
     # Initialize an empty list to collect logits for all examples
     logits_list = []
 
+    model model.to('cuda')
+
     with torch.no_grad():
         # Iterate over the dataset in batches
         for i in tqdm(
