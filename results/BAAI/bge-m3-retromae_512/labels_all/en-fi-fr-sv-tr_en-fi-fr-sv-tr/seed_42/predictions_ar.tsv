@@ -1,92 +1,92 @@
-ID NA nb	OP IP ds
-ID	IP ds
+ID NA nb	NA IP
+ID	ID
 NA ne	NA ne
 HI re	HI re
-ID IN	ID
+ID IN	ID IN dtp
 NA ne	NA ne
 NA ne	NA ne
 MT IP	MT IP ds
-OP IP rv	OP IP rv ds
-ID IN	
-IP	MT
-HI IN	
-IN ra	IN
+OP IP rv	OP IP ds
+ID IN	ID IN
+IP	MT IP ds
+HI IN	NA IN ne
+IN ra	IN OP rs
 OP ob	OP IP ob
-NA nb	OP IP ds
-IP	MT
-NA ne	OP
+NA nb	NA IN dtp
+IP	MT IP ds
+NA ne	NA ne
 NA ne	NA ne
 NA ne	NA ne
 IN IP ed	MT
-OP rv	OP IP rv ds
+OP rv	OP rv
 NA ne	NA ne
-IN ra	IN IP
-OP rs	IP ds
+IN ra	IN ra dtp
+OP rs	OP rs
 NA ne	NA sr
-ID NA ne	NA OP ne ob
-HI IP	IP ds
-NA sr	NA ne
+ID NA ne	NA ne
+HI IP	IN IP dtp ds
+NA sr	NA ne sr
 NA ne	NA ne
-HI IN lt	IN
+HI IN lt	IN lt
 NA sr	NA sr
-NA sr	NA ne
 NA sr	NA sr
-HI IN	IN
-NA	NA
-OP rs	
-IN OP dtp ob	OP IP
-NA IN ne dtp	OP
+NA sr	NA sr
+HI IN	IN dtp
+NA	NA nb
+OP rs	OP
+IN OP dtp ob	IN OP IP
+NA IN ne dtp	NA ne
 NA IN nb dtp	IN dtp
 MT IP	OP IP ds
 IN	OP IP ds
 MT NA IN ne	MT
-IP	OP IP ds
+IP	OP IP rv ds
 NA ne	NA ne
-IN OP fi av	OP IP av
+IN OP fi av	IN OP dtp av
 NA ne	NA ne
-NA ne	NA OP ne
-IN	IP ds
-OP rs	OP
+NA ne	NA ne
+IN	IN IP dtp ds
+OP rs	ID OP rs
 IN	MT
-NA ne	NA OP ne
-OP ob	OP IP ob
+NA ne	NA ne
+OP ob	NA OP sr
 NA ne	NA ne
 IN en	IN en
 NA ne	NA ne
-IN	OP IP
-NA ne	IN
-IN IP	IP ds
-OP rv ob	OP IP ob
-IP	IP
-IN	MT IP ds
-IP	IP ds
-IN OP ob rs	OP
-NA IN	IP ds
-NA	NA
-IN dtp	IP ds
-IN dtp	IN
+IN	IN dtp
+NA ne	IN lt
+IN IP	NA sr
+OP rv ob	OP rv ob
+IP	HI IN IP dtp ds
+IN	IP ds
+IP	MT
+IN OP ob rs	IN OP rs
+NA IN	IN IP dtp
+NA	NA IN ne
+IN dtp	IN IP dtp ds
+IN dtp	IN dtp
 NA ne	NA ne
 NA ne	NA ne
 NA ne	NA ne
 HI re	HI re
-IN IP fi	IN
-IP	OP IP ds
-OP rv	OP
-ID	IN
-IN	OP IP
-HI IN	IP ds
-ID HI IN	ID
-OP rs	IP
+IN IP fi	IN lt
 IP	IP ds
-OP ob rs	OP IP ob
+OP rv	IN en dtp
+ID	IN lt
+IN	IN dtp
+HI IN	IN IP dtp ds
+ID HI IN	ID HI OP
+OP rs	HI IN dtp
+IP	IP ds
+OP ob rs	OP rs
 OP IP ed	OP IP ob
 ID	ID
 NA ne	NA ne
-IN lt	IN
-IN OP IP dtp rv ed	OP
+IN lt	IN lt
+IN OP IP dtp rv ed	IN
 NA ne	NA ne
-NA OP rv	OP IP ds
+NA OP rv	IN IP dtp ds
 NA ne	NA ne
-NA ne	OP
 NA ne	NA ne
-NA sr	NA ne sr
+NA ne	NA ne
+NA sr	NA sr

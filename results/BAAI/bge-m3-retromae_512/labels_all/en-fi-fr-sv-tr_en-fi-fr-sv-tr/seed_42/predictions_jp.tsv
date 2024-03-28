@@ -1,100 +1,100 @@
 IN	IN
-NA OP nb av	OP IP ds
-IP	IN en
-MT HI	IN IP
-NA nb	OP IP ds
-IN dtp	IP ds
-IP	MT IP ds
+NA OP nb av	
+IP	IN dtp
+MT HI	MT
+NA nb	IP
+IN dtp	IN dtp
 IP	IP ds
-NA nb	ID NA OP nb
-NA nb	OP IP
-IN	IN
+IP	IP
+NA nb	NA nb
+NA nb	NA nb
+IN	IN lt
 NA nb	OP rv
-IN dtp	IN OP IP dtp ds
-IN dtp	ds
+IN dtp	IN dtp
+IN dtp	IN
 IP	IP ds
-NA nb	ID NA OP nb
+NA nb	NA nb
+IP	IN IP
+IP	NA
+IN dtp	NA IN
+IN dtp	IN
+IP	OP
+ID	ID
 IP	IP ds
-IP	OP IP ds
-IN dtp	
-IN dtp	MT IP ds
-IP	OP IP ds
-ID	ID IP ds
-IP	MT IP ds
-HI	ID HI OP av
+HI	HI
+IP	
+HI	IP
+NA nb	IN
+IN	IN
+MT IP	IN
 IP	IP ds
-HI	OP IP ds
-NA nb	MT IP ds
-IN	IN IP dtp
-MT IP	IN IP ds
-IP	IP ds
-NA nb	OP IP ds
+NA nb	
 MT HI	IN
 IP	IP ds
-NA nb	IN
-OP av	OP IP
-NA nb	OP IP ds
+NA nb	IN dtp
+OP av	IN
+NA nb	nb
 IP	IP ds
-NA nb	NA OP
-HI	IN IP
+NA nb	OP rv
+HI	IN
 ID	ID
-NA nb	ID OP
+NA nb	OP
 IP	IP ds
-IP	OP IP ds
-NA nb	OP IP nb ds
-HI	HI OP IP av ds
-IP	OP IP ds
-NA nb	OP IP rv ds
+IP	IN
+NA nb	NA nb
+HI	OP av
+IP	IP ds
+NA nb	IN dtp
 ID	ID
 NA ne	IN
 NA ne	NA
-IP	IP ds
-NA nb	ID OP
+IP	IP
+NA nb	
 ID	ID
-IP	IP ds
+IP	IP
 IP	IP ds
 HI	IP ds
 IN dtp	IN dtp
-IP	OP IP ds
+IP	IP ds
+NA nb	IN dtp
+IP	IP ds
+HI	
+HI	IN dtp
+NA OP nb rv	IN
+NA nb	NA nb
 NA nb	IN
 IP	IP ds
-HI	IP ds
-HI	IN
-NA OP nb rv	OP IP ds
-NA nb	ID NA nb
-NA nb	IN OP
-IP	OP IP ds
-NA nb	ID OP IP
-NA nb	OP IP nb rv ds
-NA nb	OP
-NA nb	OP IP ds
+NA nb	
+NA nb	OP rv
+NA nb	NA sr
+NA nb	
 IP	IP ds
-IP	OP IP ds
-IN dtp	IN en
+IP	IP ds
+IN dtp	IN dtp
 NA nb	IP ds
-NA nb	ID NA nb
-IP	IN IP ds
-SP it	OP
+NA nb	NA nb
+IP	IN dtp
+SP it	SP it
 IP	IP ds
-NA nb	ID NA nb
-IN	IP ds
-IP	OP IP ds
-IP	IP ds
-IP	IN IP
-NA nb	ID NA nb
-NA nb	ID OP
+NA nb	NA nb
+IN	IN dtp
+IP	IP
+IP	OP IP rv
+IP	IN lt
+NA nb	NA nb
+NA nb	ID
 IN lt	IN lt
-NA OP nb av	ID OP IP
+NA OP nb av	ID
 IP	IP ds
-NA nb	OP IP ds
-IN	IN
-IN dtp	IN IP ds
-NA nb	OP IP ds
-NA nb	OP IP ds
+NA nb	
+IN	IN lt
+IN dtp	IN dtp
+NA nb	IN dtp
+NA nb	IN
 IP	IP ds
 MT IN lt	IN lt
-IP	IP ds
-NA nb	OP IP ds
-IP	IP ds
-NA ne	NA IP ds
-HI	ID HI IN
+IP	IN dtp
+NA nb	IN
+IP	MT
+NA ne	IN dtp
+HI	HI IN
