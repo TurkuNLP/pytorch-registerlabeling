@@ -169,7 +169,9 @@ def run(cfg):
     )
 
     model = AutoModelForSequenceClassification.from_pretrained(
-        base_model_path, num_labels=len(label_scheme), torch_dtype=torch.bfloat16
+        base_model_path,
+        num_labels=len(label_scheme),
+        torch_dtype=torch.bfloat16 if not cfg.no_bf16 else torch.float,
     )
 
     if cfg.peft:

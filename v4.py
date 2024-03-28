@@ -38,6 +38,7 @@ if __name__ == "__main__":
     parser.add_argument("--loss_alpha", type=float, default=0.5)
     parser.add_argument("--loss_gamma", type=int, default=1)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument("--no_bf16", action="store_true")
 
     # Peft
     parser.add_argument("--peft", action="store_true")
