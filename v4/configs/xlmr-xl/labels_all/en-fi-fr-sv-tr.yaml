@@ -1,7 +1,7 @@
 train: en-fi-fr-sv-tr
 test: en-fi-fr-sv-tr-ar-ca-es-fa-hi-id-jp-no-pt-ur-zh
 model_name: facebook/xlm-roberta-xl
-learning_rate: 2e-4
+learning_rate: 7e-5
 train_batch_size: 2
 grad_acc_steps: 4
 peft: True
