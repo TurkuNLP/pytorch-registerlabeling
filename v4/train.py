@@ -172,6 +172,7 @@ def run(cfg):
         base_model_path,
         num_labels=len(label_scheme),
         torch_dtype=torch.bfloat16 if not cfg.no_bf16 else torch.float,
+        use_flash_attention_2=cfg.fa2,
     )
 
     if cfg.peft:
