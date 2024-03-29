@@ -1,6 +1,6 @@
 train: en-fi-fr-sv-tr
 test: en-fi-fr-sv-tr-ar-ca-es-fa-hi-id-jp-no-pt-ur-zh
-model_name: google/umt5-xl
+model_name: google/mt5-xl
 learning_rate: 3e-4
 train_batch_size: 1
 eval_batch_size: 1
