@@ -62,6 +62,8 @@ def run(cfg):
     print(f"Results are logged to {results_output_dir}")
 
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
+    if "mixtral" in cfg.model_name.lower():
+        tokenizer.pad_token = tokenizer.eos_token
     dataset = get_dataset(cfg, tokenizer)
 
     class MultiLabelTrainer(Trainer):
