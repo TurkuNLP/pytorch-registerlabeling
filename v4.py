@@ -40,7 +40,7 @@ if __name__ == "__main__":
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--no_bf16", action="store_true")
     parser.add_argument("--fa2", action="store_true")
-    parser.add_argument("--4bit", action="store_true")
+    parser.add_argument("--nf4", action="store_true")
 
     # Peft
     parser.add_argument("--peft", action="store_true")

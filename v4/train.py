@@ -171,12 +171,19 @@ def run(cfg):
         model_output_dir if cfg.method != "train" and not cfg.peft else cfg.model_name
     )
 
+    nf4_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_compute_dtyp=torch.bfloat16 if not cfg.no_bf16 else torch.float,
+    )
+
     model = AutoModelForSequenceClassification.from_pretrained(
         base_model_path,
         num_labels=len(label_scheme),
         torch_dtype=torch.bfloat16 if not cfg.no_bf16 else torch.float,
         use_flash_attention_2=cfg.fa2,
-        load_in_4bit=cfg.4bit
+        quantization_config=nf4_config if cfg.nf4 else None,
     )
 
     if cfg.peft:
