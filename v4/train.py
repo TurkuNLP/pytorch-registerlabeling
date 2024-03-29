@@ -23,6 +23,7 @@ from transformers import (
     EarlyStoppingCallback,
     Trainer,
     TrainingArguments,
+    BitsAndBytesConfig,
 )
 
 from .data import get_dataset, balanced_dataloader
@@ -175,6 +176,7 @@ def run(cfg):
         num_labels=len(label_scheme),
         torch_dtype=torch.bfloat16 if not cfg.no_bf16 else torch.float,
         use_flash_attention_2=cfg.fa2,
+        load_in_4bit=cfg.4bit
     )
 
     if cfg.peft:
