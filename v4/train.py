@@ -4,11 +4,12 @@ import json
 import os
 import random
 import shutil
+from pydoc import locate
 
 import numpy as np
 import torch
 import torch.nn.functional as F
-from peft import LoraConfig, get_peft_model, PeftModel, TaskType
+from peft import LoraConfig, PeftModel, TaskType, get_peft_model
 from scipy.special import expit as sigmoid
 from sklearn.metrics import (
     accuracy_score,
@@ -20,13 +21,13 @@ from sklearn.metrics import (
 from transformers import (
     AutoModelForSequenceClassification,
     AutoTokenizer,
+    BitsAndBytesConfig,
     EarlyStoppingCallback,
     Trainer,
     TrainingArguments,
-    BitsAndBytesConfig,
 )
 
-from .data import get_dataset, balanced_dataloader
+from .data import balanced_dataloader, get_dataset
 from .labels import decode_binary_labels, label_schemes
 
 
@@ -61,7 +62,7 @@ def run(cfg):
 
     print(f"This run saves models to {model_output_dir}")
     print(f"Results are logged to {results_output_dir}")
-
+    torch_dtype = locate(f"torch.{cfg.torch_dtype}")
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     if "mixtral" in cfg.model_name.lower():
         tokenizer.pad_token = tokenizer.eos_token
@@ -175,13 +176,13 @@ def run(cfg):
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
         bnb_4bit_use_double_quant=True,
-        bnb_4bit_compute_dtype=torch.bfloat16 if not cfg.no_bf16 else torch.float,
+        bnb_4bit_compute_dtype=torch_dtype,
     )
 
     model = AutoModelForSequenceClassification.from_pretrained(
         base_model_path,
         num_labels=len(label_scheme),
-        torch_dtype=torch.bfloat16 if not cfg.no_bf16 else torch.float,
+        torch_dtype=torch_dtype,
         use_flash_attention_2=cfg.fa2,
         quantization_config=nf4_config if cfg.nf4 else None,
     )
