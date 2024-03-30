@@ -26,6 +26,8 @@ def run(cfg):
             results[language]["f1"].append(data["f1"] * 100)
             results[language]["pr_auc"].append(data["pr_auc"] * 100)
 
+    assert all([len(v["f1"]) == 3 for v in results.values()])
+
     """
 
     label_scheme = label_schemes[cfg.labels]
