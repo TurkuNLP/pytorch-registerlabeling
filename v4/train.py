@@ -194,7 +194,11 @@ def run(cfg):
                 LoraConfig(
                     r=cfg.lora_rank,
                     lora_alpha=cfg.lora_alpha,
-                    target_modules=get_linear_modules(model),
+                    target_modules=(
+                        get_linear_modules(model)
+                        if not cfg.target_modules
+                        else cfg.target_modules.split(",")
+                    ),
                     lora_dropout=0.1,
                     bias="none",
                     task_type=TaskType.SEQ_CLS,
