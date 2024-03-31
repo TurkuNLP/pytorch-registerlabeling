@@ -1,4 +1,5 @@
 train: en-fi-fr-sv
+dev: en-fi-fr-sv
 test: en-fi-fr-sv-tr-ar-ca-es-fa-hi-id-jp-no-pt-ur-zh
 model_name: BAAI/bge-m3-retromae
 learning_rate: 3e-5

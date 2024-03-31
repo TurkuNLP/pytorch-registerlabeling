@@ -1,4 +1,5 @@
 train: en-fi-fr-sv
+dev: en-fi-fr-sv
 test: en-fi-fr-sv-tr-ar-ca-es-fa-hi-id-jp-no-pt-ur-zh
 model_name: xlm-roberta-large
 learning_rate: 5e-5
