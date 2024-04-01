@@ -179,6 +179,10 @@ def run(cfg):
         bnb_4bit_compute_dtype=torch_dtype,
     )
 
+    # When predicting upper labels, we can use the model trained with full taxonomy
+    if cfg.method == "test" and cfg.labels == "upper":
+        base_model_path = base_model_path.replace("upper", "all")
+
     model = AutoModelForSequenceClassification.from_pretrained(
         base_model_path,
         num_labels=len(label_scheme),
