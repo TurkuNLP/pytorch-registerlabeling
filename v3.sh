@@ -11,6 +11,9 @@
 
 if [[ -z "$SLURM_JOB_ID" ]]; then
   PARTITION="gpusmall"
+  TIME="12:00:00"
+  NUM_GPUS=1
+  MEM=32
   if [[ $1 == "m" ]]; then
     NUM_GPUS=4
     PARTITION="gpumedium"
@@ -22,9 +25,11 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
     NUM_GPUS=1
     MEM=64
     shift 
-  else
-    NUM_GPUS=1 
+  elif [[ $1 == "mixtral" ]]; then
+    NUM_GPUS=1
     MEM=32
+    TIME="24:00:00"
+    shift 
   fi
 
   # Set the dynamic GPU requirement
@@ -32,7 +37,7 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
   DYNAMIC_JOBNAME="$1"
   shift  # Shift command-line arguments to remove the first one
   # Submit the job to slurm with the dynamic job name and capture the output
-  JOB_SUBMISSION_OUTPUT=$(sbatch --job-name="$DYNAMIC_JOBNAME" --gres="$GRES_GPU" --mem="$MEM"G --partition="$PARTITION" -o "logs/${DYNAMIC_JOBNAME}-%j.log" "$0" "$@")
+  JOB_SUBMISSION_OUTPUT=$(sbatch --job-name="$DYNAMIC_JOBNAME" --time="$TIME" --gres="$GRES_GPU" --mem="$MEM"G --partition="$PARTITION" -o "logs/${DYNAMIC_JOBNAME}-%j.log" "$0" "$@")
   echo "Submission output: $JOB_SUBMISSION_OUTPUT"
   # Extract the job ID from the submission output
   JOB_ID=$(echo "$JOB_SUBMISSION_OUTPUT" | grep -oP 'Submitted batch job \K\d+')
