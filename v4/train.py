@@ -190,7 +190,6 @@ def run(cfg):
         use_flash_attention_2=cfg.fa2,
         quantization_config=nf4_config if cfg.nf4 else None,
         device_map="auto" if "mixtral" in cfg.model_name.lower() else None,
-        ignore_mismatched_sizes=cfg.method == "test" and cfg.labels == "upper",
     )
 
     if cfg.peft:
