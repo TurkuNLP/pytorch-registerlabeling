@@ -1,0 +1,6 @@
+train: en
+dev: en
+test: en
+model_name: xlm-roberta-large
+learning_rate: 3e-5
+train_batch_size: 8
