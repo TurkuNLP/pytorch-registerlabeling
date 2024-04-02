@@ -1,10 +1,7 @@
 #!/bin/bash
-#SBATCH --mem=32G
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=4
-#SBATCH --partition=gpusmall
-#SBATCH --time=12:00:00
 #SBATCH --account=project_2009199
 #SBATCH --mail-user=pytorchregisterlabeling@gmail.com 
 #SBATCH --mail-type=ALL
@@ -14,21 +11,22 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
   TIME="12:00:00"
   NUM_GPUS=1
   MEM=32
-  if [[ $1 == "m" ]]; then
+  if [[ $1 == "4gpu" ]]; then
     NUM_GPUS=4
     PARTITION="gpumedium"
     shift
-  elif [[ $1 == "2" ]]; then
+  elif [[ $1 == "2gpu" ]]; then
     NUM_GPUS=2
     shift 
-  elif [[ $1 == "64" ]]; then
-    NUM_GPUS=1
+  elif [[ $1 == "64G" ]]; then
     MEM=64
     shift 
-  elif [[ $1 == "mixtral" ]]; then
-    NUM_GPUS=1
-    MEM=32
+  elif [[ $1 == "24h" ]]; then
     TIME="24:00:00"
+    shift 
+   elif [[ $1 == "quick" ]]; then
+    TIME="2:00:00"
+    MEM=8
     shift 
   fi
 
