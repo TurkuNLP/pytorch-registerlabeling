@@ -125,7 +125,7 @@ def get_dataset(cfg, tokenizer):
         gen_kwargs={
             "languages": dict(cfg)[split].split("-"),
             "split": split,
-            "label_scheme": cfg.labels,
+            "label_scheme": cfg.predict_labels,
             "text_prefix": cfg.text_prefix,
         },
     )

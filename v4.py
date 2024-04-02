@@ -26,6 +26,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--text_prefix", default="")
     parser.add_argument("--labels", default="all")
+    parser.add_argument("--predict_labels", default="")
     parser.add_argument("--use_fold", type=int, default=0)
     parser.add_argument("--num_folds", type=int, default=10)
 
@@ -55,6 +56,7 @@ if __name__ == "__main__":
         exit()
     cfg.dev = cfg.train if not cfg.dev else cfg.dev
     cfg.test = cfg.dev if not cfg.test else cfg.test
+    cfg.predict_labels = cfg.labels if not cfg.predict_labels else cfg.predict_labels
 
     print(parser.dump(cfg))
 

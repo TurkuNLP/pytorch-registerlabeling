@@ -43,6 +43,10 @@ def get_linear_modules(model):
     print(f"\nFound linear modules: {linear_modules}")
     return list(linear_modules)
 
+def get_output_dir(cfg, target):
+    labels = cfg.labels if target == "model" else cfg.predict_labels
+    dir_structure = f"{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
+    return f"{cfg.model_output if target == 'model' else 'results'}/{dir_structure}"
 
 def run(cfg):
 
@@ -56,11 +60,10 @@ def run(cfg):
 
     test_language = ""  # Used when predicting
     label_scheme = label_schemes[cfg.labels]
-    dir_structure = f"{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
-    model_output_dir = f"{cfg.model_output}/{dir_structure}"
-    results_output_dir = f"results/{dir_structure}"
-
-    print(f"This run saves models to {model_output_dir}")
+    
+    model_output_dir = get_output_dir(cfg, "model")
+    results_output_dir = get_output_dir(cfg, "results")
+    print(f"This run {'saves models to' if cfg.method == "train" else 'uses model from'} {model_output_dir}")
     print(f"Results are logged to {results_output_dir}")
     torch_dtype = locate(f"torch.{cfg.torch_dtype}")
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
@@ -107,6 +110,12 @@ def run(cfg):
         )
 
         predictions = sigmoid(predictions)
+
+        if cfg.labels == "all" and cfg.predict_labels == "upper":
+            indexes = [label_scheme.index(item) for item in label_schemes["upper"] if item in label_scheme]
+            predictions = predictions[:, indexes]
+            labels = labels[:, indexes]
+
 
         best_threshold, best_f1 = 0, 0
         for threshold in np.arange(0.3, 0.7, 0.05):
@@ -179,9 +188,6 @@ def run(cfg):
         bnb_4bit_compute_dtype=torch_dtype,
     )
 
-    # When predicting upper labels, we can use the model trained with full taxonomy
-    if cfg.method == "test" and cfg.labels == "upper":
-        base_model_path = base_model_path.replace("upper", "all")
 
     model = AutoModelForSequenceClassification.from_pretrained(
         base_model_path,
