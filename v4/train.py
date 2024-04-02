@@ -142,6 +142,7 @@ def run(cfg):
             ]
             binary_predictions = binary_predictions[:, indexes]
             labels = labels[:, indexes]
+            predictions = predictions[:, indexes]
 
         precision, recall, f1, _ = precision_recall_fscore_support(
             labels, binary_predictions, average="micro"
