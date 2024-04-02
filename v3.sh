@@ -24,8 +24,12 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
   elif [[ $1 == "24h" ]]; then
     TIME="24:00:00"
     shift 
-   elif [[ $1 == "quick" ]]; then
-    TIME="2:00:00"
+  elif [[ $1 == "quick" ]]; then
+    TIME="1:00:00"
+    MEM=8
+    shift 
+  elif [[ $1 == "medium" ]]; then
+    TIME="6:00:00"
     MEM=8
     shift 
   fi
