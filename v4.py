@@ -51,6 +51,9 @@ if __name__ == "__main__":
     parser.add_argument("--target_modules", default="")
     cfg = parser.parse_args()
 
+    # Extra
+    parser.add_argument("--sample", type=int, default=0)
+
     if not cfg.train:
         print("--train is required.")
         exit()

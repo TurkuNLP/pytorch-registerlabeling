@@ -28,7 +28,7 @@ from transformers import (
 )
 
 from .data import balanced_dataloader, get_dataset
-from .labels import decode_binary_labels, label_schemes
+from .labels import decode_binary_labels, label_schemes, subcategory_to_parent_index
 
 
 def get_linear_modules(model):
@@ -62,7 +62,7 @@ def run(cfg):
 
     test_language = ""  # Used when predicting
     label_scheme = label_schemes[cfg.labels]
-
+    predict_upper_using_full = cfg.labels == "all" and cfg.predict_labels == "upper"
     model_output_dir = get_output_dir(cfg, "model")
     results_output_dir = get_output_dir(cfg, "results")
     print(
@@ -115,7 +115,7 @@ def run(cfg):
 
         predictions = sigmoid(predictions)
 
-        if cfg.labels == "all" and cfg.predict_labels == "upper":
+        if predict_upper_using_full:
             indexes = [
                 label_scheme.index(item)
                 for item in label_schemes["upper"]
@@ -135,6 +135,15 @@ def run(cfg):
                 best_threshold = threshold
 
         binary_predictions = predictions > best_threshold
+
+        if predict_upper_using_full:
+            # Iterate through each example and each subcategory
+            for i in range(binary_predictions.shape[0]):
+                for subcategory, parent_index in subcategory_to_parent_index.items():
+                    subcategory_index = label_scheme.index(subcategory)
+                    if binary_predictions[i, subcategory_index] == 1:
+                        # Ensure the parent category is marked as predicted
+                        binary_predictions[i, parent_index] = 1
 
         precision, recall, f1, _ = precision_recall_fscore_support(
             labels, binary_predictions, average="micro"

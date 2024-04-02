@@ -70,6 +70,13 @@ labels_all = [k for k in labels_structure.keys()] + [
     item for row in labels_structure.values() for item in row
 ]
 
+subcategory_to_parent_index = {
+    subcategory: labels_all.index(parent)
+    for parent, subcategories in labels_structure.items()
+    for subcategory in subcategories
+}
+
+
 labels_upper = [x for x in labels_all if x.isupper()]
 
 labels_xgenre = list(sorted(set(map_xgenre.values())))

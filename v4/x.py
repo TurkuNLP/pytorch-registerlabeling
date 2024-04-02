@@ -3,55 +3,36 @@ import torch
 from scipy.special import expit as sigmoid
 from sklearn.metrics import f1_score
 from tqdm.auto import tqdm
-from transformers import (
-    AutoModelForSequenceClassification,
-    AutoTokenizer,
-    EarlyStoppingCallback,
-    Trainer,
-    TrainingArguments,
-)
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from datasets import Dataset
 
-from .data import balanced_dataloader, get_dataset
-from .labels import decode_binary_labels, label_schemes
+from .data import get_dataset
+from .labels import label_schemes
 
 
-def predict(dataset, model):
+def predict(dataset, model, cfg):
     model.eval()  # Ensure the model is in evaluation mode
-
     batch_size = 32
-
-    # Initialize an empty list to collect logits for all examples
     logits_list = []
-
-    model = model.to("cuda")
+    model = model.to(cfg.device)
 
     with torch.no_grad():
-        # Iterate over the dataset in batches
         for i in tqdm(
             range(0, len(dataset["input_ids"]), batch_size), desc="Processing"
         ):
-            # Create a batch by slicing each key in the dataset
             batch = {
                 k: torch.tensor(v[i : i + batch_size])
                 for k, v in dataset.items()
                 if k in ["input_ids", "attention_mask"]
             }
 
-            # Ensure batch tensors are on the right device (e.g., CPU or GPU)
-            batch = {
-                k: v.to("cuda") for k, v in batch.items()
-            }  # Replace 'cpu' with 'cuda' if using a GPU
+            batch = {k: v.to(cfg.device) for k, v in batch.items()}
 
-            # Forward pass through the model
             outputs = model(**batch)
-
-            # Detach logits from the current batch and convert to list, then extend the logits_list
             batch_logits = outputs.logits.detach().cpu().tolist()
             logits_list.extend(batch_logits)
 
-    # Assuming `logits_list` is your list of logits for each example and `labels` is the true labels matrix
-    probs = sigmoid(np.array(logits_list))  # Convert logits to probabilities
+    probs = sigmoid(np.array(logits_list))
 
     labels = np.array(dataset["label"])
 
@@ -65,25 +46,31 @@ def predict(dataset, model):
             best_f1 = f1
             best_threshold = threshold
 
-    print(best_f1)
-
-    return probs, probs > best_threshold, best_threshold
+    return {
+        "f1": best_f1,
+        "probs": probs,
+        "preds": probs > best_threshold,
+        "threshold": best_threshold,
+    }
 
 
 def run(cfg):
-    # sample_size = 1000
     dir_structure = f"{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}"
     model_output_dir = f"{cfg.model_output}/{dir_structure}"
     label_scheme = label_schemes[cfg.labels]
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
-
     dataset = get_dataset(cfg, tokenizer)["test"][:]
+    if cfg.sample:
+        dataset = dataset[: cfg.sample]
 
     model = AutoModelForSequenceClassification.from_pretrained(
         model_output_dir, num_labels=len(label_scheme)
     )
 
-    probs, binary_predictions, best_threshold = predict(dataset, model)
+    result = predict(dataset, model, cfg)
+
+    probs = result["probs"]
+    best_threshold = result["best_threshold"]
 
     method = "entropy"
 
@@ -164,6 +151,8 @@ def run(cfg):
     # Use the `select()` function to keep only the desired examples in the dataset
     filtered_dataset = Dataset.from_dict(dataset).select(selected_indices.tolist())[:]
 
-    probs, binary_predictions, best_threshold = predict(filtered_dataset, model)
+    result = predict(filtered_dataset, model, cfg)
+
+    print(result["f1"])
 
     exit()
