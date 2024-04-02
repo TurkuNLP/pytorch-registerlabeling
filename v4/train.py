@@ -115,15 +115,6 @@ def run(cfg):
 
         predictions = sigmoid(predictions)
 
-        if predict_upper_using_full:
-            indexes = [
-                label_scheme.index(item)
-                for item in label_schemes["upper"]
-                if item in label_scheme
-            ]
-            predictions = predictions[:, indexes]
-            labels = labels[:, indexes]
-
         best_threshold, best_f1 = 0, 0
         for threshold in np.arange(0.3, 0.7, 0.05):
             binary_predictions = predictions > threshold
@@ -142,8 +133,15 @@ def run(cfg):
                 for subcategory, parent_index in subcategory_to_parent_index.items():
                     subcategory_index = label_scheme.index(subcategory)
                     if binary_predictions[i, subcategory_index] == 1:
-                        # Ensure the parent category is marked as predicted
                         binary_predictions[i, parent_index] = 1
+
+            indexes = [
+                label_scheme.index(item)
+                for item in label_schemes["upper"]
+                if item in label_scheme
+            ]
+            binary_predictions = binary_predictions[:, indexes]
+            labels = labels[:, indexes]
 
         precision, recall, f1, _ = precision_recall_fscore_support(
             labels, binary_predictions, average="micro"
