@@ -156,7 +156,7 @@ def run(cfg):
             cl_report_dict = classification_report(
                 labels,
                 binary_predictions,
-                target_names=label_scheme,
+                target_names=label_schemes[cfg.predict_labels],
                 digits=4,
                 output_dict=True,
             )
