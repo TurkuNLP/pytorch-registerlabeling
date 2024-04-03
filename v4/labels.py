@@ -117,10 +117,11 @@ def map_to_xgenre_binary(true_labels, predictions):
             if subcategories:
                 sub_indices = [labels_all.index(sub) for sub in subcategories]
                 max_sub_prob = max(label_vector[i] for i in sub_indices)
-                # Set parent probability to 0 if any subcategory is more probable
-                effective_probs[parent_index] = (
-                    0 if max_sub_prob > 0 else label_vector[parent_index]
-                )
+                # Compare max subcategory probability to parent's probability
+                if max_sub_prob > label_vector[parent_index]:
+                    effective_probs[parent_index] = 0
+                else:
+                    effective_probs[parent_index] = label_vector[parent_index]
                 for i in sub_indices:
                     effective_probs[i] = label_vector[i]
             else:

@@ -121,10 +121,10 @@ def run(cfg):
         )
 
         # Ensure that subcategory has corresponding parent category
-        # for i in range(binary_predictions.shape[0]):
-        #    for subcategory_index, parent_index in subcategory_to_parent_index.items():
-        #        if predictions[i, parent_index] < predictions[i, subcategory_index]:
-        #            predictions[i, parent_index] = predictions[i, subcategory_index]
+        for i in range(predictions.shape[0]):
+            for subcategory_index, parent_index in subcategory_to_parent_index.items():
+                if predictions[i, parent_index] < predictions[i, subcategory_index]:
+                    predictions[i, parent_index] = predictions[i, subcategory_index]
 
         if predict_upper_using_full:
             true_labels = true_labels[:, upper_all_indexes]
