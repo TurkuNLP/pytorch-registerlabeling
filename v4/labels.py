@@ -129,7 +129,7 @@ def map_to_xgenre_binary(true_labels, predictions, best_threshold):
     predictions_converted = []
 
     for i in range(predictions.shape[0]):
-        true_labels_converted.append(convert(predictions[i]))
+        predictions_converted.append(convert(predictions[i]))
         true_labels_converted.append(convert(true_labels[i]))
 
     return np.array(true_labels_converted), np.array(predictions_converted)
