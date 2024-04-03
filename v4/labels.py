@@ -1,3 +1,5 @@
+import numpy as np
+
 # The full label hierarchy
 labels_structure = {
     "MT": [],
@@ -123,11 +125,14 @@ def map_to_xgenre_binary(true_labels, predictions, best_threshold):
 
         return xgenre_vector
 
-    for i in range(predictions.shape[0]):
-        predictions[i] = convert(predictions[i])
-        true_labels[i] = convert(true_labels[i])
+    true_labels_converted = []
+    predictions_converted = []
 
-    return true_labels, predictions
+    for i in range(predictions.shape[0]):
+        true_labels_converted.append(convert(predictions[i]))
+        true_labels_converted.append(convert(true_labels[i]))
+
+    return np.array(true_labels_converted), np.array(predictions_converted)
 
 
 map_normalize = {
