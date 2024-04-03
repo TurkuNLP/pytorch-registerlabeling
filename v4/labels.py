@@ -109,7 +109,6 @@ def map_to_xgenre_binary(true_labels, predictions, best_threshold):
     def convert(label_vector):
         # Get the present label indexes
         present_labels = [i for i, x in enumerate(label_vector) if x > best_threshold]
-        print(present_labels)
         # Iterate full label taxonomy
         for parent, subcategories in labels_structure.items():
             if subcategories:  # If the parent has subcategories
@@ -117,9 +116,10 @@ def map_to_xgenre_binary(true_labels, predictions, best_threshold):
 
                 if any(index in present_labels for index in subcategory_indices):
                     label_vector[labels_all.index(parent)] = 0
-        print(label_vector)
+
         xgenre_vector = [0] * len(labels_xgenre)
         for i, v in enumerate(label_vector):
+            print(i, v)
             xgenre_vector[category_to_xgenre_index[i]] = v
 
         return xgenre_vector
