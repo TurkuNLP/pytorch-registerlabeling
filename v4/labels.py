@@ -119,9 +119,8 @@ def map_to_xgenre_binary(true_labels, predictions, best_threshold):
 
         xgenre_vector = [0] * len(labels_xgenre)
         for i, v in enumerate(label_vector):
-            xgenre_vector[category_to_xgenre_index[i]] = (
-                category_to_xgenre_index[i] or v
-            )
+            if v > xgenre_vector[category_to_xgenre_index[i]]:
+                xgenre_vector[category_to_xgenre_index[i]] = v
 
         return xgenre_vector
 
