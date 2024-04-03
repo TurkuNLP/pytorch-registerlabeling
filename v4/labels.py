@@ -65,7 +65,6 @@ map_xgenre = {
     "ds": "Promotion",
     # News & opinion blog or editorial
     "ed": "Opinion/Argumentation",  # ???
-    "": "",
 }
 
 # Flat list of labels
