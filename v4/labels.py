@@ -1,3 +1,4 @@
+# The full label hierarchy
 labels_structure = {
     "MT": [],
     "LY": [],
@@ -10,7 +11,7 @@ labels_structure = {
     "IP": ["ds", "ed"],
 }
 
-
+# Mapping to XGENRE labels
 map_xgenre = {
     ### 1. MACHINE TRANSLATED
     "MT": "Other",
@@ -18,7 +19,6 @@ map_xgenre = {
     "LY": "Prose/Lyrical",
     ### 3. SPOKEN
     "SP": "Other",
-    "sp": "Other",
     # Interview
     "it": "Other",
     ### 4. INTERACTIVE DISCUSSION
@@ -63,29 +63,69 @@ map_xgenre = {
     "ds": "Promotion",
     # News & opinion blog or editorial
     "ed": "Opinion/Argumentation",  # ???
-    "": "",
 }
 
+# Flat list of labels
 labels_all = [k for k in labels_structure.keys()] + [
     item for row in labels_structure.values() for item in row
 ]
 
+
+# Mapping from subcategory ID to parent ID
 subcategory_to_parent_index = {
-    subcategory: labels_all.index(parent)
+    labels_all.index(subcategory): labels_all.index(parent)
     for parent, subcategories in labels_structure.items()
     for subcategory in subcategories
 }
 
 
+# XGENRE labels
+labels_xgenre = list(sorted(set(map_xgenre.values())))
+
+# Mapping from original binary vector ID to XGENRE ID
+category_to_xgenre_index = {
+    i: labels_xgenre.index(map_xgenre[label]) for i, label in enumerate(labels_all)
+}
+
+# Upper labels
 labels_upper = [x for x in labels_all if x.isupper()]
 
-labels_xgenre = list(sorted(set(map_xgenre.values())))
+# Upper label indexes in the full taxonomy
+upper_all_indexes = [
+    labels_all.index(item) for item in labels_upper if item in labels_all
+]
 
 label_schemes = {
     "all": labels_all,
     "upper": labels_upper,
     "xgenre": labels_xgenre,
 }
+
+
+def map_to_xgenre_binary(true_labels, predictions, best_threshold):
+
+    def convert(label_vector):
+
+        # Get the present label indexes
+        present_labels = [i for i, x in enumerate(label_vector) if x > best_threshold]
+
+        # Iterate full label taxonomy
+        for parent, subcategories in labels_structure.items():
+            if subcategories:  # If the parent has subcategories
+                subcategory_indices = [labels_all.index(sub) for sub in subcategories]
+
+                if any(index in present_labels for index in subcategory_indices):
+                    label_vector[labels_all.index(parent)] = 0
+
+        xgenre_vector = [0] * len(labels_xgenre)
+        for i, v in enumerate(label_vector):
+            xgenre_vector[category_to_xgenre_index[i]] = v
+
+    for i in range(predictions.shape[0]):
+        predictions[i] = convert(predictions[i])
+        true_labels[i] = convert(true_labels[i])
+
+    return true_labels, predictions
 
 
 map_normalize = {

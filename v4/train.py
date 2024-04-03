@@ -28,7 +28,13 @@ from transformers import (
 )
 
 from .data import balanced_dataloader, get_dataset
-from .labels import decode_binary_labels, label_schemes, subcategory_to_parent_index
+from .labels import (
+    decode_binary_labels,
+    label_schemes,
+    subcategory_to_parent_index,
+    map_to_xgenre_binary,
+    upper_all_indexes,
+)
 
 
 def get_linear_modules(model):
@@ -63,6 +69,7 @@ def run(cfg):
     test_language = ""  # Used when predicting
     label_scheme = label_schemes[cfg.labels]
     predict_upper_using_full = cfg.labels == "all" and cfg.predict_labels == "upper"
+    predict_xgenre_using_full = cfg.labels == "all" and cfg.predict_labels == "xgenre"
     model_output_dir = get_output_dir(cfg, "model")
     results_output_dir = get_output_dir(cfg, "results")
     print(
@@ -108,47 +115,41 @@ def run(cfg):
                 return balanced_dataloader(self, "eval", cfg.eval_batch_size)
 
     def compute_metrics(p):
-        labels = p.label_ids
-        predictions = (
+        true_labels = p.label_ids
+        predictions = sigmoid(
             p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
         )
-
-        predictions = sigmoid(predictions)
 
         best_threshold, best_f1 = 0, 0
         for threshold in np.arange(0.3, 0.7, 0.05):
             binary_predictions = predictions > threshold
-
-            f1 = f1_score(labels, binary_predictions, average="micro")
-
+            f1 = f1_score(true_labels, binary_predictions, average="micro")
             if f1 > best_f1:
                 best_f1 = f1
                 best_threshold = threshold
 
-        binary_predictions = predictions > best_threshold
+        # Ensure that subcategory has corresponding parent category
+        for i in range(binary_predictions.shape[0]):
+            for subcategory_index, parent_index in subcategory_to_parent_index.items():
+                if predictions[i, parent_index] < predictions[i, subcategory_index]:
+                    predictions[i, parent_index] = predictions[i, subcategory_index]
 
         if predict_upper_using_full:
-            # Iterate through each example and each subcategory
-            for i in range(binary_predictions.shape[0]):
-                for subcategory, parent_index in subcategory_to_parent_index.items():
-                    subcategory_index = label_scheme.index(subcategory)
-                    if binary_predictions[i, subcategory_index] == 1:
-                        binary_predictions[i, parent_index] = 1
+            true_labels = true_labels[:, upper_all_indexes]
+            predictions = predictions[:, upper_all_indexes]
 
-            indexes = [
-                label_scheme.index(item)
-                for item in label_schemes["upper"]
-                if item in label_scheme
-            ]
-            binary_predictions = binary_predictions[:, indexes]
-            labels = labels[:, indexes]
-            predictions = predictions[:, indexes]
+        elif predict_xgenre_using_full:
+            true_labels, predictions = map_to_xgenre_binary(
+                true_labels, predictions, best_threshold
+            )
+
+        binary_predictions = predictions > best_threshold
 
         precision, recall, f1, _ = precision_recall_fscore_support(
-            labels, binary_predictions, average="micro"
+            true_labels, binary_predictions, average="micro"
         )
-        accuracy = accuracy_score(labels, binary_predictions)
-        pr_auc = average_precision_score(labels, predictions, average="micro")
+        accuracy = accuracy_score(true_labels, binary_predictions)
+        pr_auc = average_precision_score(true_labels, predictions, average="micro")
 
         metrics = {
             "f1": f1,
@@ -162,7 +163,7 @@ def run(cfg):
         if cfg.method == "test":
 
             cl_report_dict = classification_report(
-                labels,
+                true_labels,
                 binary_predictions,
                 target_names=label_schemes[cfg.predict_labels],
                 digits=4,
@@ -172,7 +173,7 @@ def run(cfg):
                 key: val for key, val in cl_report_dict.items() if key in label_scheme
             }
 
-            true_labels_str = decode_binary_labels(labels, cfg.labels)
+            true_labels_str = decode_binary_labels(true_labels, cfg.labels)
             predicted_labels_str = decode_binary_labels(binary_predictions, cfg.labels)
 
             data = list(zip(true_labels_str, predicted_labels_str))
