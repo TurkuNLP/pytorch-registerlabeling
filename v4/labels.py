@@ -104,32 +104,38 @@ label_schemes = {
 }
 
 
-def map_to_xgenre_binary(true_labels, predictions, best_threshold):
+def map_to_xgenre_binary(true_labels, predictions):
 
     def convert(label_vector):
-        # Get the present label indexes
-        present_labels = [i for i, x in enumerate(label_vector) if x > best_threshold]
-        # Iterate full label taxonomy
-        for parent, subcategories in labels_structure.items():
-            if subcategories:  # If the parent has subcategories
-                subcategory_indices = [labels_all.index(sub) for sub in subcategories]
-
-                if any(index in present_labels for index in subcategory_indices):
-                    label_vector[labels_all.index(parent)] = 0
-
+        # Initialize XGENRE vector with zeros
         xgenre_vector = [0] * len(labels_xgenre)
-        for i, v in enumerate(label_vector):
-            if v > xgenre_vector[category_to_xgenre_index[i]]:
-                xgenre_vector[category_to_xgenre_index[i]] = v
+
+        # Determine the effective category probabilities, prioritizing subcategories
+        effective_probs = [0] * len(labels_all)
+        for parent, subcategories in labels_structure.items():
+            parent_index = labels_all.index(parent)
+            if subcategories:
+                sub_indices = [labels_all.index(sub) for sub in subcategories]
+                max_sub_prob = max(label_vector[i] for i in sub_indices)
+                # Set parent probability to 0 if any subcategory is more probable
+                effective_probs[parent_index] = (
+                    0 if max_sub_prob > 0 else label_vector[parent_index]
+                )
+                for i in sub_indices:
+                    effective_probs[i] = label_vector[i]
+            else:
+                effective_probs[parent_index] = label_vector[parent_index]
+
+        # Map effective category probabilities to XGENRE
+        for i, prob in enumerate(effective_probs):
+            xgenre_index = category_to_xgenre_index[i]
+            xgenre_vector[xgenre_index] = max(xgenre_vector[xgenre_index], prob)
 
         return xgenre_vector
 
-    true_labels_converted = []
-    predictions_converted = []
-
-    for i in range(predictions.shape[0]):
-        predictions_converted.append(convert(predictions[i]))
-        true_labels_converted.append(convert(true_labels[i]))
+    # Convert labels and predictions
+    true_labels_converted = [convert(label_vector) for label_vector in true_labels]
+    predictions_converted = [convert(label_vector) for label_vector in predictions]
 
     return np.array(true_labels_converted), np.array(predictions_converted)
 

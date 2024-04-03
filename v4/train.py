@@ -120,6 +120,19 @@ def run(cfg):
             p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
         )
 
+        # Ensure that subcategory has corresponding parent category
+        # for i in range(binary_predictions.shape[0]):
+        #    for subcategory_index, parent_index in subcategory_to_parent_index.items():
+        #        if predictions[i, parent_index] < predictions[i, subcategory_index]:
+        #            predictions[i, parent_index] = predictions[i, subcategory_index]
+
+        if predict_upper_using_full:
+            true_labels = true_labels[:, upper_all_indexes]
+            predictions = predictions[:, upper_all_indexes]
+
+        elif predict_xgenre_using_full:
+            true_labels, predictions = map_to_xgenre_binary(true_labels, predictions)
+
         best_threshold, best_f1 = 0, 0
         for threshold in np.arange(0.3, 0.7, 0.05):
             binary_predictions = predictions > threshold
@@ -127,21 +140,6 @@ def run(cfg):
             if f1 > best_f1:
                 best_f1 = f1
                 best_threshold = threshold
-
-        # Ensure that subcategory has corresponding parent category
-        for i in range(binary_predictions.shape[0]):
-            for subcategory_index, parent_index in subcategory_to_parent_index.items():
-                if predictions[i, parent_index] < predictions[i, subcategory_index]:
-                    predictions[i, parent_index] = predictions[i, subcategory_index]
-
-        if predict_upper_using_full:
-            true_labels = true_labels[:, upper_all_indexes]
-            predictions = predictions[:, upper_all_indexes]
-
-        elif predict_xgenre_using_full:
-            true_labels, predictions = map_to_xgenre_binary(
-                true_labels, predictions, best_threshold
-            )
 
         binary_predictions = predictions > best_threshold
 
