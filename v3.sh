@@ -24,6 +24,10 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
   elif [[ $1 == "24h" ]]; then
     TIME="24:00:00"
     shift 
+   elif [[ $1 == "24h2gpu" ]]; then
+    TIME="24:00:00"
+    NUM_GPUS=2
+    shift 
   elif [[ $1 == "quick" ]]; then
     TIME="1:00:00"
     MEM=8
