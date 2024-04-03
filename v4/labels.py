@@ -107,7 +107,6 @@ label_schemes = {
 def map_to_xgenre_binary(true_labels, predictions, best_threshold):
 
     def convert(label_vector):
-
         # Get the present label indexes
         present_labels = [i for i, x in enumerate(label_vector) if x > best_threshold]
 
@@ -129,6 +128,9 @@ def map_to_xgenre_binary(true_labels, predictions, best_threshold):
     predictions_converted = []
 
     for i in range(predictions.shape[0]):
+        print(predictions[i])
+        print(true_labels[i])
+        exit()
         predictions_converted.append(convert(predictions[i]))
         true_labels_converted.append(convert(true_labels[i]))
 
