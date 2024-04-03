@@ -121,6 +121,8 @@ def map_to_xgenre_binary(true_labels, predictions, best_threshold):
         for i, v in enumerate(label_vector):
             xgenre_vector[category_to_xgenre_index[i]] = v
 
+        return xgenre_vector
+
     for i in range(predictions.shape[0]):
         predictions[i] = convert(predictions[i])
         true_labels[i] = convert(true_labels[i])
