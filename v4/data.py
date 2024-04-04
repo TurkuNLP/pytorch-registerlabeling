@@ -123,7 +123,7 @@ def gen(languages, split, label_scheme, text_prefix):
 def get_dataset(cfg, tokenizer):
     generate = lambda split: Dataset.from_generator(
         gen,
-        cache_dir="./hf_results/tokens_cache",
+        cache_dir="./hf_results/tokens_cache2",
         gen_kwargs={
             "languages": dict(cfg)[split].split("-"),
             "split": split,
