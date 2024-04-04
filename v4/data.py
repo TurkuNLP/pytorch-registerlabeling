@@ -115,6 +115,7 @@ def gen(languages, split, label_scheme, text_prefix):
                     "label": binarize_labels(normalized_labels, label_scheme),
                     "text": text_prefix + ro[1],
                     "language": l,
+                    "id": "TEST",
                 }
 
 

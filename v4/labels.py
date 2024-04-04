@@ -289,9 +289,6 @@ def normalize_labels(labels, label_scheme_name):
         # Then, map
         labels = [map_xgenre[label] for label in mapped_simple]
 
-        print(labels)
-        exit()
-
     return sorted(list(set(filter(None, labels))))
 
 
