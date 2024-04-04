@@ -62,6 +62,7 @@ def run(cfg):
 
     test_language = ""  # Used when predicting
     label_scheme = label_schemes[cfg.labels]
+    prediction_label_scheme = label_schemes[cfg.predict_labels]
     print(f"Predicting {len(label_scheme)} labels")
     predict_upper_using_full = cfg.labels == "all" and cfg.predict_labels == "upper"
     predict_xgenre_using_full = cfg.labels == "all" and cfg.predict_labels == "xgenre"
@@ -167,7 +168,9 @@ def run(cfg):
                 output_dict=True,
             )
             metrics["label_scores"] = {
-                key: val for key, val in cl_report_dict.items() if key in label_scheme
+                key: val
+                for key, val in cl_report_dict.items()
+                if key in prediction_label_scheme
             }
 
             true_labels_str = decode_binary_labels(true_labels, cfg.labels)
