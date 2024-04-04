@@ -77,8 +77,6 @@ def run(cfg):
         tokenizer.pad_token = tokenizer.eos_token
     dataset = get_dataset(cfg, tokenizer)
 
-    print(dataset["train"][0])
-
     class MultiLabelTrainer(Trainer):
         def __init__(self, *args, **kwargs):
             super(MultiLabelTrainer, self).__init__(*args, **kwargs)
