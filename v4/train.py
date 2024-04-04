@@ -50,12 +50,6 @@ def get_linear_modules(model):
     return list(linear_modules)
 
 
-def get_output_dir(cfg, target):
-    labels = cfg.labels if target == "model" else cfg.predict_labels
-    dir_structure = f"{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
-    return f"{cfg.model_output if target == 'model' else 'results'}/{dir_structure}"
-
-
 def run(cfg):
 
     # Make process deterministic
@@ -71,8 +65,8 @@ def run(cfg):
     print(f"Predicting {len(label_scheme)} labels")
     predict_upper_using_full = cfg.labels == "all" and cfg.predict_labels == "upper"
     predict_xgenre_using_full = cfg.labels == "all" and cfg.predict_labels == "xgenre"
-    model_output_dir = get_output_dir(cfg, "model")
-    results_output_dir = get_output_dir(cfg, "results")
+    model_output_dir = f"{cfg.model_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
+    results_output_dir = f"{cfg.predictions_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
     print(
         f"This run {'saves models to' if cfg.method == 'train' else 'uses model from'} {model_output_dir}"
     )
@@ -186,12 +180,17 @@ def run(cfg):
             os.makedirs(results_output_dir, exist_ok=True)
 
             with open(
-                f"{results_output_dir}/predictions_{test_language}.tsv", "w", newline=""
+                f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}.tsv",
+                "w",
+                newline="",
             ) as csvfile:
                 csv_writer = csv.writer(csvfile, delimiter="\t")
                 csv_writer.writerows(data)
 
-            with open(f"{results_output_dir}/metrics_{test_language}.json", "w") as f:
+            with open(
+                f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}_metrics.json",
+                "w",
+            ) as f:
                 json.dump(metrics, f)
 
             print(metrics)
