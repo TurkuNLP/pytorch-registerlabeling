@@ -68,6 +68,7 @@ def run(cfg):
 
     test_language = ""  # Used when predicting
     label_scheme = label_schemes[cfg.labels]
+    print(f"Predicting {len(label_scheme)} labels")
     predict_upper_using_full = cfg.labels == "all" and cfg.predict_labels == "upper"
     predict_xgenre_using_full = cfg.labels == "all" and cfg.predict_labels == "xgenre"
     model_output_dir = get_output_dir(cfg, "model")
