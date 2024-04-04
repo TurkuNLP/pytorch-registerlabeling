@@ -287,7 +287,7 @@ def normalize_labels(labels, label_scheme_name):
                 mapped_simple.append(label)
 
         # Then, map
-        labels = [map_xgenre[label] for label in mapped_simple]
+        labels = [map_xgenre[label] for label in mapped_simple if label]
 
     return sorted(list(set(filter(None, labels))))
 
