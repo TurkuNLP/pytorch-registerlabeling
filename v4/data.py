@@ -110,9 +110,11 @@ def gen(languages, split, label_scheme, text_prefix):
                 normalized_labels = normalize_labels(ro[0], label_scheme)
                 if not normalized_labels:
                     continue
+                print(label_scheme)
+                print(binarize_labels(normalized_labels, label_scheme))
 
                 yield {
-                    "label": binarize_labels(normalized_labels, label_scheme),
+                    "labelTEST": binarize_labels(normalized_labels, label_scheme),
                     "text": text_prefix + ro[1],
                     "language": l,
                 }
