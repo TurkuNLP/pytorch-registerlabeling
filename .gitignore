@@ -4,7 +4,7 @@ data/fi/*.tsv
 data/en/*.tsv
 data/fr/*.tsv
 data/sv/*.tsv
-google_embeddings/*.csv
+*google_embeddings
 .test
 .hf
 __pycache*

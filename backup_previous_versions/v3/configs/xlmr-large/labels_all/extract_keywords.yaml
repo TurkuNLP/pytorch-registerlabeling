@@ -1,0 +1,7 @@
+method: extract_keywords
+data:
+  train: fi
+  remove_unused_cols: False
+  no_dynamic_padding: True
+model:
+  name: xlm-roberta-large

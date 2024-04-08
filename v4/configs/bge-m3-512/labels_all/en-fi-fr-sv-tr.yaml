@@ -1,6 +1,0 @@
-train: en-fi-fr-sv-tr
-test: en-fi-fr-sv-tr-ar-ca-es-fa-hi-id-jp-no-pt-ur-zh
-model_name: BAAI/bge-m3-retromae
-learning_rate: 3e-5
-train_batch_size: 8
-path_suffix: "512"

@@ -1,8 +1,0 @@
-train: en-fi-fr-sv-tr
-test: en-fi-fr-sv-tr-ar-ca-es-fa-hi-id-jp-no-pt-ur-zh
-model_name: mistralai/Mixtral-8x7B-v0.1
-learning_rate: 1e-4
-train_batch_size: 1
-eval_batch_size: 1
-grad_acc_steps: 8
-peft: True

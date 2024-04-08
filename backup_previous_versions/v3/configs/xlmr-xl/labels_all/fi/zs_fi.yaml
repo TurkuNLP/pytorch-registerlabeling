@@ -1,0 +1,15 @@
+data:
+  train: en-fr-sv-tr
+model:
+  name: facebook/xlm-roberta-xl
+trainer:
+  learning_rate: 1e-4
+  gradient_accumulation_steps: 8
+peft:
+  enable: True
+dataloader:
+  train_batch_size: 1
+  balancing_sampler: True
+# 42 {'f1': 0.7562919873866463, 'f1_th05': 0.7466824262612152, 'precision': 0.7539146393845914, 'recall': 0.7586843759823955, 'pr_auc': 0.8351537746855617, 'roc_auc': 0.8688371738556028, 'accuracy': 0.5336508912108174, 'threshold': 0.5499999999999999}
+# 43 {'f1': 0.7595251295188209, 'f1_th05': 0.7491515183822876, 'precision': 0.7428667589095397, 'recall': 0.77694774718398, 'pr_auc': 0.8334072495783049, 'roc_auc': 0.8770074523961201, 'accuracy': 0.5364167178856791, 'threshold': 0.5499999999999999}
+# 44 {'f1': 0.7606049428255256, 'f1_th05': 0.7493396107746771, 'precision': 0.7514289002263225, 'recall': 0.7700078616352202, 'pr_auc': 0.8375119915569194, 'roc_auc': 0.8742024906255844, 'accuracy': 0.5455593116164721, 'threshold': 0.5499999999999999}

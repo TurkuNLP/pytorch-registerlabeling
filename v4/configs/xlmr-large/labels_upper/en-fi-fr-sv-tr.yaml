@@ -1,5 +1,0 @@
-train: en-fi-fr-sv-tr
-test: en-fi-fr-sv-tr
-model_name: xlm-roberta-large
-labels: upper
-learning_rate: 5e-5

@@ -1,0 +1,5 @@
+train: en-fi-fr-sv-tr
+test: en-fi-fr-sv-tr-ar-ca-es-fa-hi-id-jp-no-pt-ur-zh
+model_name: intfloat/multilingual-e5-large
+learning_rate: 6e-5
+train_batch_size: 8

@@ -1,0 +1,18 @@
+data:
+  train: fi-fr-sv-tr
+  max_length: 2048
+model:
+  name: BAAI/bge-m3-retromae
+trainer:
+  learning_rate: 3e-5
+  gradient_accumulation_steps: 8
+  loss_gamma: 1
+  loss_alpha: 0.5
+dataloader:
+  balancing_sampler: True
+  train_batch_size: 1
+  dev_batch_size: 16
+  test_batch_size: 16
+#z42 {'f1': 0.7756160830090791, 'f1_th05': 0.7671688857743518, 'precision': 0.7670881436686824, 'recall': 0.7843357691587034, 'pr_auc': 0.8476649031543813, 'roc_auc': 0.8823400077409742, 'accuracy': 0.5989285714285715, 'threshold': 0.5499999999999999}
+#z43 {'f1': 0.7682484266617667, 'f1_th05': 0.7632181920366607, 'precision': 0.7566051393412957, 'recall': 0.7802556685639638, 'pr_auc': 0.8426180563646896, 'roc_auc': 0.8797243009481327, 'accuracy': 0.5848214285714286, 'threshold': 0.5499999999999999}
+#z44 {'f1': 0.7678481360906048, 'f1_th05': 0.7601552393272962, 'precision': 0.7528322244200684, 'recall': 0.7834752503041078, 'pr_auc': 0.8427452343513798, 'roc_auc': 0.881108376739288, 'accuracy': 0.5851785714285714, 'threshold': 0.5499999999999999}

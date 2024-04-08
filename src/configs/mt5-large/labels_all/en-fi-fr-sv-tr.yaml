@@ -1,0 +1,6 @@
+train: en-fi-fr-sv-tr
+test: en-fi-fr-sv-tr-ar-ca-es-fa-hi-id-jp-no-pt-ur-zh
+model_name: google/mt5-large
+learning_rate: 5e-5
+train_batch_size: 2
+grad_acc_steps: 4
