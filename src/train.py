@@ -66,15 +66,15 @@ def run(cfg):
     print(f"Predicting {len(label_scheme)} labels")
     predict_upper_using_full = cfg.labels == "all" and cfg.predict_labels == "upper"
     predict_xgenre_using_full = cfg.labels == "all" and cfg.predict_labels == "xgenre"
-    model_output_dir = f"{cfg.model_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
-    results_output_dir = f"{cfg.predictions_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
+    model_output_dir = f"{cfg.model_output}/{cfg.base_model_name}{('_'+cfg.output_suffix) if cfg.output_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
+    results_output_dir = f"{cfg.predictions_output}/{cfg.base_model_name}{('_'+cfg.output_suffix) if cfg.output_suffix else ''}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
     print(
-        f"This run {'saves models to' if cfg.method == 'train' else 'uses model from'} {model_output_dir}"
+        f"This run {'saves models to' if not cfg.just_evaluate else 'uses model from'} {model_output_dir}"
     )
     print(f"Results are logged to {results_output_dir}")
     torch_dtype = locate(f"torch.{cfg.torch_dtype}")
-    tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
-    if "mixtral" in cfg.model_name.lower():
+    tokenizer = AutoTokenizer.from_pretrained(cfg.base_model_name)
+    if "mixtral" in cfg.base_model_name.lower():
         tokenizer.pad_token = tokenizer.eos_token
     dataset = get_dataset(cfg, tokenizer)
 
@@ -100,12 +100,12 @@ def run(cfg):
 
             return (loss, outputs) if return_outputs else loss
 
-        if len(cfg.train.split("-")) > 1 and cfg.method != "test":
+        if len(cfg.train.split("-")) > 1 and not cfg.just_evaluate:
 
             def get_train_dataloader(self):
                 return balanced_dataloader(self, "train", cfg.train_batch_size)
 
-        if len(cfg.dev.split("-")) > 1 and cfg.method != "test":
+        if len(cfg.dev.split("-")) > 1 and not cfg.just_evaluate:
 
             def get_eval_dataloader(self, eval_dataset=None):
                 return balanced_dataloader(self, "eval", cfg.eval_batch_size)
@@ -158,7 +158,7 @@ def run(cfg):
             "threshold": best_threshold,
         }
 
-        if cfg.method == "test":
+        if cfg.just_evaluate:
 
             cl_report_dict = classification_report(
                 true_labels,
@@ -199,7 +199,7 @@ def run(cfg):
         return metrics
 
     base_model_path = (
-        model_output_dir if cfg.method != "train" and not cfg.peft else cfg.model_name
+        model_output_dir if cfg.just_evaluate and not cfg.peft else cfg.base_model_name
     )
 
     nf4_config = BitsAndBytesConfig(
@@ -215,11 +215,13 @@ def run(cfg):
         torch_dtype=torch_dtype,
         use_flash_attention_2=cfg.fa2,
         quantization_config=nf4_config if cfg.nf4 else None,
-        device_map="auto" if "mixtral" in cfg.model_name.lower() else None,
+        device_map="auto" if "mixtral" in cfg.base_model_name.lower() else None,
     )
 
     if cfg.peft:
-        if cfg.method == "train":
+        if cfg.just_evaluate:
+            model = PeftModel.from_pretrained(model, model_output_dir)
+        else:
             print("Using LoRa")
             model = get_peft_model(
                 model,
@@ -236,8 +238,6 @@ def run(cfg):
                     task_type=TaskType.SEQ_CLS,
                 ),
             )
-        else:
-            model = PeftModel.from_pretrained(model, model_output_dir)
 
     trainer = MultiLabelTrainer(
         model=model,
@@ -260,6 +260,7 @@ def run(cfg):
             save_total_limit=2,
             tf32=True,
             group_by_length=True,
+            report_to=None,
         ),
         train_dataset=dataset.get("train", []),
         eval_dataset=dataset.get("dev", []),
@@ -267,7 +268,7 @@ def run(cfg):
         callbacks=[EarlyStoppingCallback(early_stopping_patience=cfg.patience)],
     )
 
-    if cfg.method == "train":
+    if not cfg.just_evaluate:
         trainer.train()
         for dir_path in glob.glob(f"{model_output_dir}/checkpoint*"):
             shutil.rmtree(dir_path, ignore_errors=True)
@@ -275,8 +276,7 @@ def run(cfg):
         shutil.rmtree(f"{model_output_dir}/runs", ignore_errors=True)
 
     print("Predicting..")
-    cfg.method = "test"
-
+    cfg.just_evaluate = True
     for language in cfg.test.split("-"):
         print(f"-- {language} --")
         test_language = language

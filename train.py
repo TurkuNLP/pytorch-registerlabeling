@@ -6,18 +6,17 @@ from jsonargparse import ActionConfigFile, ArgumentParser
 os.environ["HF_HOME"] = ".hf/hf_home"
 os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
 os.environ["HF_DATASETS_CACHE"] = ".hf/datasets_cache"
-os.environ["WANDB_DISABLED"] = "true"
 
 if __name__ == "__main__":
     parser = ArgumentParser()
     # Main args
-    parser.add_argument("--model_name", "-m", default="xlm-roberta-large")
-    parser.add_argument("--method", "-me", default="train")
-    parser.add_argument("--model_output", "-o", default="models")
-    parser.add_argument("--predictions_output", default="predictions")
-    parser.add_argument("--path_suffix", default="")
     parser.add_argument("--seed", "-s", type=int, default=42)
+    parser.add_argument("--base_model_name", default="xlm-roberta-large")
+    parser.add_argument("--model_output", default="models")
+    parser.add_argument("--predictions_output", default="predictions")
+    parser.add_argument("--output_suffix", default="")
     parser.add_argument("--config", "-c", action=ActionConfigFile)
+    parser.add_argument("--just_evaluate", action="store_true")
 
     # Data
     parser.add_argument("--train", "-t", default="en-fi-fr-sv-tr")
@@ -25,7 +24,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "--test", "-te", default="en-fi-fr-sv-tr-ar-ca-es-fa-hi-id-jp-no-pt-ur-zh"
     )
-    parser.add_argument("--text_prefix", default="")
     parser.add_argument("--labels", default="all")
     parser.add_argument("--predict_labels", default="")
     parser.add_argument("--use_fold", type=int, default=0)
@@ -52,9 +50,6 @@ if __name__ == "__main__":
     parser.add_argument("--target_modules", default="")
     cfg = parser.parse_args()
 
-    # Extra
-    parser.add_argument("--sample", type=int, default=0)
-
     if not cfg.train:
         print("--train is required.")
         exit()
@@ -63,7 +58,4 @@ if __name__ == "__main__":
     cfg.predict_labels = cfg.labels if not cfg.predict_labels else cfg.predict_labels
 
     print(parser.dump(cfg))
-
-    method = cfg.method if cfg.method != "test" else "train"
-
-    locate(f"src.{method}").run(cfg)
+    locate(f"src.train").run(cfg)

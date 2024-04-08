@@ -1,5 +1,6 @@
 import csv
 import sys
+import gzip
 
 csv.field_size_limit(sys.maxsize)
 from itertools import cycle
@@ -97,12 +98,10 @@ small_languages = [
 ]
 
 
-def gen(languages, split, label_scheme, text_prefix):
+def gen(languages, split, label_scheme):
     for l in languages:
-        with open(
-            f"data/{l}/{split if l not in small_languages else l}.tsv",
-            "r",
-        ) as c:
+        file_path = f"data/{l}/{split if l not in small_languages else l}.tsv.gz"
+        with gzip.open(file_path, "rt", encoding="utf-8") as c:
             re = csv.reader(c, delimiter="\t")
             for ro in re:
                 if not (ro[0] and ro[1]):
@@ -113,7 +112,7 @@ def gen(languages, split, label_scheme, text_prefix):
 
                 yield {
                     "label": binarize_labels(normalized_labels, label_scheme),
-                    "text": text_prefix + ro[1],
+                    "text": ro[1],
                     "language": l,
                 }
 
@@ -121,12 +120,10 @@ def gen(languages, split, label_scheme, text_prefix):
 def get_dataset(cfg, tokenizer):
     generate = lambda split: Dataset.from_generator(
         gen,
-        cache_dir="./hf_results/tokens_cache2",
         gen_kwargs={
             "languages": dict(cfg)[split].split("-"),
             "split": split,
             "label_scheme": cfg.labels,
-            "text_prefix": cfg.text_prefix,
         },
     )
     splits = {}
