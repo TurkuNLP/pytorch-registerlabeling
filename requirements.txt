@@ -1,0 +1,5 @@
+jsonargparse
+requests
+torch
+zstandard
+transformers

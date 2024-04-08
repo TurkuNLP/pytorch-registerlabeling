@@ -9,8 +9,6 @@ os.environ["HF_DATASETS_CACHE"] = ".hf/datasets_cache"
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-
-    parser.add_argument("--seed", "-s", type=int, default=42)
     parser.add_argument("--train_labels", default="all")
     parser.add_argument("--predict_labels", default="upper")
     parser.add_argument("--batch_size", type=int, default=8)
