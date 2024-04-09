@@ -150,11 +150,13 @@ def get_dataset(cfg, tokenizer):
         train_fold, dev_fold = list(k_fold_fn.split(list(range(len(y))), y))[
             cfg.use_fold - 1
         ]
-
-        splits["train"] = Dataset.from_list(
-            [data_to_be_folded[int(i)] for i in train_fold]
-        )
-        splits["dev"] = Dataset.from_list([data_to_be_folded[int(i)] for i in dev_fold])
+        if not cfg.just_evaluate:
+            splits["train"] = Dataset.from_list(
+                [data_to_be_folded[int(i)] for i in train_fold]
+            )
+            splits["dev"] = Dataset.from_list(
+                [data_to_be_folded[int(i)] for i in dev_fold]
+            )
         splits["test"] = generate("test")
 
     else:
