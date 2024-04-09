@@ -20,7 +20,6 @@ wandb
 checkpoints
 tokens_cache
 instruction_based
-predictions
 .wandb
 hf_results
 token.json

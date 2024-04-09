@@ -1,4 +1,3 @@
-import csv
 import glob
 import json
 
@@ -14,7 +13,7 @@ s = lambda x: "{\scriptsize" + f"({x:.2f})" + "}"
 
 def run(cfg):
 
-    results_path = f"results/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}"
+    results_path = f"predictions/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}"
     results = {}
     for seed in [42, 43, 44]:
         for file_path in glob.glob(f"{results_path}/seed_{seed}/metrics*.json"):
@@ -28,36 +27,6 @@ def run(cfg):
 
     assert all([len(v["f1"]) == 3 for v in results.values()])
 
-    """
-
-    label_scheme = label_schemes[cfg.labels]
-    results_path = f"results/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}"
-    results = {}
-    for seed in [42, 43, 44]:
-        for file_path in glob.glob(f"{results_path}/seed_{seed}/predictions*.tsv"):
-            language = file_path.split("_")[-1].split(".tsv")[0]
-            if language not in results:
-                results[language] = []
-
-            with open(file_path, "r", encoding="utf-8") as file:
-                labels, predictions = zip(
-                    *[
-                        [
-                            binarize_labels(normalize_labels(y, cfg.labels), cfg.labels)
-                            for y in x
-                        ]
-                        for x in list(csv.reader(file, delimiter="\t"))
-                    ]
-                )
-
-            labels = np.array(labels)
-            predictions = np.array(predictions)
-
-            micro_f1 = f1_score(labels, predictions, average="micro")
-            micro_pr_auc = average_precision_score(labels, predictions, average="micro")
-
-            results[language].append([micro_f1, micro_pr_auc])
-    """
     main_languages = ["en", "fi", "fr", "sv", "tr"]
 
     for lang_group in [main_languages, small_languages]:
