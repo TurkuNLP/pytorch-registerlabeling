@@ -158,7 +158,7 @@ def get_dataset(cfg, tokenizer):
         splits["test"] = generate("test")
 
     else:
-        include_splits = ["train", "dev", "test"] if cfg.method == "train" else ["test"]
+        include_splits = ["train", "dev", "test"] if not cfg.just_evaluate else ["test"]
         for s in include_splits:
             splits[s] = generate(s)
 
