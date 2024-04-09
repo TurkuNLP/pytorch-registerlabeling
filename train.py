@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     # Main args
     parser.add_argument("--seed", "-s", type=int, default=42)
-    parser.add_argument("--base_model_name", default="xlm-roberta-large")
+    parser.add_argument("--model_name", default="xlm-roberta-large")
     parser.add_argument("--model_output", default="models")
     parser.add_argument("--predictions_output", default="predictions")
     parser.add_argument("--output_suffix", default="")
