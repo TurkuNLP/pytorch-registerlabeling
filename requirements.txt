@@ -3,3 +3,8 @@ requests
 torch
 zstandard
 transformers
+peft
+scipy
+scikit-learn
+datasets
+scikit-multilearn

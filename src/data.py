@@ -97,11 +97,19 @@ small_languages = [
     "zh",
 ]
 
+file_opener = lambda file_path, use_gz: (
+    gzip.open(file_path + ".gz", "rt", encoding="utf-8")
+    if use_gz
+    else open(file_path, "r")
+)
 
-def gen(languages, split, label_scheme):
+
+def gen(languages, split, label_scheme, use_gz):
     for l in languages:
-        file_path = f"data/{l}/{split if l not in small_languages else l}.tsv.gz"
-        with gzip.open(file_path, "rt", encoding="utf-8") as c:
+
+        with file_opener(
+            f"data/{l}/{split if l not in small_languages else l}.tsv", use_gz
+        ) as c:
             re = csv.reader(c, delimiter="\t")
             for ro in re:
                 if not (ro[0] and ro[1]):
@@ -124,6 +132,7 @@ def get_dataset(cfg, tokenizer):
             "languages": dict(cfg)[split].split("-"),
             "split": split,
             "label_scheme": cfg.labels,
+            "use_gz": cfg.use_gz,
         },
     )
     splits = {}

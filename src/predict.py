@@ -8,9 +8,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from torch import sigmoid
 from .labels import (
     decode_binary_labels,
-    label_schemes,
     subcategory_to_parent_index,
-    map_to_xgenre_binary,
     upper_all_indexes,
 )
 
