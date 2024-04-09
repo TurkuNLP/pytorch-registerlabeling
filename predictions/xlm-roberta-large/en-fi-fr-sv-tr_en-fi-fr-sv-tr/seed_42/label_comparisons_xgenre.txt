@@ -1,0 +1,848 @@
+LANGUAGE: ar
+
+f1-score all-xgenre: 0.7058823529411765
+f1-score xgenre-xgenre: 0.653061224489796
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.5
+f1-score xgenre-xgenre: 0.5714285714285715
+XGENRE-XGENRE IS BETTER
+
+label: Information/Explanation
+f1-score all-xgenre: 0.6
+f1-score xgenre-xgenre: 0.5531914893617021
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.4285714285714285
+f1-score xgenre-xgenre: 0.4285714285714285
+BOTH ARE THE SAME
+
+label: Legal
+f1-score all-xgenre: 0.5714285714285715
+f1-score xgenre-xgenre: 0.5714285714285715
+BOTH ARE THE SAME
+
+label: News
+f1-score all-xgenre: 0.9090909090909091
+f1-score xgenre-xgenre: 0.9090909090909091
+BOTH ARE THE SAME
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.5500000000000002
+f1-score xgenre-xgenre: 0.5
+ALL-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.5
+f1-score xgenre-xgenre: 0.36363636363636365
+ALL-XGENRE IS BETTER
+
+label: Promotion
+f1-score all-xgenre: 0.5142857142857142
+f1-score xgenre-xgenre: 0.6451612903225806
+XGENRE-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.8735632183908046
+f1-score xgenre-xgenre: 0.7368421052631577
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: ca
+
+f1-score all-xgenre: 0.6876971608832808
+f1-score xgenre-xgenre: 0.6393442622950819
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.6666666666666666
+f1-score xgenre-xgenre: 0.6666666666666666
+BOTH ARE THE SAME
+
+label: Information/Explanation
+f1-score all-xgenre: 0.6575342465753425
+f1-score xgenre-xgenre: 0.6176470588235295
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.6666666666666666
+f1-score xgenre-xgenre: 0.4444444444444445
+ALL-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 1.0
+f1-score xgenre-xgenre: 1.0
+BOTH ARE THE SAME
+
+label: News
+f1-score all-xgenre: 0.8095238095238095
+f1-score xgenre-xgenre: 0.7826086956521738
+ALL-XGENRE IS BETTER
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.5964912280701754
+f1-score xgenre-xgenre: 0.6428571428571428
+XGENRE-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.5714285714285715
+f1-score xgenre-xgenre: 0.5714285714285715
+BOTH ARE THE SAME
+
+label: Promotion
+f1-score all-xgenre: 0.5714285714285715
+f1-score xgenre-xgenre: 0.5128205128205129
+ALL-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.7654320987654321
+f1-score xgenre-xgenre: 0.6
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: en
+
+f1-score all-xgenre: 0.7759930189715912
+f1-score xgenre-xgenre: 0.727929080606836
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.8260547742413028
+f1-score xgenre-xgenre: 0.8064280496712929
+ALL-XGENRE IS BETTER
+
+label: Information/Explanation
+f1-score all-xgenre: 0.701519536903039
+f1-score xgenre-xgenre: 0.674209092813744
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.6002587322121604
+f1-score xgenre-xgenre: 0.6490872210953347
+XGENRE-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 0.6753246753246753
+f1-score xgenre-xgenre: 0.6666666666666667
+ALL-XGENRE IS BETTER
+
+label: News
+f1-score all-xgenre: 0.8388712639839707
+f1-score xgenre-xgenre: 0.8294145494713587
+ALL-XGENRE IS BETTER
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.7349756786442805
+f1-score xgenre-xgenre: 0.7274008810572689
+BOTH ARE THE SAME
+
+label: Other
+f1-score all-xgenre: 0.6750788643533123
+f1-score xgenre-xgenre: 0.6604361370716512
+ALL-XGENRE IS BETTER
+
+label: Promotion
+f1-score all-xgenre: 0.5263157894736843
+f1-score xgenre-xgenre: 0.5165165165165165
+ALL-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.8361928104575164
+f1-score xgenre-xgenre: 0.5812983918999405
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: es
+
+f1-score all-xgenre: 0.7125506072874493
+f1-score xgenre-xgenre: 0.6422018348623852
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.3333333333333333
+f1-score xgenre-xgenre: 0.28571428571428575
+ALL-XGENRE IS BETTER
+
+label: Information/Explanation
+f1-score all-xgenre: 0.48780487804878053
+f1-score xgenre-xgenre: 0.5652173913043478
+XGENRE-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.4444444444444445
+f1-score xgenre-xgenre: 0.4444444444444445
+BOTH ARE THE SAME
+
+label: Legal
+f1-score all-xgenre: 0.6666666666666666
+f1-score xgenre-xgenre: 0.5714285714285715
+ALL-XGENRE IS BETTER
+
+label: News
+f1-score all-xgenre: 0.8571428571428571
+f1-score xgenre-xgenre: 0.8085106382978724
+ALL-XGENRE IS BETTER
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.5263157894736842
+f1-score xgenre-xgenre: 0.45454545454545453
+ALL-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.33333333333333337
+f1-score xgenre-xgenre: 0.2222222222222222
+ALL-XGENRE IS BETTER
+
+label: Promotion
+f1-score all-xgenre: 0.7407407407407408
+f1-score xgenre-xgenre: 0.8135593220338982
+XGENRE-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.90625
+f1-score xgenre-xgenre: 0.5
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: fa
+
+f1-score all-xgenre: 0.7589285714285714
+f1-score xgenre-xgenre: 0.711864406779661
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.0
+f1-score xgenre-xgenre: 0.0
+BOTH ARE THE SAME
+
+label: Information/Explanation
+f1-score all-xgenre: 0.787878787878788
+f1-score xgenre-xgenre: 0.7500000000000001
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.7272727272727272
+f1-score xgenre-xgenre: 0.7692307692307692
+XGENRE-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 1.0
+f1-score xgenre-xgenre: 1.0
+BOTH ARE THE SAME
+
+label: News
+f1-score all-xgenre: 0.8780487804878048
+f1-score xgenre-xgenre: 0.8837209302325583
+BOTH ARE THE SAME
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.588235294117647
+f1-score xgenre-xgenre: 0.47058823529411764
+ALL-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.5
+f1-score xgenre-xgenre: 0.4
+ALL-XGENRE IS BETTER
+
+label: Promotion
+f1-score all-xgenre: 0.7346938775510203
+f1-score xgenre-xgenre: 0.761904761904762
+XGENRE-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.8163265306122449
+f1-score xgenre-xgenre: 0.3333333333333333
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: fi
+
+f1-score all-xgenre: 0.8296632124352331
+f1-score xgenre-xgenre: 0.7869212201009436
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.8299319727891157
+f1-score xgenre-xgenre: 0.7981220657276995
+ALL-XGENRE IS BETTER
+
+label: Information/Explanation
+f1-score all-xgenre: 0.7219917012448133
+f1-score xgenre-xgenre: 0.6865203761755486
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.7111111111111111
+f1-score xgenre-xgenre: 0.7161572052401747
+XGENRE-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 0.6530612244897959
+f1-score xgenre-xgenre: 0.5957446808510638
+ALL-XGENRE IS BETTER
+
+label: News
+f1-score all-xgenre: 0.8031746031746032
+f1-score xgenre-xgenre: 0.780058651026393
+ALL-XGENRE IS BETTER
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.8371361132966169
+f1-score xgenre-xgenre: 0.801826484018265
+ALL-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.9620689655172414
+f1-score xgenre-xgenre: 0.9620689655172414
+BOTH ARE THE SAME
+
+label: Promotion
+f1-score all-xgenre: 0.7707509881422926
+f1-score xgenre-xgenre: 0.8127659574468085
+XGENRE-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.8715019988577956
+f1-score xgenre-xgenre: 0.6820512820512821
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: fr
+
+f1-score all-xgenre: 0.7894010488545404
+f1-score xgenre-xgenre: 0.7735849056603773
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.9008264462809917
+f1-score xgenre-xgenre: 0.891566265060241
+ALL-XGENRE IS BETTER
+
+label: Information/Explanation
+f1-score all-xgenre: 0.7814371257485031
+f1-score xgenre-xgenre: 0.7511885895404121
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.7114093959731543
+f1-score xgenre-xgenre: 0.6941176470588235
+ALL-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 0.7777777777777778
+f1-score xgenre-xgenre: 0.8157894736842104
+XGENRE-XGENRE IS BETTER
+
+label: News
+f1-score all-xgenre: 0.7859649122807018
+f1-score xgenre-xgenre: 0.7668711656441718
+ALL-XGENRE IS BETTER
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.740072202166065
+f1-score xgenre-xgenre: 0.7491039426523297
+XGENRE-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.7916666666666667
+f1-score xgenre-xgenre: 0.8456375838926175
+XGENRE-XGENRE IS BETTER
+
+label: Promotion
+f1-score all-xgenre: 0.8020176544766708
+f1-score xgenre-xgenre: 0.8156123822341856
+XGENRE-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.8016759776536313
+f1-score xgenre-xgenre: 0.5930232558139535
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: hi
+
+f1-score all-xgenre: 0.8421052631578947
+f1-score xgenre-xgenre: 0.7616099071207432
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.0
+f1-score xgenre-xgenre: 0.0
+BOTH ARE THE SAME
+
+label: Information/Explanation
+f1-score all-xgenre: 0.7631578947368423
+f1-score xgenre-xgenre: 0.7241379310344828
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.46153846153846156
+f1-score xgenre-xgenre: 0.3636363636363636
+ALL-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 0.6666666666666666
+f1-score xgenre-xgenre: 1.0
+XGENRE-XGENRE IS BETTER
+
+label: News
+f1-score all-xgenre: 0.9517241379310345
+f1-score xgenre-xgenre: 0.9459459459459458
+BOTH ARE THE SAME
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.6666666666666667
+f1-score xgenre-xgenre: 0.6206896551724138
+ALL-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.4761904761904762
+f1-score xgenre-xgenre: 0.43478260869565216
+ALL-XGENRE IS BETTER
+
+label: Promotion
+f1-score all-xgenre: 0.4761904761904762
+f1-score xgenre-xgenre: 0.0
+ALL-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.9430051813471502
+f1-score xgenre-xgenre: 0.8108108108108109
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: id
+
+f1-score all-xgenre: 0.6695595573877198
+f1-score xgenre-xgenre: 0.6002252252252253
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.23333333333333334
+f1-score xgenre-xgenre: 0.28571428571428575
+XGENRE-XGENRE IS BETTER
+
+label: Information/Explanation
+f1-score all-xgenre: 0.49406175771971494
+f1-score xgenre-xgenre: 0.4708860759493671
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.582375478927203
+f1-score xgenre-xgenre: 0.5555555555555555
+ALL-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 0.29629629629629634
+f1-score xgenre-xgenre: 0.24999999999999994
+ALL-XGENRE IS BETTER
+
+label: News
+f1-score all-xgenre: 0.9137931034482759
+f1-score xgenre-xgenre: 0.9006993006993007
+ALL-XGENRE IS BETTER
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.5974025974025974
+f1-score xgenre-xgenre: 0.5744680851063829
+ALL-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.1772151898734177
+f1-score xgenre-xgenre: 0.1991701244813278
+XGENRE-XGENRE IS BETTER
+
+label: Promotion
+f1-score all-xgenre: 0.7151702786377708
+f1-score xgenre-xgenre: 0.7093425605536333
+ALL-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.8212728857890148
+f1-score xgenre-xgenre: 0.4976525821596244
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: jp
+
+f1-score all-xgenre: 0.6601307189542484
+f1-score xgenre-xgenre: 0.6697674418604651
+XGENRE-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.6666666666666666
+f1-score xgenre-xgenre: 0.6666666666666666
+BOTH ARE THE SAME
+
+label: Information/Explanation
+f1-score all-xgenre: 0.5769230769230769
+f1-score xgenre-xgenre: 0.65
+XGENRE-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.625
+f1-score xgenre-xgenre: 0.4285714285714285
+ALL-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 0.5
+f1-score xgenre-xgenre: 0.8
+XGENRE-XGENRE IS BETTER
+
+label: News
+f1-score all-xgenre: 0.0
+f1-score xgenre-xgenre: 0.0
+BOTH ARE THE SAME
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.71875
+f1-score xgenre-xgenre: 0.7017543859649124
+ALL-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.4000000000000001
+f1-score xgenre-xgenre: 0.28571428571428575
+ALL-XGENRE IS BETTER
+
+label: Promotion
+f1-score all-xgenre: 0.7894736842105263
+f1-score xgenre-xgenre: 0.8055555555555556
+XGENRE-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.6557377049180328
+f1-score xgenre-xgenre: 0.0
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: no
+
+f1-score all-xgenre: 0.7150259067357513
+f1-score xgenre-xgenre: 0.7017543859649124
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.6666666666666666
+f1-score xgenre-xgenre: 0.6666666666666666
+BOTH ARE THE SAME
+
+label: Information/Explanation
+f1-score all-xgenre: 0.6829268292682927
+f1-score xgenre-xgenre: 0.5937499999999999
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.75
+f1-score xgenre-xgenre: 0.8275862068965517
+XGENRE-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 0.5
+f1-score xgenre-xgenre: 0.5
+BOTH ARE THE SAME
+
+label: News
+f1-score all-xgenre: 0.7857142857142857
+f1-score xgenre-xgenre: 0.8148148148148148
+XGENRE-XGENRE IS BETTER
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.6222222222222223
+f1-score xgenre-xgenre: 0.5641025641025642
+ALL-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.8235294117647058
+f1-score xgenre-xgenre: 0.8235294117647058
+BOTH ARE THE SAME
+
+label: Promotion
+f1-score all-xgenre: 0.7096774193548387
+f1-score xgenre-xgenre: 0.8
+XGENRE-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.7419354838709677
+f1-score xgenre-xgenre: 0.0
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: pt
+
+f1-score all-xgenre: 0.7012987012987013
+f1-score xgenre-xgenre: 0.6257142857142857
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.3333333333333333
+f1-score xgenre-xgenre: 0.31999999999999995
+ALL-XGENRE IS BETTER
+
+label: Information/Explanation
+f1-score all-xgenre: 0.515625
+f1-score xgenre-xgenre: 0.4597701149425288
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.56
+f1-score xgenre-xgenre: 0.5306122448979592
+ALL-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 0.6363636363636364
+f1-score xgenre-xgenre: 0.6363636363636364
+BOTH ARE THE SAME
+
+label: News
+f1-score all-xgenre: 0.7674418604651162
+f1-score xgenre-xgenre: 0.7666666666666667
+BOTH ARE THE SAME
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.5263157894736842
+f1-score xgenre-xgenre: 0.45
+ALL-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.0
+f1-score xgenre-xgenre: 0.0
+BOTH ARE THE SAME
+
+label: Promotion
+f1-score all-xgenre: 0.7818181818181817
+f1-score xgenre-xgenre: 0.7537688442211056
+ALL-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.8538461538461538
+f1-score xgenre-xgenre: 0.5416666666666666
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: sv
+
+f1-score all-xgenre: 0.8326612903225806
+f1-score xgenre-xgenre: 0.8093287109990546
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.74
+f1-score xgenre-xgenre: 0.7628865979381443
+XGENRE-XGENRE IS BETTER
+
+label: Information/Explanation
+f1-score all-xgenre: 0.8111888111888113
+f1-score xgenre-xgenre: 0.7744107744107744
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.7419354838709676
+f1-score xgenre-xgenre: 0.7464114832535885
+XGENRE-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 0.7500000000000001
+f1-score xgenre-xgenre: 0.7529411764705882
+BOTH ARE THE SAME
+
+label: News
+f1-score all-xgenre: 0.7722772277227723
+f1-score xgenre-xgenre: 0.8037383177570094
+XGENRE-XGENRE IS BETTER
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.8645962732919255
+f1-score xgenre-xgenre: 0.8484107579462102
+ALL-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.8559322033898304
+f1-score xgenre-xgenre: 0.8559999999999999
+BOTH ARE THE SAME
+
+label: Promotion
+f1-score all-xgenre: 0.8446601941747572
+f1-score xgenre-xgenre: 0.8506900878293601
+XGENRE-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.8560975609756099
+f1-score xgenre-xgenre: 0.5137614678899082
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: tr
+
+f1-score all-xgenre: 0.8150422102839602
+f1-score xgenre-xgenre: 0.7714907508161045
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.5142857142857143
+f1-score xgenre-xgenre: 0.36363636363636365
+ALL-XGENRE IS BETTER
+
+label: Information/Explanation
+f1-score all-xgenre: 0.7272727272727273
+f1-score xgenre-xgenre: 0.6260162601626015
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.7605633802816902
+f1-score xgenre-xgenre: 0.732394366197183
+ALL-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 0.7592592592592593
+f1-score xgenre-xgenre: 0.7835051546391751
+XGENRE-XGENRE IS BETTER
+
+label: News
+f1-score all-xgenre: 0.9112709832134293
+f1-score xgenre-xgenre: 0.9095238095238095
+BOTH ARE THE SAME
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.7426470588235294
+f1-score xgenre-xgenre: 0.7078189300411524
+ALL-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.767123287671233
+f1-score xgenre-xgenre: 0.7425742574257426
+ALL-XGENRE IS BETTER
+
+label: Promotion
+f1-score all-xgenre: 0.8213689482470784
+f1-score xgenre-xgenre: 0.7983706720977596
+ALL-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.896
+f1-score xgenre-xgenre: 0.7999999999999999
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: ur
+
+f1-score all-xgenre: 0.8844221105527639
+f1-score xgenre-xgenre: 0.8192771084337349
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.25
+f1-score xgenre-xgenre: 0.33333333333333337
+XGENRE-XGENRE IS BETTER
+
+label: Information/Explanation
+f1-score all-xgenre: 0.619047619047619
+f1-score xgenre-xgenre: 0.6666666666666666
+XGENRE-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.25
+f1-score xgenre-xgenre: 0.25
+BOTH ARE THE SAME
+
+label: Legal
+f1-score all-xgenre: 0.0
+f1-score xgenre-xgenre: 0.0
+BOTH ARE THE SAME
+
+label: News
+f1-score all-xgenre: 0.9832402234636871
+f1-score xgenre-xgenre: 0.9887640449438202
+XGENRE-XGENRE IS BETTER
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.9090909090909091
+f1-score xgenre-xgenre: 0.7659574468085107
+ALL-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.25
+f1-score xgenre-xgenre: 0.4
+XGENRE-XGENRE IS BETTER
+
+label: Promotion
+f1-score all-xgenre: 0.5714285714285715
+f1-score xgenre-xgenre: 0.25
+ALL-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.9421487603305785
+f1-score xgenre-xgenre: 0.6521739130434783
+ALL-XGENRE IS BETTER
+
+-------------------------------------
+LANGUAGE: zh
+
+f1-score all-xgenre: 0.6927939317319848
+f1-score xgenre-xgenre: 0.637037037037037
+ALL-XGENRE IS BETTER
+-----
+------
+label: Forum
+f1-score all-xgenre: 0.6666666666666665
+f1-score xgenre-xgenre: 0.7000000000000001
+XGENRE-XGENRE IS BETTER
+
+label: Information/Explanation
+f1-score all-xgenre: 0.72
+f1-score xgenre-xgenre: 0.6153846153846154
+ALL-XGENRE IS BETTER
+
+label: Instruction
+f1-score all-xgenre: 0.17391304347826086
+f1-score xgenre-xgenre: 0.28571428571428575
+XGENRE-XGENRE IS BETTER
+
+label: Legal
+f1-score all-xgenre: 0.787878787878788
+f1-score xgenre-xgenre: 0.7142857142857143
+ALL-XGENRE IS BETTER
+
+label: News
+f1-score all-xgenre: 0.7924528301886793
+f1-score xgenre-xgenre: 0.7936507936507936
+BOTH ARE THE SAME
+
+label: Opinion/Argumentation
+f1-score all-xgenre: 0.3655913978494624
+f1-score xgenre-xgenre: 0.3829787234042553
+XGENRE-XGENRE IS BETTER
+
+label: Other
+f1-score all-xgenre: 0.25
+f1-score xgenre-xgenre: 0.125
+ALL-XGENRE IS BETTER
+
+label: Promotion
+f1-score all-xgenre: 0.7777777777777778
+f1-score xgenre-xgenre: 0.7513227513227513
+ALL-XGENRE IS BETTER
+
+label: Prose/Lyrical
+f1-score all-xgenre: 0.8021978021978022
+f1-score xgenre-xgenre: 0.7446808510638299
+ALL-XGENRE IS BETTER
+
+-------------------------------------

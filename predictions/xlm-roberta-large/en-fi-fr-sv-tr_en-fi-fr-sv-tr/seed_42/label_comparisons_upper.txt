@@ -1,0 +1,848 @@
+LANGUAGE: ar
+
+f1-score all-upper: 0.6666666666666666
+f1-score upper-upper: 0.6949152542372882
+UPPER-UPPER IS BETTER
+-----
+label: MT
+f1-score all-upper: 0.5
+f1-score upper-upper: 0.4444444444444444
+ALL-UPPER IS BETTER
+
+label: LY
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: SP
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: ID
+f1-score all-upper: 0.5
+f1-score upper-upper: 0.4615384615384615
+ALL-UPPER IS BETTER
+
+label: NA
+f1-score all-upper: 0.868421052631579
+f1-score upper-upper: 0.8799999999999999
+UPPER-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.5
+f1-score upper-upper: 0.5454545454545454
+UPPER-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.6274509803921569
+f1-score upper-upper: 0.75
+UPPER-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.6285714285714287
+f1-score upper-upper: 0.6285714285714287
+BOTH ARE THE SAME
+
+label: IP
+f1-score all-upper: 0.5128205128205128
+f1-score upper-upper: 0.5
+ALL-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: ca
+
+f1-score all-upper: 0.6311475409836065
+f1-score upper-upper: 0.6350710900473934
+UPPER-UPPER IS BETTER
+-----
+label: MT
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: LY
+f1-score all-upper: 0.6666666666666666
+f1-score upper-upper: 1.0
+UPPER-UPPER IS BETTER
+
+label: SP
+f1-score all-upper: 1.0
+f1-score upper-upper: 0.6666666666666666
+ALL-UPPER IS BETTER
+
+label: ID
+f1-score all-upper: 0.6666666666666666
+f1-score upper-upper: 0.6666666666666666
+BOTH ARE THE SAME
+
+label: NA
+f1-score all-upper: 0.7435897435897436
+f1-score upper-upper: 0.7733333333333334
+UPPER-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.6666666666666666
+f1-score upper-upper: 0.5
+ALL-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.6575342465753425
+f1-score upper-upper: 0.5625000000000001
+ALL-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.37499999999999994
+f1-score upper-upper: 0.47058823529411764
+UPPER-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.5714285714285715
+f1-score upper-upper: 0.5789473684210527
+UPPER-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: en
+
+f1-score all-upper: 0.7422254720633145
+f1-score upper-upper: 0.7387478693509008
+BOTH ARE THE SAME
+-----
+label: MT
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: LY
+f1-score all-upper: 0.875
+f1-score upper-upper: 0.8712121212121213
+ALL-UPPER IS BETTER
+
+label: SP
+f1-score all-upper: 0.7086092715231788
+f1-score upper-upper: 0.7033639143730888
+ALL-UPPER IS BETTER
+
+label: ID
+f1-score all-upper: 0.8260547742413028
+f1-score upper-upper: 0.8354430379746836
+UPPER-UPPER IS BETTER
+
+label: NA
+f1-score all-upper: 0.8275486889348275
+f1-score upper-upper: 0.8142129517341742
+ALL-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.5877192982456141
+f1-score upper-upper: 0.6321381142098274
+UPPER-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.701519536903039
+f1-score upper-upper: 0.7064170150881659
+UPPER-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.6612623045744065
+f1-score upper-upper: 0.6619446233097231
+BOTH ARE THE SAME
+
+label: IP
+f1-score all-upper: 0.5263157894736843
+f1-score upper-upper: 0.48275862068965514
+ALL-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: es
+
+f1-score all-upper: 0.6774193548387097
+f1-score upper-upper: 0.6564102564102563
+ALL-UPPER IS BETTER
+-----
+label: MT
+f1-score all-upper: 0.33333333333333337
+f1-score upper-upper: 0.2857142857142857
+ALL-UPPER IS BETTER
+
+label: LY
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: SP
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: ID
+f1-score all-upper: 0.3333333333333333
+f1-score upper-upper: 0.3333333333333333
+BOTH ARE THE SAME
+
+label: NA
+f1-score all-upper: 0.9032258064516129
+f1-score upper-upper: 0.8358208955223881
+ALL-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.4444444444444445
+f1-score upper-upper: 0.25
+ALL-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.48780487804878053
+f1-score upper-upper: 0.5
+UPPER-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.25
+f1-score upper-upper: 0.28571428571428575
+UPPER-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.7407407407407408
+f1-score upper-upper: 0.75
+UPPER-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: fa
+
+f1-score all-upper: 0.7344632768361581
+f1-score upper-upper: 0.7052023121387284
+ALL-UPPER IS BETTER
+-----
+label: MT
+f1-score all-upper: 0.6666666666666666
+f1-score upper-upper: 0.6666666666666666
+BOTH ARE THE SAME
+
+label: LY
+f1-score all-upper: 0.8
+f1-score upper-upper: 0.8
+BOTH ARE THE SAME
+
+label: SP
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: ID
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: NA
+f1-score all-upper: 0.8372093023255814
+f1-score upper-upper: 0.8571428571428572
+UPPER-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.7272727272727272
+f1-score upper-upper: 0.5454545454545454
+ALL-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.787878787878788
+f1-score upper-upper: 0.742857142857143
+ALL-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.5806451612903226
+f1-score upper-upper: 0.44444444444444436
+ALL-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.7346938775510203
+f1-score upper-upper: 0.7499999999999999
+UPPER-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: fi
+
+f1-score all-upper: 0.8195731838758353
+f1-score upper-upper: 0.8178927284290863
+BOTH ARE THE SAME
+-----
+label: MT
+f1-score all-upper: 0.9764065335753176
+f1-score upper-upper: 0.9779411764705882
+BOTH ARE THE SAME
+
+label: LY
+f1-score all-upper: 0.25
+f1-score upper-upper: 0.4615384615384615
+UPPER-UPPER IS BETTER
+
+label: SP
+f1-score all-upper: 0.6896551724137931
+f1-score upper-upper: 0.7368421052631577
+UPPER-UPPER IS BETTER
+
+label: ID
+f1-score all-upper: 0.8299319727891157
+f1-score upper-upper: 0.8366013071895425
+UPPER-UPPER IS BETTER
+
+label: NA
+f1-score all-upper: 0.8580521960534693
+f1-score upper-upper: 0.8591022443890275
+BOTH ARE THE SAME
+
+label: HI
+f1-score all-upper: 0.7064220183486238
+f1-score upper-upper: 0.7105263157894737
+BOTH ARE THE SAME
+
+label: IN
+f1-score all-upper: 0.7219917012448133
+f1-score upper-upper: 0.7292817679558011
+UPPER-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.7804054054054054
+f1-score upper-upper: 0.7630252100840336
+ALL-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.7707509881422926
+f1-score upper-upper: 0.7539062500000001
+ALL-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: fr
+
+f1-score all-upper: 0.7854278074866311
+f1-score upper-upper: 0.7813267813267813
+ALL-UPPER IS BETTER
+-----
+label: MT
+f1-score all-upper: 0.8166666666666667
+f1-score upper-upper: 0.8214285714285714
+BOTH ARE THE SAME
+
+label: LY
+f1-score all-upper: 0.8571428571428571
+f1-score upper-upper: 0.9230769230769231
+UPPER-UPPER IS BETTER
+
+label: SP
+f1-score all-upper: 0.6666666666666667
+f1-score upper-upper: 0.7142857142857142
+UPPER-UPPER IS BETTER
+
+label: ID
+f1-score all-upper: 0.9008264462809917
+f1-score upper-upper: 0.8813559322033899
+ALL-UPPER IS BETTER
+
+label: NA
+f1-score all-upper: 0.7976366322008862
+f1-score upper-upper: 0.7915407854984894
+ALL-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.7111111111111111
+f1-score upper-upper: 0.6562499999999999
+ALL-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.7814371257485031
+f1-score upper-upper: 0.7744
+ALL-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.6557377049180327
+f1-score upper-upper: 0.6666666666666666
+UPPER-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.8020176544766708
+f1-score upper-upper: 0.8037634408602151
+BOTH ARE THE SAME
+
+------
+-------------------------------------
+LANGUAGE: hi
+
+f1-score all-upper: 0.7887323943661972
+f1-score upper-upper: 0.7964071856287425
+UPPER-UPPER IS BETTER
+-----
+label: MT
+f1-score all-upper: 0.4210526315789473
+f1-score upper-upper: 0.5333333333333333
+UPPER-UPPER IS BETTER
+
+label: LY
+f1-score all-upper: 0.9600000000000001
+f1-score upper-upper: 1.0
+UPPER-UPPER IS BETTER
+
+label: SP
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: ID
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: NA
+f1-score all-upper: 0.9341317365269461
+f1-score upper-upper: 0.9285714285714286
+BOTH ARE THE SAME
+
+label: HI
+f1-score all-upper: 0.46153846153846156
+f1-score upper-upper: 0.46153846153846156
+BOTH ARE THE SAME
+
+label: IN
+f1-score all-upper: 0.7631578947368423
+f1-score upper-upper: 0.7777777777777778
+UPPER-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.6
+f1-score upper-upper: 0.6086956521739131
+UPPER-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.4761904761904762
+f1-score upper-upper: 0.125
+ALL-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: id
+
+f1-score all-upper: 0.6160544217687074
+f1-score upper-upper: 0.6167471819645733
+BOTH ARE THE SAME
+-----
+label: MT
+f1-score all-upper: 0.3157894736842105
+f1-score upper-upper: 0.3247863247863248
+BOTH ARE THE SAME
+
+label: LY
+f1-score all-upper: 0.8799999999999999
+f1-score upper-upper: 0.923076923076923
+UPPER-UPPER IS BETTER
+
+label: SP
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.09009009009009009
+UPPER-UPPER IS BETTER
+
+label: ID
+f1-score all-upper: 0.23333333333333334
+f1-score upper-upper: 0.24615384615384614
+UPPER-UPPER IS BETTER
+
+label: NA
+f1-score all-upper: 0.8052190121155639
+f1-score upper-upper: 0.8033550792171482
+ALL-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.583657587548638
+f1-score upper-upper: 0.5681818181818181
+ALL-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.49406175771971494
+f1-score upper-upper: 0.5232163080407701
+UPPER-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.5495327102803739
+f1-score upper-upper: 0.5380333951762524
+ALL-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.7151702786377708
+f1-score upper-upper: 0.6882716049382717
+ALL-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: jp
+
+f1-score all-upper: 0.6324786324786325
+f1-score upper-upper: 0.6137566137566136
+ALL-UPPER IS BETTER
+-----
+label: MT
+f1-score all-upper: 0.28571428571428575
+f1-score upper-upper: 0.0
+ALL-UPPER IS BETTER
+
+label: LY
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: SP
+f1-score all-upper: 1.0
+f1-score upper-upper: 1.0
+BOTH ARE THE SAME
+
+label: ID
+f1-score all-upper: 0.6666666666666666
+f1-score upper-upper: 0.7272727272727273
+UPPER-UPPER IS BETTER
+
+label: NA
+f1-score all-upper: 0.631578947368421
+f1-score upper-upper: 0.4583333333333333
+ALL-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.625
+f1-score upper-upper: 0.4615384615384615
+ALL-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.6
+f1-score upper-upper: 0.6153846153846154
+UPPER-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.125
+f1-score upper-upper: 0.0
+ALL-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.7837837837837839
+f1-score upper-upper: 0.8181818181818182
+UPPER-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: no
+
+f1-score all-upper: 0.6996466431095406
+f1-score upper-upper: 0.6911764705882353
+ALL-UPPER IS BETTER
+-----
+label: MT
+f1-score all-upper: 0.787878787878788
+f1-score upper-upper: 0.8125
+UPPER-UPPER IS BETTER
+
+label: LY
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: SP
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: ID
+f1-score all-upper: 0.6666666666666666
+f1-score upper-upper: 0.6666666666666666
+BOTH ARE THE SAME
+
+label: NA
+f1-score all-upper: 0.7547169811320754
+f1-score upper-upper: 0.7037037037037037
+ALL-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.7368421052631577
+f1-score upper-upper: 0.7058823529411764
+ALL-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.6216216216216216
+f1-score upper-upper: 0.6027397260273972
+ALL-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.30769230769230765
+f1-score upper-upper: 0.2857142857142857
+ALL-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.7529411764705882
+f1-score upper-upper: 0.7894736842105263
+UPPER-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: pt
+
+f1-score all-upper: 0.681948424068768
+f1-score upper-upper: 0.6884816753926702
+UPPER-UPPER IS BETTER
+-----
+label: MT
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: LY
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.3333333333333333
+UPPER-UPPER IS BETTER
+
+label: SP
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: ID
+f1-score all-upper: 0.3333333333333333
+f1-score upper-upper: 0.3846153846153846
+UPPER-UPPER IS BETTER
+
+label: NA
+f1-score all-upper: 0.8412017167381974
+f1-score upper-upper: 0.8292682926829268
+ALL-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.4090909090909091
+f1-score upper-upper: 0.5490196078431372
+UPPER-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.5263157894736842
+f1-score upper-upper: 0.5413533834586467
+UPPER-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.5666666666666667
+f1-score upper-upper: 0.4864864864864865
+ALL-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.7619047619047619
+f1-score upper-upper: 0.7909090909090909
+UPPER-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: sv
+
+f1-score all-upper: 0.8190779014308427
+f1-score upper-upper: 0.8117609459891338
+ALL-UPPER IS BETTER
+-----
+label: MT
+f1-score all-upper: 0.8660714285714286
+f1-score upper-upper: 0.8828828828828829
+UPPER-UPPER IS BETTER
+
+label: LY
+f1-score all-upper: 0.7692307692307692
+f1-score upper-upper: 0.8
+UPPER-UPPER IS BETTER
+
+label: SP
+f1-score all-upper: 0.6666666666666666
+f1-score upper-upper: 0.6666666666666665
+BOTH ARE THE SAME
+
+label: ID
+f1-score all-upper: 0.74
+f1-score upper-upper: 0.7254901960784313
+ALL-UPPER IS BETTER
+
+label: NA
+f1-score all-upper: 0.8567774936061382
+f1-score upper-upper: 0.8454661558109835
+ALL-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.6962962962962963
+f1-score upper-upper: 0.6521739130434783
+ALL-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.8111888111888113
+f1-score upper-upper: 0.7999999999999998
+ALL-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.7339449541284403
+f1-score upper-upper: 0.7444794952681387
+UPPER-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.8446601941747572
+f1-score upper-upper: 0.8378378378378378
+BOTH ARE THE SAME
+
+------
+-------------------------------------
+LANGUAGE: tr
+
+f1-score all-upper: 0.7893660531697342
+f1-score upper-upper: 0.7576054955839059
+ALL-UPPER IS BETTER
+-----
+label: MT
+f1-score all-upper: 0.7800000000000001
+f1-score upper-upper: 0.7391304347826088
+ALL-UPPER IS BETTER
+
+label: LY
+f1-score all-upper: 0.5454545454545454
+f1-score upper-upper: 0.7692307692307692
+UPPER-UPPER IS BETTER
+
+label: SP
+f1-score all-upper: 0.631578947368421
+f1-score upper-upper: 0.5833333333333334
+ALL-UPPER IS BETTER
+
+label: ID
+f1-score all-upper: 0.5142857142857143
+f1-score upper-upper: 0.3684210526315789
+ALL-UPPER IS BETTER
+
+label: NA
+f1-score all-upper: 0.8997867803837953
+f1-score upper-upper: 0.8796680497925312
+ALL-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.7941176470588236
+f1-score upper-upper: 0.6923076923076923
+ALL-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.7272727272727273
+f1-score upper-upper: 0.7201946472019465
+ALL-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.6117647058823529
+f1-score upper-upper: 0.5473684210526316
+ALL-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.8213689482470784
+f1-score upper-upper: 0.7961165048543689
+ALL-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: ur
+
+f1-score all-upper: 0.8351648351648352
+f1-score upper-upper: 0.8357348703170029
+BOTH ARE THE SAME
+-----
+label: MT
+f1-score all-upper: 0.25
+f1-score upper-upper: 0.4
+UPPER-UPPER IS BETTER
+
+label: LY
+f1-score all-upper: 1.0
+f1-score upper-upper: 0.8
+ALL-UPPER IS BETTER
+
+label: SP
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.0
+BOTH ARE THE SAME
+
+label: ID
+f1-score all-upper: 0.25
+f1-score upper-upper: 0.2857142857142857
+UPPER-UPPER IS BETTER
+
+label: NA
+f1-score all-upper: 0.9500000000000001
+f1-score upper-upper: 0.9595959595959594
+UPPER-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.6666666666666666
+f1-score upper-upper: 0.6666666666666666
+BOTH ARE THE SAME
+
+label: IN
+f1-score all-upper: 0.619047619047619
+f1-score upper-upper: 0.5714285714285715
+ALL-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.8421052631578947
+f1-score upper-upper: 0.8285714285714286
+ALL-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.5714285714285715
+f1-score upper-upper: 0.47058823529411764
+ALL-UPPER IS BETTER
+
+------
+-------------------------------------
+LANGUAGE: zh
+
+f1-score all-upper: 0.6933333333333332
+f1-score upper-upper: 0.6732394366197182
+ALL-UPPER IS BETTER
+-----
+label: MT
+f1-score all-upper: 0.26666666666666666
+f1-score upper-upper: 0.20000000000000004
+ALL-UPPER IS BETTER
+
+label: LY
+f1-score all-upper: 0.3333333333333333
+f1-score upper-upper: 0.3333333333333333
+BOTH ARE THE SAME
+
+label: SP
+f1-score all-upper: 0.0
+f1-score upper-upper: 0.5
+UPPER-UPPER IS BETTER
+
+label: ID
+f1-score all-upper: 0.6666666666666665
+f1-score upper-upper: 0.7368421052631579
+UPPER-UPPER IS BETTER
+
+label: NA
+f1-score all-upper: 0.7977528089887641
+f1-score upper-upper: 0.8272251308900525
+UPPER-UPPER IS BETTER
+
+label: HI
+f1-score all-upper: 0.2105263157894737
+f1-score upper-upper: 0.28571428571428575
+UPPER-UPPER IS BETTER
+
+label: IN
+f1-score all-upper: 0.72
+f1-score upper-upper: 0.6341463414634148
+ALL-UPPER IS BETTER
+
+label: OP
+f1-score all-upper: 0.3692307692307692
+f1-score upper-upper: 0.2950819672131148
+ALL-UPPER IS BETTER
+
+label: IP
+f1-score all-upper: 0.7777777777777778
+f1-score upper-upper: 0.7564766839378237
+ALL-UPPER IS BETTER
+
+------
+-------------------------------------
