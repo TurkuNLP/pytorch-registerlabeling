@@ -9,11 +9,11 @@ Promotion	Promotion
 Promotion	Promotion
 Promotion	Promotion
 Promotion	Promotion
-News	News
+News	Opinion/Argumentation
 Promotion	Promotion
-Promotion	Promotion
+Promotion	
 Information/Explanation	Information/Explanation
-Opinion/Argumentation	
+Opinion/Argumentation	Opinion/Argumentation
 News	News
 Opinion/Argumentation	Opinion/Argumentation
 News	News
@@ -34,22 +34,22 @@ Information/Explanation	Information/Explanation
 News	News
 Promotion	Promotion
 Prose/Lyrical	Prose/Lyrical
-Promotion	Promotion
-News	Information/Explanation
+Promotion	
+News	
 Other	Promotion
 Promotion	Promotion
-Prose/Lyrical	
+Prose/Lyrical	Forum
 Promotion	Promotion
 Other	Other
 Promotion	Promotion
 News	News
-Other	
+Other	Other
 Promotion	Promotion
 Promotion	Promotion
 Other	Information/Explanation
 Information/Explanation	Promotion
 Opinion/Argumentation	Opinion/Argumentation
-Prose/Lyrical	Opinion/Argumentation Prose/Lyrical
+Prose/Lyrical	Prose/Lyrical
 Instruction	Promotion
 Promotion	Promotion
 Information/Explanation	Information/Explanation
@@ -63,7 +63,7 @@ Information/Explanation	Information/Explanation
 Instruction Promotion	Promotion
 Information/Explanation	Information/Explanation
 Opinion/Argumentation	News
-Information/Explanation	
+Information/Explanation	Information/Explanation
 Information/Explanation Instruction	
 Other	Promotion
 Promotion	Promotion
@@ -86,22 +86,22 @@ Promotion	Promotion
 Opinion/Argumentation	Opinion/Argumentation
 Instruction	Instruction
 Opinion/Argumentation	Opinion/Argumentation
-Information/Explanation	Information/Explanation
-Instruction Promotion	Instruction Promotion
+Information/Explanation	
+Instruction Promotion	
 Opinion/Argumentation	Promotion
 News	News
 Promotion	Promotion
 Opinion/Argumentation Other	News
-Information/Explanation	Opinion/Argumentation
-Legal	Promotion
-Other	Promotion
-Information/Explanation	Opinion/Argumentation
+Information/Explanation	Information/Explanation Opinion/Argumentation
+Legal	Legal
+Other	Other
+Information/Explanation	Information/Explanation
 News	News
 Promotion	Promotion
 News	News
 Promotion	Promotion
 Information/Explanation	Information/Explanation
-Legal	
+Legal	Information/Explanation
 Promotion	Promotion
 Promotion	Promotion
 Information/Explanation	Information/Explanation
@@ -109,15 +109,15 @@ Information/Explanation
 News	
 Promotion	Promotion
 Information/Explanation	
-Legal Promotion	Legal Promotion
+Legal Promotion	Legal
 Other	Other
 News	Information/Explanation
 News	News
 Opinion/Argumentation Prose/Lyrical	Forum
 News	News
 News	News
-Promotion	Opinion/Argumentation Promotion
-Information/Explanation	Legal
+Promotion	Promotion
+Information/Explanation	Information/Explanation Legal
 News	News
 Other	Other
 Other	Other
@@ -125,9 +125,9 @@ Other	Other
 News	News
 Opinion/Argumentation	Promotion
 Information/Explanation	News
-Legal Promotion	Promotion
+Legal Promotion	Legal Promotion
 Information/Explanation	
-Legal	Promotion
+Legal	Legal
 Promotion	Promotion
 Instruction	Promotion
 News	News
@@ -140,14 +140,14 @@ Promotion	Promotion
 Legal	
 Promotion	Promotion
 News	News
-Forum	Forum
-Legal News	News
-Other	Other
+Forum	Opinion/Argumentation
+Legal News	Legal News
+Other	Other Promotion
 Information/Explanation	Information/Explanation
-Other	
+Other	Forum
 News	News
 Promotion	Promotion
-Legal News	News
+Legal News	Legal News
 News	News
 News	News
 Forum Opinion/Argumentation	
@@ -170,15 +170,15 @@ Forum Promotion	Information/Explanation
 Promotion	Information/Explanation
 Other	News
 Promotion	Promotion
-News	Legal News
+News	News
 Forum	Information/Explanation
 News	News
 Promotion	Promotion
 Other	Other
 Opinion/Argumentation	Opinion/Argumentation
 News	News
-Opinion/Argumentation	Opinion/Argumentation
-Opinion/Argumentation	Opinion/Argumentation
+Opinion/Argumentation	Opinion/Argumentation Other
+Opinion/Argumentation	
 Forum	Forum
 Promotion	Promotion
 Information/Explanation	News
@@ -189,12 +189,12 @@ Other	Other
 Promotion	Promotion
 Promotion	Promotion
 Promotion	Promotion
-Other	
+Other	Opinion/Argumentation
 Promotion	Promotion
 Promotion	Promotion
-Forum	
+Forum	Forum
 Information/Explanation	Information/Explanation
-Other	
+Other	Information/Explanation
 Other	Other
 Prose/Lyrical	Prose/Lyrical
 Promotion	Promotion
@@ -207,11 +207,11 @@ News	News
 Opinion/Argumentation	Opinion/Argumentation
 Promotion	Promotion
 Promotion	Promotion
-Other	
-Opinion/Argumentation	
+Other	Other
+Opinion/Argumentation	Opinion/Argumentation
 Forum	
 Prose/Lyrical	Prose/Lyrical
-Promotion	Instruction
+Promotion	
 Promotion	Promotion
 News	News
 News	News
@@ -224,7 +224,7 @@ News	News
 Promotion	Promotion
 Information/Explanation	News
 News	News
-Other	Instruction
+Other	
 Legal	Legal
 News	News
 News	News
@@ -248,7 +248,7 @@ Opinion/Argumentation
 News	News
 Opinion/Argumentation	Opinion/Argumentation
 Opinion/Argumentation	Promotion
-Opinion/Argumentation	Opinion/Argumentation
+Opinion/Argumentation	
 News	News
 Promotion	Promotion
 Promotion	Promotion
@@ -256,15 +256,15 @@ Information/Explanation	Information/Explanation
 Promotion	Promotion
 Information/Explanation	Information/Explanation
 Other	Other
-Legal Promotion	Legal Promotion
+Legal Promotion	Legal
 News	News
 Promotion	Information/Explanation
 Legal	Legal
 Promotion	Promotion
 Opinion/Argumentation Promotion	Promotion
 Other	Other
-Legal Promotion	Legal Promotion
-Information/Explanation	Information/Explanation
+Legal Promotion	Legal
+Information/Explanation	
 Instruction	Instruction
 Promotion	Promotion
 News	News
@@ -273,27 +273,27 @@ News	News
 Information/Explanation	Information/Explanation
 News	News
 Promotion	Promotion
-Information/Explanation	
-Opinion/Argumentation	Opinion/Argumentation
 Information/Explanation	Information/Explanation
 Opinion/Argumentation	Opinion/Argumentation
 Information/Explanation	Information/Explanation
+Opinion/Argumentation	Opinion/Argumentation
+Information/Explanation	Information/Explanation
 Promotion	Promotion
 Promotion	Promotion
-Promotion	Promotion
+Promotion	Legal
 Legal	Legal
 Promotion	Promotion
 Other	Other
 Other	Other
-Information/Explanation	Information/Explanation
+Information/Explanation	Opinion/Argumentation
 Other	Other
 News	News
 News	News
 News	News
 News	News
 News	News
-Information/Explanation Opinion/Argumentation	Information/Explanation Opinion/Argumentation
-Information/Explanation	Promotion
+Information/Explanation Opinion/Argumentation	Opinion/Argumentation
+Information/Explanation	
 Information/Explanation Opinion/Argumentation	Information/Explanation
 Other	Promotion
 Information/Explanation	News
@@ -308,14 +308,14 @@ Opinion/Argumentation	Instruction
 Information/Explanation	
 Instruction	Instruction
 Promotion	Promotion
-Promotion	Promotion
+Promotion	Information/Explanation
 Promotion	Promotion
 Instruction	Instruction
 Promotion	Promotion
 News	News
 Opinion/Argumentation	Opinion/Argumentation
 Other	Other
-Promotion	Promotion
+Promotion	
 Promotion	Promotion
 News	News
 News	News
@@ -326,11 +326,11 @@ Instruction	Instruction
 Promotion	Information/Explanation
 News	News
 Prose/Lyrical	Prose/Lyrical
-News	News
+News	Other
 Forum	Information/Explanation
-Promotion	Information/Explanation
+Promotion	News
 News	News
-Information/Explanation	Opinion/Argumentation
+Information/Explanation	
 Information/Explanation	Information/Explanation
 Opinion/Argumentation Prose/Lyrical	Opinion/Argumentation
 News	News
@@ -342,12 +342,12 @@ Promotion	Promotion
 News	News
 Legal	Opinion/Argumentation
 News	News
+Other	News
 Other	Other
-Other	Other Promotion
 Information/Explanation	Opinion/Argumentation
 News	News
 Information/Explanation Opinion/Argumentation	Opinion/Argumentation
-Opinion/Argumentation	Instruction
+Opinion/Argumentation	Information/Explanation
 Other	Other
 News	News
 Promotion	Promotion
@@ -365,7 +365,7 @@ Promotion	Information/Explanation
 News	News
 Promotion	Promotion
 Opinion/Argumentation Promotion	Promotion
-Information/Explanation	Information/Explanation
+Information/Explanation	Information/Explanation Other
 Opinion/Argumentation	Opinion/Argumentation
 Opinion/Argumentation	Prose/Lyrical
 News	News
@@ -374,7 +374,7 @@ News	News
 News	News
 News	News
 News	News
-Promotion	Promotion
+Promotion	
 Promotion	Promotion
 News	News
 Other	Other
@@ -407,7 +407,7 @@ Promotion	Promotion
 News	News
 Promotion	Promotion
 Information/Explanation	Information/Explanation
-Legal	Legal
+Legal	Information/Explanation Legal
 News	News
 News	News
 Promotion	Promotion
@@ -416,7 +416,7 @@ Promotion	Promotion
 Instruction Opinion/Argumentation	Instruction
 Opinion/Argumentation	Opinion/Argumentation
 News	News
-Opinion/Argumentation	Forum
+Opinion/Argumentation	Opinion/Argumentation
 Other	Other
 Other	Other
 Promotion	Promotion
@@ -425,14 +425,14 @@ Other	Promotion
 Promotion	Promotion
 Opinion/Argumentation	Opinion/Argumentation
 Promotion	Promotion
-Opinion/Argumentation	Opinion/Argumentation
+Opinion/Argumentation	News
 News	News
 Legal Promotion	Promotion
 News	
 News	News
 Promotion	News Promotion
-Promotion	Opinion/Argumentation
-Information/Explanation	Other
+Promotion	
+Information/Explanation	Information/Explanation
 News	News
 Legal Promotion	Promotion
 Information/Explanation	Promotion
@@ -453,15 +453,15 @@ Other	Promotion
 Other	Other
 Opinion/Argumentation	Opinion/Argumentation
 Promotion	Promotion
-Information/Explanation	Promotion
+Information/Explanation	
 Legal	
 Information/Explanation	
-Other	Other
+Other	Opinion/Argumentation Other
 Other	Other
 Prose/Lyrical	Prose/Lyrical
 Promotion	Promotion
 Opinion/Argumentation	Opinion/Argumentation
-Opinion/Argumentation	News
+Opinion/Argumentation	Opinion/Argumentation
 Promotion	Promotion
 Promotion	Promotion
 Other	Other
@@ -469,7 +469,7 @@ Other	Other
 Promotion	Promotion
 Opinion/Argumentation	Opinion/Argumentation
 Legal Promotion	Promotion
-Other	Promotion
+Other	Other
 News	News
 News	News
 Information/Explanation	Information/Explanation
@@ -481,11 +481,11 @@ Information/Explanation	Information/Explanation
 Information/Explanation	Information/Explanation
 Promotion	Promotion
 News	News
-News	News
+News	Information/Explanation
 News	News
 Opinion/Argumentation	Opinion/Argumentation
 Other	News
-Opinion/Argumentation	Promotion
+Opinion/Argumentation	
 Promotion	Promotion
 Promotion	Promotion
 Other	Other
@@ -495,11 +495,11 @@ Promotion	Promotion
 News	News
 Opinion/Argumentation	
 Promotion	Promotion
-Information/Explanation	Information/Explanation
+Information/Explanation	
 Opinion/Argumentation Promotion	Promotion
 Information/Explanation	
-Promotion	Promotion
-Opinion/Argumentation	News
+Promotion	Information/Explanation
+Opinion/Argumentation	
 Opinion/Argumentation	Opinion/Argumentation
 Forum	Opinion/Argumentation
 News	News
@@ -507,29 +507,29 @@ Promotion	Promotion
 Other	Promotion
 Opinion/Argumentation Promotion	Promotion
 Promotion	Promotion
-Prose/Lyrical	Opinion/Argumentation Prose/Lyrical
+Prose/Lyrical	Prose/Lyrical
 News	News
 Information/Explanation	Information/Explanation
 Other	Other
 Opinion/Argumentation	Opinion/Argumentation
 Other	Other
-Other	Promotion
+Other	Information/Explanation
 Promotion	Promotion
 News	News
 Information/Explanation	Information/Explanation
 Opinion/Argumentation	Opinion/Argumentation
-Promotion	
+Promotion	Information/Explanation
 Instruction Opinion/Argumentation	Instruction
 News	
 Promotion	Promotion
 Opinion/Argumentation	Opinion/Argumentation
 News	News
 Information/Explanation	News
-News	
-Opinion/Argumentation	Opinion/Argumentation
+News	Legal
+Opinion/Argumentation	Promotion
 Other	Other
 Opinion/Argumentation	Promotion
-Legal	Promotion
+Legal	Legal Promotion
 Opinion/Argumentation	Promotion
 News	News
 News	News
@@ -541,14 +541,14 @@ Instruction Opinion/Argumentation	Instruction Opinion/Argumentation
 Information/Explanation	Information/Explanation
 Information/Explanation	Information/Explanation
 Legal	Legal
-Promotion	Legal
+Promotion	Information/Explanation
 Other	Other
 News	News
 Opinion/Argumentation	Opinion/Argumentation
 Opinion/Argumentation	Promotion
 Promotion	
 Opinion/Argumentation	Opinion/Argumentation
-News	
+News	News
 Opinion/Argumentation	
 News	News
 Promotion	Promotion
@@ -559,7 +559,7 @@ Promotion	Other
 Legal	Legal
 News	News
 Information/Explanation	Forum
-Other	Promotion
+Other	
 Promotion	Promotion
 News	News
 Opinion/Argumentation	Opinion/Argumentation
@@ -568,15 +568,15 @@ Opinion/Argumentation	Opinion/Argumentation
 News	News
 Information/Explanation	Information/Explanation
 News	News
-Legal	Information/Explanation
+Legal	
 Promotion	Promotion
 Information/Explanation	Information/Explanation
 Promotion	Promotion
-Legal Promotion	Promotion
+Legal Promotion	Legal
 Instruction	Instruction
-Promotion	Other
+Promotion	Information/Explanation
 Opinion/Argumentation	Opinion/Argumentation
-Legal Promotion	Legal Promotion
+Legal Promotion	Legal
 Information/Explanation	News
 Promotion	Promotion
 Opinion/Argumentation	
@@ -584,15 +584,15 @@ Promotion	Promotion
 Legal	Legal
 Instruction	Instruction
 Forum Opinion/Argumentation	Opinion/Argumentation
-News	
-Forum	Forum Opinion/Argumentation
+News	News
+Forum	Opinion/Argumentation
 News	News
 Other	Instruction
 News	News
 News	News
 Promotion	Promotion
 Other	Other
-Information/Explanation News	News
+Information/Explanation News	Information/Explanation
 Promotion	Promotion
 Instruction	Instruction
 Promotion	Promotion
@@ -608,19 +608,19 @@ Promotion	Promotion
 Information/Explanation	Information/Explanation
 Information/Explanation	Information/Explanation
 Opinion/Argumentation	Opinion/Argumentation
-Information/Explanation	Other
-Promotion	Information/Explanation
+Information/Explanation	
+Promotion	Information/Explanation Opinion/Argumentation
 Opinion/Argumentation	Opinion/Argumentation
-Promotion	Promotion
+Promotion	
 Opinion/Argumentation	Promotion
-Promotion	Promotion
+Promotion	Instruction
 Opinion/Argumentation	Opinion/Argumentation
-Promotion	Promotion
+Promotion	
 Promotion	News
 Instruction	Promotion
 Promotion	Promotion
 Forum Instruction	Instruction
-News	News
+News	
 Other	Promotion
 Promotion	Promotion
 Promotion	Promotion
@@ -631,7 +631,7 @@ Opinion/Argumentation Promotion	Opinion/Argumentation
 News	News
 News	News
 News	News
-Promotion	Promotion
+Promotion	
 Promotion	Promotion
 Promotion	Promotion
 Other	Other
@@ -646,7 +646,7 @@ Forum	Forum
 Information/Explanation	Information/Explanation
 Opinion/Argumentation	Promotion
 Promotion	Promotion
-Other	Other Promotion
+Other	Other
 Other	
 Information/Explanation	Promotion
 Other	Other
@@ -654,9 +654,9 @@ Promotion	Promotion
 Promotion	Promotion
 Forum Instruction	Instruction
 Promotion	Promotion
-Legal	
+Legal	Information/Explanation
 News	News
-Other	Promotion
+Other	
 News	News
 Promotion	Promotion
 Information/Explanation	Promotion
@@ -664,7 +664,7 @@ Promotion	Promotion
 Promotion	Information/Explanation
 Instruction	Instruction
 Information/Explanation	Information/Explanation
-Opinion/Argumentation	Opinion/Argumentation
+Opinion/Argumentation	
 Instruction	Promotion
 News	Information/Explanation
 Other	Other
@@ -685,15 +685,15 @@ News	News
 Promotion	Promotion
 Promotion	Promotion
 News	News
-Information/Explanation	
+Information/Explanation	Information/Explanation
 Promotion	
 Legal	Legal
-Information/Explanation	
-Other	Other
+Information/Explanation	Information/Explanation
+Other	Information/Explanation
 Promotion	Information/Explanation
 Promotion	Promotion
-Other	Promotion
-Opinion/Argumentation	Instruction Opinion/Argumentation
+Other	Other
+Opinion/Argumentation	Opinion/Argumentation
 News	News
 News	News
 News	News
@@ -701,19 +701,19 @@ Other	Other
 Opinion/Argumentation	Opinion/Argumentation
 Other	News
 News	News
-Other	Promotion
 Other	Other
-Other	Promotion
+Other	Other
+Other	Other
 News	News
 News	News
 Promotion	Promotion
 Information/Explanation	Information/Explanation
 Other	Other
-Promotion	Promotion
-Promotion	Promotion
+Promotion	Information/Explanation
+Promotion	
 Information/Explanation	Information/Explanation
 News	News
-Opinion/Argumentation	Instruction Opinion/Argumentation
+Opinion/Argumentation	Opinion/Argumentation
 News	News
 News	News
 Opinion/Argumentation	Opinion/Argumentation
@@ -731,7 +731,7 @@ Legal	Legal
 Information/Explanation	News
 Prose/Lyrical	Prose/Lyrical
 Promotion	Promotion
-Legal	Promotion
+Legal	Legal Promotion
 Promotion	Promotion
 Information/Explanation	
 Information/Explanation Prose/Lyrical	Information/Explanation
@@ -741,37 +741,37 @@ Opinion/Argumentation	Opinion/Argumentation
 Opinion/Argumentation	Opinion/Argumentation
 News	News
 Promotion	Promotion
-Information/Explanation	
+Information/Explanation	Information/Explanation
 Instruction Promotion	
 Opinion/Argumentation	Opinion/Argumentation
 Opinion/Argumentation	
 Promotion	Promotion
 News	News
 Opinion/Argumentation	Instruction
-Other	Promotion
+Other	Other Promotion
 News	News
 Information/Explanation	Information/Explanation
 Promotion	Promotion
 Legal	Legal
 Legal News	News
 News	News
-Information/Explanation	Information/Explanation
-Information/Explanation Opinion/Argumentation	Opinion/Argumentation
+Information/Explanation	
+Information/Explanation Opinion/Argumentation	Information/Explanation
 Information/Explanation	
 Other	Information/Explanation
 Legal News	News
 News	News
 News	News
-Promotion	
+Promotion	Opinion/Argumentation
 News	News
 News	News
 Instruction	Instruction
 Legal Promotion	Promotion
-Promotion	Promotion
+Promotion	Information/Explanation
 Other	Promotion
 News	News
 News	News
-Information/Explanation	News
+Information/Explanation	
 Promotion	Promotion
 Other	Promotion
 News	News
@@ -783,7 +783,7 @@ Promotion	Promotion
 Legal	Legal
 News	News
 News	
-Information/Explanation	News
+Information/Explanation	Information/Explanation
 Opinion/Argumentation	Opinion/Argumentation
 Other	Promotion
 News	News
@@ -795,7 +795,7 @@ Other	Other
 Forum	Opinion/Argumentation
 Promotion	Promotion
 Opinion/Argumentation Promotion	Promotion
-Opinion/Argumentation	Information/Explanation
+Opinion/Argumentation	
 Prose/Lyrical	Prose/Lyrical
 Promotion	Promotion
 Information/Explanation	Information/Explanation
@@ -810,25 +810,25 @@ Information/Explanation
 Opinion/Argumentation	Opinion/Argumentation
 Promotion	Promotion
 Promotion	Information/Explanation
-Other	
+Other	Information/Explanation
 Instruction Promotion	Instruction
 News	News
 Information/Explanation	Information/Explanation
 Promotion	Promotion
 News	News
-Opinion/Argumentation	Prose/Lyrical
+Opinion/Argumentation	Opinion/Argumentation
 News	News
-Legal	
+Legal	Legal
 Information/Explanation	Information/Explanation
-Opinion/Argumentation Promotion	Opinion/Argumentation
+Opinion/Argumentation Promotion	Promotion
 News	News
-Information/Explanation	Promotion
+Information/Explanation	Information/Explanation
 Promotion	Promotion
 Opinion/Argumentation	Opinion/Argumentation
 Promotion	Promotion
 Promotion	Promotion
 Promotion	Promotion
-Information/Explanation	Promotion
+Information/Explanation	Information/Explanation Promotion
 Information/Explanation	Information/Explanation
 News	News
 Promotion	Promotion
@@ -838,12 +838,12 @@ Forum Opinion/Argumentation	Opinion/Argumentation
 Legal Promotion	Promotion
 Promotion	Promotion
 Forum	Opinion/Argumentation
-Other	
+Other	News
 Instruction	Instruction
 Information/Explanation	Information/Explanation
 Promotion	Promotion
 News	News
-Instruction Opinion/Argumentation	Instruction Opinion/Argumentation
+Instruction Opinion/Argumentation	Instruction
 Other	Other
 Forum	Forum
 News	News
@@ -853,19 +853,19 @@ Promotion	Promotion
 Other	Promotion
 Opinion/Argumentation Promotion	Promotion
 Other	Other
-Information/Explanation	News
+Information/Explanation	Legal News
 Promotion	Promotion
 Information/Explanation	Information/Explanation
 Other	Promotion
-Instruction Promotion	Promotion
+Instruction Promotion	
 Opinion/Argumentation	Opinion/Argumentation
-Promotion	Promotion
+Promotion	
 Promotion	Promotion
 Promotion	Promotion
 Information/Explanation	Information/Explanation
 Information/Explanation	
-Prose/Lyrical	Opinion/Argumentation
-Information/Explanation	
+Prose/Lyrical	Opinion/Argumentation Prose/Lyrical
+Information/Explanation	Information/Explanation
 Promotion	
 Legal	Legal
 Forum	Forum
@@ -874,7 +874,7 @@ Opinion/Argumentation	Promotion
 Opinion/Argumentation	Opinion/Argumentation
 News	News
 Legal	Legal
-Information/Explanation	Instruction
+Information/Explanation	
 Information/Explanation	Information/Explanation
 Promotion	Promotion
 Promotion	Promotion
@@ -884,13 +884,13 @@ Information/Explanation	Information/Explanation
 Opinion/Argumentation	Information/Explanation
 News	News
 News	News
-Information/Explanation	
+Information/Explanation	Promotion
 Instruction	Instruction
 Prose/Lyrical	Prose/Lyrical
 Information/Explanation	News
 News	News
 Prose/Lyrical	Prose/Lyrical
-Forum Opinion/Argumentation	Instruction
+Forum Opinion/Argumentation	Opinion/Argumentation
 Other	Other
 Opinion/Argumentation	Opinion/Argumentation
 Promotion	Promotion
@@ -908,7 +908,7 @@ Information/Explanation	Information/Explanation
 Promotion	Promotion
 Promotion	Promotion
 Legal Promotion	Promotion
-Promotion	Opinion/Argumentation Promotion
+Promotion	Opinion/Argumentation
 Other	Information/Explanation
 Information/Explanation	Information/Explanation
 News	News
