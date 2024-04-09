@@ -1,160 +1,160 @@
-Other	Other
-Opinion/Argumentation	Opinion/Argumentation
-Prose/Lyrical	Prose/Lyrical
-News	News
-Information/Explanation	Information/Explanation
-News	Information/Explanation
-News	News
-News	News
-Promotion	Opinion/Argumentation
-Opinion/Argumentation Prose/Lyrical	Opinion/Argumentation
-Prose/Lyrical	Prose/Lyrical
-Prose/Lyrical	News
-Information/Explanation Opinion/Argumentation	Information/Explanation Other
-News	News
-News	News
-Instruction Promotion	Information/Explanation Promotion
-Information/Explanation Opinion/Argumentation	Information/Explanation
-News	News
-Prose/Lyrical	Opinion/Argumentation Prose/Lyrical
-News	News
-News	News
-News	News Opinion/Argumentation
-Information/Explanation	Information/Explanation
-Information/Explanation	Information/Explanation
-Opinion/Argumentation	Opinion/Argumentation
-Information/Explanation	Information/Explanation Prose/Lyrical
-News	News
-Other	Other
-Information/Explanation Opinion/Argumentation	Instruction Opinion/Argumentation
-News	News
-News	News
-News	News
-Instruction	Instruction
-Promotion	Information/Explanation Promotion
-Prose/Lyrical	Opinion/Argumentation Prose/Lyrical
-Information/Explanation	Information/Explanation
-Prose/Lyrical	Prose/Lyrical
-Information/Explanation	Information/Explanation
-News	News
-News	News
-News	News
-Information/Explanation	Information/Explanation
-Prose/Lyrical	Prose/Lyrical
-News	News
-News	News
-News	News
-News	News
-News	News
-News	News
-Information/Explanation	Opinion/Argumentation
-News	News
-Instruction	Instruction Other
-Information/Explanation Instruction	Information/Explanation
-News	News
-News	News
-News	News
-News	News
-Opinion/Argumentation	Opinion/Argumentation
-News	News
-News	News
-News	News
-Other	Other
-News	News
-Opinion/Argumentation	Opinion/Argumentation
-News	News
-Promotion	Information/Explanation
-Information/Explanation	Information/Explanation
-News	News
-Opinion/Argumentation	Opinion/Argumentation
-Prose/Lyrical	News Prose/Lyrical
-Information/Explanation	Information/Explanation Promotion
-Other	News
-Prose/Lyrical	Prose/Lyrical
-Information/Explanation	Information/Explanation
-News	News
-Prose/Lyrical	Prose/Lyrical
-News	News
-Promotion	Information/Explanation Instruction
-Prose/Lyrical	Prose/Lyrical
-Promotion	Information/Explanation
-Other	Forum Opinion/Argumentation
-Prose/Lyrical	Opinion/Argumentation
-Promotion	News
-Information/Explanation	Information/Explanation
-Instruction News	Information/Explanation News
-News	Information/Explanation Other
-Prose/Lyrical	Opinion/Argumentation Prose/Lyrical
-Information/Explanation	Opinion/Argumentation
-News	News
-News	News
-Information/Explanation Prose/Lyrical	Opinion/Argumentation Prose/Lyrical
-News	News
-News	News
-Information/Explanation	Information/Explanation
-News	News
-News	News
-Other	Forum
-Information/Explanation	Information/Explanation
-Information/Explanation	Information/Explanation
-News	News
-Information/Explanation	Information/Explanation Other
-News	News
-Promotion	Information/Explanation Opinion/Argumentation
-Legal	Legal
-Prose/Lyrical	Information/Explanation
-Information/Explanation Instruction	Instruction Other
-News	News
-News	News
-News	News
-Instruction Promotion	Instruction Promotion
-News	News
-News	News
-Opinion/Argumentation	Opinion/Argumentation
-Opinion/Argumentation	Opinion/Argumentation
-Information/Explanation	Information/Explanation
-News	News
-News	News
-News	News
-Information/Explanation Opinion/Argumentation	Information/Explanation
-Prose/Lyrical	Information/Explanation
-Information/Explanation	Information/Explanation Legal
-News	News
-Other	Other
-News	News
-News	News
-Instruction	Instruction Other
-Opinion/Argumentation	Opinion/Argumentation
-News	News
-News	News
-News	News
-Information/Explanation	Information/Explanation
-Information/Explanation	Information/Explanation Opinion/Argumentation
-News	News
-Promotion	Other
-News	News
-Promotion	Other Promotion
-News	News
-Information/Explanation	Information/Explanation
-Opinion/Argumentation Prose/Lyrical	Opinion/Argumentation Prose/Lyrical
-News	News
-News	News
-Information/Explanation	Information/Explanation
-Information/Explanation Instruction	Information/Explanation
-Information/Explanation	Information/Explanation
-News	News
-Opinion/Argumentation	Opinion/Argumentation
-Promotion	Information/Explanation Promotion
-News	News
-Information/Explanation	Information/Explanation
-News	News
-News	News
-Prose/Lyrical	News
-News	News
-Forum	Opinion/Argumentation Prose/Lyrical
-Opinion/Argumentation	Opinion/Argumentation
-Prose/Lyrical	Prose/Lyrical
-News	News
-Prose/Lyrical	Prose/Lyrical
-Prose/Lyrical	Prose/Lyrical
-News	News
+IN	IN
+HI OP	NA HI IP
+IP	IP
+NA IP	NA IP
+LY	LY
+NA IP	LY IP
+NA IP	NA IP
+NA IP	NA IP
+OP	HI
+HI IP	HI
+HI IP	HI IP
+IP	NA IP
+LY HI	LY IN
+NA IP	NA IP
+NA IP	NA IP
+SP OP	HI OP
+LY HI	LY
+NA IP	NA IP
+IP	IP
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+LY	LY
+LY	LY IP
+HI OP	HI
+LY	LY IP
+NA IP	NA IP
+IN	IN
+LY HI	SP HI
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+SP	SP
+OP	LY OP
+IP	IP
+LY	LY
+IP	IP
+LY	LY
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+LY	LY
+IP	IP
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+LY	LY HI
+NA IP	NA IP
+SP	IN
+LY SP	LY SP
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+HI	NA IP
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+IN	IN
+NA IP	NA IP
+HI	NA IP
+NA IP	NA IP
+OP	LY HI
+LY	LY
+NA IP	NA IP
+HI	HI IP
+IP	NA IP
+LY	LY OP
+IN	NA IP
+IP	IP
+LY	LY
+NA IP	NA IP
+IP	IP
+NA IP	NA IP
+OP	SP
+IP	IP
+OP	LY HI
+IN	IN
+IP	LY NA IP
+OP	LY NA IP
+LY	LY
+SP NA IP	LY NA IP
+NA IP	LY IN
+IP	IP
+LY	HI
+NA IP	NA IP
+NA IP	NA IP
+LY IP	IP
+NA IP	NA IP
+NA IP	NA IP
+LY	LY
+NA IP	NA IP
+NA IP	NA IP
+IN	MT
+LY	LY
+LY	LY
+NA IP	NA IP
+LY	LY IN
+NA IP	NA IP
+OP	LY HI
+LY ID	LY ID
+IP	LY IP
+LY SP	LY
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+SP OP	SP OP
+NA IP	NA IP
+NA IP	NA IP
+HI IP	HI IP
+HI	HI
+LY	LY
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+LY HI	LY HI
+IP	LY IP
+LY	LY IN
+NA IP	NA IP
+IN	IN
+NA IP	NA IP
+NA IP	NA IP
+SP	IN
+HI	HI
+NA IP	NA IP
+NA IP	NA IP
+NA IP	NA IP
+LY	LY
+LY	LY HI
+NA IP	NA IP
+OP	IN
+NA IP	NA IP
+OP	IN
+NA IP	NA IP
+LY	LY IP
+HI IP	IP
+NA IP	NA IP
+NA IP	NA IP
+LY	LY
+LY SP	LY
+LY	LY
+NA IP	NA IP
+HI IP	HI IP
+OP	LY
+NA IP	NA IP
+LY	LY
+NA IP	NA IP
+NA IP	NA IP
+IP	NA IP
+NA IP	NA IP
+MT	HI
+HI IP	HI IP
+IP	IP
+NA IP	NA IP
+IP	IP
+IP	IP
+NA IP	NA IP

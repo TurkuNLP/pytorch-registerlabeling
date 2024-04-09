@@ -1,27 +1,27 @@
-News	News
+News	News Opinion/Argumentation
 Information/Explanation	Information/Explanation
 Information/Explanation	News
 News	News
-Information/Explanation	Promotion
+Information/Explanation	Opinion/Argumentation Promotion
 News	News
 Prose/Lyrical	Opinion/Argumentation
-Information/Explanation	Promotion
+Information/Explanation	Information/Explanation Promotion
 Prose/Lyrical	Prose/Lyrical
 Forum	Forum
 News	News
 Information/Explanation	Promotion
 Promotion	Promotion
-Information/Explanation	Promotion
-Opinion/Argumentation	Opinion/Argumentation
+Information/Explanation	Information/Explanation
+Opinion/Argumentation	Opinion/Argumentation Prose/Lyrical
 News	News
 Instruction	Information/Explanation Instruction
 Information/Explanation	Promotion
 News	News
-Promotion	Information/Explanation Promotion
-Promotion	Promotion
+Promotion	Information/Explanation
+Promotion	News Promotion
 News	News
-Information/Explanation	Opinion/Argumentation
-Information/Explanation	
+Information/Explanation	Information/Explanation
+Information/Explanation	Information/Explanation Instruction
 Opinion/Argumentation	Opinion/Argumentation
 Information/Explanation	Instruction
 Opinion/Argumentation	Opinion/Argumentation
@@ -31,10 +31,10 @@ Opinion/Argumentation	Opinion/Argumentation
 Information/Explanation	Information/Explanation
 News	News
 News	News
-Prose/Lyrical	Opinion/Argumentation
+Prose/Lyrical	News Opinion/Argumentation
 Opinion/Argumentation	Instruction Opinion/Argumentation
 Opinion/Argumentation	Opinion/Argumentation
-Instruction	Instruction
+Instruction	Information/Explanation Instruction
 Forum	Opinion/Argumentation
 News	News
 Opinion/Argumentation	Promotion
@@ -44,7 +44,7 @@ Promotion	Promotion
 Information/Explanation	News
 Information/Explanation	Opinion/Argumentation
 Information/Explanation	Opinion/Argumentation
-Information/Explanation	
+Information/Explanation	Opinion/Argumentation
 Information/Explanation	Information/Explanation
 News	News
 Opinion/Argumentation	Promotion
@@ -57,53 +57,53 @@ Information/Explanation	Information/Explanation
 Opinion/Argumentation	Opinion/Argumentation
 Opinion/Argumentation	Opinion/Argumentation
 Information/Explanation	Information/Explanation
-Information/Explanation	Information/Explanation Opinion/Argumentation
+Information/Explanation	Information/Explanation Prose/Lyrical
 News	News
 Information/Explanation	Promotion
-News	Prose/Lyrical
-Other	Other
+News	Opinion/Argumentation
+Other	Opinion/Argumentation Other
 Promotion	Information/Explanation Promotion
 Opinion/Argumentation	Opinion/Argumentation
 News	News
 Opinion/Argumentation	Promotion
 Opinion/Argumentation	News
-Other	Other
+Other	Information/Explanation Other
 Information/Explanation	Information/Explanation
 Information/Explanation	Opinion/Argumentation
 Opinion/Argumentation	Opinion/Argumentation Promotion
 Promotion	Promotion
 News	News
 Information/Explanation	Promotion
-Other	
+Other	Information/Explanation
 Information/Explanation	Information/Explanation
 Information/Explanation	Opinion/Argumentation
 Promotion	Promotion
 Information/Explanation	Promotion
 Opinion/Argumentation	Opinion/Argumentation
-Opinion/Argumentation	
-Information/Explanation	Opinion/Argumentation
+Opinion/Argumentation	Promotion
+Information/Explanation	Information/Explanation Opinion/Argumentation
 Information/Explanation	Information/Explanation
 Information/Explanation	Information/Explanation
 Opinion/Argumentation	Promotion
 Information/Explanation Other	Promotion
+Opinion/Argumentation	Opinion/Argumentation Promotion
+Promotion	News Promotion
+Information/Explanation	Information/Explanation
+Information/Explanation	Information/Explanation Promotion
+Information/Explanation	Information/Explanation
 Opinion/Argumentation	Opinion/Argumentation
-Promotion	Promotion
-Information/Explanation	Information/Explanation
-Information/Explanation	Promotion
-Information/Explanation	Information/Explanation
-Opinion/Argumentation	
 Promotion	Promotion
 News	News
 Information/Explanation	News
 Opinion/Argumentation	Opinion/Argumentation
 Prose/Lyrical	Prose/Lyrical
-Promotion	Promotion
+Promotion	Instruction Promotion
 Opinion/Argumentation	Opinion/Argumentation
 Prose/Lyrical	Prose/Lyrical
 Legal	Legal
 News	News
 Opinion/Argumentation	Opinion/Argumentation
-Information/Explanation	Instruction
+Information/Explanation	Information/Explanation Instruction
 Legal	Legal
-Information/Explanation Opinion/Argumentation	Promotion
+Information/Explanation Opinion/Argumentation	Opinion/Argumentation Promotion
 News Opinion/Argumentation	Opinion/Argumentation
