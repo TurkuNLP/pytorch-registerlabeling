@@ -1,5 +1,5 @@
 import json
-
+import csv
 import matplotlib.pyplot as plt
 
 import numpy as np
@@ -14,7 +14,9 @@ from .data import get_dataset
 from .labels import label_schemes, decode_binary_labels
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-entropy = lambda probs: -(probs * np.log(probs) + (1 - probs) * np.log(1 - probs))
+calculate_entropy = lambda probs: -(
+    probs * np.log(probs) + (1 - probs) * np.log(1 - probs)
+)
 
 
 def predict(dataset, model, tokenizer, cfg):
@@ -57,14 +59,17 @@ def predict(dataset, model, tokenizer, cfg):
             best_f1 = f1
             best_threshold = threshold
 
+    final_preds = probs > best_threshold
+
     return {
         "f1": best_f1,
         "probs": probs,
-        "preds": probs > best_threshold,
+        "binary_preds": final_preds,
+        "binary_labels": labels,
         "threshold": best_threshold,
         "texts": decoded_texts,
         "true_labels": decode_binary_labels(labels, cfg.labels),
-        "pred_labels": decode_binary_labels(binary_predictions, cfg.labels),
+        "pred_labels": decode_binary_labels(final_preds, cfg.labels),
     }
 
 
@@ -94,7 +99,7 @@ def run(cfg):
     )
 
     result = predict(dataset, model, tokenizer, cfg)
-    entropies = entropy(result["probs"])
+    entropies = calculate_entropy(result["probs"])
 
     # Calculate mean, median, and max entropy for each example
     mean_entropies = [np.mean(e) for e in entropies]
@@ -138,46 +143,64 @@ def run(cfg):
 
         print(f"Saved: {full_path}")
 
-    exit()
-
-    for method in ["mean", "median", "max"]:
-
-        avg_entropies = methods[method](label_entropies, axis=1)
-
-        mean_entropies = [
-            np.mean(example_entropy) for example_entropy in label_entropies
-        ]
-        median_entropies = [
-            np.median(example_entropy) for example_entropy in label_entropies
-        ]
-        max_entropies = [np.max(example_entropy) for example_entropy in label_entropies]
-
-        print(label_entropies)
-
-        low_percentile, high_percentile = np.percentile(mean_entropies, [10, 90])
+        low_percentile, high_percentile = np.percentile(data, [5, 95])
 
         # Pair texts with their entropies and sort by entropy
         text_entropy_pairs = sorted(
-            zip(result["texts"], result["true_labels"], mean_entropies),
-            key=lambda x: x[1],
+            zip(
+                result["texts"],
+                result["true_labels"],
+                result["pred_labels"],
+                result["binary_labels"],
+                result["binary_preds"],
+                data,
+            ),
+            key=lambda x: x[-1],
         )
 
-        # Filter based on calculated percentiles
-        low_entropy_texts = [
-            (text, label)
-            for text, label, entropy in text_entropy_pairs
-            if entropy <= low_percentile
-        ]
-        high_entropy_texts = [
-            (text, label)
-            for text, label, entropy in text_entropy_pairs
-            if entropy >= high_percentile
-        ]
+        percentile_results = {"high_entropy": [], "low_entropy": []}
 
-        print("Low Entropy Texts:", low_entropy_texts)
-        print("High Entropy Texts:", high_entropy_texts)
+        for (
+            text,
+            true_label,
+            pred_label,
+            binary_label,
+            binary_pred,
+            entropy,
+        ) in text_entropy_pairs:
+            item = {
+                "text": text,
+                "true_label": true_label,
+                "pred_label": pred_label,
+                "binary_label": binary_label,
+                "binary_pred": binary_pred,
+                "entropy": entropy,
+            }
+            if entropy <= low_percentile:
+                percentile_results["low_entropy"].append(item)
+            elif entropy >= high_percentile:
+                percentile_results["high_entropy"].append(item)
 
-        exit()
+        for key, val in percentile_results.items():
+      
+            percentile_f1 = f1_score(
+                [item["binary_label"] for item in val],
+                [item["binary_pred"] for item in val],
+                average="micro",
+            )
+            print(f"{key} percentile F1: {percentile_f1}")
+
+            output_file_path = f"output/{cfg.test}_{key}.tsv"
+            
+            with open(output_file_path, mode="w", newline="", encoding="utf-8") as file:
+                fieldnames = ["entropy", "true_label", "pred_label", "text"]
+                writer = csv.DictWriter(file, fieldnames=fieldnames, delimiter="\t")
+                writer.writeheader()
+                for item in val:
+                    filtered_item = {k: item[k] for k in fieldnames}
+                    writer.writerow(filtered_item)
+
+    exit()
 
     # To get an uncertainty measure per example, you can take the mean entropy across all labels for each example
     example_uncertainty = np.mean(label_entropies, axis=1)
