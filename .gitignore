@@ -17,11 +17,9 @@ tmp
 logs
 log
 wandb
-checkpoints
-tokens_cache
 instruction_based
 .wandb
-hf_results
 token.json
 credentials.json
 models
+test.py

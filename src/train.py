@@ -218,6 +218,12 @@ def run(cfg):
         device_map="auto" if "mixtral" in cfg.model_name.lower() else None,
     )
 
+    label2id = {label: id for id, label in enumerate(label_scheme)}
+    id2label = {id: label for label, id in label2id.items()}
+
+    model.config.label2id = label2id
+    model.config.id2label = id2label
+
     if cfg.peft:
         if cfg.just_evaluate:
             model = PeftModel.from_pretrained(model, model_output_dir)

@@ -13,19 +13,26 @@ s = lambda x: "{\scriptsize" + f"({x:.2f})" + "}"
 
 def run(cfg):
 
-    results_path = f"predictions/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}"
+    results_path = f"predictions/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/{cfg.train}_{cfg.dev}"
     results = {}
     for seed in [42, 43, 44]:
-        for file_path in glob.glob(f"{results_path}/seed_{seed}/metrics*.json"):
-            language = file_path.split("_")[-1].split(".json")[0]
+        seed_files = glob.glob(
+            f"{results_path}/seed_{seed}/{cfg.labels}_{cfg.predict_labels}*.json"
+        )
+
+        if not seed_files:
+            print(f"Seed {seed} results missing.")
+            exit()
+
+        for file_path in seed_files:
+
+            language = file_path.split("_metrics.json")[0].split("_")[-1]
             if language not in results:
                 results[language] = {"f1": [], "pr_auc": []}
 
             data = json.load(open(file_path, "r", encoding="utf-8"))
             results[language]["f1"].append(data["f1"] * 100)
             results[language]["pr_auc"].append(data["pr_auc"] * 100)
-
-    assert all([len(v["f1"]) == 3 for v in results.values()])
 
     main_languages = ["en", "fi", "fr", "sv", "tr"]
 
