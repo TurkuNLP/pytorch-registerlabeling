@@ -182,7 +182,7 @@ def run(cfg):
                 percentile_results["high_entropy"].append(item)
 
         for key, val in percentile_results.items():
-      
+
             percentile_f1 = f1_score(
                 [item["binary_label"] for item in val],
                 [item["binary_pred"] for item in val],
@@ -190,8 +190,8 @@ def run(cfg):
             )
             print(f"{key} percentile F1: {percentile_f1}")
 
-            output_file_path = f"output/{cfg.test}_{key}.tsv"
-            
+            output_file_path = f"output/{cfg.test}_{filename.split('_')[0]}_{key}.tsv"
+
             with open(output_file_path, mode="w", newline="", encoding="utf-8") as file:
                 fieldnames = ["entropy", "true_label", "pred_label", "text"]
                 writer = csv.DictWriter(file, fieldnames=fieldnames, delimiter="\t")
