@@ -173,6 +173,10 @@ def get_dataset(cfg, tokenizer):
             max_length=cfg.max_length,
             padding="max_length",
         ),
-        remove_columns=(["text"]),
+        remove_columns=(
+            (["text"])
+            if not (hasattr(cfg, "keep_columns") and cfg.keep_columns)
+            else None
+        ),
         batched=True,
     )
