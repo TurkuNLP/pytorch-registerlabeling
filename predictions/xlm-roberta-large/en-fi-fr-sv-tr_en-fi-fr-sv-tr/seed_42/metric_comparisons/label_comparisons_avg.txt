@@ -1,0 +1,192 @@
+LANGUAGE: ar
+
+f1-score all-all: 0.6373056994818653
+-----
+f1-score all-upper: 0.6666666666666666
+f1-score upper-upper: 0.6949152542372882
+UPPER-UPPER IS BETTER
+-----
+f1-score all-xgenre: 0.7058823529411765
+f1-score xgenre-xgenre: 0.653061224489796
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: ca
+
+f1-score all-all: 0.6038781163434903
+-----
+f1-score all-upper: 0.6311475409836065
+f1-score upper-upper: 0.6350710900473934
+UPPER-UPPER IS BETTER
+-----
+f1-score all-xgenre: 0.6876971608832808
+f1-score xgenre-xgenre: 0.6393442622950819
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: en
+
+f1-score all-all: 0.7174323799663518
+-----
+f1-score all-upper: 0.7422254720633145
+f1-score upper-upper: 0.7387478693509008
+BOTH ARE THE SAME
+-----
+f1-score all-xgenre: 0.7759930189715912
+f1-score xgenre-xgenre: 0.727929080606836
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: es
+
+f1-score all-all: 0.6120996441281139
+-----
+f1-score all-upper: 0.6774193548387097
+f1-score upper-upper: 0.6564102564102563
+ALL-UPPER IS BETTER
+-----
+f1-score all-xgenre: 0.7125506072874493
+f1-score xgenre-xgenre: 0.6422018348623852
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: fa
+
+f1-score all-all: 0.7195121951219512
+-----
+f1-score all-upper: 0.7344632768361581
+f1-score upper-upper: 0.7052023121387284
+ALL-UPPER IS BETTER
+-----
+f1-score all-xgenre: 0.7589285714285714
+f1-score xgenre-xgenre: 0.711864406779661
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: fi
+
+f1-score all-all: 0.7935570469798657
+-----
+f1-score all-upper: 0.8195731838758353
+f1-score upper-upper: 0.8178927284290863
+BOTH ARE THE SAME
+-----
+f1-score all-xgenre: 0.8296632124352331
+f1-score xgenre-xgenre: 0.7869212201009436
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: fr
+
+f1-score all-all: 0.7553665451599838
+-----
+f1-score all-upper: 0.7854278074866311
+f1-score upper-upper: 0.7813267813267813
+ALL-UPPER IS BETTER
+-----
+f1-score all-xgenre: 0.7894010488545404
+f1-score xgenre-xgenre: 0.7735849056603773
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: hi
+
+f1-score all-all: 0.7899159663865546
+-----
+f1-score all-upper: 0.7887323943661972
+f1-score upper-upper: 0.7964071856287425
+UPPER-UPPER IS BETTER
+-----
+f1-score all-xgenre: 0.8421052631578947
+f1-score xgenre-xgenre: 0.7616099071207432
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: id
+
+f1-score all-all: 0.6061903193941389
+-----
+f1-score all-upper: 0.6160544217687074
+f1-score upper-upper: 0.6167471819645733
+BOTH ARE THE SAME
+-----
+f1-score all-xgenre: 0.6695595573877198
+f1-score xgenre-xgenre: 0.6002252252252253
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: jp
+
+f1-score all-all: 0.5454545454545454
+-----
+f1-score all-upper: 0.6324786324786325
+f1-score upper-upper: 0.6137566137566136
+ALL-UPPER IS BETTER
+-----
+f1-score all-xgenre: 0.6601307189542484
+f1-score xgenre-xgenre: 0.6697674418604651
+XGENRE-XGENRE IS BETTER
+------------------
+LANGUAGE: no
+
+f1-score all-all: 0.6546184738955824
+-----
+f1-score all-upper: 0.6996466431095406
+f1-score upper-upper: 0.6911764705882353
+ALL-UPPER IS BETTER
+-----
+f1-score all-xgenre: 0.7150259067357513
+f1-score xgenre-xgenre: 0.7017543859649124
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: pt
+
+f1-score all-all: 0.6631339894019682
+-----
+f1-score all-upper: 0.681948424068768
+f1-score upper-upper: 0.6884816753926702
+UPPER-UPPER IS BETTER
+-----
+f1-score all-xgenre: 0.7012987012987013
+f1-score xgenre-xgenre: 0.6257142857142857
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: sv
+
+f1-score all-all: 0.8027160946962746
+-----
+f1-score all-upper: 0.8190779014308427
+f1-score upper-upper: 0.8117609459891338
+ALL-UPPER IS BETTER
+-----
+f1-score all-xgenre: 0.8326612903225806
+f1-score xgenre-xgenre: 0.8093287109990546
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: tr
+
+f1-score all-all: 0.7842445620223398
+-----
+f1-score all-upper: 0.7893660531697342
+f1-score upper-upper: 0.7576054955839059
+ALL-UPPER IS BETTER
+-----
+f1-score all-xgenre: 0.8150422102839602
+f1-score xgenre-xgenre: 0.7714907508161045
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: ur
+
+f1-score all-all: 0.8224582701062215
+-----
+f1-score all-upper: 0.8351648351648352
+f1-score upper-upper: 0.8357348703170029
+BOTH ARE THE SAME
+-----
+f1-score all-xgenre: 0.8844221105527639
+f1-score xgenre-xgenre: 0.8192771084337349
+ALL-XGENRE IS BETTER
+------------------
+LANGUAGE: zh
+
+f1-score all-all: 0.6624548736462094
+-----
+f1-score all-upper: 0.6933333333333332
+f1-score upper-upper: 0.6732394366197182
+ALL-UPPER IS BETTER
+-----
+f1-score all-xgenre: 0.6927939317319848
+f1-score xgenre-xgenre: 0.637037037037037
+ALL-XGENRE IS BETTER
+------------------

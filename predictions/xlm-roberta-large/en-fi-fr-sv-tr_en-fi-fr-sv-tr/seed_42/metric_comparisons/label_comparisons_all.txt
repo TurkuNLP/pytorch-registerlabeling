@@ -1,0 +1,1296 @@
+LANGUAGE: ar
+
+f1-score all-all: 0.6373056994818653
+-----
+label: MT
+f1-score all-all: 0.5
+
+label: LY
+f1-score all-all: 0.0
+
+label: SP
+f1-score all-all: 0.0
+
+label: ID
+f1-score all-all: 0.5
+
+label: NA
+f1-score all-all: 0.88
+
+label: HI
+f1-score all-all: 0.5
+
+label: IN
+f1-score all-all: 0.6
+
+label: OP
+f1-score all-all: 0.6285714285714286
+
+label: IP
+f1-score all-all: 0.5142857142857142
+
+label: it
+f1-score all-all: 0.0
+
+label: ne
+f1-score all-all: 0.8727272727272727
+
+label: sr
+f1-score all-all: 0.7692307692307693
+
+label: nb
+f1-score all-all: 0.0
+
+label: re
+f1-score all-all: 1.0
+
+label: en
+f1-score all-all: 1.0
+
+label: ra
+f1-score all-all: 0.6666666666666666
+
+label: dtp
+f1-score all-all: 0.26666666666666666
+
+label: fi
+f1-score all-all: 0.0
+
+label: lt
+f1-score all-all: 0.5714285714285714
+
+label: rv
+f1-score all-all: 0.2
+
+label: ob
+f1-score all-all: 0.4444444444444444
+
+label: rs
+f1-score all-all: 0.8333333333333334
+
+label: av
+f1-score all-all: 1.0
+
+label: ds
+f1-score all-all: 0.0
+
+label: ed
+f1-score all-all: 0.0
+
+------
+-------------------------------------
+LANGUAGE: ca
+
+f1-score all-all: 0.6038781163434903
+-----
+label: MT
+f1-score all-all: 0.0
+
+label: LY
+f1-score all-all: 0.6666666666666666
+
+label: SP
+f1-score all-all: 0.6666666666666666
+
+label: ID
+f1-score all-all: 0.6666666666666666
+
+label: NA
+f1-score all-all: 0.7671232876712328
+
+label: HI
+f1-score all-all: 0.6666666666666666
+
+label: IN
+f1-score all-all: 0.5714285714285714
+
+label: OP
+f1-score all-all: 0.4166666666666667
+
+label: IP
+f1-score all-all: 0.5853658536585366
+
+label: it
+f1-score all-all: 1.0
+
+label: ne
+f1-score all-all: 0.8
+
+label: sr
+f1-score all-all: 1.0
+
+label: nb
+f1-score all-all: 0.46153846153846156
+
+label: re
+f1-score all-all: 0.0
+
+label: en
+f1-score all-all: 0.5714285714285714
+
+label: ra
+f1-score all-all: 0.6666666666666666
+
+label: dtp
+f1-score all-all: 0.631578947368421
+
+label: fi
+f1-score all-all: 0.0
+
+label: lt
+f1-score all-all: 1.0
+
+label: rv
+f1-score all-all: 0.4
+
+label: ob
+f1-score all-all: 0.3333333333333333
+
+label: rs
+f1-score all-all: 0.0
+
+label: av
+f1-score all-all: 0.0
+
+label: ds
+f1-score all-all: 0.3157894736842105
+
+label: ed
+f1-score all-all: 0.0
+
+------
+-------------------------------------
+LANGUAGE: en
+
+f1-score all-all: 0.7174323799663518
+-----
+label: MT
+f1-score all-all: 0.0
+
+label: LY
+f1-score all-all: 0.875
+
+label: SP
+f1-score all-all: 0.7086092715231788
+
+label: ID
+f1-score all-all: 0.8260547742413027
+
+label: NA
+f1-score all-all: 0.8275486889348276
+
+label: HI
+f1-score all-all: 0.5877192982456141
+
+label: IN
+f1-score all-all: 0.701519536903039
+
+label: OP
+f1-score all-all: 0.6612623045744065
+
+label: IP
+f1-score all-all: 0.5263157894736842
+
+label: it
+f1-score all-all: 0.7142857142857143
+
+label: ne
+f1-score all-all: 0.8019425675675675
+
+label: sr
+f1-score all-all: 0.8871834228702993
+
+label: nb
+f1-score all-all: 0.6587301587301587
+
+label: re
+f1-score all-all: 0.8695652173913043
+
+label: en
+f1-score all-all: 0.7751196172248804
+
+label: ra
+f1-score all-all: 0.6520376175548589
+
+label: dtp
+f1-score all-all: 0.5196641626159965
+
+label: fi
+f1-score all-all: 0.46601941747572817
+
+label: lt
+f1-score all-all: 0.6753246753246753
+
+label: rv
+f1-score all-all: 0.6800947867298578
+
+label: ob
+f1-score all-all: 0.5496246872393661
+
+label: rs
+f1-score all-all: 0.6961325966850829
+
+label: av
+f1-score all-all: 0.4222737819025522
+
+label: ds
+f1-score all-all: 0.6163021868787276
+
+label: ed
+f1-score all-all: 0.0
+
+------
+-------------------------------------
+LANGUAGE: es
+
+f1-score all-all: 0.6120996441281139
+-----
+label: MT
+f1-score all-all: 0.3333333333333333
+
+label: LY
+f1-score all-all: 0.0
+
+label: SP
+f1-score all-all: 0.0
+
+label: ID
+f1-score all-all: 0.3333333333333333
+
+label: NA
+f1-score all-all: 0.8852459016393442
+
+label: HI
+f1-score all-all: 0.4444444444444444
+
+label: IN
+f1-score all-all: 0.47368421052631576
+
+label: OP
+f1-score all-all: 0.2857142857142857
+
+label: IP
+f1-score all-all: 0.7407407407407407
+
+label: it
+f1-score all-all: 0.0
+
+label: ne
+f1-score all-all: 0.8235294117647058
+
+label: sr
+f1-score all-all: 0.6666666666666666
+
+label: nb
+f1-score all-all: 0.7272727272727273
+
+label: re
+f1-score all-all: 1.0
+
+label: en
+f1-score all-all: 0.0
+
+label: ra
+f1-score all-all: 0.0
+
+label: dtp
+f1-score all-all: 0.11764705882352941
+
+label: fi
+f1-score all-all: 0.0
+
+label: lt
+f1-score all-all: 0.8
+
+label: rv
+f1-score all-all: 0.0
+
+label: ob
+f1-score all-all: 0.0
+
+label: rs
+f1-score all-all: 1.0
+
+label: av
+f1-score all-all: 0.0
+
+label: ds
+f1-score all-all: 0.0
+
+label: ed
+f1-score all-all: 0.0
+
+------
+-------------------------------------
+LANGUAGE: fa
+
+f1-score all-all: 0.7195121951219512
+-----
+label: MT
+f1-score all-all: 0.6666666666666666
+
+label: LY
+f1-score all-all: 0.8
+
+label: SP
+f1-score all-all: 0.0
+
+label: ID
+f1-score all-all: 0.0
+
+label: NA
+f1-score all-all: 0.8636363636363636
+
+label: HI
+f1-score all-all: 0.7272727272727273
+
+label: IN
+f1-score all-all: 0.7428571428571429
+
+label: OP
+f1-score all-all: 0.5806451612903226
+
+label: IP
+f1-score all-all: 0.72
+
+label: it
+f1-score all-all: 0.0
+
+label: ne
+f1-score all-all: 0.8333333333333334
+
+label: sr
+f1-score all-all: 0.7272727272727273
+
+label: nb
+f1-score all-all: 0.0
+
+label: re
+f1-score all-all: 0.0
+
+label: en
+f1-score all-all: 0.0
+
+label: ra
+f1-score all-all: 0.0
+
+label: dtp
+f1-score all-all: 0.6153846153846154
+
+label: fi
+f1-score all-all: 0.0
+
+label: lt
+f1-score all-all: 1.0
+
+label: rv
+f1-score all-all: 0.0
+
+label: ob
+f1-score all-all: 0.4
+
+label: rs
+f1-score all-all: 0.0
+
+label: av
+f1-score all-all: 0.8571428571428571
+
+label: ds
+f1-score all-all: 0.7619047619047619
+
+label: ed
+f1-score all-all: 0.4
+
+------
+-------------------------------------
+LANGUAGE: fi
+
+f1-score all-all: 0.7935570469798657
+-----
+label: MT
+f1-score all-all: 0.9764065335753176
+
+label: LY
+f1-score all-all: 0.25
+
+label: SP
+f1-score all-all: 0.6896551724137931
+
+label: ID
+f1-score all-all: 0.8299319727891157
+
+label: NA
+f1-score all-all: 0.8580521960534692
+
+label: HI
+f1-score all-all: 0.7064220183486238
+
+label: IN
+f1-score all-all: 0.7219917012448133
+
+label: OP
+f1-score all-all: 0.7804054054054054
+
+label: IP
+f1-score all-all: 0.7707509881422925
+
+label: it
+f1-score all-all: 0.7
+
+label: ne
+f1-score all-all: 0.7520325203252033
+
+label: sr
+f1-score all-all: 0.9130434782608695
+
+label: nb
+f1-score all-all: 0.8034934497816594
+
+label: re
+f1-score all-all: 0.8
+
+label: en
+f1-score all-all: 0.6736842105263158
+
+label: ra
+f1-score all-all: 0.7142857142857143
+
+label: dtp
+f1-score all-all: 0.5567010309278351
+
+label: fi
+f1-score all-all: 0.5714285714285714
+
+label: lt
+f1-score all-all: 0.6530612244897959
+
+label: rv
+f1-score all-all: 0.8235294117647058
+
+label: ob
+f1-score all-all: 0.6111111111111112
+
+label: rs
+f1-score all-all: 0.8522727272727273
+
+label: av
+f1-score all-all: 0.0
+
+label: ds
+f1-score all-all: 0.8106796116504854
+
+label: ed
+f1-score all-all: 0.0
+
+------
+-------------------------------------
+LANGUAGE: fr
+
+f1-score all-all: 0.7553665451599838
+-----
+label: MT
+f1-score all-all: 0.8166666666666667
+
+label: LY
+f1-score all-all: 0.8571428571428571
+
+label: SP
+f1-score all-all: 0.6666666666666666
+
+label: ID
+f1-score all-all: 0.9008264462809917
+
+label: NA
+f1-score all-all: 0.7976366322008862
+
+label: HI
+f1-score all-all: 0.7111111111111111
+
+label: IN
+f1-score all-all: 0.781437125748503
+
+label: OP
+f1-score all-all: 0.6557377049180327
+
+label: IP
+f1-score all-all: 0.8020176544766708
+
+label: it
+f1-score all-all: 0.7142857142857143
+
+label: ne
+f1-score all-all: 0.7603305785123967
+
+label: sr
+f1-score all-all: 0.9090909090909091
+
+label: nb
+f1-score all-all: 0.7071428571428572
+
+label: re
+f1-score all-all: 0.8
+
+label: en
+f1-score all-all: 0.8108108108108109
+
+label: ra
+f1-score all-all: 0.4444444444444444
+
+label: dtp
+f1-score all-all: 0.6066066066066066
+
+label: fi
+f1-score all-all: 0.7142857142857143
+
+label: lt
+f1-score all-all: 0.7777777777777778
+
+label: rv
+f1-score all-all: 0.7651006711409396
+
+label: ob
+f1-score all-all: 0.5172413793103449
+
+label: rs
+f1-score all-all: 0.6363636363636364
+
+label: av
+f1-score all-all: 0.4166666666666667
+
+label: ds
+f1-score all-all: 0.7613636363636364
+
+label: ed
+f1-score all-all: 0.0
+
+------
+-------------------------------------
+LANGUAGE: hi
+
+f1-score all-all: 0.7899159663865546
+-----
+label: MT
+f1-score all-all: 0.42105263157894735
+
+label: LY
+f1-score all-all: 0.96
+
+label: SP
+f1-score all-all: 0.0
+
+label: ID
+f1-score all-all: 0.0
+
+label: NA
+f1-score all-all: 0.9341317365269461
+
+label: HI
+f1-score all-all: 0.46153846153846156
+
+label: IN
+f1-score all-all: 0.7631578947368421
+
+label: OP
+f1-score all-all: 0.6
+
+label: IP
+f1-score all-all: 0.47619047619047616
+
+label: it
+f1-score all-all: 0.0
+
+label: ne
+f1-score all-all: 0.9444444444444444
+
+label: sr
+f1-score all-all: 0.4
+
+label: nb
+f1-score all-all: 0.5
+
+label: re
+f1-score all-all: 1.0
+
+label: en
+f1-score all-all: 0.7272727272727273
+
+label: ra
+f1-score all-all: 0.0
+
+label: dtp
+f1-score all-all: 0.6875
+
+label: fi
+f1-score all-all: 0.0
+
+label: lt
+f1-score all-all: 0.6666666666666666
+
+label: rv
+f1-score all-all: 0.0
+
+label: ob
+f1-score all-all: 0.2857142857142857
+
+label: rs
+f1-score all-all: 0.6666666666666666
+
+label: av
+f1-score all-all: 0.5333333333333333
+
+label: ds
+f1-score all-all: 0.0
+
+label: ed
+f1-score all-all: 0.6666666666666666
+
+------
+-------------------------------------
+LANGUAGE: id
+
+f1-score all-all: 0.6061903193941389
+-----
+label: MT
+f1-score all-all: 0.3157894736842105
+
+label: LY
+f1-score all-all: 0.88
+
+label: SP
+f1-score all-all: 0.0
+
+label: ID
+f1-score all-all: 0.23333333333333334
+
+label: NA
+f1-score all-all: 0.8052190121155638
+
+label: HI
+f1-score all-all: 0.5836575875486382
+
+label: IN
+f1-score all-all: 0.49406175771971494
+
+label: OP
+f1-score all-all: 0.5495327102803739
+
+label: IP
+f1-score all-all: 0.7151702786377709
+
+label: it
+f1-score all-all: 0.0
+
+label: ne
+f1-score all-all: 0.8809135399673735
+
+label: sr
+f1-score all-all: 0.8775510204081632
+
+label: nb
+f1-score all-all: 0.4092664092664093
+
+label: re
+f1-score all-all: 0.7857142857142857
+
+label: en
+f1-score all-all: 0.4
+
+label: ra
+f1-score all-all: 0.5
+
+label: dtp
+f1-score all-all: 0.2691131498470948
+
+label: fi
+f1-score all-all: 0.4
+
+label: lt
+f1-score all-all: 0.2962962962962963
+
+label: rv
+f1-score all-all: 0.5192307692307693
+
+label: ob
+f1-score all-all: 0.23943661971830985
+
+label: rs
+f1-score all-all: 0.696969696969697
+
+label: av
+f1-score all-all: 0.40268456375838924
+
+label: ds
+f1-score all-all: 0.704225352112676
+
+label: ed
+f1-score all-all: 0.0
+
+------
+-------------------------------------
+LANGUAGE: jp
+
+f1-score all-all: 0.5454545454545454
+-----
+label: MT
+f1-score all-all: 0.25
+
+label: LY
+f1-score all-all: 0.0
+
+label: SP
+f1-score all-all: 1.0
+
+label: ID
+f1-score all-all: 0.6666666666666666
+
+label: NA
+f1-score all-all: 0.6557377049180327
+
+label: HI
+f1-score all-all: 0.625
+
+label: IN
+f1-score all-all: 0.5769230769230769
+
+label: OP
+f1-score all-all: 0.19047619047619047
+
+label: IP
+f1-score all-all: 0.7894736842105263
+
+label: it
+f1-score all-all: 1.0
+
+label: ne
+f1-score all-all: 0.0
+
+label: sr
+f1-score all-all: 0.0
+
+label: nb
+f1-score all-all: 0.6666666666666666
+
+label: re
+f1-score all-all: 0.0
+
+label: en
+f1-score all-all: 0.0
+
+label: ra
+f1-score all-all: 0.0
+
+label: dtp
+f1-score all-all: 0.5
+
+label: fi
+f1-score all-all: 0.0
+
+label: lt
+f1-score all-all: 0.5
+
+label: rv
+f1-score all-all: 0.0
+
+label: ob
+f1-score all-all: 0.0
+
+label: rs
+f1-score all-all: 0.0
+
+label: av
+f1-score all-all: 0.25
+
+label: ds
+f1-score all-all: 0.0
+
+label: ed
+f1-score all-all: 0.0
+
+------
+-------------------------------------
+LANGUAGE: no
+
+f1-score all-all: 0.6546184738955824
+-----
+label: MT
+f1-score all-all: 0.7878787878787878
+
+label: LY
+f1-score all-all: 0.0
+
+label: SP
+f1-score all-all: 0.0
+
+label: ID
+f1-score all-all: 0.6666666666666666
+
+label: NA
+f1-score all-all: 0.7142857142857143
+
+label: HI
+f1-score all-all: 0.7368421052631579
+
+label: IN
+f1-score all-all: 0.6493506493506493
+
+label: OP
+f1-score all-all: 0.4
+
+label: IP
+f1-score all-all: 0.735632183908046
+
+label: it
+f1-score all-all: 0.0
+
+label: ne
+f1-score all-all: 0.7368421052631579
+
+label: sr
+f1-score all-all: 0.5714285714285714
+
+label: nb
+f1-score all-all: 0.5714285714285714
+
+label: re
+f1-score all-all: 0.5
+
+label: en
+f1-score all-all: 0.8571428571428571
+
+label: ra
+f1-score all-all: 0.0
+
+label: dtp
+f1-score all-all: 0.41025641025641024
+
+label: fi
+f1-score all-all: 0.2857142857142857
+
+label: lt
+f1-score all-all: 0.5
+
+label: rv
+f1-score all-all: 0.3333333333333333
+
+label: ob
+f1-score all-all: 0.0
+
+label: rs
+f1-score all-all: 0.0
+
+label: av
+f1-score all-all: 0.0
+
+label: ds
+f1-score all-all: 0.7894736842105263
+
+label: ed
+f1-score all-all: 0.0
+
+------
+-------------------------------------
+LANGUAGE: pt
+
+f1-score all-all: 0.6631339894019682
+-----
+label: MT
+f1-score all-all: 0.0
+
+label: LY
+f1-score all-all: 0.0
+
+label: SP
+f1-score all-all: 0.0
+
+label: ID
+f1-score all-all: 0.3333333333333333
+
+label: NA
+f1-score all-all: 0.8451882845188284
+
+label: HI
+f1-score all-all: 0.5306122448979592
+
+label: IN
+f1-score all-all: 0.515625
+
+label: OP
+f1-score all-all: 0.4931506849315068
+
+label: IP
+f1-score all-all: 0.7818181818181819
+
+label: it
+f1-score all-all: 0.0
+
+label: ne
+f1-score all-all: 0.7439024390243902
+
+label: sr
+f1-score all-all: 0.6666666666666666
+
+label: nb
+f1-score all-all: 0.3902439024390244
+
+label: re
+f1-score all-all: 0.9090909090909091
+
+label: en
+f1-score all-all: 0.0
+
+label: ra
+f1-score all-all: 0.0
+
+label: dtp
+f1-score all-all: 0.36363636363636365
+
+label: fi
+f1-score all-all: 0.0
+
+label: lt
+f1-score all-all: 0.6363636363636364
+
+label: rv
+f1-score all-all: 0.5
+
+label: ob
+f1-score all-all: 0.4
+
+label: rs
+f1-score all-all: 0.8888888888888888
+
+label: av
+f1-score all-all: 0.2
+
+label: ds
+f1-score all-all: 0.7604166666666666
+
+label: ed
+f1-score all-all: 0.0
+
+------
+-------------------------------------
+LANGUAGE: sv
+
+f1-score all-all: 0.8027160946962746
+-----
+label: MT
+f1-score all-all: 0.8660714285714286
+
+label: LY
+f1-score all-all: 0.7692307692307693
+
+label: SP
+f1-score all-all: 0.6666666666666666
+
+label: ID
+f1-score all-all: 0.74
+
+label: NA
+f1-score all-all: 0.8567774936061381
+
+label: HI
+f1-score all-all: 0.6962962962962963
+
+label: IN
+f1-score all-all: 0.8111888111888111
+
+label: OP
+f1-score all-all: 0.7339449541284404
+
+label: IP
+f1-score all-all: 0.8446601941747572
+
+label: it
+f1-score all-all: 0.5
+
+label: ne
+f1-score all-all: 0.7796610169491526
+
+label: sr
+f1-score all-all: 0.6923076923076923
+
+label: nb
+f1-score all-all: 0.84375
+
+label: re
+f1-score all-all: 0.9411764705882353
+
+label: en
+f1-score all-all: 0.9438202247191011
+
+label: ra
+f1-score all-all: 0.0
+
+label: dtp
+f1-score all-all: 0.5
+
+label: fi
+f1-score all-all: 0.8461538461538461
+
+label: lt
+f1-score all-all: 0.75
+
+label: rv
+f1-score all-all: 0.7575757575757576
+
+label: ob
+f1-score all-all: 0.6545454545454545
+
+label: rs
+f1-score all-all: 0.7058823529411765
+
+label: av
+f1-score all-all: 0.5454545454545454
+
+label: ds
+f1-score all-all: 0.804416403785489
+
+label: ed
+f1-score all-all: 0.0
+
+------
+-------------------------------------
+LANGUAGE: tr
+
+f1-score all-all: 0.7842445620223398
+-----
+label: MT
+f1-score all-all: 0.78
+
+label: LY
+f1-score all-all: 0.5454545454545454
+
+label: SP
+f1-score all-all: 0.631578947368421
+
+label: ID
+f1-score all-all: 0.5142857142857142
+
+label: NA
+f1-score all-all: 0.8997867803837953
+
+label: HI
+f1-score all-all: 0.7941176470588235
+
+label: IN
+f1-score all-all: 0.7272727272727273
+
+label: OP
+f1-score all-all: 0.611764705882353
+
+label: IP
+f1-score all-all: 0.8213689482470785
+
+label: it
+f1-score all-all: 0.7272727272727273
+
+label: ne
+f1-score all-all: 0.8928571428571429
+
+label: sr
+f1-score all-all: 0.7096774193548387
+
+label: nb
+f1-score all-all: 0.6956521739130435
+
+label: re
+f1-score all-all: 1.0
+
+label: en
+f1-score all-all: 0.25
+
+label: ra
+f1-score all-all: 0.0
+
+label: dtp
+f1-score all-all: 0.5714285714285714
+
+label: fi
+f1-score all-all: 0.0
+
+label: lt
+f1-score all-all: 0.7592592592592593
+
+label: rv
+f1-score all-all: 0.5098039215686274
+
+label: ob
+f1-score all-all: 0.21428571428571427
+
+label: rs
+f1-score all-all: 0.8571428571428571
+
+label: av
+f1-score all-all: 0.6
+
+label: ds
+f1-score all-all: 0.8198019801980198
+
+label: ed
+f1-score all-all: 0.676923076923077
+
+------
+-------------------------------------
+LANGUAGE: ur
+
+f1-score all-all: 0.8224582701062215
+-----
+label: MT
+f1-score all-all: 0.25
+
+label: LY
+f1-score all-all: 1.0
+
+label: SP
+f1-score all-all: 0.0
+
+label: ID
+f1-score all-all: 0.25
+
+label: NA
+f1-score all-all: 0.9547738693467337
+
+label: HI
+f1-score all-all: 0.6666666666666666
+
+label: IN
+f1-score all-all: 0.6190476190476191
+
+label: OP
+f1-score all-all: 0.821917808219178
+
+label: IP
+f1-score all-all: 0.4444444444444444
+
+label: it
+f1-score all-all: 0.0
+
+label: ne
+f1-score all-all: 0.9822485207100592
+
+label: sr
+f1-score all-all: 0.8333333333333334
+
+label: nb
+f1-score all-all: 0.5
+
+label: re
+f1-score all-all: 0.0
+
+label: en
+f1-score all-all: 0.8571428571428571
+
+label: ra
+f1-score all-all: 0.0
+
+label: dtp
+f1-score all-all: 0.3076923076923077
+
+label: fi
+f1-score all-all: 0.0
+
+label: lt
+f1-score all-all: 0.0
+
+label: rv
+f1-score all-all: 0.6666666666666666
+
+label: ob
+f1-score all-all: 0.5
+
+label: rs
+f1-score all-all: 0.8108108108108109
+
+label: av
+f1-score all-all: 0.4
+
+label: ds
+f1-score all-all: 0.2857142857142857
+
+label: ed
+f1-score all-all: 0.5714285714285714
+
+------
+-------------------------------------
+LANGUAGE: zh
+
+f1-score all-all: 0.6624548736462094
+-----
+label: MT
+f1-score all-all: 0.23529411764705882
+
+label: LY
+f1-score all-all: 0.5
+
+label: SP
+f1-score all-all: 0.0
+
+label: ID
+f1-score all-all: 0.6666666666666666
+
+label: NA
+f1-score all-all: 0.8131868131868132
+
+label: HI
+f1-score all-all: 0.2857142857142857
+
+label: IN
+f1-score all-all: 0.6918918918918919
+
+label: OP
+f1-score all-all: 0.410958904109589
+
+label: IP
+f1-score all-all: 0.7761194029850746
+
+label: it
+f1-score all-all: 0.0
+
+label: ne
+f1-score all-all: 0.7906976744186046
+
+label: sr
+f1-score all-all: 1.0
+
+label: nb
+f1-score all-all: 0.1875
+
+label: re
+f1-score all-all: 0.0
+
+label: en
+f1-score all-all: 0.6666666666666666
+
+label: ra
+f1-score all-all: 0.7142857142857143
+
+label: dtp
+f1-score all-all: 0.36363636363636365
+
+label: fi
+f1-score all-all: 0.0
+
+label: lt
+f1-score all-all: 0.7428571428571429
+
+label: rv
+f1-score all-all: 0.3448275862068966
+
+label: ob
+f1-score all-all: 0.4444444444444444
+
+label: rs
+f1-score all-all: 0.0
+
+label: av
+f1-score all-all: 0.2857142857142857
+
+label: ds
+f1-score all-all: 0.7337278106508875
+
+label: ed
+f1-score all-all: 0.0
+
+------
+-------------------------------------
