@@ -15,7 +15,7 @@ if __name__ == "__main__":
     parser.add_argument("--model_name", default="xlm-roberta-large")
     parser.add_argument("--model_output", default="models")
     parser.add_argument("--predictions_output", default="predictions")
-    parser.add_argument("--output_suffix", default="")
+    parser.add_argument("--path_suffix", default="")
     parser.add_argument("--config", "-c", action=ActionConfigFile)
     parser.add_argument("--just_evaluate", action="store_true")
 

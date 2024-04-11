@@ -66,8 +66,8 @@ def run(cfg):
     print(f"Predicting {len(label_scheme)} labels")
     predict_upper_using_full = cfg.labels == "all" and cfg.predict_labels == "upper"
     predict_xgenre_using_full = cfg.labels == "all" and cfg.predict_labels == "xgenre"
-    model_output_dir = f"{cfg.model_output}/{cfg.model_name}{('_'+cfg.output_suffix) if cfg.output_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
-    results_output_dir = f"{cfg.predictions_output}/{cfg.model_name}{('_'+cfg.output_suffix) if cfg.output_suffix else ''}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
+    model_output_dir = f"{cfg.model_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
+    results_output_dir = f"{cfg.predictions_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
     print(
         f"This run {'saves models to' if not cfg.just_evaluate else 'uses model from'} {model_output_dir}"
     )
