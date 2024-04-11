@@ -1,5 +1,10 @@
 import os
+import sys
 from pydoc import locate
+
+sys.path.append(
+    f"venv/lib/python{'.'.join(map(str, sys.version_info[:3]))}/site-packages"
+)
 
 from jsonargparse import ArgumentParser
 
