@@ -11,7 +11,7 @@ for value in "${values[@]}"; do
   $BASE_CMD"en.yaml" --just_evaluate --predict_labels upper -s "$value" --test en
   $BASE_CMD"fi.yaml" --just_evaluate --predict_labels upper -s "$value" --test fi
   $BASE_CMD"fr.yaml" --just_evaluate --predict_labels upper -s "$value" --test fr
-  $BASE_CMD"fr.yaml" --just_evaluate --predict_labels upper -s "$value" --test sv
+  $BASE_CMD"sv.yaml" --just_evaluate --predict_labels upper -s "$value" --test sv
   $BASE_CMD"tr.yaml" --just_evaluate --predict_labels upper -s "$value" --test tr
   $BASE_CMD"en-fi-fr-sv-tr.yaml" --just_evaluate --predict_labels upper -s "$value"
   $BASE_CMD"en-fi-fr-sv.yaml" --just_evaluate --predict_labels upper -s "$value" --test tr
