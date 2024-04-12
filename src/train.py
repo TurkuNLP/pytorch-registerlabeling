@@ -19,6 +19,7 @@ from sklearn.metrics import (
     precision_recall_fscore_support,
 )
 from transformers import (
+    AutoConfig,
     AutoModelForSequenceClassification,
     AutoTokenizer,
     BitsAndBytesConfig,
@@ -83,7 +84,7 @@ def run(cfg):
         from pyreft import (
             get_reft_model,
             ReftConfig,
-            ConsreftIntervention,
+            LoreftIntervention,
             ReftTrainerForSequenceClassification,
         )
 
@@ -261,14 +262,30 @@ def run(cfg):
             )
 
     if hasattr(cfg, "reft") and cfg.reft:
-        # wrap the model with rank-1 constant reft
+        config = AutoConfig.from_pretrained(model)
+        layers = [l for l in range(config.num_hidden_layers)]
+        model_arch = model.config.architectures[0].lower()
+        residual_stream_component_mapping = {
+            "robertaformaskedlm": "roberta.encoder.layer[%s].output"
+        }
+        device = "cuda" if torch.cuda.is_available() else "cpu"
         reft_config = ReftConfig(
-            representations={
-                "component": f"model.layers[15].output",  # string access to the model component
-                "intervention": ConsreftIntervention(
-                    embed_dim=model.config.hidden_size, low_rank_dimension=1
-                ),
-            }
+            representations=[
+                {
+                    "component": residual_stream_component_mapping[model_arch] % l,
+                    "intervention": LoreftIntervention(
+                        embed_dim=config.hidden_size,
+                        low_rank_dimension=1,
+                        dropout=0.05,
+                        dtype=torch.bfloat16,
+                        act_fn=None,
+                        device=device,
+                        add_bias=False,
+                    ),
+                }
+                for l in layers
+            ],
+            task_type=TaskType.SEQ_CLS,
         )
         reft_model = get_reft_model(model, reft_config)
         reft_model.print_trainable_parameters()
