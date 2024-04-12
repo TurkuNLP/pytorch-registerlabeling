@@ -147,49 +147,6 @@ label_schemes = {
 }
 
 
-def map_to_xgenre_binary(true_labels, predictions):
-
-    def convert(label_vector, what):
-        print(f"Converting {what}\n======")
-        print(label_vector)
-        # Initialize XGENRE vector with zeros
-        xgenre_vector = [0] * len(labels_xgenre)
-
-        # Determine the effective category probabilities, prioritizing subcategories
-        effective_probs = [0] * len(labels_all)
-        for parent, subcategories in labels_structure.items():
-            parent_index = labels_all.index(parent)
-            if subcategories:
-                sub_indices = [labels_all.index(sub) for sub in subcategories]
-                max_sub_prob = max(label_vector[i] for i in sub_indices)
-                # Compare max subcategory probability to parent's probability
-                if max_sub_prob >= label_vector[parent_index]:
-                    effective_probs[parent_index] = 0
-                else:
-                    effective_probs[parent_index] = label_vector[parent_index]
-                for i in sub_indices:
-                    effective_probs[i] = label_vector[i]
-            else:
-                effective_probs[parent_index] = label_vector[parent_index]
-
-        # Map effective category probabilities to XGENRE
-        for i, prob in enumerate(effective_probs):
-            xgenre_index = category_to_xgenre_index[i]
-            xgenre_vector[xgenre_index] = max(xgenre_vector[xgenre_index], prob)
-        print(xgenre_vector)
-        return xgenre_vector
-
-    # Convert labels and predictions
-    true_labels_converted = [
-        convert(label_vector, "true") for label_vector in true_labels
-    ]
-    predictions_converted = [
-        convert(label_vector, "pred") for label_vector in predictions
-    ]
-
-    return np.array(true_labels_converted), np.array(predictions_converted)
-
-
 map_normalize = {
     # Our categories, upper
     "MT": "MT",
@@ -371,3 +328,48 @@ def map_childless_upper_to_other(doc_labels):
     ]
 
     return [label for label in updated_labels if label not in labels_with_children]
+
+
+def map_to_xgenre_binary(true_labels, predictions):
+
+    def convert(label_vector, what):
+        print(f"Converting {what}\n======")
+        print(label_vector)
+        print(decode_binary_labels([label_vector], "all"))
+        # Initialize XGENRE vector with zeros
+        xgenre_vector = [0] * len(labels_xgenre)
+
+        # Determine the effective category probabilities, prioritizing subcategories
+        effective_probs = [0] * len(labels_all)
+        for parent, subcategories in labels_structure.items():
+            parent_index = labels_all.index(parent)
+            if subcategories:
+                sub_indices = [labels_all.index(sub) for sub in subcategories]
+                max_sub_prob = max(label_vector[i] for i in sub_indices)
+                # Compare max subcategory probability to parent's probability
+                if max_sub_prob >= label_vector[parent_index]:
+                    effective_probs[parent_index] = 0
+                else:
+                    effective_probs[parent_index] = label_vector[parent_index]
+                for i in sub_indices:
+                    effective_probs[i] = label_vector[i]
+            else:
+                effective_probs[parent_index] = label_vector[parent_index]
+
+        # Map effective category probabilities to XGENRE
+        for i, prob in enumerate(effective_probs):
+            xgenre_index = category_to_xgenre_index[i]
+            xgenre_vector[xgenre_index] = max(xgenre_vector[xgenre_index], prob)
+        print(xgenre_vector)
+        print(decode_binary_labels([xgenre_vector], "xgenre"))
+        return xgenre_vector
+
+    # Convert labels and predictions
+    true_labels_converted = [
+        convert(label_vector, "true") for label_vector in true_labels
+    ]
+    predictions_converted = [
+        convert(label_vector, "pred") for label_vector in predictions
+    ]
+
+    return np.array(true_labels_converted), np.array(predictions_converted)
