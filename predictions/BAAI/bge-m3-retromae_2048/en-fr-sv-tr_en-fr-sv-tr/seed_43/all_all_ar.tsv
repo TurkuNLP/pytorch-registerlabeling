@@ -1,0 +1,92 @@
+IP	MT
+OP rs	OP rs
+IP	IP ds
+OP ob	
+NA ne	NA ne
+NA ne	NA ne
+IN lt	IN lt
+IN	OP IP rv
+OP rs	HI IN IP
+MT IP	MT IP
+ID HI IN	ID OP
+HI IN	NA IN ne
+NA ne	NA ne
+ID NA nb	NA IP
+NA IN	IP ds
+ID	ID
+IN	IP ds
+OP rs	
+NA ne	NA ne
+NA ne	NA ne
+ID IN	ID
+OP rv	IN dtp
+OP IP rv	IP ds
+NA ne	NA ne
+IN ra	IN
+OP rv ob	OP IP rv ob
+OP rs	OP IP rs
+NA IN nb dtp	IN dtp
+HI IN	IP ds
+MT NA IN ne	MT
+NA sr	NA sr
+IN	MT
+NA ne	NA ne
+ID IN	ID
+NA sr	NA sr
+IN ra	IN OP
+IP	IP ds
+IN IP	NA sr
+OP ob	NA
+HI re	NA HI re
+ID	ID
+NA sr	NA sr
+ID NA ne	NA ne
+HI IN	IN dtp
+NA ne	NA ne
+NA OP rv	IP ds
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+IN OP dtp ob	OP IP ob
+OP IP ed	OP IP ob
+IP	OP IP ds
+NA ne	NA ne
+NA ne	NA ne
+OP ob rs	OP IP ob
+OP rv	OP rv
+IN dtp	IN dtp
+IN OP ob rs	IN OP rs
+IN	IP ds
+NA ne	NA ne
+NA ne	NA ne
+HI IP	HI OP IP ds
+NA sr	NA sr
+IN OP IP dtp rv ed	MT IN
+IP	IP ds
+IN dtp	IN IP ds
+NA ne	NA ne
+IP	MT
+NA ne	NA ne
+NA	NA nb
+NA ne	NA ne
+IP	MT
+IN	IN dtp
+IN IP fi	IN lt
+NA ne	NA ne
+NA ne	NA ne
+IN IP ed	MT
+NA IN ne dtp	NA ne
+NA sr	NA ne sr
+NA nb	IN IP dtp
+HI re	HI re
+NA ne	NA ne
+HI IN lt	IN lt
+NA ne	IN lt
+NA ne	NA sr
+IN en	IN en
+NA	NA ne
+NA ne	NA ne
+MT IP	OP IP rv ds
+IN OP fi av	IN OP av
+ID	IN lt
+IN	IN OP
