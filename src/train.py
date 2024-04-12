@@ -141,7 +141,7 @@ def run(cfg):
         binary_predictions = predictions > best_threshold
 
         if predict_xgenre_using_full:
-            true_labels, predictions = map_to_xgenre_binary(
+            true_labels, binary_predictions = map_to_xgenre_binary(
                 true_labels, binary_predictions
             )
 
@@ -149,14 +149,14 @@ def run(cfg):
             true_labels, binary_predictions, average="micro"
         )
         accuracy = accuracy_score(true_labels, binary_predictions)
-        pr_auc = average_precision_score(true_labels, predictions, average="micro")
+        # pr_auc = average_precision_score(true_labels, predictions, average="micro")
 
         metrics = {
             "f1": f1,
             "precision": precision,
             "recall": recall,
             "accuracy": accuracy,
-            "pr_auc": pr_auc,
+            # "pr_auc": pr_auc,
             "threshold": best_threshold,
         }
 
