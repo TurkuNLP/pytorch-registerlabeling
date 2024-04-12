@@ -78,7 +78,17 @@ def run(cfg):
         tokenizer.pad_token = tokenizer.eos_token
     dataset = get_dataset(cfg, tokenizer)
 
-    class MultiLabelTrainer(Trainer):
+    if hasattr(cfg, "reft") and cfg.reft:
+
+        from pyreft import (
+            get_reft_model,
+            ReftConfig,
+            ConsreftIntervention
+            ReftTrainerForSequenceClassification
+        )
+
+
+    class MultiLabelTrainer(Trainer if hasattr(cfg, "reft") and cfg.reft else ReftTrainerForSequenceClassification):
         def __init__(self, *args, **kwargs):
             super(MultiLabelTrainer, self).__init__(*args, **kwargs)
 
@@ -246,6 +256,15 @@ def run(cfg):
                     task_type=TaskType.SEQ_CLS,
                 ),
             )
+        
+    if hasattr(cfg, "reft") and cfg.reft:
+        # wrap the model with rank-1 constant reft
+        reft_config = ReftConfig(representations={
+            "component": f"model.layers[15].output", # string access to the model component
+            "intervention": ConsreftIntervention(
+            embed_dim=model.config.hidden_size, low_rank_dimension=1)})
+        reft_model = get_reft_model(model, reft_config)
+        reft_model.print_trainable_parameters()
 
     trainer = MultiLabelTrainer(
         model=model,
