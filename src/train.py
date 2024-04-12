@@ -112,9 +112,8 @@ def run(cfg):
 
     def compute_metrics(p):
         true_labels = p.label_ids
-        predictions = sigmoid(
-            p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
-        )
+        probs = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
+        predictions = sigmoid(probs)
 
         if cfg.labels == "all":
             # Ensure that subcategory has corresponding parent category
@@ -130,6 +129,10 @@ def run(cfg):
             true_labels = true_labels[:, upper_all_indexes]
             predictions = predictions[:, upper_all_indexes]
 
+        elif predict_xgenre_using_full:
+            probs, predictions = map_to_xgenre_binary(true_labels, predictions)
+            predictions = sigmoid(probs)
+
         best_threshold, best_f1 = 0, 0
         for threshold in np.arange(0.3, 0.7, 0.05):
             binary_predictions = predictions > threshold
@@ -140,23 +143,18 @@ def run(cfg):
 
         binary_predictions = predictions > best_threshold
 
-        if predict_xgenre_using_full:
-            true_labels, binary_predictions = map_to_xgenre_binary(
-                true_labels, binary_predictions
-            )
-
         precision, recall, f1, _ = precision_recall_fscore_support(
             true_labels, binary_predictions, average="micro"
         )
         accuracy = accuracy_score(true_labels, binary_predictions)
-        # pr_auc = average_precision_score(true_labels, predictions, average="micro")
+        pr_auc = average_precision_score(true_labels, predictions, average="micro")
 
         metrics = {
             "f1": f1,
             "precision": precision,
             "recall": recall,
             "accuracy": accuracy,
-            # "pr_auc": pr_auc,
+            "pr_auc": pr_auc,
             "threshold": best_threshold,
         }
 
