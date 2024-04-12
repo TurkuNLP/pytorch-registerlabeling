@@ -87,12 +87,14 @@ def run(cfg):
             LoreftIntervention,
             ReftTrainerForSequenceClassification,
         )
-    
-    ext_class = Trainer if hasattr(cfg, "reft") and cfg.reft else ReftTrainerForSequenceClassification
 
-    class MultiLabelTrainer(
-        ext_class
-    ):
+    ext_class = (
+        Trainer
+        if hasattr(cfg, "reft") and cfg.reft
+        else ReftTrainerForSequenceClassification
+    )
+
+    class MultiLabelTrainer(ext_class):
         def __init__(self, *args, **kwargs):
             super(MultiLabelTrainer, self).__init__(*args, **kwargs)
 
@@ -288,11 +290,11 @@ def run(cfg):
             ],
             task_type=TaskType.SEQ_CLS,
         )
-        reft_model = get_reft_model(model, reft_config)
-        reft_model.print_trainable_parameters()
+        model = get_reft_model(model, reft_config)
+        model.print_trainable_parameters()
 
     trainer = MultiLabelTrainer(
-        model=reft_model if hasattr(cfg, "reft") and cfg.reft else model,
+        model=model,
         args=TrainingArguments(
             output_dir=model_output_dir,
             overwrite_output_dir=True,
