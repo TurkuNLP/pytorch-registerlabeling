@@ -87,11 +87,11 @@ def run(cfg):
             LoreftIntervention,
             ReftTrainerForSequenceClassification,
         )
+    
+    ext_class = Trainer if hasattr(cfg, "reft") and cfg.reft else ReftTrainerForSequenceClassification
 
     class MultiLabelTrainer(
-        Trainer
-        if hasattr(cfg, "reft") and cfg.reft
-        else ReftTrainerForSequenceClassification
+        ext_class
     ):
         def __init__(self, *args, **kwargs):
             super(MultiLabelTrainer, self).__init__(*args, **kwargs)
