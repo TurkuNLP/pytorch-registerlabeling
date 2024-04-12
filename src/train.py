@@ -262,7 +262,7 @@ def run(cfg):
             )
 
     if hasattr(cfg, "reft") and cfg.reft:
-        config = AutoConfig.from_pretrained(model)
+        config = AutoConfig.from_pretrained(base_model_path)
         layers = [l for l in range(config.num_hidden_layers)]
         model_arch = model.config.architectures[0].lower()
         residual_stream_component_mapping = {
