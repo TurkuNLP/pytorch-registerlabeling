@@ -88,6 +88,83 @@ def run(cfg):
             ReftTrainerForSequenceClassification,
         )
 
+    base_model_path = (
+        model_output_dir if cfg.just_evaluate and not cfg.peft else cfg.model_name
+    )
+
+    nf4_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_use_double_quant=True,
+        bnb_4bit_compute_dtype=torch_dtype,
+    )
+
+    model = AutoModelForSequenceClassification.from_pretrained(
+        base_model_path,
+        num_labels=len(label_scheme),
+        torch_dtype=torch_dtype,
+        use_flash_attention_2=cfg.fa2,
+        quantization_config=nf4_config if cfg.nf4 else None,
+        device_map="auto" if "mixtral" in cfg.model_name.lower() else None,
+    )
+
+    label2id = {label: id for id, label in enumerate(label_scheme)}
+    id2label = {id: label for label, id in label2id.items()}
+
+    model.config.label2id = label2id
+    model.config.id2label = id2label
+
+    if cfg.peft:
+        if cfg.just_evaluate:
+            model = PeftModel.from_pretrained(model, model_output_dir)
+        else:
+            print("Using LoRa")
+            model = get_peft_model(
+                model,
+                LoraConfig(
+                    r=cfg.lora_rank,
+                    lora_alpha=cfg.lora_alpha,
+                    target_modules=(
+                        get_linear_modules(model)
+                        if not cfg.target_modules
+                        else cfg.target_modules.split(",")
+                    ),
+                    lora_dropout=0.1,
+                    bias="none",
+                    task_type=TaskType.SEQ_CLS,
+                ),
+            )
+
+    if cfg.reft:
+        config = AutoConfig.from_pretrained(base_model_path)
+        layers = [l for l in range(config.num_hidden_layers)]
+        model_arch = model.config.architectures[0].lower()
+        model_arch = "robertaformaskedlm"
+        residual_stream_component_mapping = {
+            "robertaformaskedlm": "roberta.encoder.layer[%s].output"
+        }
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        reft_config = ReftConfig(
+            representations=[
+                {
+                    "component": residual_stream_component_mapping[model_arch] % l,
+                    "intervention": LoreftIntervention(
+                        embed_dim=config.hidden_size,
+                        low_rank_dimension=1,
+                        dropout=0.05,
+                        dtype=torch.bfloat16,
+                        act_fn=None,
+                        device=device,
+                        add_bias=False,
+                    ),
+                }
+                for l in layers
+            ],
+            task_type=TaskType.SEQ_CLS,
+        )
+        model = get_reft_model(model, reft_config)
+        model.print_trainable_parameters()
+
     ext_class = (
         Trainer
         if hasattr(cfg, "reft") and cfg.reft
@@ -215,83 +292,6 @@ def run(cfg):
             print(metrics)
 
         return metrics
-
-    base_model_path = (
-        model_output_dir if cfg.just_evaluate and not cfg.peft else cfg.model_name
-    )
-
-    nf4_config = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_use_double_quant=True,
-        bnb_4bit_compute_dtype=torch_dtype,
-    )
-
-    model = AutoModelForSequenceClassification.from_pretrained(
-        base_model_path,
-        num_labels=len(label_scheme),
-        torch_dtype=torch_dtype,
-        use_flash_attention_2=cfg.fa2,
-        quantization_config=nf4_config if cfg.nf4 else None,
-        device_map="auto" if "mixtral" in cfg.model_name.lower() else None,
-    )
-
-    label2id = {label: id for id, label in enumerate(label_scheme)}
-    id2label = {id: label for label, id in label2id.items()}
-
-    model.config.label2id = label2id
-    model.config.id2label = id2label
-
-    if cfg.peft:
-        if cfg.just_evaluate:
-            model = PeftModel.from_pretrained(model, model_output_dir)
-        else:
-            print("Using LoRa")
-            model = get_peft_model(
-                model,
-                LoraConfig(
-                    r=cfg.lora_rank,
-                    lora_alpha=cfg.lora_alpha,
-                    target_modules=(
-                        get_linear_modules(model)
-                        if not cfg.target_modules
-                        else cfg.target_modules.split(",")
-                    ),
-                    lora_dropout=0.1,
-                    bias="none",
-                    task_type=TaskType.SEQ_CLS,
-                ),
-            )
-
-    if hasattr(cfg, "reft") and cfg.reft:
-        config = AutoConfig.from_pretrained(base_model_path)
-        layers = [l for l in range(config.num_hidden_layers)]
-        model_arch = model.config.architectures[0].lower()
-        model_arch = "robertaformaskedlm"
-        residual_stream_component_mapping = {
-            "robertaformaskedlm": "roberta.encoder.layer[%s].output"
-        }
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        reft_config = ReftConfig(
-            representations=[
-                {
-                    "component": residual_stream_component_mapping[model_arch] % l,
-                    "intervention": LoreftIntervention(
-                        embed_dim=config.hidden_size,
-                        low_rank_dimension=1,
-                        dropout=0.05,
-                        dtype=torch.bfloat16,
-                        act_fn=None,
-                        device=device,
-                        add_bias=False,
-                    ),
-                }
-                for l in layers
-            ],
-            task_type=TaskType.SEQ_CLS,
-        )
-        model = get_reft_model(model, reft_config)
-        model.print_trainable_parameters()
 
     trainer = MultiLabelTrainer(
         model=model,
