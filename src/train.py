@@ -166,6 +166,7 @@ def run(cfg):
         )
         model = get_reft_model(model, reft_config)
         model.print_trainable_parameters()
+        dataset = dataset.rename_column('label', 'labels')
         data_collator = ReftDataCollator(
             data_collator=DataCollatorWithPadding(
                 tokenizer=tokenizer, padding="longest"
