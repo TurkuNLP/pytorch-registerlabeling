@@ -194,9 +194,13 @@ def get_dataset(cfg, tokenizer):
             padding="max_length",
         ),
         remove_columns=(
-            (["text", "label_text"])
-            if not (hasattr(cfg, "keep_columns") and cfg.keep_columns)
-            else None
+            cfg.remove_columns.split(",")
+            if hasattr(cfg.remove_columns)
+            else (
+                ["text", "label_text"]
+                if not (hasattr(cfg, "keep_columns") and cfg.keep_columns)
+                else None
+            )
         ),
         batched=True,
     )
