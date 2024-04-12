@@ -265,6 +265,7 @@ def run(cfg):
         config = AutoConfig.from_pretrained(base_model_path)
         layers = [l for l in range(config.num_hidden_layers)]
         model_arch = model.config.architectures[0].lower()
+        model_arch = "robertaformaskedlm"
         residual_stream_component_mapping = {
             "robertaformaskedlm": "roberta.encoder.layer[%s].output"
         }
