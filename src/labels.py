@@ -13,6 +13,15 @@ labels_structure = {
     "IP": ["ds", "ed"],
 }
 
+other_labels = {
+    "SP": "os",
+    "NA": "on",
+    "HI": "oh",
+    "IN": "oi",
+    "OP": "oo",
+    "IP": "oe",
+}
+
 # Mapping to XGENRE labels
 map_xgenre = {
     ### 1. MACHINE TRANSLATED
@@ -65,6 +74,40 @@ map_xgenre = {
     "ds": "Promotion",
     # News & opinion blog or editorial
     "ed": "Opinion/Argumentation",  # ???
+}
+
+map_full_names = {
+    "MT": "Machine translated (MT)",
+    "LY": "Lyrical (LY)",
+    "SP": "Spoken (SP)",
+    "it": "Interview (it)",
+    "os": "Other SP",
+    "ID": "Interactive discussion (ID)",
+    "NA": "Narrative (NA)",
+    "ne": "News report (ne)",
+    "sr": "Sports report (sr)",
+    "nb": "Narrative blog (nb)",
+    "on": "Other NA",
+    "HI": "How-to or instructions (HI)",
+    "re": "Recipe (re)",
+    "oh": "Other HI",
+    "IN": "Informational description (IN)",
+    "en": "Encyclopedia article (en)",
+    "ra": "Research article (ra)",
+    "dtp": "Description: thing / person (dtp)",
+    "fi": "FAQ (fi)",
+    "lt": "Legal (lt)",
+    "oi": "Other IN",
+    "OP": "Opinion (OP)",
+    "rv": "Review (rv)",
+    "ob": "Opinion blog (ob)",
+    "rs": "Religious blog / sermon (rs)",
+    "av": "Advice (av)",
+    "oo": "Other OP",
+    "IP": "Informational persuasion (IP)",
+    "ds": "Description: intent to sell (ds)",
+    "ed": "News & opinion blog / editorial (ed)",
+    "oe": "Other IP",
 }
 
 # Flat list of labels
@@ -304,3 +347,21 @@ def decode_binary_labels(data, label_scheme_name):
         " ".join([label_scheme[i] for i, bin_val in enumerate(bin) if bin_val == 1])
         for bin in data
     ]
+
+
+def map_childless_upper_to_other(doc_labels):
+    updated_labels = [
+        (
+            other_labels.get(label, label)
+            if label in labels_structure.keys()
+            and not set(labels_structure[label]).intersection(doc_labels)
+            else label
+        )
+        for label in doc_labels
+    ]
+
+    labels_with_children = [
+        label for label in labels_structure.keys() if labels_structure[label]
+    ]
+
+    return [label for label in updated_labels if label not in labels_with_children]

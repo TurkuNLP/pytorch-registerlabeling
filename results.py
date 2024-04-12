@@ -12,13 +12,12 @@ if __name__ == "__main__":
     parser.add_argument("--seed", "-s", type=int, default=42)
     parser.add_argument("--model_name", default="xlm-roberta-large")
     parser.add_argument("--path_suffix", default="")
-    parser.add_argument("--train", "-t", default="en-fi-fr-sv-tr")
-    parser.add_argument("--dev", "-d", default="")
+    parser.add_argument("--test", default="mono")
+    parser.add_argument("--target", default="main")
     parser.add_argument("--labels", default="all")
     parser.add_argument("--predict_labels", default="")
     cfg = parser.parse_args()
 
-    cfg.dev = cfg.train if not cfg.dev else cfg.dev
     cfg.predict_labels = cfg.labels if not cfg.predict_labels else cfg.predict_labels
 
     print(parser.dump(cfg))

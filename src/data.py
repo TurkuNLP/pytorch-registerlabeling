@@ -13,6 +13,25 @@ from transformers.trainer_utils import seed_worker
 
 from .labels import binarize_labels, normalize_labels
 
+language_names = {
+    "ar": "Arabic",
+    "ca": "Catalan",
+    "en": "English",
+    "es": "Spanish",
+    "fa": "Persian",
+    "fi": "Finnish",
+    "fr": "French",
+    "hi": "Hindi",
+    "id": "Indonesian",
+    "jp": "Japanese",
+    "no": "Norwegian",
+    "pt": "Portuguese",
+    "sv": "Swedish",
+    "tr": "Turkish",
+    "ur": "Urdu",
+    "zh": "Chinese",
+}
+
 
 class BalancedLanguageSampler(Sampler):
     def __init__(self, language_data, size="smallest", lang_cycle="random"):
@@ -120,6 +139,7 @@ def gen(languages, split, label_scheme, use_gz):
 
                 yield {
                     "label": binarize_labels(normalized_labels, label_scheme),
+                    "label_text": normalized_labels,
                     "text": ro[1],
                     "language": l,
                 }
@@ -174,7 +194,7 @@ def get_dataset(cfg, tokenizer):
             padding="max_length",
         ),
         remove_columns=(
-            (["text"])
+            (["text", "label_text"])
             if not (hasattr(cfg, "keep_columns") and cfg.keep_columns)
             else None
         ),
