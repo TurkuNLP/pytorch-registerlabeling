@@ -291,7 +291,7 @@ def run(cfg):
         reft_model.print_trainable_parameters()
 
     trainer = MultiLabelTrainer(
-        model=model,
+        model=reft_model if hasattr(cfg, "reft") and cfg.reft else model,
         args=TrainingArguments(
             output_dir=model_output_dir,
             overwrite_output_dir=True,

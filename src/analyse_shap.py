@@ -54,3 +54,5 @@ def run(cfg):
     explainer = shap.Explainer(f, tokenizer)
 
     shap_values = explainer(dataset["text"], fixed_context=1)
+
+    print(shap_values)
