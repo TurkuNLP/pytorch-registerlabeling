@@ -149,7 +149,9 @@ label_schemes = {
 
 def map_to_xgenre_binary(true_labels, predictions):
 
-    def convert(label_vector):
+    def convert(label_vector, what):
+        print(f"Converting {what}\n======")
+        print(label_vector)
         # Initialize XGENRE vector with zeros
         xgenre_vector = [0] * len(labels_xgenre)
 
@@ -174,12 +176,16 @@ def map_to_xgenre_binary(true_labels, predictions):
         for i, prob in enumerate(effective_probs):
             xgenre_index = category_to_xgenre_index[i]
             xgenre_vector[xgenre_index] = max(xgenre_vector[xgenre_index], prob)
-
+        print(xgenre_vector)
         return xgenre_vector
 
     # Convert labels and predictions
-    true_labels_converted = [convert(label_vector) for label_vector in true_labels]
-    predictions_converted = [convert(label_vector) for label_vector in predictions]
+    true_labels_converted = [
+        convert(label_vector, "true") for label_vector in true_labels
+    ]
+    predictions_converted = [
+        convert(label_vector, "pred") for label_vector in predictions
+    ]
 
     return np.array(true_labels_converted), np.array(predictions_converted)
 
