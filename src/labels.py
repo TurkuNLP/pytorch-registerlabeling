@@ -333,9 +333,9 @@ def map_childless_upper_to_other(doc_labels):
 def map_to_xgenre_binary(true_labels, predictions):
 
     def convert(label_vector, what):
-        print(f"Converting {what}\n======")
-        print(label_vector)
-        print(decode_binary_labels([label_vector], "all"))
+        # print(f"Converting {what}\n======")
+        # print(label_vector)
+        # print(decode_binary_labels([label_vector], "all"))
         # Initialize XGENRE vector with zeros
         xgenre_vector = [0] * len(labels_xgenre)
 
@@ -360,8 +360,8 @@ def map_to_xgenre_binary(true_labels, predictions):
         for i, prob in enumerate(effective_probs):
             xgenre_index = category_to_xgenre_index[i]
             xgenre_vector[xgenre_index] = max(xgenre_vector[xgenre_index], prob)
-        print(xgenre_vector)
-        print(decode_binary_labels([xgenre_vector], "xgenre"))
+        # print(xgenre_vector)
+        # print(decode_binary_labels([xgenre_vector], "xgenre"))
         return xgenre_vector
 
     # Convert labels and predictions
