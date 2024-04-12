@@ -26,6 +26,7 @@ from transformers import (
     EarlyStoppingCallback,
     Trainer,
     TrainingArguments,
+    DataCollatorWithPadding,
 )
 
 from .data import balanced_dataloader, get_dataset
@@ -133,6 +134,7 @@ def run(cfg):
             LoreftIntervention,
             ReftTrainerForSequenceClassification,
             ConsreftIntervention,
+            ReftDataCollator,
         )
 
         config = AutoConfig.from_pretrained(base_model_path)
@@ -148,7 +150,7 @@ def run(cfg):
             representations=[
                 {
                     "component": residual_stream_component_mapping[model_arch] % l,
-                    "intervention": ConsreftIntervention(
+                    "intervention": LoreftIntervention(
                         embed_dim=config.hidden_size,
                         low_rank_dimension=1,
                         dropout=0.05,
@@ -164,6 +166,11 @@ def run(cfg):
         )
         model = get_reft_model(model, reft_config)
         model.print_trainable_parameters()
+        data_collator = ReftDataCollator(
+            data_collator=DataCollatorWithPadding(
+                tokenizer=tokenizer, padding="longest"
+            )
+        )
 
     ext_class = (
         Trainer
@@ -320,6 +327,8 @@ def run(cfg):
         eval_dataset=dataset.get("dev", []),
         compute_metrics=compute_metrics,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=cfg.patience)],
+        data_collator=data_collator if cfg.reft else None,
+        tokenizer=tokenizer if cfg.reft else None,
     )
 
     if not cfg.just_evaluate:
