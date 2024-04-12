@@ -79,15 +79,6 @@ def run(cfg):
         tokenizer.pad_token = tokenizer.eos_token
     dataset = get_dataset(cfg, tokenizer)
 
-    if hasattr(cfg, "reft") and cfg.reft:
-
-        from pyreft import (
-            get_reft_model,
-            ReftConfig,
-            LoreftIntervention,
-            ReftTrainerForSequenceClassification,
-        )
-
     base_model_path = (
         model_output_dir if cfg.just_evaluate and not cfg.peft else cfg.model_name
     )
@@ -136,6 +127,14 @@ def run(cfg):
             )
 
     if cfg.reft:
+        from pyreft import (
+            get_reft_model,
+            ReftConfig,
+            LoreftIntervention,
+            ReftTrainerForSequenceClassification,
+            ConsreftIntervention,
+        )
+
         config = AutoConfig.from_pretrained(base_model_path)
         layers = [l for l in range(config.num_hidden_layers)]
         model_arch = model.config.architectures[0].lower()
@@ -143,12 +142,13 @@ def run(cfg):
         residual_stream_component_mapping = {
             "robertaformaskedlm": "roberta.encoder.layer[%s].output"
         }
+
         device = "cuda" if torch.cuda.is_available() else "cpu"
         reft_config = ReftConfig(
             representations=[
                 {
                     "component": residual_stream_component_mapping[model_arch] % l,
-                    "intervention": LoreftIntervention(
+                    "intervention": ConsreftIntervention(
                         embed_dim=config.hidden_size,
                         low_rank_dimension=1,
                         dropout=0.05,
