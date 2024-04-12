@@ -130,9 +130,6 @@ def run(cfg):
             true_labels = true_labels[:, upper_all_indexes]
             predictions = predictions[:, upper_all_indexes]
 
-        elif predict_xgenre_using_full:
-            true_labels, predictions = map_to_xgenre_binary(true_labels, predictions)
-
         best_threshold, best_f1 = 0, 0
         for threshold in np.arange(0.3, 0.7, 0.05):
             binary_predictions = predictions > threshold
@@ -142,6 +139,11 @@ def run(cfg):
                 best_threshold = threshold
 
         binary_predictions = predictions > best_threshold
+
+        if predict_xgenre_using_full:
+            true_labels, predictions = map_to_xgenre_binary(
+                true_labels, binary_predictions
+            )
 
         precision, recall, f1, _ = precision_recall_fscore_support(
             true_labels, binary_predictions, average="micro"
