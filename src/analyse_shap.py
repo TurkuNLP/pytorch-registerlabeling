@@ -43,7 +43,7 @@ def run(cfg):
                 )
                 for v in x
             ]
-        )
+        ).to(device)
         outputs = model(tv)[0].detach().cpu().numpy()
         probabilities = torch.sigmoid(
             torch.from_numpy(outputs)
