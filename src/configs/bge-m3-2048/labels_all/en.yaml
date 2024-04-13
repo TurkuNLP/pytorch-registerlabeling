@@ -2,7 +2,7 @@ train: en
 dev: en
 test: en
 model_name: BAAI/bge-m3-retromae
-learning_rate: 3e-5
+learning_rate: 5e-5
 train_batch_size: 1
 eval_batch_size: 4
 path_suffix: "2048"
