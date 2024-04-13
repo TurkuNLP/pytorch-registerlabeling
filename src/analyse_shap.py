@@ -60,6 +60,6 @@ def run(cfg):
     fig = plt.figure()
 
     # Generate the plot
-    shap.plots.bar(shap_values.abs.sum(0), show=False)
+    shap.plots.bar(shap_values.abs.max(0), show=False)
 
     plt.savefig("shap_plot2.png")
