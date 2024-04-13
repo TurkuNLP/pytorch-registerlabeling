@@ -166,18 +166,18 @@ def run(cfg):
         )
         model = get_reft_model(model, reft_config)
         model.print_trainable_parameters()
-        dataset = .rename_column('label', 'labels')
+        dataset = dataset.rename_column("label", "labels")
         data_collator = ReftDataCollator(
             data_collator=DataCollatorWithPadding(
                 tokenizer=tokenizer, padding="longest"
             )
         )
 
-    #ext_class = (
+    # ext_class = (
     #    Trainer
     #    if hasattr(cfg, "reft") and cfg.reft
     #    else ReftTrainerForSequenceClassification
-    #)
+    # )
 
     class MultiLabelTrainer(Trainer):
         def __init__(self, *args, **kwargs):
