@@ -1,6 +1,6 @@
-train: en-fi-fr-sv
-dev: en-fi-fr-sv
-test: tr
+train: fi-fr-sv-tr
+dev: fi-fr-sv-tr
+test: en
 model_name: BAAI/bge-m3-retromae
 learning_rate: 3e-5
 train_batch_size: 8

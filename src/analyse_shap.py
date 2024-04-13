@@ -56,3 +56,5 @@ def run(cfg):
     shap_values = explainer(dataset["text"], fixed_context=1)
 
     print(shap_values)
+
+    shap.plots.text(shap_values[0])
