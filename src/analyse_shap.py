@@ -3,7 +3,7 @@ import json
 import numpy as np
 import torch
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
-
+import matplotlib.pyplot as plt
 from .data import get_dataset
 from .labels import label_schemes
 
@@ -39,7 +39,7 @@ def run(cfg):
         tv = torch.tensor(
             [
                 tokenizer.encode(
-                    v, padding="max_length", max_length=500, truncation=True
+                    v, padding="max_length", max_length=512, truncation=True
                 )
                 for v in x
             ]
@@ -48,13 +48,18 @@ def run(cfg):
         probabilities = torch.sigmoid(
             torch.from_numpy(outputs)
         ).numpy()  # sigmoid activation
-        return probabilities
+        # print("a")
+        # print(probabilities)
+        return probabilities[:, 1]
 
     # build an explainer using a token masker
     explainer = shap.Explainer(f, tokenizer)
 
-    shap_values = explainer(dataset["text"], fixed_context=1)
+    shap_values = explainer(dataset["text"])
 
-    print(shap_values)
+    fig = plt.figure()
 
-    shap.plots.text(shap_values[0])
+    # Generate the plot
+    shap.plots.bar(shap_values.abs.sum(0), show=False)
+
+    plt.savefig("shap_plot2.png")
