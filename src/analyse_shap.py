@@ -39,7 +39,7 @@ def run(cfg):
         tv = torch.tensor(
             [
                 tokenizer.encode(
-                    v, padding="max_length", max_length=512, truncation=True
+                    v, padding="max_length", max_length=256, truncation=True
                 )
                 for v in x
             ]
@@ -60,6 +60,6 @@ def run(cfg):
     fig = plt.figure()
 
     # Generate the plot
-    shap.plots.bar(shap_values.abs.max(0), show=False)
+    shap.plots.bar(shap_values.abs.max(0), show=False, max_display=20)
 
     plt.savefig("shap_plot2.png")
