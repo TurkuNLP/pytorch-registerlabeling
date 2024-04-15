@@ -1,0 +1,160 @@
+OP rs	OP rs
+NA ne	NA ne
+IN OP fi rs	ID OP
+NA ne	NA sr
+NA ne	NA ne
+NA	IN
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+OP rs	OP rs
+IN en	IN en
+OP ob	OP ob
+OP rs	IN dtp
+NA ne	NA ne
+NA ne	NA ne
+IN en	IN en
+NA	NA ne
+LY NA nb	ID
+IN	IN
+NA ne	NA ne
+NA ne	NA ne
+IN OP fi rs	ID OP
+NA ne	NA ne
+ID	ID
+NA ne	NA ne
+NA	IN en
+NA ne	NA ne
+NA OP rs	OP rs
+NA ne	NA ne
+NA ne	NA ne
+IN	MT
+NA ne	NA ne
+OP rv	OP rs
+IN OP fi rs	OP rs
+NA ne	NA ne
+NA ne	NA ne
+IN dtp	IN
+OP ob	OP IP ob
+NA ne	NA ne
+OP ob	OP IP ob
+HI	MT
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+NA sr	NA sr
+NA OP av	NA OP
+NA ne	NA ne
+NA ne	NA ne
+OP	OP IP ob
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+OP IP av	
+NA sr	NA sr
+NA ne	NA ne
+NA ne	NA ne
+IP ed	NA
+OP av	SP NA
+NA ne	NA ne
+IN lt	MT
+NA ne	NA ne
+NA ne	NA ne
+OP ob	OP IP ob
+NA ne	NA ne
+MT IP ds	MT
+IN en	IN en
+NA IN nb dtp	NA
+IP ed	OP IP ob
+IN OP dtp rs	OP rs
+IP ds	IP
+NA ne	NA ne
+NA ne	NA ne
+NA IN dtp	NA OP
+IN OP dtp rs	NA OP
+NA ne	NA ne
+NA ne	NA ne
+IN OP fi rs	OP
+NA ne	NA ne
+NA sr	NA sr
+NA ne	NA ne
+NA sr	NA sr
+NA ne	NA ne
+IN en	IN en
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+OP rs	OP rs
+NA ne	NA ne
+NA ne	NA ne
+IP ds	IP ds
+NA ne	NA ne
+NA ne	NA ne
+IN en	IN en
+NA ne	NA ne
+NA ne	NA ne
+NA sr	NA sr
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne sr
+OP rs	OP
+NA	NA nb
+NA	NA
+OP rv	OP rv
+NA ne	NA ne
+NA ne	NA ne
+NA nb	NA nb
+OP av	OP av
+NA ne	NA ne
+OP rs	OP rs
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+OP rs	OP rs
+IN	IN OP
+NA ne	NA ne
+IN dtp	NA IN
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+IN	IN
+NA ne	NA ne
+NA ne	NA ne
+IN en	IN en
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+IN OP fi rs av	ID OP rs
+OP rs av	HI OP av
+OP IP rs ds	OP rs
+NA ne	NA ne
+NA IN nb dtp	NA OP
+OP	MT
+IN OP dtp av	OP
+IP ed	NA OP
+OP av	HI OP av
+LY	LY
+NA ne	NA ne
+NA ne	NA ne
+OP rs	OP rs
+NA ne	NA ne
+NA ne	NA ne
+NA ne	NA ne
+IP ed	OP ob
+IP ds	MT
+OP rs	OP rs
+NA ne	NA ne
+IP ed	OP ob
+HI OP rs	OP rs
+NA ne	NA ne
+LY	LY
+NA ne	NA ne
+IP ds	NA ne
+NA ne	NA ne
+OP ob	OP IP ob
