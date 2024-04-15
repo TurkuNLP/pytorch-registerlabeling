@@ -12,7 +12,7 @@ from datasets import concatenate_datasets
 
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
-from .data import get_dataset
+from ..data import get_dataset
 
 csv.field_size_limit(sys.maxsize)
 
@@ -139,7 +139,7 @@ def average_pool(last_hidden_states, attention_mask):
     return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
 
 
-def get_batch_embeddings(batch_data, model, tokenizer, device, output_path):
+def get_batch_embeddings(batch_data, model, tokenizer, output_path):
 
     batch = {
         "input_ids": torch.stack([x for x in batch_data["input_ids"]]),
@@ -206,9 +206,13 @@ def run(cfg):
 
     tokenizer = AutoTokenizer.from_pretrained(config.get("_name_or_path"))
 
-    dataset = get_dataset(cfg, tokenizer)["test"]
+    dataset = get_dataset(cfg, tokenizer)
+    dataset.set_format(type="torch")
+    print(dataset)
     if cfg.sample:
-        dataset = dataset.select(range(cfg.sample))
+        dataset["train"] = dataset["train"].select(range(cfg.sample))
+        dataset["test"] = dataset["test"].select(range(cfg.sample))
+        dataset["dev"] = dataset["dev"].select(range(cfg.sample))
 
     data = concatenate_datasets([dataset["train"], dataset["dev"], dataset["test"]])
     batch_size = 16
@@ -220,8 +224,8 @@ def run(cfg):
         batch_data["label"].append(d["label_text"])
 
         if len(batch_data["input_ids"]) == batch_size:
-            get_batch_embeddings(batch_data, model, tokenizer, device, path)
+            get_batch_embeddings(batch_data, model, tokenizer, path)
             batch_data = init_batch_data()
 
     if len(batch_data["input_ids"]):
-        get_batch_embeddings(batch_data, model, tokenizer, device, path)
+        get_batch_embeddings(batch_data, model, tokenizer, path)

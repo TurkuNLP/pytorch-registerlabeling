@@ -10,8 +10,8 @@ from tqdm.auto import tqdm
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from datasets import Dataset
 
-from .data import get_dataset
-from .labels import label_schemes, decode_binary_labels
+from ..data import get_dataset
+from ..labels import label_schemes, decode_binary_labels
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 calculate_entropy = lambda probs: -(

@@ -139,7 +139,7 @@ def gen(languages, split, label_scheme, use_gz):
 
                 yield {
                     "label": binarize_labels(normalized_labels, label_scheme),
-                    "label_text": normalized_labels,
+                    "label_text": " ".join(normalized_labels),
                     "text": ro[1],
                     "language": l,
                 }

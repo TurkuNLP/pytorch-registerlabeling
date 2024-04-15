@@ -15,16 +15,19 @@ os.environ["HF_DATASETS_CACHE"] = ".hf/datasets_cache"
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--what", default="entropy")
+    parser.add_argument("--task", default="analyse_entropy")
     parser.add_argument("--labels", default="all")
-    parser.add_argument("--train", "-t", default="en-fi-fr-sv-tr")
-    parser.add_argument("--dev", "-d", default="")
-    parser.add_argument("--test", "-te", default="en-fi-fr-sv-tr")
-    parser.add_argument("--model_name", default="xlm-roberta-large")
-    parser.add_argument("--just_evaluate", type=bool, default=False)
+    parser.add_argument("--train", default="en-fi-fr-sv-tr")
+    parser.add_argument("--dev", default="")
+    parser.add_argument("--test", default="en")
+    parser.add_argument("--batch_size", type=int, default=32)
+    parser.add_argument("--model_path", default="xlm-roberta-large")
+    parser.add_argument("--source_data_path", default="")
+    parser.add_argument("--just_evaluate", action="store_true")
     parser.add_argument("--max_length", type=int, default=512)
     parser.add_argument("--use_fold", type=int, default=0)
     parser.add_argument("--use_gz", action="store_true")
+    parser.add_argument("--sample", type=int, default=10)
     parser.add_argument("--keep_columns", type=bool, default=True)
 
     cfg = parser.parse_args()
@@ -33,4 +36,4 @@ if __name__ == "__main__":
     cfg.test = cfg.dev if not cfg.test else cfg.test
 
     print(parser.dump(cfg))
-    locate(f"src.plot_{cfg.what}").run(cfg)
+    locate(f"src.tools.{cfg.task}").run(cfg)

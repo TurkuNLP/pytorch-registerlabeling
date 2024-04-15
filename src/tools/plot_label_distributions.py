@@ -4,8 +4,8 @@ import plotly.io as pio
 import seaborn as sns
 from datasets import concatenate_datasets
 from transformers import AutoTokenizer
-from .data import get_dataset, language_names
-from .labels import (
+from ..data import get_dataset, language_names
+from ..labels import (
     labels_structure,
     map_full_names,
     map_childless_upper_to_other,
@@ -16,14 +16,14 @@ pio.kaleido.scope.mathjax = None  # a fix for .pdf files
 
 
 def run(cfg):
-    tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(cfg.model_path)
     data = get_dataset(cfg, tokenizer)
     data = concatenate_datasets([data["train"], data["dev"], data["test"]])
     df = pd.DataFrame(data)[["label_text", "language"]]
 
     # Convert childless upper categories to "other"
     df["label_text"] = df["label_text"].apply(
-        lambda labels: map_childless_upper_to_other(labels)
+        lambda labels: map_childless_upper_to_other(labels.split())
     )
 
     print(df.head(10))

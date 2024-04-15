@@ -4,8 +4,8 @@ import numpy as np
 import torch
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 import matplotlib.pyplot as plt
-from .data import get_dataset
-from .labels import label_schemes
+from ..data import get_dataset
+from ..labels import label_schemes
 
 import scipy as sp
 

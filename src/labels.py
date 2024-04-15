@@ -373,3 +373,24 @@ def map_to_xgenre_binary(true_labels, predictions):
     ]
 
     return np.array(true_labels_converted), np.array(predictions_converted)
+
+
+# Function to convert hierarchical labels into flat representation
+def flatten_labels(example):
+    labels = example.split() if type(example) == str else example
+    mapped_simple = []
+    for label in labels:
+        if not (
+            label in labels_structure
+            and any(x in labels for x in labels_structure[label])
+        ):
+            mapped_simple.append(label)
+
+    return [
+        (
+            labels_all[subcategory_to_parent_index[labels_all.index(x)]]
+            if labels_all.index(x) in subcategory_to_parent_index
+            else x
+        )
+        for x in mapped_simple
+    ]
