@@ -30,49 +30,42 @@ SPECIAL_TOKENS = ["<s>", "</s>"]
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def print_aggregated(target, aggregated, real_label):
+def print_aggregated(target, txt, real_label):
     """ "
     This requires one target and one agg vector at a time
     Shows agg scores as colors
     """
     print("<html><body>")
-    for tg, inp_txt in zip(target, aggregated):  # one input of the batch
-        x = captum.attr.visualization.format_word_importances(
-            [t for t, a in inp_txt], [a for t, a in inp_txt]
-        )
-        print(f"<b>prediction: {tg}, real label: {real_label}</b>")
-        print(f"""<table style="border:solid;">{x}</table>""")
+
+    x = captum.attr.visualization.format_word_importances(
+        [t for t, a in txt], [a for t, a in txt]
+    )
+    print(f"<b>prediction: {target}, real label: {real_label}</b>")
+    print(f"""<table style="border:solid;">{x}</table>""")
     print("</body></html>")
 
 
 def aggregate(inp, attrs, tokenizer):
     """Detokenize and merge attributions. This works for languages that use white spaces between the words."""
-    detokenized = []
-    for l in inp.input_ids.cpu().tolist():
-        detokenized.append(tokenizer.convert_ids_to_tokens(l))
+    tokens = tokenizer.convert_ids_to_tokens(inp.input_ids[0])
     attrs = attrs.cpu().tolist()
-    aggregated = []
-    for token_list, attr_list in zip(
-        detokenized, attrs
-    ):  # One text from the batch at a time!
-        res = []
-        for token, a_val in zip(token_list, attr_list):
-            if token in SPECIAL_TOKENS:  # special tokens
-                res.append((token, a_val))
-            elif token.startswith("▁"):
-                # This NOT is a continuation. A NEW word.
-                res.append((token[1:], a_val))
-                # print(res)
-            else:  # we're continuing a word and need to choose the larger abs value of the two
-                last_a_val = res[-1][1]
-                # print("last val", last_a_val)
-                if abs(a_val) < abs(last_a_val):  # past value bigger
-                    res[-1] = (res[-1][0] + token, last_a_val)
-                else:  # new value bigger
-                    res[-1] = (res[-1][0] + token, a_val)
+    res = []
+    for token, a_val in zip(tokens, attrs):
+        if token in SPECIAL_TOKENS:  # special tokens
+            res.append((token, a_val))
+        elif token.startswith("▁"):
+            # This NOT is a continuation. A NEW word.
+            res.append((token[1:], a_val))
+            # print(res)
+        else:  # we're continuing a word and need to choose the larger abs value of the two
+            last_a_val = res[-1][1]
+            # print("last val", last_a_val)
+            if abs(a_val) < abs(last_a_val):  # past value bigger
+                res[-1] = (res[-1][0] + token, last_a_val)
+            else:  # new value bigger
+                res[-1] = (res[-1][0] + token, a_val)
 
-        aggregated.append(res)
-    return aggregated
+    return res
 
 
 # # Forward on the model -> data in, prediction out, nothing fancy really
@@ -147,7 +140,6 @@ def run(cfg):
     if len(target[0]) == 0:  # escape early if no prediction
         return None, None, sigm
 
-    aggregated = []
     # loop over the targets => "[0]" to flatten the extra dimension, actually looping over all targets
     for tg in target[0]:
         attrs, delta = lig.attribute(
@@ -159,13 +151,13 @@ def run(cfg):
             n_steps=50,
         )
         # append the calculated and normalized scores to aggregated
-        attrs_sum = attrs.sum(dim=-1)
+        attrs_sum = attrs.sum(dim=-1).squeeze(0)
         attrs_sum = attrs_sum / torch.norm(attrs_sum)
+
+        print(attrs_sum)
 
         aggregated_tg = aggregate(inp, attrs_sum, tokenizer)
 
-        print(aggregated_tg)
-
-        print_aggregated(tg, aggregated, "SOME LABEL")
+        print_aggregated(tg, aggregated_tg, "SOME LABEL")
 
         exit()

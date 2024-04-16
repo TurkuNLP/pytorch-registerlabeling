@@ -98,6 +98,9 @@ def analyse(d, model, tokenizer):
     attributions_sum = summarize_attributions(attributions)
     print(attributions_sum.size())
 
+    print(attributions_sum)
+    exit()
+
     from captum.attr import visualization as viz
 
     score_vis = viz.VisualizationDataRecord(
