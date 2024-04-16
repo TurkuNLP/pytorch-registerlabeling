@@ -19,7 +19,6 @@ csv.field_size_limit(sys.maxsize)
 init_batch_data = lambda: {
     "input_ids": [],
     "attention_mask": [],
-    "language": [],
     "label": [],
 }
 
@@ -160,6 +159,8 @@ def get_batch_embeddings(batch_data, model, tokenizer, output_path):
         .numpy()
     )
 
+    doc_embeddings = outputs.hidden_states[-1][:, 0, :].cpu().detach().numpy()
+
     batch_data["doc_embeddings"] = doc_embeddings
 
     # Extract token IDs for each document in the batch
@@ -179,21 +180,24 @@ def get_batch_embeddings(batch_data, model, tokenizer, output_path):
         cosine_similarities = compute_cosine_similarities(
             batch_data, i, tokenizer.all_special_tokens
         )
-        with open(f"{output_path}/keywords.tsv", "a", newline="") as tsvfile:
+        with open(f"{output_path}", "a", newline="") as tsvfile:
             writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
             writer.writerow(
                 [
-                    batch_data["language"][i],
                     batch_data["label"][i],
                     batch_data["doc_embeddings"][i],
-                    json.dumps(cosine_similarities),
+                    json.dumps(cosine_similarities, ensure_ascii=False),
                 ]
             )
 
 
 def run(cfg):
+    if not cfg.train == cfg.dev == cfg.test:
+        print("This script only works with the same dataset for train, dev and test")
+        exit()
     path = "output/keywords"
     os.makedirs(path, exist_ok=True)
+    path = f"{path}/{cfg.train}.csv"
     # Init model
     model = AutoModelForSequenceClassification.from_pretrained(cfg.model_path).to(
         device
@@ -220,7 +224,6 @@ def run(cfg):
     for d in tqdm(data):
         batch_data["input_ids"].append(d["input_ids"])
         batch_data["attention_mask"].append(d["attention_mask"])
-        batch_data["language"].append(d["language"])
         batch_data["label"].append(d["label_text"])
 
         if len(batch_data["input_ids"]) == batch_size:

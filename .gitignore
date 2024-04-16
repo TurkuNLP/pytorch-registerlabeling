@@ -23,3 +23,4 @@ token.json
 credentials.json
 models
 test.py
+*.html

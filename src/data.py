@@ -1,4 +1,5 @@
 import csv
+import string
 import sys
 import gzip
 
@@ -186,13 +187,51 @@ def get_dataset(cfg, tokenizer):
 
     dataset = DatasetDict(splits).shuffle(seed=cfg.seed)
 
-    return dataset.map(
-        lambda example: tokenizer(
-            example["text"],
+    def process(examples):
+        tokenized_texts = tokenizer(
+            examples["text"],
             truncation=True,
             max_length=cfg.max_length,
             padding="max_length",
-        ),
+        )
+
+        if cfg.mask_alphabets:
+            # Retrieve the token IDs for unknown and punctuation tokens
+            unk_token_id = tokenizer.unk_token_id
+
+            # Initialize new_input_ids to hold the processed batches
+            new_input_ids = []
+
+            # Iterate over each set of input_ids in the batch
+            for input_ids in tokenized_texts["input_ids"]:
+                # Convert input_ids to tokens
+                tokens = tokenizer.convert_ids_to_tokens(input_ids)
+
+                # Replace non-punctuation tokens with the <unk> token ID
+                processed_ids = [
+                    (
+                        unk_token_id
+                        if not (
+                            token in string.punctuation
+                            or token in tokenizer.all_special_tokens
+                        )
+                        else token_id
+                    )
+                    for token, token_id in zip(tokens, input_ids)
+                ]
+
+                # Append the processed IDs to the new_input_ids list
+                new_input_ids.append(processed_ids)
+
+            # Update the input_ids in tokenized_batch with the new IDs
+            tokenized_texts["input_ids"] = new_input_ids
+
+            tokens = tokenizer.convert_ids_to_tokens(tokenized_texts["input_ids"][0])
+
+        return tokenized_texts
+
+    return dataset.map(
+        process,
         remove_columns=(
             cfg.remove_columns.split(",")
             if hasattr(cfg, "remove_columns") and cfg.remove_columns
