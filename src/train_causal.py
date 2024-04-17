@@ -164,7 +164,7 @@ def run(cfg):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-    base_model_id = "mistralai/Mistral-7B-v0.1"
+    base_model_id = "mistralai/Mixtral-8x7B-v0.1"
     tokenizer = AutoTokenizer.from_pretrained(
         base_model_id,
         padding_side="left",
@@ -175,7 +175,6 @@ def run(cfg):
 
     dataset = get_dataset(cfg, tokenizer)
 
-    base_model_id = "mistralai/Mistral-7B-v0.1"
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_use_double_quant=True,
