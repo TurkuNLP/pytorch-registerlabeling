@@ -120,7 +120,6 @@ def gen(languages, split, label_scheme, use_gz):
 
 def get_dataset(cfg, tokenizer):
     def process(examples):
-        print(examples)
         result = tokenizer(
             examples["text"],
             truncation=True,
@@ -128,7 +127,6 @@ def get_dataset(cfg, tokenizer):
             padding="max_length",
         )
         result["labels"] = result["input_ids"].copy()
-        print(result)
         return result
 
     generate = lambda split: Dataset.from_generator(
@@ -186,7 +184,7 @@ def run(cfg):
     )
 
     model = AutoModelForCausalLM.from_pretrained(
-        base_model_id, quantization_config=bnb_config, resume_download=True
+        base_model_id  # , quantization_config=bnb_config, resume_download=True
     )
     tokenizer = AutoTokenizer.from_pretrained(
         base_model_id,
