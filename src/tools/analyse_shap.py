@@ -50,16 +50,17 @@ def run(cfg):
         ).numpy()  # sigmoid activation
         # print("a")
         # print(probabilities)
-        return probabilities[:, 1]
+        return probabilities[:, 6]
 
     # build an explainer using a token masker
     explainer = shap.Explainer(f, tokenizer)
 
-    shap_values = explainer(dataset["text"])
+    text = "TEXT"
 
-    fig = plt.figure()
+    shap_values = explainer({"text": [text]})
 
-    # Generate the plot
-    shap.plots.bar(shap_values.abs.max(0), show=False, max_display=20)
+    html_content = shap.plots.text(shap_values[0], display=False)
 
-    plt.savefig("shap_plot2.png")
+    # Write the HTML string to a file
+    with open("visualization.html", "w", encoding="utf-8") as html_file:
+        html_file.write(html_content)

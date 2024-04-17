@@ -24,3 +24,4 @@ credentials.json
 models
 test.py
 *.html
+TMP_*

@@ -154,7 +154,7 @@ def run(cfg):
                         embed_dim=config.hidden_size,
                         low_rank_dimension=1,
                         dropout=0.05,
-                        dtype=torch.bfloat16,
+                        dtype=torch_dtype,
                         act_fn=None,
                         device=device,
                         add_bias=False,
