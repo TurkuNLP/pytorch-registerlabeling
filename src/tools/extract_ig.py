@@ -22,7 +22,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 label_scheme = label_schemes["upper"]
 
-init_batch_data = lambda: {"texts": [], "labels": []}
+init_batch_data = lambda: {"texts": [], "labels": [], "idx": []}
 
 
 def print_aggregated(target, txt, real_label):
