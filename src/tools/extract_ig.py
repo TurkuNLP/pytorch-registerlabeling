@@ -142,9 +142,6 @@ def process_batch(batch, model, tokenizer, threshold, path):
 
     predicted_labels = decode_binary_labels(bin_predictions, "upper")
 
-    print(predicted_labels)
-    exit()
-
     # Calculate Integrated Gradients for each label in each text
     for i in range(len(texts)):
         predicted_label = predicted_labels[i]
@@ -161,6 +158,8 @@ def process_batch(batch, model, tokenizer, threshold, path):
                 int_bs=10,
                 n_steps=50,
             )
+
+            print("a")
 
             attrs_sum = attrs.sum(dim=-1).squeeze(0)
             attrs_sum = attrs_sum / torch.norm(attrs_sum)
