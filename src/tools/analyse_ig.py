@@ -8,11 +8,9 @@ import string
 
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
-
-SPECIAL_TOKENS = ["<s>", "</s>"]
-
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+labels = ["MT", "LY", "SP", "ID", "NA", "HI", "IN", "OP", "IP"]
 
 
 ###### BELOW IS CONTRUBITOR STUFF
@@ -161,8 +159,14 @@ def run(cfg):
     tokenizer = AutoTokenizer.from_pretrained(config.get("_name_or_path"))
 
     texts = [
-        "Full service design and build contractor providing custom outdoor kitchens , outdoor fireplaces , patios , arbors , pergolas , decks , outdoor fire pits , swimming pools , custom stonework and hardscapes , fences , water features , retaining walls and a variety of remodeling , renovations and home repairs . To serve you better , we reserve the right to make improvements to the products and services seen on our website . Therefore , some may change without notice ."
+        "I am a sentence that is very narrative-like, like a short story with a lot of words.",
+        "Hello, how are you? Fine thanks, and you?",
+        "Prince Andrew, what were you thinking? Well you must understand that I was not being serious.",
+        "Just add water and 5 grams of sichuan pepper and you have a delicious meal.",
+        "Ketchup is nice but mustard is better, according to some experts",
     ]
+
+    labels = ["NA", "SP", "SP", "HI" "HI"]
 
     # Normalize spacing for punctuation
     texts = [
@@ -195,6 +199,7 @@ def run(cfg):
 
     # Calculate Integrated Gradients for each label in each text
     for i in range(len(texts)):  # Loop through batch
+        true_label = labels[i]
         text_labels = bin_predictions[i]
         label_indices = text_labels.nonzero(as_tuple=True)[0]
         for label_idx in label_indices:

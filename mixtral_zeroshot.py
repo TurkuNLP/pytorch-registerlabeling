@@ -20,9 +20,9 @@ NA: The purpose of the document is to narrate or report on events (e.g. news rep
 HI: The purpose of the document is to explain how-to or instructions (e.g. recipe or typically other step step-by-step, objective instructions on how to do something).
 IN: The purpose of the document is to describe or explain information (e.g. encyclopedia article, research article, description of a thing or person, FAQ, Legal terms and conditions, course materials and blogs for informing the reader)
 OP: The purpose of the document to express opinions (review, opinion blog typically written by an amateur writer, such as a politician, to express their opinion, denominational religious blog / sermon, advice).
-IP: The purpose of the document is to describe or explain facts with intent to persuade or market (e.g. description with intent to sell a product or service, a news & opinion blog or editorial typically written by a professional writer on a news-related topic with well-structured argumentation, or other descriptive texts that e.g. sell or promote a service, product or upcoming event, such as a hotel, a smartphone or a football game).
+IP: The purpose of the document is to describe or explain facts with intent to persuade or market (e.g. description with intent to sell a product or service, a news & opinion blog or editorial typically written by a professional writer on a news-related topic with well-structured argumentation).
 
-Just output the appropriate label(s) as a space-separated list. if you are unsure, leave blank.
+Just give the label(s) as a space-separated list. ONLY output the label(s), nothing else. If you are unsure, type "None".
 
 """
 
@@ -48,4 +48,5 @@ messages = [
 input_ids = tokenizer.apply_chat_template(messages, return_tensors="pt").to("cuda")
 
 outputs = model.generate(input_ids, max_new_tokens=20)
+print("OUTPUT:::")
 print(tokenizer.decode(outputs[0], skip_special_tokens=True))
