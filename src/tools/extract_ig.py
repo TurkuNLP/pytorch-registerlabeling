@@ -203,8 +203,9 @@ def run(cfg):
         dataset["test"] = dataset["test"].select(range(cfg.sample))
         dataset["dev"] = dataset["dev"].select(range(cfg.sample))
 
-    data = concatenate_datasets([dataset["train"], dataset["dev"], dataset["test"]])
-    batch_size = 2
+    # data = concatenate_datasets([dataset["train"], dataset["dev"], dataset["test"]])
+    data = dataset["test"]
+    batch_size = 8
     batch_data = init_batch_data()
 
     for d in tqdm(data):
