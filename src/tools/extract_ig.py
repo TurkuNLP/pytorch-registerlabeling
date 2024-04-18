@@ -155,7 +155,7 @@ def process_batch(batch, model, tokenizer, threshold, path):
                 ),  # Single example in batch
                 baselines=(blank_input_ids[i : i + 1], inp.attention_mask[i : i + 1]),
                 target=label_idx,
-                int_bs=10,
+                internal_batch_size=10,
                 n_steps=50,
             )
 
