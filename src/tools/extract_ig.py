@@ -168,7 +168,7 @@ def process_batch(batch, model, tokenizer, threshold, path):
                 writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
                 writer.writerow(
                     [
-                        " ".join(probs[i].cpu().tolist()),
+                        probs[i].cpu().tolist(),
                         true_label,
                         predicted_label,
                         test_label,
