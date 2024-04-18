@@ -169,7 +169,7 @@ def process_batch(batch, model, tokenizer, threshold, path):
                 writer.writerow(
                     [
                         probs[i].cpu().tolist(),
-                        true_label,
+                        true_label if type(true_label) == str else " ".join(true_label),
                         predicted_label,
                         test_label,
                         json.dumps(aggregated_tg, ensure_ascii=False),
