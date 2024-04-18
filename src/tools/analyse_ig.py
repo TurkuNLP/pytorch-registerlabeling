@@ -160,8 +160,6 @@ def run(cfg):
 
     tokenizer = AutoTokenizer.from_pretrained(config.get("_name_or_path"))
 
-    # Simulate a batch:
-
     texts = [
         "Full service design and build contractor providing custom outdoor kitchens , outdoor fireplaces , patios , arbors , pergolas , decks , outdoor fire pits , swimming pools , custom stonework and hardscapes , fences , water features , retaining walls and a variety of remodeling , renovations and home repairs . To serve you better , we reserve the right to make improvements to the products and services seen on our website . Therefore , some may change without notice ."
     ]
@@ -180,10 +178,10 @@ def run(cfg):
         padding=True,
     ).to(model.device)
 
-    # b_input_ids, b_attention_mask = blank_reference_input(inp, tokenizer.pad_token_id)
-    b_input_ids, b_attention_mask = blank_reference_input(
-        inp, tokenizer.convert_tokens_to_ids("-")
-    )
+    b_input_ids, b_attention_mask = blank_reference_input(inp, tokenizer.pad_token_id)
+    # b_input_ids, b_attention_mask = blank_reference_input(
+    #    inp, tokenizer.convert_tokens_to_ids("-")
+    # )
 
     def predict_f(inputs, attention_mask=None):
         return model(inputs, attention_mask=attention_mask).logits
@@ -200,11 +198,8 @@ def run(cfg):
         label_indices = text_labels.nonzero(as_tuple=True)[0]
         for label_idx in label_indices:
             attrs = lig.attribute(
-                inputs=(
-                    inp.input_ids[i : i + 1],
-                    inp.attention_mask[i : i + 1],
-                ),  # Single example in batch
-                baselines=(b_input_ids[i : i + 1], b_attention_mask[i : i + 1]),
+                inputs=inp.input_ids[i : i + 1],
+                baselines=b_input_ids[i : i + 1],
                 target=label_idx.item(),
                 internal_batch_size=10,
                 n_steps=50,

@@ -102,6 +102,15 @@ def transform_and_rescale(similarities):
     return scaled
 
 
+def logarithmic_scale(similarities):
+    # Assuming similarities are already scaled between 0 and 1
+    epsilon = 1e-5  # small number to avoid log(0)
+    # Shift similarities by a small epsilon away from 0 to apply logarithm
+    similarities = np.maximum(similarities, epsilon)
+    # Apply a negative logarithm to make differences at the high end more pronounced
+    return -np.log(similarities)
+
+
 # Function to generate simple HTML for document visualization
 def generate_html_for_document(tokens, similarities, doc_index):
     html_content = "<html><head><title>Document Visualization</title></head><body><p>"
@@ -165,9 +174,7 @@ def get_batch_embeddings(batch_data, model, tokenizer, output_path):
         )
 
         # Transform and scale the similarities
-        transformed_and_scaled_similarities = transform_and_rescale(
-            np.array(similarities)
-        )
+        transformed_and_scaled_similarities = logarithmic_scale(np.array(similarities))
 
         # Generate and save HTML for visualization
         generate_html_for_document(

@@ -183,7 +183,7 @@ def run(cfg):
     )
 
     model = AutoModelForCausalLM.from_pretrained(
-        base_model_id  # , quantization_config=bnb_config, resume_download=True
+        base_model_id, quantization_config=bnb_config, resume_download=True
     )
     tokenizer = AutoTokenizer.from_pretrained(
         base_model_id,
