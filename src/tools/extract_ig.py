@@ -121,6 +121,7 @@ def process_batch(batch, model, tokenizer, threshold, path):
         return_tensors="pt",
         return_special_tokens_mask=True,
         truncation=True,
+        padding="max_length",
         max_length=512,
     ).to(model.device)
 
@@ -146,8 +147,11 @@ def process_batch(batch, model, tokenizer, threshold, path):
 
         for label_idx in range(len(label_scheme)):
             attrs = lig.attribute(
-                inputs=inp.input_ids[i : i + 1],
-                baselines=blank_input_ids[i : i + 1],
+                inputs=(
+                    inp.input_ids[i : i + 1],
+                    inp.attention_mask[i : i + 1],
+                ),  # Single example in batch
+                baselines=(blank_input_ids[i : i + 1], inp.attention_maskk[i : i + 1]),
                 target=label_idx,
             )
 
