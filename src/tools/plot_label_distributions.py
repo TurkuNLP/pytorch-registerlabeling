@@ -4,7 +4,7 @@ import plotly.io as pio
 import seaborn as sns
 from datasets import concatenate_datasets
 from transformers import AutoTokenizer
-from ..data import get_dataset, language_names
+from ..data import get_dataset, language_names, language_colors
 from ..labels import (
     labels_structure,
     map_full_names,
@@ -26,7 +26,7 @@ def run(cfg):
         lambda labels: map_childless_upper_to_other(labels.split())
     )
 
-    print(df.head(10))
+    print(df.head(100))
 
     # Explode the labels
     df = df.explode("label_text")
@@ -123,7 +123,6 @@ def run(cfg):
 
     # Creating the plot
     fig = go.Figure()
-    color_i = 0
     print(subcategories)
     for lang, counts in langs.items():
         fig.add_trace(
@@ -132,12 +131,9 @@ def run(cfg):
                 y=subcategories,
                 x=counts,
                 orientation="h",
-                marker_color=sns.color_palette("Blues", n_colors=6).as_hex()[
-                    color_i + 1
-                ],
+                marker_color=language_colors[lang],
             )
         )
-        color_i += 1
 
     annotations = []
     current_index = 0

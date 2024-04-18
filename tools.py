@@ -30,6 +30,8 @@ if __name__ == "__main__":
     parser.add_argument("--sample", type=int, default=10)
     parser.add_argument("--keep_columns", type=bool, default=True)
     parser.add_argument("--mask_alphabets", type=bool, default=False)
+    parser.add_argument("--skip_tokenize", type=bool, default=True)
+    parser.add_argument("--threshold", type=float, default=0.5)
 
     cfg = parser.parse_args()
 

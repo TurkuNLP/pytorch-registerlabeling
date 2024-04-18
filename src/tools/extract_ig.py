@@ -4,59 +4,20 @@ from captum.attr import LayerIntegratedGradients
 import captum
 import numpy as np
 import torch
+import os
 import string
+from tqdm import tqdm
+from datasets import concatenate_datasets
+from ..data import get_dataset
+from ..labels import label_schemes, decode_binary_labels
 
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-labels = ["MT", "LY", "SP", "ID", "NA", "HI", "IN", "OP", "IP"]
+label_scheme = label_schemes["upper"]
 
-
-###### BELOW IS CONTRUBITOR STUFF
-
-import numpy as np
-
-
-def aggregate_scores(texts):
-    scores_by_word = {}
-
-    # Collect all scores for each word
-    for text in texts:
-        for word, score in text:
-            if word not in scores_by_word:
-                scores_by_word[word] = []
-            scores_by_word[word].append(score)
-
-    return scores_by_word
-
-
-def compute_statistics(scores_by_word):
-    stats_by_word = {}
-
-    # Compute statistics for each word
-    for word, scores in scores_by_word.items():
-        mean_score = np.mean(scores)
-        std_dev = np.std(scores)
-        stats_by_word[word] = {"mean": mean_score, "std_dev": std_dev, "scores": scores}
-
-    return stats_by_word
-
-
-def find_top_contributors(stats_by_word, top_n=20):
-    # Sort words by mean score for positive and negative contributions
-    sorted_by_mean_positive = sorted(
-        stats_by_word.items(), key=lambda x: x[1]["mean"], reverse=True
-    )
-    sorted_by_mean_negative = sorted(stats_by_word.items(), key=lambda x: x[1]["mean"])
-
-    top_positive = sorted_by_mean_positive[:top_n]
-    top_negative = sorted_by_mean_negative[:top_n]
-
-    return top_positive, top_negative
-
-
-#### END CONTRIBUTOR STUFF
+init_batch_data = lambda: {"texts": [], "labels": []}
 
 
 def print_aggregated(target, txt, real_label):
@@ -107,11 +68,11 @@ def aggregate(scores, tokens, special_tokens, prepare_keywords=False):
 
     # Process each token and corresponding score
     for score, token in zip(scores, tokens):
-        print(token)
+        # print(token)
         if prepare_keywords:
             token = token.lower()
-            if not token.strip(string.punctuation).replace("▁", "").strip():
-                continue
+            # if not token.strip(string.punctuation).replace("▁", "").strip():
+            #    continue
         if token in special_tokens:
             continue
 
@@ -144,29 +105,10 @@ def blank_reference_input(tokenized_input, blank_token_id):
     return blank_input_ids, tokenized_input.attention_mask
 
 
-def run(cfg):
-    # model = torch.load(f"{cfg.model_path}", map_location=torch.device(device))
-    # model = model.to(device)
-    # tokenizer = AutoTokenizer.from_pretrained("xlm-roberta-base")
+def process_batch(batch, model, tokenizer, threshold, path):
 
-    model = AutoModelForSequenceClassification.from_pretrained(cfg.model_path).to(
-        device
-    )
-
-    with open(f"{cfg.model_path}/config.json", "r") as config_file:
-        config = json.load(config_file)
-
-    tokenizer = AutoTokenizer.from_pretrained(config.get("_name_or_path"))
-
-    texts = [
-        "I am a sentence that is very narrative-like, like a short story with a lot of words.",
-        "Hello, how are you? Fine thanks, and you?",
-        "Prince Andrew, what were you thinking? Well you must understand that I was not being serious.",
-        "Just add water and 5 grams of sichuan pepper and you have a delicious meal.",
-        "Ketchup is nice but mustard is better, according to some experts",
-    ]
-
-    labels = ["NA", "SP", "SP", "HI" "HI"]
+    texts = batch["texts"]
+    labels = batch["labels"]
 
     # Normalize spacing for punctuation
     texts = [
@@ -193,28 +135,32 @@ def run(cfg):
     with torch.no_grad():
         logits = model(inp.input_ids, attention_mask=inp.attention_mask).logits
 
-    bin_predictions = torch.sigmoid(logits) > 0.45
+    bin_predictions = torch.sigmoid(logits) > threshold
 
-    print(bin_predictions)
+    predicted_labels = decode_binary_labels(bin_predictions, "upper")
 
     # Calculate Integrated Gradients for each label in each text
-    for i in range(len(texts)):  # Loop through batch
-        true_label = labels[i]
-        text_labels = bin_predictions[i]
-        label_indices = text_labels.nonzero(as_tuple=True)[0]
-        for label_idx in label_indices:
+    for i in range(len(texts)):
+        predicted_label = predicted_labels[i]
+        tokens = tokenizer.convert_ids_to_tokens(inp.input_ids[i : i + 1][0])
+
+        for label_idx in range(len(label_scheme)):
             attrs = lig.attribute(
                 inputs=inp.input_ids[i : i + 1],
                 baselines=blank_input_ids[i : i + 1],
-                target=label_idx.item(),
+                target=label_idx,
             )
-            tokens = tokenizer.convert_ids_to_tokens(inp.input_ids[i : i + 1][0])
+
             attrs_sum = attrs.sum(dim=-1).squeeze(0)
             attrs_sum = attrs_sum / torch.norm(attrs_sum)
             aggregated_tg = aggregate(
                 attrs_sum, tokens, tokenizer.all_special_tokens, prepare_keywords=False
             )
-            print_aggregated(label_idx, aggregated_tg, "SOME LABEL")
+            test_label = label_scheme[label_idx]
+            print(aggregated_tg)
+            print(predicted_label)
+            print(test_label)
+            exit()
 
     exit()
     for tg in targets:
@@ -260,3 +206,45 @@ def run(cfg):
         print_aggregated(tg, result, "SOME LABEL")
 
         exit()
+
+
+def run(cfg):
+    if not cfg.train == cfg.dev == cfg.test:
+        print("This script only works with the same dataset for train, dev and test")
+        exit()
+    path = "output/keywords_ig"
+    os.makedirs(path, exist_ok=True)
+    path = f"{path}/{cfg.train}.csv"
+    model = AutoModelForSequenceClassification.from_pretrained(cfg.model_path).to(
+        device
+    )
+
+    threshold = cfg.threshold
+
+    with open(f"{cfg.model_path}/config.json", "r") as config_file:
+        config = json.load(config_file)
+
+    tokenizer = AutoTokenizer.from_pretrained(config.get("_name_or_path"))
+
+    dataset = get_dataset(cfg, tokenizer)
+    dataset.set_format(type="torch")
+    print(dataset)
+    if cfg.sample:
+        dataset["train"] = dataset["train"].select(range(cfg.sample))
+        dataset["test"] = dataset["test"].select(range(cfg.sample))
+        dataset["dev"] = dataset["dev"].select(range(cfg.sample))
+
+    data = concatenate_datasets([dataset["train"], dataset["dev"], dataset["test"]])
+    batch_size = 2
+    batch_data = init_batch_data()
+
+    for d in tqdm(data):
+        batch_data["texts"].append(d["text"])
+        batch_data["labels"].append(d["label_text"])
+
+        if len(batch_data["texts"]) == batch_size:
+            process_batch(batch_data, model, tokenizer, threshold, path)
+            batch_data = init_batch_data()
+
+    if len(batch_data["texts"]):
+        process_batch(batch_data, model, tokenizer, threshold, path)

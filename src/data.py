@@ -2,10 +2,11 @@ import csv
 import string
 import sys
 import gzip
+import seaborn as sns
 
 csv.field_size_limit(sys.maxsize)
 from itertools import cycle
-
+import random
 import numpy as np
 from datasets import Dataset, DatasetDict, concatenate_datasets
 from skmultilearn.model_selection import IterativeStratification
@@ -15,23 +16,45 @@ from transformers.trainer_utils import seed_worker
 from .labels import binarize_labels, normalize_labels
 
 language_names = {
-    "ar": "Arabic",
-    "ca": "Catalan",
     "en": "English",
-    "es": "Spanish",
-    "fa": "Persian",
     "fi": "Finnish",
     "fr": "French",
+    "sv": "Swedish",
+    "tr": "Turkish",
+    "ar": "Arabic",
+    "ca": "Catalan",
+    "es": "Spanish",
+    "fa": "Persian",
     "hi": "Hindi",
     "id": "Indonesian",
     "jp": "Japanese",
     "no": "Norwegian",
     "pt": "Portuguese",
-    "sv": "Swedish",
-    "tr": "Turkish",
     "ur": "Urdu",
     "zh": "Chinese",
 }
+
+palette = sns.color_palette("husl", len(language_names)).as_hex()
+palette = [
+    "#a48cf4",
+    "#b39b32",
+    "#d673f4",
+    "#f77732",
+    "#97a431",
+    "#6cad31",
+    "#34af8e",
+    "#f77189",
+    "#f66ab5",
+    "#39a7d0",
+    "#36ada4",
+    "#37abb8",
+    "#ce9032",
+    "#32b166",
+    "#5a9ef4",
+    "#f561dd",
+]
+
+language_colors = {lang: palette[idx] for idx, lang in enumerate(language_names)}
 
 
 class BalancedLanguageSampler(Sampler):
@@ -186,6 +209,9 @@ def get_dataset(cfg, tokenizer):
             splits[s] = generate(s)
 
     dataset = DatasetDict(splits).shuffle(seed=cfg.seed)
+
+    if hasattr(cfg, "skip_tokenize") and cfg.skip_tokenize:
+        return dataset
 
     def process(examples):
         tokenized_texts = tokenizer(
