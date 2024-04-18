@@ -14,6 +14,8 @@ HI: The purpose of the document is to explain how-to or instructions (e.g. recip
 IN: The purpose of the document is to describe or explain information (e.g. encyclopedia article, research article, description of a thing or person, FAQ, Legal terms and conditions, course materials and blogs for informing the reader)
 OP: The purpose of the document to express opinions (review, opinion blog typically written by an amateur writer, such as a politician, to express their opinion, denominational religious blog / sermon, advice).
 IP: The purpose of the document is to describe or explain facts with intent to persuade or market (e.g. description with intent to sell a product or service, a news & opinion blog or editorial typically written by a professional writer on a news-related topic with well-structured argumentation, or other descriptive texts that e.g. sell or promote a service, product or upcoming event, such as a hotel, a smartphone or a football game).
+
+Give the label(s) as a space-separated list. If you are unsure, output "None". 
 """
 import csv
 import glob
@@ -98,7 +100,7 @@ file_opener = lambda file_path, use_gz: (
 
 
 def format_prompt(input, output):
-    return f"### Instruction: {INSTRUCTION} \n### Output labels: {output} \n### Input text: {input}"
+    return f"### Instruction: {INSTRUCTION} \n### Output: {output} \n### Input text: {input}"
 
 
 def gen(languages, split, label_scheme, use_gz):

@@ -178,19 +178,20 @@ def run(cfg):
         padding=True,
     ).to(model.device)
 
-    b_input_ids, b_attention_mask = blank_reference_input(inp, tokenizer.pad_token_id)
-    # b_input_ids, b_attention_mask = blank_reference_input(
-    #    inp, tokenizer.convert_tokens_to_ids("-")
-    # )
+    blank_input_ids = inp.input_ids.clone().detach()
+    blank_input_ids[inp.special_tokens_mask == 0] = tokenizer.pad_token_id
 
     def predict_f(inputs, attention_mask=None):
         return model(inputs, attention_mask=attention_mask).logits
 
     lig = LayerIntegratedGradients(predict_f, model.roberta.embeddings)
+
     with torch.no_grad():
         logits = model(inp.input_ids, attention_mask=inp.attention_mask).logits
 
-    bin_predictions = torch.sigmoid(logits) > 0.5
+    bin_predictions = torch.sigmoid(logits) > 0.45
+
+    print(bin_predictions)
 
     # Calculate Integrated Gradients for each label in each text
     for i in range(len(texts)):  # Loop through batch
@@ -199,12 +200,9 @@ def run(cfg):
         for label_idx in label_indices:
             attrs = lig.attribute(
                 inputs=inp.input_ids[i : i + 1],
-                baselines=b_input_ids[i : i + 1],
+                baselines=blank_input_ids[i : i + 1],
                 target=label_idx.item(),
-                internal_batch_size=10,
-                n_steps=50,
             )
-            print(inp.input_ids[i : i + 1])
             tokens = tokenizer.convert_ids_to_tokens(inp.input_ids[i : i + 1][0])
             attrs_sum = attrs.sum(dim=-1).squeeze(0)
             attrs_sum = attrs_sum / torch.norm(attrs_sum)
