@@ -11,6 +11,10 @@ from datasets import concatenate_datasets
 from tqdm import tqdm
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
+from datasets import disable_caching
+
+disable_caching()
+
 from ..data import get_dataset
 from ..labels import decode_binary_labels, label_schemes
 
@@ -164,7 +168,7 @@ def process_batch(batch, model, tokenizer, threshold, path):
                 writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
                 writer.writerow(
                     [
-                        probs[i],
+                        " ".join(probs[i].cpu().tolist()),
                         true_label,
                         predicted_label,
                         test_label,
