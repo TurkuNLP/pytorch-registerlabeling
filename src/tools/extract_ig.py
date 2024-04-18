@@ -142,6 +142,9 @@ def process_batch(batch, model, tokenizer, threshold, path):
 
     predicted_labels = decode_binary_labels(bin_predictions, "upper")
 
+    print(predicted_label)
+    exit()
+
     # Calculate Integrated Gradients for each label in each text
     for i in range(len(texts)):
         predicted_label = predicted_labels[i]
