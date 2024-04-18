@@ -33,6 +33,7 @@ if __name__ == "__main__":
     parser.add_argument("--skip_tokenize", type=bool, default=True)
     parser.add_argument("--threshold", type=float, default=0.5)
     parser.add_argument("--save_path_suffix", default="")
+    parser.add_argument("--cachedir", default=".ig_cache")
 
     cfg = parser.parse_args()
 

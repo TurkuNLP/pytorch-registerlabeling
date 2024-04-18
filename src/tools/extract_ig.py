@@ -11,10 +11,6 @@ from datasets import concatenate_datasets
 from tqdm import tqdm
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
-from datasets import disable_caching
-
-disable_caching()
-
 from ..data import get_dataset
 from ..labels import decode_binary_labels, label_schemes
 
@@ -145,7 +141,7 @@ def process_batch(batch, model, tokenizer, threshold, path):
     # Calculate Integrated Gradients for each label in each text
     for i in range(len(texts)):
         predicted_label = predicted_labels[i]
-        true_label = batch["labels"][i]
+        true_label = labels[i]
         tokens = tokenizer.convert_ids_to_tokens(inp.input_ids[i : i + 1][0])
         idx = idxs[i]
         for label_idx in range(len(label_scheme)):

@@ -173,15 +173,24 @@ def gen(languages, split, label_scheme, use_gz):
 
 
 def get_dataset(cfg, tokenizer):
-    generate = lambda split: Dataset.from_generator(
-        gen,
-        gen_kwargs={
-            "languages": dict(cfg)[split].split("-"),
-            "split": split,
-            "label_scheme": cfg.labels,
-            "use_gz": cfg.use_gz,
-        },
-    )
+    def generate(split):
+        kwargs = {
+            'gen_kwargs': {
+                "languages": dict(cfg)[split].split("-"),
+                "split": split,
+                "label_scheme": cfg.labels,
+                "use_gz": cfg.use_gz,
+            }
+        }
+
+        if hasattr(cfg, "cachedir") and cfg.cachedir
+            kwargs["cache_dir"] = cfg.cachedir
+    
+        return Dataset.from_generator(
+            gen,
+            **kwargs,            
+        )
+    
     splits = {}
 
     if cfg.use_fold:
