@@ -148,6 +148,7 @@ file_opener = lambda file_path, use_gz: (
 
 
 def gen(languages, split, label_scheme, use_gz):
+    idx = -1
     for l in languages:
 
         with file_opener(
@@ -161,7 +162,9 @@ def gen(languages, split, label_scheme, use_gz):
                 if not normalized_labels:
                     continue
 
+                idx += 1
                 yield {
+                    "idx": idx,
                     "label": binarize_labels(normalized_labels, label_scheme),
                     "label_text": " ".join(normalized_labels),
                     "text": ro[1],

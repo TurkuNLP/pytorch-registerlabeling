@@ -109,6 +109,7 @@ def process_batch(batch, model, tokenizer, threshold, path):
 
     texts = batch["texts"]
     labels = batch["labels"]
+    idxs = batch["idx"]
 
     # Normalize spacing for punctuation
     texts = [
@@ -146,7 +147,7 @@ def process_batch(batch, model, tokenizer, threshold, path):
         predicted_label = predicted_labels[i]
         true_label = batch["labels"][i]
         tokens = tokenizer.convert_ids_to_tokens(inp.input_ids[i : i + 1][0])
-
+        idx = idxs[i]
         for label_idx in range(len(label_scheme)):
             attrs = lig.attribute(
                 inputs=(
@@ -168,6 +169,7 @@ def process_batch(batch, model, tokenizer, threshold, path):
                 writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
                 writer.writerow(
                     [
+                        idx,
                         probs[i].cpu().tolist(),
                         true_label if type(true_label) == str else " ".join(true_label),
                         predicted_label,
@@ -212,6 +214,7 @@ def run(cfg):
     for d in tqdm(data):
         batch_data["texts"].append(d["text"])
         batch_data["labels"].append(d["label_text"])
+        batch_data["idx"].append(d["idx"])
 
         if len(batch_data["texts"]) == batch_size:
             process_batch(batch_data, model, tokenizer, threshold, path)
