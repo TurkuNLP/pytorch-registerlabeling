@@ -1,3 +1,10 @@
+import os
+
+os.environ["HF_HOME"] = ".hf/hf_home"
+os.environ["XDG_CACHE_HOME"] = ".hf/xdg_cache_home"
+os.environ["HF_DATASETS_CACHE"] = ".hf/datasets_cache"
+os.environ["WANDB_DISABLED"] = "true"
+
 INSTRUCTION = """
 Categorize the following web-scraped text into one or more of the following categories:
 
@@ -28,7 +35,7 @@ model_id = "mistralai/Mixtral-8x7B-Instruct-v0.1"
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 
 model = AutoModelForCausalLM.from_pretrained(
-    model_id, load_in_4bit=True, device_map="auto"
+    model_id, load_in_4bit=True, device_map="auto", use_flash_attention_2=True
 )
 
 messages = [
