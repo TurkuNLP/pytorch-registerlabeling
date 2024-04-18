@@ -121,7 +121,7 @@ def process_batch(batch, model, tokenizer, threshold, path):
         return_tensors="pt",
         return_special_tokens_mask=True,
         truncation=True,
-        padding=True,
+        max_length=512,
     ).to(model.device)
 
     blank_input_ids = inp.input_ids.clone().detach()
