@@ -1,17 +1,18 @@
+import csv
 import json
+import os
 import re
-from captum.attr import LayerIntegratedGradients
+
 import captum
 import numpy as np
 import torch
-import os
-import string
-from tqdm import tqdm
+from captum.attr import LayerIntegratedGradients
 from datasets import concatenate_datasets
-from ..data import get_dataset
-from ..labels import label_schemes, decode_binary_labels
-
+from tqdm import tqdm
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+from ..data import get_dataset
+from ..labels import decode_binary_labels, label_schemes
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -57,7 +58,7 @@ def mean_pool_ngrams(word_scores, k, n):
     return ngrams
 
 
-def aggregate(scores, tokens, special_tokens, prepare_keywords=False):
+def aggregate(scores, tokens, special_tokens):
     scores = scores.cpu().tolist()
 
     # Initialize variables
@@ -68,11 +69,6 @@ def aggregate(scores, tokens, special_tokens, prepare_keywords=False):
 
     # Process each token and corresponding score
     for score, token in zip(scores, tokens):
-        # print(token)
-        if prepare_keywords:
-            token = token.lower()
-            # if not token.strip(string.punctuation).replace("▁", "").strip():
-            #    continue
         if token in special_tokens:
             continue
 
@@ -125,8 +121,6 @@ def process_batch(batch, model, tokenizer, threshold, path):
         max_length=512,
     ).to(model.device)
 
-    print(inp)
-
     blank_input_ids = inp.input_ids.clone().detach()
     blank_input_ids[inp.special_tokens_mask == 0] = tokenizer.pad_token_id
 
@@ -138,13 +132,15 @@ def process_batch(batch, model, tokenizer, threshold, path):
     with torch.no_grad():
         logits = model(inp.input_ids, attention_mask=inp.attention_mask).logits
 
-    bin_predictions = torch.sigmoid(logits) > threshold
+    probs = torch.sigmoid(logits)
+    bin_predictions = probs > threshold
 
     predicted_labels = decode_binary_labels(bin_predictions, "upper")
 
     # Calculate Integrated Gradients for each label in each text
     for i in range(len(texts)):
         predicted_label = predicted_labels[i]
+        true_label = batch["labels"][i]
         tokens = tokenizer.convert_ids_to_tokens(inp.input_ids[i : i + 1][0])
 
         for label_idx in range(len(label_scheme)):
@@ -159,70 +155,31 @@ def process_batch(batch, model, tokenizer, threshold, path):
                 n_steps=50,
             )
 
-            print("a")
-
             attrs_sum = attrs.sum(dim=-1).squeeze(0)
             attrs_sum = attrs_sum / torch.norm(attrs_sum)
-            aggregated_tg = aggregate(
-                attrs_sum, tokens, tokenizer.all_special_tokens, prepare_keywords=False
-            )
+            aggregated_tg = aggregate(attrs_sum, tokens, tokenizer.all_special_tokens)
             test_label = label_scheme[label_idx]
-            print(aggregated_tg)
-            print(predicted_label)
-            print(test_label)
-            exit()
 
-    exit()
-    for tg in targets:
-
-        attrs = lig.attribute(
-            inputs=(inp.input_ids, inp.attention_mask),
-            baselines=(b_input_ids, b_attention_mask),
-            target=tuple(tg),
-            internal_batch_size=10,
-            n_steps=50,
-        )
-        # append the calculated and normalized scores to aggregated
-        attrs_sum = attrs.sum(dim=-1).squeeze(0)
-        attrs_sum = attrs_sum / torch.norm(attrs_sum)
-
-        print(attrs_sum)
-
-        aggregated_tg = aggregate(
-            attrs_sum, tokens, tokenizer.all_special_tokens, prepare_keywords=True
-        )
-
-        print(aggregated_tg)
-
-        result = mean_pool_ngrams(aggregated_tg, 1, 1)
-
-        print(result)
-
-        # Compute statistics for each word
-        stats_by_word = compute_statistics(result)
-
-        # Find the top 20 positive and negative contributing words
-        top_positive, top_negative = find_top_contributors(stats_by_word)
-
-        print(
-            "Top Positive Keywords:",
-            [(word, data["mean"], data["std_dev"]) for word, data in top_positive],
-        )
-        print(
-            "Top Negative Keywords:",
-            [(word, data["mean"], data["std_dev"]) for word, data in top_negative],
-        )
-
-        print_aggregated(tg, result, "SOME LABEL")
-
-        exit()
+            with open(f"{path}", "a", newline="") as tsvfile:
+                writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
+                writer.writerow(
+                    [
+                        probs[i],
+                        true_label,
+                        predicted_label,
+                        test_label,
+                        json.dumps(aggregated_tg, ensure_ascii=False),
+                    ]
+                )
 
 
 def run(cfg):
     if not cfg.train == cfg.dev == cfg.test:
         print("This script only works with the same dataset for train, dev and test")
         exit()
-    path = "output/keywords_ig"
+    path = f"output/keywords_ig"
+    if cfg.save_path_suffix:
+        path += "/" + cfg.save_path_suffix
     os.makedirs(path, exist_ok=True)
     path = f"{path}/{cfg.train}.csv"
     model = AutoModelForSequenceClassification.from_pretrained(cfg.model_path).to(
