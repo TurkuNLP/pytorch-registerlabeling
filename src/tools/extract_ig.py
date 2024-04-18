@@ -125,6 +125,8 @@ def process_batch(batch, model, tokenizer, threshold, path):
         max_length=512,
     ).to(model.device)
 
+    print(inp)
+
     blank_input_ids = inp.input_ids.clone().detach()
     blank_input_ids[inp.special_tokens_mask == 0] = tokenizer.pad_token_id
 
@@ -153,6 +155,8 @@ def process_batch(batch, model, tokenizer, threshold, path):
                 ),  # Single example in batch
                 baselines=(blank_input_ids[i : i + 1], inp.attention_mask[i : i + 1]),
                 target=label_idx,
+                int_bs=10,
+                n_steps=50,
             )
 
             attrs_sum = attrs.sum(dim=-1).squeeze(0)
