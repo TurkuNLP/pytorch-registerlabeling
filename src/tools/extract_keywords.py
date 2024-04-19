@@ -13,6 +13,7 @@ from datasets import concatenate_datasets
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from ..data import get_dataset
+from ..labels import decode_binary_labels
 
 csv.field_size_limit(sys.maxsize)
 
@@ -25,7 +26,7 @@ init_batch_data = lambda: {
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def pool_embeddings_for_words(token_embeddings, tokens, special_tokens, method="mean"):
+def pool_embeddings_for_words(token_embeddings, tokens, special_tokens, method="max"):
     pool = np.mean if method == "mean" else np.max
     # Initialize a dictionary to hold the pooled embeddings for each full word
     word_embeddings = []
@@ -65,7 +66,7 @@ def pool_embeddings_for_words(token_embeddings, tokens, special_tokens, method="
 
 
 def generate_ngrams_with_embeddings(
-    word_embedding_tuples, method="mean", ngram_range=(1, 2)
+    word_embedding_tuples, method="mean", ngram_range=(1, 3)
 ):
     pool = np.mean if method == "mean" else np.max
     ngrams_with_embeddings = []
@@ -113,7 +114,7 @@ def compute_cosine_similarities(batch_data, i, special_tokens):
         batch_data["token_embeddings"][i],
         batch_data["tokens"][i],
         special_tokens,
-        "mean",
+        "max",
     )
 
     ngram_embeddings = generate_ngrams_with_embeddings(word_embeddings, "mean")
@@ -138,26 +139,30 @@ def average_pool(last_hidden_states, attention_mask):
     return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
 
 
-def get_batch_embeddings(batch_data, model, tokenizer, output_path):
+def get_batch_embeddings(batch_data, model, tokenizer, threshold, output_path):
 
     batch = {
         "input_ids": torch.stack([x for x in batch_data["input_ids"]]),
         "attention_mask": torch.stack([x for x in batch_data["attention_mask"]]),
     }
     batch = {k: v.to(device) for k, v in batch.items()}
+    with torch.no_grad():
+        outputs = model(
+            input_ids=batch["input_ids"],
+            attention_mask=batch["attention_mask"],
+            output_hidden_states=True,
+        )
 
-    outputs = model(
-        input_ids=batch["input_ids"],
-        attention_mask=batch["attention_mask"],
-        output_hidden_states=True,
-    )
-
-    doc_embeddings = (
-        average_pool(outputs.hidden_states[-1], batch["attention_mask"])
-        .cpu()
-        .detach()
-        .numpy()
-    )
+    probs = torch.sigmoid(outputs.logits)
+    bin_predictions = probs > threshold
+    predicted_labels = decode_binary_labels(bin_predictions, "upper")
+    batch_data["predicted_labels"] = predicted_labels
+    # doc_embeddings = (
+    #    average_pool(outputs.hidden_states[-1], batch["attention_mask"])
+    #    .cpu()
+    #   .detach()
+    #    .numpy()
+    # )
 
     doc_embeddings = outputs.hidden_states[-1][:, 0, :].cpu().detach().numpy()
 
@@ -180,12 +185,13 @@ def get_batch_embeddings(batch_data, model, tokenizer, output_path):
         cosine_similarities = compute_cosine_similarities(
             batch_data, i, tokenizer.all_special_tokens
         )
+
         with open(f"{output_path}", "a", newline="") as tsvfile:
             writer = csv.writer(tsvfile, delimiter="\t", lineterminator="\n")
             writer.writerow(
                 [
                     batch_data["label"][i],
-                    batch_data["doc_embeddings"][i],
+                    batch_data["predicted_labels"][i],
                     json.dumps(cosine_similarities, ensure_ascii=False),
                 ]
             )
@@ -195,7 +201,9 @@ def run(cfg):
     if not cfg.train == cfg.dev == cfg.test:
         print("This script only works with the same dataset for train, dev and test")
         exit()
-    path = "output/keywords"
+    path = f"output/keywords_emb"
+    if cfg.save_path_suffix:
+        path += "/" + cfg.save_path_suffix
     os.makedirs(path, exist_ok=True)
     path = f"{path}/{cfg.train}.csv"
     # Init model
@@ -227,8 +235,8 @@ def run(cfg):
         batch_data["label"].append(d["label_text"])
 
         if len(batch_data["input_ids"]) == batch_size:
-            get_batch_embeddings(batch_data, model, tokenizer, path)
+            get_batch_embeddings(batch_data, model, tokenizer, cfg.threshold, path)
             batch_data = init_batch_data()
 
     if len(batch_data["input_ids"]):
-        get_batch_embeddings(batch_data, model, tokenizer, path)
+        get_batch_embeddings(batch_data, model, tokenizer, cfg.threshold, path)

@@ -143,6 +143,8 @@ def get_batch_embeddings(batch_data, model, tokenizer, output_path):
         .numpy()
     )
 
+    doc_embeddings = outputs.hidden_states[-1][:, 0, :].cpu().detach().numpy()
+
     batch_data["doc_embeddings"] = doc_embeddings
 
     # Extract token IDs for each document in the batch
