@@ -1,11 +1,18 @@
 import torch
+import os
 from transformers import AutoTokenizer, AutoModelForCausalLM
-
+from huggingface_hub import login
 import logging
 import warnings
 
 warnings.filterwarnings("ignore")
 logging.basicConfig(level=logging.INFO)
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+login(token=os.getenv("HUGGINGFACE_ACCESS_TOKEN", ""))
 
 SYSTEM_PROMPT = """
 You are a classifier for web-scraped texts written in different languages. Given a text, you must label it as one or more of the following categories:
