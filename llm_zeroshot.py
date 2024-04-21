@@ -1,5 +1,8 @@
 import torch
 import os
+
+os.environ["HF_HOME"] = ".hf/hf_home"
+
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from huggingface_hub import login
 import logging
