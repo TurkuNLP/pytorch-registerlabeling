@@ -43,6 +43,8 @@ test_input = "Recently Thomson Reuters celebrated the 20 th anniversary of the p
 model = "lucyknada/microsoft_WizardLM-2-7B"
 
 tokenizer = AutoTokenizer.from_pretrained(model)
+if tokenizer.pad_token is None:
+    tokenizer.pad_token = tokenizer.eos_token
 model = AutoModelForCausalLM.from_pretrained(model, load_in_4bit=True)
 model.eval()
 
@@ -62,14 +64,15 @@ def generate_response(text):
 
     terminators = [
         tokenizer.eos_token_id,
-        # tokenizer.convert_tokens_to_ids("<|eot_id|>"),
+        tokenizer.convert_tokens_to_ids("<|eot_id|>"),
     ]
 
     outputs = model.generate(
         input_ids,
         max_new_tokens=20,
-        eos_token_id=terminators,
+        # eos_token_id=terminators,
         do_sample=False,
+        pad_token_id=tokenizer.pad_token_id,
         temperature=0.0,
     )
     response = outputs[0][input_ids.shape[-1] :]
