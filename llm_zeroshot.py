@@ -38,7 +38,8 @@ test_input = """
 The quick brown fox did a news report.
 """
 
-model = "meta-llama/Meta-LLAMA-3-8B-Instruct"
+# model = "meta-llama/Meta-LLAMA-3-8B-Instruct"
+model = "lucyknada/microsoft_WizardLM-2-7B"
 
 tokenizer = AutoTokenizer.from_pretrained(model)
 model = AutoModelForCausalLM.from_pretrained(model, load_in_4bit=True)
@@ -60,7 +61,7 @@ def generate_response(text):
 
     terminators = [
         tokenizer.eos_token_id,
-        tokenizer.convert_tokens_to_ids("<|eot_id|>"),
+        # tokenizer.convert_tokens_to_ids("<|eot_id|>"),
     ]
 
     outputs = model.generate(
