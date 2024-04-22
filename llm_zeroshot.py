@@ -56,6 +56,8 @@ model = AutoModelForCausalLM.from_pretrained(
 
 def generate_label(text):
 
+    text = text[:3000]
+
     messages = [
         {
             "role": "system",
