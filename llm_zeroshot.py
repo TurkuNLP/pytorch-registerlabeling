@@ -83,7 +83,9 @@ def generate_label(text):
         temperature=0.0,
     )
     response = outputs[0][input_ids.shape[-1] :]
-    return tokenizer.decode(response, skip_special_tokens=True)
+    result = tokenizer.decode(response, skip_special_tokens=True)
+    print(f'"{text[:10]}..." -> "{result}"')
+    return result
 
 
 # Define the path to the directories containing the files
