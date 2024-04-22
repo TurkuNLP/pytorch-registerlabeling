@@ -26,3 +26,4 @@ test.py
 *.html
 TMP_*
 .ipynb_checkpoints
+.ig_cache
