@@ -83,7 +83,7 @@ def generate_label(text):
         temperature=0.0,
     )
     response = outputs[0][input_ids.shape[-1] :]
-    print(tokenizer.decode(response, skip_special_tokens=True))
+    return tokenizer.decode(response, skip_special_tokens=True)
 
 
 # Define the path to the directories containing the files
@@ -97,11 +97,20 @@ for file_name in file_names:
     file_path = base_path + file_name
 
     # Read the TSV file into a DataFrame
-    df = pd.read_csv(file_path, sep="\t", header=None, names=["true_labels", "text"])
+    df = pd.read_csv(
+        file_path,
+        sep="\t",
+        header=None,
+        names=["true_labels", "text"],
+        na_values="",  # Don't interpret NA as NaN!
+        keep_default_na=False,
+    )
 
     # Strip whitespace from strings in the DataFrame
     df["true_labels"] = df["true_labels"].str.strip()
     df["text"] = df["text"].str.strip()
+
+    df.dropna(inplace=True)
 
     # Filter out rows where either 'true_labels' or 'text' are empty
     df = df[(df["true_labels"] != "") & (df["text"] != "")]
