@@ -25,3 +25,4 @@ models
 test.py
 *.html
 TMP_*
+.ipynb_checkpoints
