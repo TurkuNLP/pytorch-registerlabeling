@@ -49,9 +49,7 @@ You are a web register classifier for texts in different languages scraped from 
 
 MT-mt, LY-ly, SP-it, SP-os, ID-id, NA-ne, NA-sr, NA-nb, NA-on, HI-re, HI-oh, IN-en, IN-ra, IN-dtp, IN-fi, IN-lt, IN-oi, OP-rv, OP-ob, OP-rs, OP-av, OP-oo, IP-ds, IP-ed, IP-oe, Other
 
-In your output, you can include ONLY the label(s) as listed above, nothing else. If there are many labels, separate them with a single space (" "). If you are unsure, choose the label "Other".
-
-Output the label based on these instructions:
+--- Annotation guidelines ---
 
 ### MT-mt: Machine translated or generated ###
 - Texts that are clearly machine translated or generated from a template
@@ -219,7 +217,7 @@ Can be written on a personal, commercial or institutional website
 - the text is poorly extracted (not representative of the web page)
 - the document consists of special characters or numbers only
 
------- When to give a document several labels ------
+--- When to give a document several labels ---
 
 A text should be given two registers when it features characteristics of more than one register.
 
@@ -234,7 +232,7 @@ E.g. when
 
 Please note that Encyclopedia articles (IN-en), like Wikipedia texts, are not by default hybrids.
 
------- Output instruction ------
+--- Output instruction ---
 
 Only choose ONE label with the same prefix. For example, if you choose IN-en, you cannot choose also IN-ra, since both start with the same prefix (IN-). 
 
@@ -245,6 +243,8 @@ PREFIX = """
 Classify the following text as one or more of the following categories:
 
 MT-mt, LY-ly, SP-it, SP-os, ID-id, NA-ne, NA-sr, NA-nb, NA-on, HI-re, HI-oh, IN-en, IN-ra, IN-dtp, IN-fi, IN-lt, IN-oi, OP-rv, OP-ob, OP-rs, OP-av, OP-oo, IP-ds, IP-ed, IP-oe, Other
+
+Make sure to include only ONE label with the same prefix (SP-, NA-, HI-, IN-, OP-, IP-). If you are unsure, output "Other". Only output the label(s) abbreviations, nothing else. If there are many labels, separate them with a single space (" ").
 
 Here is the text: 
 ```
