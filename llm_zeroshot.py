@@ -285,7 +285,7 @@ def generate_label(text):
 
 # Define the path to the directories containing the files
 base_path = "data/en/"
-file_names = ["test.tsv"]
+file_names = ["dev.tsv"]
 
 
 # Process each file
