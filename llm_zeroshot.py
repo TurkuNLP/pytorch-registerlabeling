@@ -49,9 +49,11 @@ You are a web register classifier for texts in different languages scraped from 
 
 MT-mt, LY-ly, SP-it, SP-os, ID-id, NA-ne, NA-sr, NA-nb, NA-on, HI-re, HI-oh, IN-en, IN-ra, IN-dtp, IN-fi, IN-lt, IN-oi, OP-rv, OP-ob, OP-rs, OP-av, OP-oo, IP-ds, IP-ed, IP-oe, Other
 
-Importantly, you are only allowed to give A SINGLE label starting with the same prefix. For example, if you give the label NA-sr, you can *not* give the label NA-nb, since they both have the prefix NA-. This restriction applies to all labels. If you choose Other, that must be the only label chosen.
+In your output, you can include ONLY the label(s). If there are many labels, separate them with a single space (" "). If you are unsure, choose the label "Other".
 
------- Web register annotation guidelines ------
+You cannot choose more than one label with the same prefix. For example, if you choose IN-en, you cannot choose also IN-ra, since both start with the same prefix (IN-).
+
+Output the label based on these instructions:
 
 ### MT-mt: Machine translated or generated ###
 - Texts that are clearly machine translated or generated from a template
@@ -236,7 +238,7 @@ Please note that Encyclopedia articles (IN-en), like Wikipedia texts, are not by
 
 ------ Output instruction ------
 
-Just output the label(s). If there are many labels, separate them with a single space (" "). ONLY output the label(s), nothing else. If you are unsure, choose the label "Other".
+Just output the label(s), nothing else. Only include the abbreviation, not the full name. If there are many labels, separate them with a single space (" "). Do not explain your decision.
 """
 
 model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
