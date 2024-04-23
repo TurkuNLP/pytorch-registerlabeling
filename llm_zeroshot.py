@@ -244,7 +244,7 @@ Classify the following text as one or more of the following categories:
 
 MT-mt, LY-ly, SP-it, SP-os, ID-id, NA-ne, NA-sr, NA-nb, NA-on, HI-re, HI-oh, IN-en, IN-ra, IN-dtp, IN-fi, IN-lt, IN-oi, OP-rv, OP-ob, OP-rs, OP-av, OP-oo, IP-ds, IP-ed, IP-oe, Other
 
-Make sure to include only ONE label with the same prefix (SP-, NA-, HI-, IN-, OP-, IP-). If you are unsure, output "Other". Only output the label(s) abbreviations, nothing else. If there are many labels, separate them with a single space (" ").
+Make sure to include only ONE label with the same prefix (MT-, LY-, SP-, NA-, HI-, IN-, OP-, IP-). If you are unsure, output "Other". Only output the label(s) abbreviations, nothing else. If there are many labels, separate them with a single space (" ").
 
 Here is the text: 
 ```
