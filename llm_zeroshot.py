@@ -49,9 +49,7 @@ You are a web register classifier for texts in different languages scraped from 
 
 MT-mt, LY-ly, SP-it, SP-os, ID-id, NA-ne, NA-sr, NA-nb, NA-on, HI-re, HI-oh, IN-en, IN-ra, IN-dtp, IN-fi, IN-lt, IN-oi, OP-rv, OP-ob, OP-rs, OP-av, OP-oo, IP-ds, IP-ed, IP-oe, Other
 
-In your output, you can include ONLY the label(s). If there are many labels, separate them with a single space (" "). If you are unsure, choose the label "Other".
-
-You cannot choose more than one label with the same prefix. For example, if you choose IN-en, you cannot choose also IN-ra, since both start with the same prefix (IN-).
+In your output, you can include ONLY the label(s) as listed above, nothing else. If there are many labels, separate them with a single space (" "). If you are unsure, choose the label "Other".
 
 Output the label based on these instructions:
 
@@ -238,7 +236,18 @@ Please note that Encyclopedia articles (IN-en), like Wikipedia texts, are not by
 
 ------ Output instruction ------
 
+Only choose ONE label with the same prefix. For example, if you choose IN-en, you cannot choose also IN-ra, since both start with the same prefix (IN-). 
+
 Just output the label(s), nothing else. Only include the abbreviation, not the full name. If there are many labels, separate them with a single space (" "). Do not explain your decision.
+"""
+
+PREFIX = """
+Classify the following text as one or more of the following categories:
+
+MT-mt, LY-ly, SP-it, SP-os, ID-id, NA-ne, NA-sr, NA-nb, NA-on, HI-re, HI-oh, IN-en, IN-ra, IN-dtp, IN-fi, IN-lt, IN-oi, OP-rv, OP-ob, OP-rs, OP-av, OP-oo, IP-ds, IP-ed, IP-oe, Other
+
+Here is the text: 
+```
 """
 
 model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
@@ -260,7 +269,7 @@ def generate_label(text):
             "role": "system",
             "content": FULL_PROMPT,
         },
-        {"role": "user", "content": text},
+        {"role": "user", "content": PREFIX + text+'\n```'},
     ]
 
     input_ids = tokenizer.apply_chat_template(
