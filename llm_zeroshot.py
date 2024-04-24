@@ -359,7 +359,7 @@ Here is the text:
 ```
 """
 
-model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
+model_id = "meta-llama/Meta-Llama-3-70B-Instruct"
 
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForCausalLM.from_pretrained(
@@ -439,7 +439,7 @@ for file_name in file_names:
     df = df[["true_labels", "new_labels", "text"]]
 
     # Construct the output file path
-    output_file_path = base_path + file_name.replace(".tsv", "_full_gen_simplified_prompt.tsv")
+    output_file_path = base_path + file_name.replace(".tsv", "_full_gen_simplified_prompt_70b.tsv")
 
     # Save the new DataFrame to a TSV file
     df.to_csv(output_file_path, sep="\t", index=False, header=False)
