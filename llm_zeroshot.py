@@ -52,6 +52,7 @@ MT-mt, LY-ly, SP-it, SP-os, ID-id, NA-ne, NA-sr, NA-nb, NA-on, HI-re, HI-oh, IN-
 --- Annotation guidelines ---
 
 ### MT-mt: Machine translated or generated ###
+
 - Texts that are clearly machine translated or generated from a template
 - Such texts can be e.g. from holiday accommodation sites or flight booking sites
 - It is not necessary to give another register label to Machine translated or generated text
@@ -234,7 +235,49 @@ Please note that Encyclopedia articles (IN-en), like Wikipedia texts, are not by
 
 --- Output instruction ---
 
-VERY IMPORTANT: Only choose A SINGLE label WITH THE SAME PREFIX!!. For example, if you choose IN-en, that must be the ONLY label startign with IN-. The same goes for all other prefixes. If you choose a label with any of the prefixes (MT-, LY-, SP-, ID-, NA-, HI-, IN-, OP-, IP-), you must not choose any other label with the same prefix!
+VERY IMPORTANT: Only choose A SINGLE label WITH THE SAME PREFIX!!. For example, if you choose IN-en, that must be the ONLY label starting with IN-. The same goes for all other prefixes. If you choose a label with any of the prefixes (MT-, LY-, SP-, ID-, NA-, HI-, IN-, OP-, IP-), you must not choose any other label with the same prefix!
+
+Just output the label(s), nothing else. Only include the abbreviation, not the full name. If there are many labels, separate them with a single space (" "). Do not explain your decision.
+"""
+
+
+FULL_PROMPT_SIMPLIFIED = """
+You are a web register classifier for texts in different languages scraped from the unrestricted web. Given a text, you must label it as one or more of the following:
+
+MT-mt, LY-ly, SP-it, SP-os, ID-id, NA-ne, NA-sr, NA-nb, NA-on, HI-re, HI-oh, IN-en, IN-ra, IN-dtp, IN-fi, IN-lt, IN-oi, OP-rv, OP-ob, OP-rs, OP-av, OP-oo, IP-ds, IP-ed, IP-oe, Other
+
+--- Annotation guidelines ---
+
+MT-mt: Texts that are clearly machine translated or generated from a template
+LY-ly: Song lyrics or poems
+SP-it: Spoken interviews structured in a dialogic question-answer format
+SP-os: Other Spoken texts with more than 50% spoken material
+ID-id: Interactive forum discussions with participants and possibly other readers
+NA-ne: News reports, releases, newsletters, and weather forecasts
+NA-sr: Sports reports written by professional journalists or amateur writers
+NA-nb: Personal, travel, lifestyle, or community blogs
+NA-on: Other Narrative texts such as short stories, fiction, magazine articles
+HI-re: Step-by-step instructions on how to prepare or cook something
+HI-oh: Other How-to instructions on how to perform a task
+IN-en: Encyclopedia articles or wikis written to objectively describe various topics
+IN-ra: Research articles describing a study, methods, and findings
+IN-dtp: Descriptions of a thing or person, excluding Encyclopedia articles
+IN-fi: FAQs structured as questions-and-answers
+IN-lt: Legal terms and conditions, privacy policies, and bills
+IN-oi: Other Informational descriptions such as course materials or reports
+OP-rv: Reviews evaluating the quality of a product or service
+OP-ob: Opinion blogs expressing the writer's opinion on politics, policies, or social issues
+OP-rs: Denominational religious blogs or sermons
+OP-av: Advice offering solutions to a problem based on personal opinion
+OP-oo: Other Opinion pieces expressing the writer's opinion
+IP-ds: Descriptions with intent to sell a product or service
+IP-ed: News & opinion blogs or editorials persuading the reader with information and facts
+IP-oe: Other Informational persuasion texts promoting healthy lifestyles or advertising an event
+Other: Rejected text that doesn't fit any of the above categories
+
+--- Instructions ---
+
+A text should be given multiple registers when it features characteristics of more than one register.
 
 Just output the label(s), nothing else. Only include the abbreviation, not the full name. If there are many labels, separate them with a single space (" "). Do not explain your decision.
 """
@@ -245,6 +288,17 @@ Classify the following text as one or more of the following categories:
 MT-mt, LY-ly, SP-it, SP-os, ID-id, NA-ne, NA-sr, NA-nb, NA-on, HI-re, HI-oh, IN-en, IN-ra, IN-dtp, IN-fi, IN-lt, IN-oi, OP-rv, OP-ob, OP-rs, OP-av, OP-oo, IP-ds, IP-ed, IP-oe, Other
 
 VERY IMPORTANT: Make sure to include only A SINGLE label with the same prefix (MT-, LY-, SP-, NA-, HI-, IN-, OP-, IP-). If you are unsure, output "Other". Only output the label(s) abbreviations, nothing else. If there are many labels, separate them with a single space (" ").
+
+Please do the labeling as carefully as possible, this is important scientific work, and you will be rewarded.
+
+Here is the text:
+```
+"""
+
+PREFIX_SIMPLIFIED = """
+Classify the following text as one or more of the following categories:
+
+MT-mt, LY-ly, SP-it, SP-os, ID-id, NA-ne, NA-sr, NA-nb, NA-on, HI-re, HI-oh, IN-en, IN-ra, IN-dtp, IN-fi, IN-lt, IN-oi, OP-rv, OP-ob, OP-rs, OP-av, OP-oo, IP-ds, IP-ed, IP-oe, Other
 
 Please do the labeling as carefully as possible, this is important scientific work, and you will be rewarded.
 
@@ -269,9 +323,9 @@ def generate_label(text):
     messages = [
         {
             "role": "system",
-            "content": FULL_PROMPT,
+            "content": FULL_PROMPT_SIMPLIFIED,
         },
-        {"role": "user", "content": PREFIX + text+'\n```'},
+        {"role": "user", "content": PREFIX_SIMPLIFIED + text+'\n```'},
     ]
 
     input_ids = tokenizer.apply_chat_template(
@@ -332,7 +386,7 @@ for file_name in file_names:
     df = df[["true_labels", "new_labels", "text"]]
 
     # Construct the output file path
-    output_file_path = base_path + file_name.replace(".tsv", "_full_gen.tsv")
+    output_file_path = base_path + file_name.replace(".tsv", "_full_gen_simplified_prompt.tsv")
 
     # Save the new DataFrame to a TSV file
     df.to_csv(output_file_path, sep="\t", index=False, header=False)
