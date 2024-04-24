@@ -279,6 +279,8 @@ Other: Rejected text that doesn't fit any of the above categories
 
 A text should be given multiple registers when it features characteristics of more than one register.
 
+Always prefer to use a single label over multiple labels.
+
 Just output the label(s), nothing else. Only include the abbreviation, not the full name. If there are many labels, separate them with a single space (" "). Do not explain your decision.
 """
 
@@ -299,6 +301,8 @@ PREFIX_SIMPLIFIED = """
 Classify the following text as one or more of the following categories:
 
 MT-mt, LY-ly, SP-it, SP-os, ID-id, NA-ne, NA-sr, NA-nb, NA-on, HI-re, HI-oh, IN-en, IN-ra, IN-dtp, IN-fi, IN-lt, IN-oi, OP-rv, OP-ob, OP-rs, OP-av, OP-oo, IP-ds, IP-ed, IP-oe, Other
+
+Only use multiple labels if necessary, otherwise prefer a single label.
 
 Please do the labeling as carefully as possible, this is important scientific work, and you will be rewarded.
 
