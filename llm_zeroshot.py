@@ -44,6 +44,55 @@ IP: The text describes or explains facts with intent to persuade or market (e.g.
 Just output the label(s). If there are many labels, separate them with a single space (" "). ONLY output the label(s), nothing else. If you are unsure, output "None". Prefer single labels over multiple labels.
 """
 
+
+PREFIX_IMPROVED = """
+Classify the following text into one or more of the following registers:
+
+["Machine-translated", "Lyrical", "Spoken:Interview", "Spoken:Other", "Forum", "Narrative:News", "Narrative:Sports", "Narrative:Blog", "Narrative:Other", "How-to:Recipe", "How-to:Other", "Informational:Encyclopedia", "Informational:Research", "Informational:Description", "Informational:FAQ", "Informational:Legal", "Informational:Other", "Opinion:Review", "Opinion:Blog", "Opinion:Religious", "Opinion:Advice", "Opinion:Other", "Persuasion:Marketing", "Persuasion:Informational", "Persuasion:Other", "Other"]
+
+Here is the text:
+```
+"""
+
+FULL_PROMPT_IMPROVED = """
+You will be given texts randomly scraped from the web. Your task is to classify it into a primary register and, if necessary, a secondary register.
+
+Choose strictly from this list: ["Machine-translated", "Lyrical", "Spoken:Interview", "Spoken:Other", "Forum", "Narrative:News", "Narrative:Sports", "Narrative:Blog", "Narrative:Other", "How-to:Recipe", "How-to:Other", "Informational:Encyclopedia", "Informational:Research", "Informational:Description", "Informational:FAQ", "Informational:Legal", "Informational:Other", "Opinion:Review", "Opinion:Blog", "Opinion:Religious", "Opinion:Advice", "Opinion:Other", "Persuasion:Marketing", "Persuasion:Informational", "Persuasion:Other", "Other"]
+
+You can choose multiple labels if the text contains characteristics from multiple registers. However, choose only one subcategory from the hierarchical categories (Spoken, Narrative, How-to, Informational, Opinion, Persuasion)
+
+Choose the label(s) based on answering these questions:
+
+- Is the web page machine translated or generated from a template? --> "Machine-Translated"
+- Is the web page lyrical, such as songs or poems? --> "Lyrical"
+- Is the web page an interactive discussion written by multiple participants in a discussion format? --> "Forum"
+- Is the web page a spoken interview --> "Spoken:Interview"
+- Is the web page some other spoken content --> "Spoken:Other"
+- Is the web page a news report, newsletter, weather forecast or similar --> "Narrative:News"
+- Is the web page a sports report --> "Narrative:Sports"
+- Is the web page a personal blog --> "Narrative:Blog"
+- Is the web page some other narrative or report --> "Narrative:Other"
+- Is the web page a recipe --> "How-to:Recipe"
+- Is the web page some other how-to or instructions --> "How-to:Other"
+- Is the web page a description of some topic like a wiki or dictionary entry --> "Informational:Encyclopedia"
+- Is the web page a description of a research study --> "Informational:Research"
+- Is the web page a description of a thing or a person --> "Informational:Description"
+- Is the web page a frequently-asked-questions page --> "Informational:FAQ"
+- Is the web page legislational --> "Informational:Legal"
+- Is the web page some other description (e.g. course materials, tests, meeting notes) --> "Informational:Other"
+- Is the web page an opinionated review --> "Opinion:Review"
+- Is the web page an opinionated blog (e.g. politics, society) --> "Opinion:Blog"
+- Is the web page denominationally religious --> "Opinion:Religious"
+- Is the web page offering personal advice --> "Opinion:Advice"
+- Is the web page some other opinion piece --> "Opinion:Other"
+- Is the web page intending to sell a product or service --> "Persuasion:Marketing"
+- Is the web page intending to persuade with information --> "Persuasion:Informational"
+- Is the web page some other informational persuasion (e.g. upcoming event, lifestyle) --> "Persuasion:Other"
+- Is the web page mostly list entries or captions, lacking substantial content --> "Other"
+
+Just output the register class(es) from the list above, nothing else. If there are many labels, separate them with a single space (" "). Do not explain your decision in any way. 
+"""
+
 FULL_PROMPT = """
 You are a web register classifier for texts in different languages scraped from the unrestricted web. Given a text, you must give it one or more of the following labels:
 
@@ -327,9 +376,9 @@ def generate_label(text):
     messages = [
         {
             "role": "system",
-            "content": FULL_PROMPT_SIMPLIFIED,
+            "content": FULL_PROMPT_IMPROVED,
         },
-        {"role": "user", "content": PREFIX_SIMPLIFIED + text+'\n```'},
+        {"role": "user", "content": PREFIX_IMPROVED+ text+'\n```'},
     ]
 
     input_ids = tokenizer.apply_chat_template(
