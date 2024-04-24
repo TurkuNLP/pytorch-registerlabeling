@@ -234,7 +234,7 @@ Please note that Encyclopedia articles (IN-en), like Wikipedia texts, are not by
 
 --- Output instruction ---
 
-Only choose ONE label with the same prefix. For example, if you choose IN-en, you cannot choose also IN-ra, since both start with the same prefix (IN-). 
+VERY IMPORTANT: Only choose A SINGLE label WITH THE SAME PREFIX!!. For example, if you choose IN-en, that must be the ONLY label startign with IN-. The same goes for all other prefixes. If you choose a label with any of the prefixes (MT-, LY-, SP-, ID-, NA-, HI-, IN-, OP-, IP-), you must not choose any other label with the same prefix!
 
 Just output the label(s), nothing else. Only include the abbreviation, not the full name. If there are many labels, separate them with a single space (" "). Do not explain your decision.
 """
@@ -244,9 +244,11 @@ Classify the following text as one or more of the following categories:
 
 MT-mt, LY-ly, SP-it, SP-os, ID-id, NA-ne, NA-sr, NA-nb, NA-on, HI-re, HI-oh, IN-en, IN-ra, IN-dtp, IN-fi, IN-lt, IN-oi, OP-rv, OP-ob, OP-rs, OP-av, OP-oo, IP-ds, IP-ed, IP-oe, Other
 
-Make sure to include only ONE label with the same prefix (MT-, LY-, SP-, NA-, HI-, IN-, OP-, IP-). If you are unsure, output "Other". Only output the label(s) abbreviations, nothing else. If there are many labels, separate them with a single space (" ").
+VERY IMPORTANT: Make sure to include only A SINGLE label with the same prefix (MT-, LY-, SP-, NA-, HI-, IN-, OP-, IP-). If you are unsure, output "Other". Only output the label(s) abbreviations, nothing else. If there are many labels, separate them with a single space (" ").
 
-Here is the text: 
+Please do the labeling as carefully as possible, this is important scientific work, and you will be rewarded.
+
+Here is the text:
 ```
 """
 
