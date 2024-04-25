@@ -63,6 +63,7 @@ def run(cfg):
     torch.backends.cudnn.benchmark = False
 
     test_language = ""  # Used when predicting
+    test_dataset = []  # Used when predicting
     label_scheme = label_schemes[cfg.labels]
     prediction_label_scheme = label_schemes[cfg.predict_labels]
     print(f"Predicting {len(label_scheme)} labels")
@@ -75,6 +76,8 @@ def run(cfg):
     )
     print(f"Results are logged to {results_output_dir}")
     torch_dtype = locate(f"torch.{cfg.torch_dtype}")
+    if not torch.cuda.is_available():
+        torch_dtype = torch.float32
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     if "mixtral" in cfg.model_name.lower():
         tokenizer.pad_token = tokenizer.eos_token
@@ -278,8 +281,8 @@ def run(cfg):
 
             true_labels_str = decode_binary_labels(true_labels, cfg.labels)
             predicted_labels_str = decode_binary_labels(binary_predictions, cfg.labels)
-
-            data = list(zip(true_labels_str, predicted_labels_str))
+            example_indices = [x["row"] for x in test_dataset]
+            data = list(zip(true_labels_str, predicted_labels_str, example_indices))
 
             os.makedirs(results_output_dir, exist_ok=True)
 
@@ -320,7 +323,7 @@ def run(cfg):
             metric_for_best_model="eval_loss",
             load_best_model_at_end=True,
             save_total_limit=2,
-            tf32=True,
+            tf32=True if torch.cuda.is_available() else False,
             group_by_length=True,
             report_to=None,
         ),
@@ -344,6 +347,7 @@ def run(cfg):
     for language in cfg.test.split("-"):
         print(f"-- {language} --")
         test_language = language
-        trainer.predict(
-            dataset["test"].filter(lambda example: example["language"] == language)
+        test_dataset = dataset["test"].filter(
+            lambda example: example["language"] == language
         )
+        trainer.predict(test_dataset)

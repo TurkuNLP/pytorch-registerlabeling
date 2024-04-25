@@ -27,3 +27,4 @@ test.py
 TMP_*
 .ipynb_checkpoints
 .ig_cache
+test_cache

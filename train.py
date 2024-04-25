@@ -32,6 +32,7 @@ if __name__ == "__main__":
     parser.add_argument("--use_gz", action="store_true")
     parser.add_argument("--remove_columns", default="")
     parser.add_argument("--mask_alphabets", type=bool, default=False)
+    parser.add_argument("--cachedir", default="")
 
     # Trainer
     parser.add_argument("--learning_rate", "-lr", type=float, default=5e-5)

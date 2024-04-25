@@ -149,6 +149,7 @@ file_opener = lambda file_path, use_gz: (
 
 def gen(languages, split, label_scheme, use_gz):
     idx = -1
+    row = -1
     for l in languages:
 
         with file_opener(
@@ -156,6 +157,7 @@ def gen(languages, split, label_scheme, use_gz):
         ) as c:
             re = csv.reader(c, delimiter="\t")
             for ro in re:
+                row += 1
                 if not (ro[0] and ro[1]):
                     continue
                 normalized_labels = normalize_labels(ro[0], label_scheme)
@@ -165,6 +167,7 @@ def gen(languages, split, label_scheme, use_gz):
                 idx += 1
                 yield {
                     "idx": idx,
+                    "row": row,
                     "label": binarize_labels(normalized_labels, label_scheme),
                     "label_text": " ".join(normalized_labels),
                     "text": ro[1],
