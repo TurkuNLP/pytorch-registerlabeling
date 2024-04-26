@@ -2,12 +2,7 @@ print("Importing packages...")
 import csv
 import sys
 
-sys.path.append(
-    f"venv/lib/python{'.'.join(map(str, sys.version_info[:3]))}/site-packages"
-)
-
-print(f"venv/lib/python{'.'.join(map(str, sys.version_info[:5]))}/site-packages")
-exit()
+sys.path.append(f"venv/lib/python3.9.7/site-packages")
 
 from tqdm import tqdm
 
