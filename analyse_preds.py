@@ -6,7 +6,7 @@ sys.path.append(
     f"venv/lib/python{'.'.join(map(str, sys.version_info[:3]))}/site-packages"
 )
 
-print(f"venv/lib/python{'.'.join(map(str, sys.version_info[:3]))}/site-packages")
+print(f"venv/lib/python{'.'.join(map(str, sys.version_info[:5]))}/site-packages")
 exit()
 
 from tqdm import tqdm
