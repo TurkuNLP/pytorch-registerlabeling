@@ -132,7 +132,15 @@ def perform_ig(inputs, blank_input_ids, idx, model, tokenizer):
     return word_visualizations
 
 
-def analyse_ig(train_languages, test_language, true_labels, pred_labels, ig_path, data):
+def analyse_ig(
+    train_languages,
+    test_language,
+    true_labels_filter,
+    predicted_labels_filter,
+    data_filename,
+    ig_path,
+    data,
+):
 
     inner_html = []
 
@@ -178,32 +186,57 @@ def analyse_ig(train_languages, test_language, true_labels, pred_labels, ig_path
             )
 
         true_text = (
-            f", Pred labels: {pred_labels}"
-            if pred_attributions
-            else " (Correct prediction)"
+            f"Token contributions relative to true labels: {', '.join(true_labels)}"
         )
 
+        if pred_bin == true_bin:
+            true_text += " (Correctly predicted)"
+
         html_block = f"""
-            <h4>Row {row['row_idx']}</h4>
-            <h5>True labels: {true_labels}{true_text}</h5>
+            <h3>Row {row['row_idx']}</h3>
+            <h4>{true_text}</h4>
             <table style="border:solid;">{true_attributions}</table>
         """
 
-        if pred_attributions:
+        if pred_bin != true_bin:
             html_block += f"""
-                <h5>True labels: {true_labels}, Pred labels: {pred_labels} (Wrong prediction)</h5>
+                <h4>Token contributions relative to wrongly predicted labels: {', '.join(pred_labels)}</h4>"
                 <table style="border:solid;">{pred_attributions}</table>
             """
 
         inner_html.append(html_block)
     inner_html = "\n".join(inner_html)
+    style = """
+        body {
+            font-family:sans-serif;
+            font-family: sans-serif;
+            margin: 20px auto;
+            max-width: 960px;
+            padding:0 20px;
+        }
+        table {
+            border: 1px solid #aaa;
+            border-radius: 5px;
+            margin: 10px 0 20px;
+            padding: 10px;
+        }
+    """
     html = f"""
-        <html>
-            <body>
+        <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <title>Integrated Gradients</title>
+            </head>
+            <style>
+                {style}
+
+            </style>
                 <div style="text-align:center;">
                     <h1>Integrated Gradients</h1>
-                    <h2>Model: XLM-RoBERTa-Large, Train: {train_languages}, Test: {test_language}, File: {ig_path}</h2>
-                    <h3>True labels filter: {true_labels}, Pred labels filter: {pred_labels}</h3>
+                    <h2>Model: XLM-RoBERTa-Large, Train: {train_languages}, Test: {test_language}, File: {data_filename}</h2>
+                    <h3>True labels filter: {true_labels_filter}, Pred labels filter: {predicted_labels_filter}</h3>
                 </div>
                 {inner_html}
             </body>
@@ -296,6 +329,7 @@ def filter_rows(train_languages, test_language, true_label, predicted_label, ig_
                 test_language,
                 true_label,
                 predicted_label,
+                data_filename,
                 ig_path,
                 results,
             )
