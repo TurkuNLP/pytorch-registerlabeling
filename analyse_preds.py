@@ -1,15 +1,16 @@
+print("Importing packages...")
 import csv
 import sys
+
+sys.path.append(
+    f"venv/lib/python{'.'.join(map(str, sys.version_info[:3]))}/site-packages"
+)
 
 import torch
 from captum.attr import LayerIntegratedGradients, visualization
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from tqdm import tqdm
-
-sys.path.append(
-    f"venv/lib/python{'.'.join(map(str, sys.version_info[:3]))}/site-packages"
-)
 
 csv.field_size_limit(sys.maxsize)
 
@@ -20,6 +21,8 @@ from src.labels import (
     labels_structure,
     normalize_labels,
 )
+
+print("Imports finished")
 
 label_scheme = label_schemes["all"]
 
@@ -185,23 +188,22 @@ def analyse_ig(
                 inputs, blank_input_ids, pred_indexes, model, tokenizer
             )
 
-        true_text = (
-            f"Token contributions relative to true labels: {', '.join(true_labels)}"
+        correct_text = (
+            " and <span style='color:green;'>correctly</span> predicted"
+            if pred_bin == true_bin
+            else ""
         )
-
-        if pred_bin == true_bin:
-            true_text += " (Correctly predicted)"
 
         html_block = f"""
             <h3>Row {row['row_idx']}</h3>
-            <h4>{true_text}</h4>
-            <table style="border:solid;">{true_attributions}</table>
+            <h4>True{correct_text} labels: {', '.join(true_labels)}</h4>
+            <table>{true_attributions}</table>
         """
 
         if pred_bin != true_bin:
             html_block += f"""
-                <h4>Token contributions relative to wrongly predicted labels: {', '.join(pred_labels)}</h4>"
-                <table style="border:solid;">{pred_attributions}</table>
+                <h4><span style="color:red;">Wrongly</span> predicted labels: {', '.join(pred_labels)}</h4>
+                <table>{pred_attributions}</table>
             """
 
         inner_html.append(html_block)
