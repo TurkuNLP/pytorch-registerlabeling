@@ -345,7 +345,7 @@ def filter_rows(train_languages, test_language, true_label, predicted_label, ig_
                 )
 
         if not results:
-            print("Nothing found.")
+            print("No rows found matching the criteria.")
             exit()
 
         for row in results:
@@ -367,6 +367,8 @@ def filter_rows(train_languages, test_language, true_label, predicted_label, ig_
             print(f"True: {gold}, Pred: {pred}, Text: {row['file']} [{row['row_idx']}]")
             print(row["text"][:5000])
             print("-" * 50)
+
+        print(f"Found {len(results)} rows matching the criteria.")
 
         if ig_path:
             print("")
