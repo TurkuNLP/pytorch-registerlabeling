@@ -2,13 +2,10 @@ print("Importing packages...")
 import csv
 import sys
 
-sys.path.append(f"venv/lib/python3.9.7/site-packages")
-
 from tqdm import tqdm
 
 csv.field_size_limit(sys.maxsize)
 
-from src.data import small_languages
 from src.labels import (
     binarize_labels,
     label_schemes,
@@ -19,6 +16,20 @@ from src.labels import (
 print("Imports finished")
 
 label_scheme = label_schemes["all"]
+
+small_languages = [
+    "ar",
+    "ca",
+    "es",
+    "fa",
+    "hi",
+    "id",
+    "jp",
+    "no",
+    "pt",
+    "ur",
+    "zh",
+]
 
 
 def group_labels_by_parent(example_labels):
