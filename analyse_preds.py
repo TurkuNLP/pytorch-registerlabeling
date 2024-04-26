@@ -6,10 +6,6 @@ sys.path.append(
     f"venv/lib/python{'.'.join(map(str, sys.version_info[:3]))}/site-packages"
 )
 
-import torch
-from captum.attr import LayerIntegratedGradients, visualization
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
-
 from tqdm import tqdm
 
 csv.field_size_limit(sys.maxsize)
@@ -101,40 +97,6 @@ def aggregate(scores, tokens, special_tokens):
     return word_scores
 
 
-def perform_ig(inputs, blank_input_ids, idx, model, tokenizer):
-
-    def predict_f(pred_inputs, attention_mask=None):
-        return model(pred_inputs, attention_mask=attention_mask).logits
-
-    def custom_f(inputs, attention_mask, target_indices):
-        outputs = model(
-            inputs, attention_mask
-        ).logits  # Assuming the model returns raw logits
-        target_outputs = outputs[:, target_indices]  # Select outputs for target classes
-        return torch.mean(target_outputs, dim=1)
-
-    lig = LayerIntegratedGradients(custom_f, model.roberta.embeddings)
-
-    tokens = tokenizer.convert_ids_to_tokens(inputs.input_ids[0])
-
-    attrs = lig.attribute(
-        inputs=(inputs.input_ids, inputs.attention_mask),
-        baselines=(blank_input_ids, inputs.attention_mask),
-        additional_forward_args=(idx,),
-        target=None,
-        internal_batch_size=10,
-        n_steps=50,
-    )
-
-    attrs_sum = attrs.sum(dim=-1).squeeze(0)
-    attrs_sum = attrs_sum / torch.norm(attrs_sum)
-    aggregated_tg = aggregate(attrs_sum, tokens, tokenizer.all_special_tokens)
-    word_visualizations = visualization.format_word_importances(
-        [t for t, _ in aggregated_tg], [a for _, a in aggregated_tg]
-    )
-    return word_visualizations
-
-
 def analyse_ig(
     train_languages,
     test_language,
@@ -145,11 +107,54 @@ def analyse_ig(
     data,
 ):
 
+    import torch
+    from captum.attr import LayerIntegratedGradients, visualization
+    from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+    def perform_ig(inputs, blank_input_ids, idx, model, tokenizer):
+
+        def predict_f(pred_inputs, attention_mask=None):
+            return model(pred_inputs, attention_mask=attention_mask).logits
+
+        def custom_f(inputs, attention_mask, target_indices):
+            outputs = model(
+                inputs, attention_mask
+            ).logits  # Assuming the model returns raw logits
+            target_outputs = outputs[
+                :, target_indices
+            ]  # Select outputs for target classes
+            return torch.mean(target_outputs, dim=1)
+
+        lig = LayerIntegratedGradients(custom_f, model.roberta.embeddings)
+
+        tokens = tokenizer.convert_ids_to_tokens(inputs.input_ids[0])
+
+        attrs = lig.attribute(
+            inputs=(inputs.input_ids, inputs.attention_mask),
+            baselines=(blank_input_ids, inputs.attention_mask),
+            additional_forward_args=(idx,),
+            target=None,
+            internal_batch_size=10,
+            n_steps=50,
+        )
+
+        attrs_sum = attrs.sum(dim=-1).squeeze(0)
+        attrs_sum = attrs_sum / torch.norm(attrs_sum)
+        aggregated_tg = aggregate(attrs_sum, tokens, tokenizer.all_special_tokens)
+        word_visualizations = visualization.format_word_importances(
+            [t for t, _ in aggregated_tg], [a for _, a in aggregated_tg]
+        )
+        return word_visualizations
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    if device == "cpu":
+        print("Error: IG needs cuda device to run. Exiting...")
+        exit()
+
     inner_html = []
 
     print("Loading model and tokenizer...")
-
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model_path = f"models/xlm-roberta-large/labels_all/{train_languages}_{train_languages}/seed_42"
 
@@ -255,8 +260,35 @@ def print_with_background(list_items, background_color, text_color=30):
     return list_items
 
 
+def check_list_conditions(test_list, conditions):
+    if any("=" in x for x in conditions):
+        conditions = [x.replace("=", "") for x in conditions]
+        return conditions == test_list
+    for condition in conditions:
+        if condition.startswith("+"):
+            # Check item (without the prefix) is in the test list
+            if condition[1:] not in test_list:
+                return False
+        elif condition.startswith("-"):
+            # Check item (without the prefix) is not in the test list
+            if condition[1:] in test_list:
+                return False
+        else:
+            if condition not in test_list:
+                return False
+    return True
+
+
 def criterion(true_label_test, predicted_label_test, true_label, pred_label):
-    return true_label_test in true_label and predicted_label_test in pred_label
+    true_label = true_label.split()
+    true_label_test = true_label_test.split()
+    true_label_cond = check_list_conditions(true_label, true_label_test)
+
+    pred_label = pred_label.split()
+    predicted_label_test = predicted_label_test.split()
+    pred_label_cond = check_list_conditions(pred_label, predicted_label_test)
+
+    return true_label_cond and pred_label_cond
 
 
 def filter_rows(train_languages, test_language, true_label, predicted_label, ig_path):
@@ -303,6 +335,10 @@ def filter_rows(train_languages, test_language, true_label, predicted_label, ig_
                     }
                 )
 
+        if not results:
+            print("Nothing found.")
+            exit()
+
         for row in results:
             gold = []
             for label in row["gold"].split():
@@ -320,7 +356,7 @@ def filter_rows(train_languages, test_language, true_label, predicted_label, ig_
             pred = " ".join(pred)
             gold = " ".join(gold)
             print(f"True: {gold}, Pred: {pred}, Text: {row['file']} [{row['row_idx']}]")
-            print(row["text"])
+            print(row["text"][:5000])
             print("-" * 50)
 
         if ig_path:
@@ -340,7 +376,7 @@ def filter_rows(train_languages, test_language, true_label, predicted_label, ig_
 if __name__ == "__main__":
     import sys
 
-    if len(sys.argv) < 5:
+    if len(sys.argv) < 4:
         print(
             "Usage: python extract_predictions.py <train-language(s)> <test-language> <true_label> <predicted_label> <save_ig_path (optional)>"
         )
@@ -349,9 +385,19 @@ if __name__ == "__main__":
     train_languages = sys.argv[1]
     test_language = sys.argv[2]
     true_label = sys.argv[3]
-    predicted_label = sys.argv[4]
+    predicted_label = ""
+    if len(sys.argv) == 5:
+        predicted_label = sys.argv[4]
     ig_path = ""
     if len(sys.argv) == 6:
-        ig_path = sys.argv[5]
+        if sys.argv[5].endswith(".html"):
+            ig_path = sys.argv[5]
+        else:
+            print("Error: IG visualization output path must end with .html")
+            exit()
+
+    if len(sys.argv) > 6:
+        print(f"Too many arguments {len(sys.argv[1:])}")
+        exit()
 
     filter_rows(train_languages, test_language, true_label, predicted_label, ig_path)
