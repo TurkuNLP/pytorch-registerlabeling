@@ -148,13 +148,13 @@ file_opener = lambda file_path, use_gz: (
 
 
 def gen(languages, split, label_scheme, use_gz):
-    idx = -1
-    row = -1
     for l in languages:
 
         with file_opener(
             f"data/{l}/{split if l not in small_languages else l}.tsv", use_gz
         ) as c:
+            idx = -1
+            row = -1
             re = csv.reader(c, delimiter="\t")
             for ro in re:
                 row += 1
