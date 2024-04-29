@@ -64,6 +64,7 @@ def run(cfg):
 
     test_language = ""  # Used when predicting
     test_dataset = []  # Used when predicting
+    current_epoch = 0
     label_scheme = label_schemes[cfg.labels]
     prediction_label_scheme = label_schemes[cfg.predict_labels]
     print(f"Predicting {len(label_scheme)} labels")
@@ -181,6 +182,27 @@ def run(cfg):
     #    if hasattr(cfg, "reft") and cfg.reft
     #    else ReftTrainerForSequenceClassification
     # )
+
+    class CustomEarlyStoppingCallback(EarlyStoppingCallback):
+        def __init__(
+            self,
+            early_stopping_patience: int = 1,
+            early_stopping_threshold: float = 0.0,
+        ):
+            super().__init__(early_stopping_patience, early_stopping_threshold)
+            self.stopped_epoch = 0
+            self.current_epoch = 0  # Tracking the current epoch
+
+        def on_epoch_end(self, args, state, control, **kwargs):
+            self.current_epoch += 1  # Increment epoch count at the end of each epoch
+            if control.should_training_stop:
+                self.stopped_epoch = (
+                    self.current_epoch
+                )  # Save the epoch number when training is stopped
+
+        def get_stopped_epoch(self):
+            # Return the epoch number when training stopped, or the last epoch if training was not stopped early
+            return self.stopped_epoch if self.stopped_epoch != 0 else self.current_epoch
 
     class MultiLabelTrainer(Trainer):
         def __init__(self, *args, **kwargs):
@@ -304,6 +326,10 @@ def run(cfg):
 
         return metrics
 
+    early_stopping_callback = CustomEarlyStoppingCallback(
+        early_stopping_patience=cfg.early_stopping_patience
+    )
+
     trainer = MultiLabelTrainer(
         model=model,
         args=TrainingArguments(
@@ -330,17 +356,29 @@ def run(cfg):
         train_dataset=dataset.get("train", []),
         eval_dataset=dataset.get("dev", []),
         compute_metrics=compute_metrics,
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=cfg.patience)],
+        callbacks=[early_stopping_callback],
         data_collator=data_collator if cfg.reft else None,
         tokenizer=tokenizer if cfg.reft else None,
     )
 
     if not cfg.just_evaluate:
         trainer.train()
+        trainer.save_model()
         for dir_path in glob.glob(f"{model_output_dir}/checkpoint*"):
             shutil.rmtree(dir_path, ignore_errors=True)
-        trainer.save_model()
         shutil.rmtree(f"{model_output_dir}/runs", ignore_errors=True)
+
+        # Gather training parameters and metadata
+        training_metadata = {
+            "batch_size": trainer.args.per_device_train_batch_size,
+            "learning_rate": trainer.args.learning_rate,
+            "warmup_ratio": trainer.args.warmup_ratio,
+            "stopped_epoch": early_stopping_callback.get_stopped_epoch(),
+            "total_epochs": trainer.state.epoch,
+        }
+
+        with open("{model_output_dir}/training_metadata.json", "w") as f:
+            json.dump(training_metadata, f, indent=4)
 
     print("Predicting..")
     cfg.just_evaluate = True

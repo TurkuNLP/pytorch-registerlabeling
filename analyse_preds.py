@@ -345,7 +345,7 @@ def filter_rows(train_languages, test_language, true_label, predicted_label, ig_
                 )
 
         if not results:
-            print("No rows found matching the criteria.")
+            print("No texts found matching the criteria.")
             exit()
 
         for row in results:
@@ -368,7 +368,7 @@ def filter_rows(train_languages, test_language, true_label, predicted_label, ig_
             print(row["text"][:5000])
             print("-" * 50)
 
-        print(f"Found {len(results)} rows matching the criteria.")
+        print(f"Found {len(results)} texts matching the criteria.")
 
         if ig_path:
             print("")
