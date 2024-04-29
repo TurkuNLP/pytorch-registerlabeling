@@ -327,7 +327,7 @@ def run(cfg):
         return metrics
 
     early_stopping_callback = CustomEarlyStoppingCallback(
-        early_stopping_patience=cfg.early_stopping_patience
+        early_stopping_patience=cfg.patience
     )
 
     trainer = MultiLabelTrainer(
