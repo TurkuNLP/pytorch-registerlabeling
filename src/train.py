@@ -377,7 +377,7 @@ def run(cfg):
             "total_epochs": trainer.state.epoch,
         }
 
-        with open("{model_output_dir}/training_metadata.json", "w") as f:
+        with open(f"{model_output_dir}/training_metadata.json", "w") as f:
             json.dump(training_metadata, f, indent=4)
 
     print("Predicting..")
