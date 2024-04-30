@@ -190,19 +190,20 @@ def run(cfg):
             early_stopping_threshold: float = 0.0,
         ):
             super().__init__(early_stopping_patience, early_stopping_threshold)
-            self.stopped_epoch = 0
-            self.current_epoch = 0  # Tracking the current epoch
+            self.best_epoch = 0
 
-        def on_epoch_end(self, args, state, control, **kwargs):
-            self.current_epoch += 1  # Increment epoch count at the end of each epoch
-            if control.should_training_stop:
-                self.stopped_epoch = (
-                    self.current_epoch
-                )  # Save the epoch number when training is stopped
-
-        def get_stopped_epoch(self):
-            # Return the epoch number when training stopped, or the last epoch if training was not stopped early
-            return self.stopped_epoch if self.stopped_epoch != 0 else self.current_epoch
+        def check_metric_value(self, args, state, control, metric_value):
+            # best_metric is set by code for load_best_model
+            operator = np.greater if args.greater_is_better else np.less
+            if state.best_metric is None or (
+                operator(metric_value, state.best_metric)
+                and abs(metric_value - state.best_metric)
+                > self.early_stopping_threshold
+            ):
+                self.early_stopping_patience_counter = 0
+                self.best_epoch = state.global_step  # Update the best epoch
+            else:
+                self.early_stopping_patience_counter += 1
 
     class MultiLabelTrainer(Trainer):
         def __init__(self, *args, **kwargs):
@@ -373,7 +374,7 @@ def run(cfg):
             "batch_size": trainer.args.per_device_train_batch_size,
             "learning_rate": trainer.args.learning_rate,
             "warmup_ratio": trainer.args.warmup_ratio,
-            "stopped_epoch": early_stopping_callback.get_stopped_epoch(),
+            "stopped_epoch": early_stopping_callback.best_epoch,
             "total_epochs": trainer.state.epoch,
         }
 
