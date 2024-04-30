@@ -144,6 +144,8 @@ label_schemes = {
     "all": labels_all,
     "upper": labels_upper,
     "xgenre": labels_xgenre,
+    "en_all": labels_all[1:],
+    "en_upper": labels_upper[1:],
 }
 
 
