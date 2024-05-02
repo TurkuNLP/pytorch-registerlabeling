@@ -259,7 +259,7 @@ def analyse_ig(
         </html>
     """
 
-    with open(ig_path, "w") as file:
+    with open(f"ig_visualizations/{ig_path}", "w") as file:
         file.write(html)
 
 
