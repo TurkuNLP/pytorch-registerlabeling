@@ -116,6 +116,8 @@ def analyse_ig(
     data,
 ):
 
+    print("Importing more packages...")
+
     import torch
     from captum.attr import LayerIntegratedGradients, visualization
     from transformers import AutoModelForSequenceClassification, AutoTokenizer
@@ -372,7 +374,7 @@ def filter_rows(train_languages, test_language, true_label, predicted_label, ig_
 
         if ig_path:
             print("")
-            print(f"Now saving IG visualisations to {ig_path}")
+            print(f"Saving IG visualisations to ig_visualizations/{ig_path}")
             analyse_ig(
                 train_languages,
                 test_language,
