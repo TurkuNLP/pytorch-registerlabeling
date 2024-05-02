@@ -64,12 +64,11 @@ def run(cfg):
 
     test_language = ""  # Used when predicting
     test_dataset = []  # Used when predicting
-    current_epoch = 0
     label_scheme = label_schemes[cfg.labels]
     prediction_label_scheme = label_schemes[cfg.predict_labels]
     print(f"Predicting {len(label_scheme)} labels")
-    predict_upper_using_full = cfg.labels == "all" and cfg.predict_labels == "upper"
-    predict_xgenre_using_full = cfg.labels == "all" and cfg.predict_labels == "xgenre"
+    predict_upper_using_full = "all" in cfg.labels and "upper" in cfg.predict_labels
+    predict_xgenre_using_full = "all" in cfg.labels and "xgenre" in cfg.predict_labels
     model_output_dir = f"{cfg.model_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
     results_output_dir = f"{cfg.predictions_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
     print(
