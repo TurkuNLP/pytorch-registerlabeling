@@ -139,6 +139,9 @@ labels_upper = [x for x in labels_all if x.isupper()]
 upper_all_indexes = [
     labels_all.index(item) for item in labels_upper if item in labels_all
 ]
+upper_all_indexes_en = [
+    labels_all.index(item) for item in labels_upper[1:] if item in labels_all[1:]
+]
 
 label_schemes = {
     "all": labels_all,

@@ -36,6 +36,7 @@ from .labels import (
     subcategory_to_parent_index,
     map_to_xgenre_binary,
     upper_all_indexes,
+    upper_all_indexes_en,
 )
 
 
@@ -67,8 +68,11 @@ def run(cfg):
     label_scheme = label_schemes[cfg.labels]
     prediction_label_scheme = label_schemes[cfg.predict_labels]
     print(f"Predicting {len(label_scheme)} labels")
-    predict_upper_using_full = "all" in cfg.labels and "upper" in cfg.predict_labels
-    predict_xgenre_using_full = "all" in cfg.labels and "xgenre" in cfg.predict_labels
+    predict_upper_using_full = cfg.labels == "all" and cfg.predict_labels == "upper"
+    predict_upper_en_using_full_en = (
+        cfg.labels == "en_all" and cfg.predict_labels == "en_upper"
+    )
+    predict_xgenre_using_full = cfg.labels == "all" and cfg.predict_labels == "xgenre"
     model_output_dir = f"{cfg.model_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
     results_output_dir = f"{cfg.predictions_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
     print(
@@ -255,6 +259,9 @@ def run(cfg):
         if predict_upper_using_full:
             true_labels = true_labels[:, upper_all_indexes]
             predictions = predictions[:, upper_all_indexes]
+        elif predict_upper_en_using_full_en:
+            true_labels = true_labels[:, upper_all_indexes_en]
+            predictions = predictions[:, upper_all_indexes_en]
 
         best_threshold, best_f1 = 0, 0
         for threshold in np.arange(0.3, 0.7, 0.05):
