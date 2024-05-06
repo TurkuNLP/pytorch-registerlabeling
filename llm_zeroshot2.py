@@ -27,42 +27,34 @@ login(token=os.getenv("HUGGINGFACE_ACCESS_TOKEN", ""))
 PROMPT = """
 You are an expert in categorizing web-scraped text into predefined linguistic registers (Biber and Egbert 2018). 
 
-The register taxonomy is hierarchical, with the following MAIN registers. First, choose the most appropriate MAIN register for the text:
+Choose from one of the following register classes. If the text fits more than one register, choose all that apply.
 
-LYRICAL: song lyrics or poem
-FORUM: online forum discussion
-SPOKEN: originally spoken content (more than half spoken)
-NARRATIVE: any narrative or report
-HOWTO: how-to and instructions
-INFORMATIONAL: informational description (wikis, articles, FAQs, etc.)
-OPINION: opinionated text
-PERSUASION: persuasion, such as marketing or other persuasive writing
-OTHER: none of the above
+LY: lyrics (poetic text)
+ID: online forum discussion
+SP: any clearly spoken content
+SP-it: spoken interview
+NA: any narrative or report
+NA-ne: news report
+NA-sr: sports report
+NA-nb: narrative blog
+HI: how-to and instructions
+HI-re: recipe
+IN: any informational description
+IN-en: encyclopedia article
+IN-ra: research article
+IN-dtp: description of a thing or person
+IN-fi: FAQ
+IN-lt: legal terms and conditions
+OP: any opinionated text
+OP-rv: review
+OP-ob: opinion blog
+OP-rs: religious text
+OP-av: advice
+IP: any persuasive writing
+IP-ds: marketing 
+IP-ed: persuasive facts
 
-Optionally, also choose one of the sub-registers for the MAIN class (given in parentheses):
-
-interview: interview (SPOKEN)
-news: news report (NARRATIVE)
-sports: sports report (NARRATIVE)
-blog: narrative blog (NARRATIVE)
-recipe: recipe (HOWTO)
-encyclopedia: encyclopedia article (INFORMATIONAL)
-research: research article (INFORMATIONAL)
-description: description of a thing or person (INFORMATIONAL)
-faq: FAQ (INFORMATIONAL)
-legal: legal terms and conditions (INFORMATIONAL)
-review: review (OPINION)
-opinion-blog: opinion blog (OPINION)
-religious: denominational religious text (OPINION)
-advice: advice (OPINION)
-marketing: marketing description (PERSUASION)
-persuasive-facts: persuasive facts (PERSUASION)
-
-Very importantly, only choose a sub-register if if you already chose its corresponding MAIN register!
-
-A text should be given multiple registers if and only if it features characteristics of more than one register.
-
-Strictly output only the register names as a space-separated (" ") list. Do not explain your decision.
+Strictly output only the register abbreviations as a space-separated (" ") list. Do not explain your decision.
 
 Here is the text (enclosed within ``` and ```)
 
