@@ -1,100 +1,100 @@
-OP rv	IN dtp
-IP	
-IP	
-HI	IN
-IN dtp	IN dtp
-IN dtp	
-IP	IP ds
-OP av	
-NA nb	NA nb
-IP	IP ds
-IN lt	IN lt
-IN	
-NA sr	NA sr
-IN	IN
-IP	IP ds
-NA	OP
-IN	
-IP	IP ds
-IN dtp	IP ds
-NA nb	NA nb
-IP	IP ds
-IN dtp	IP ds
-IP	MT
-NA	NA ne
-NA nb	ID
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-IP	IP ds
-ID	
-IP	
-NA sr	NA
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-IP	IP ds
-NA	
-IN	
-ID	ID
-NA ne	NA ne
-NA nb	NA nb
-IP	IP
-NA IP nb	IP
-IN	
-NA ne	NA ne
-NA nb	
-IP	MT
-NA ne	NA ne
-IP	IP ds
-IN dtp	IP ds
-IN dtp	IN
-IP	IP ds
-HI IP	HI IP
-IN dtp	IP ds
-IP	IP ds
-IN lt	IN
-IN	NA ne
-IN dtp	
-IP	IP ds
-NA sr	NA
-IN dtp	NA ne
-NA ne	NA ne
-NA sr	NA sr
-IN dtp	IN
-IP	
-NA ne	NA ne
-HI	IN
-IP	IP
-NA nb	NA nb
-IN dtp	IN
-NA ne	NA
-NA ne	NA ne
-IP	MT
-IN dtp	
-IP	IP
-IN dtp	
-ID OP rs	OP rs
-IN ra	IN dtp
-MT	MT
-IP	IP ds
-NA	NA ne
-HI	IN
-IN dtp	IP
-NA	NA ne
-IP	IP ds
-OP rv	
-IN lt	IN lt
-IN	MT
-IP	IP
-IP	
-IP	
-OP rv	
-HI	
-HI re	HI re
-HI	
-NA ne	NA ne
-NA	NA
-IP	IP ds
-ID	
+OP rv	IN dtp	58
+IP		14
+IP		98
+HI	IN	76
+IN dtp	IN dtp	65
+IN dtp		93
+IP	IP ds	34
+OP av		68
+NA nb	NA nb	20
+IP	IP ds	27
+IN lt	IN lt	89
+IN		26
+NA sr	NA sr	71
+IN	IN	79
+IP	IP ds	18
+NA	OP	28
+IN		15
+IP	IP ds	44
+IN dtp	IP ds	17
+NA nb	NA nb	72
+IP	IP ds	64
+IN dtp	IP ds	13
+IP	MT	5
+NA	NA ne	67
+NA nb	ID	3
+NA ne	NA ne	2
+NA ne	NA ne	23
+NA ne	NA ne	90
+IP	IP ds	55
+ID		63
+IP		8
+NA sr	NA	51
+NA ne	NA ne	16
+NA ne	NA ne	32
+NA ne	NA ne	53
+NA ne	NA ne	92
+IP	IP ds	96
+NA		95
+IN		21
+ID	ID	22
+NA ne	NA ne	97
+NA nb	NA nb	78
+IP	IP	83
+NA IP nb	IP	42
+IN		1
+NA ne	NA ne	52
+NA nb		56
+IP	MT	25
+NA ne	NA ne	33
+IP	IP ds	87
+IN dtp	IP ds	57
+IN dtp	IN	54
+IP	IP ds	29
+HI IP	HI IP	69
+IN dtp	IP ds	94
+IP	IP ds	73
+IN lt	IN	85
+IN	NA ne	82
+IN dtp		24
+IP	IP ds	75
+NA sr	NA	46
+IN dtp	NA ne	61
+NA ne	NA ne	66
+NA sr	NA sr	41
+IN dtp	IN	49
+IP		35
+NA ne	NA ne	31
+HI	IN	4
+IP	IP	10
+NA nb	NA nb	50
+IN dtp	IN	38
+NA ne	NA	80
+NA ne	NA ne	11
+IP	MT	45
+IN dtp		37
+IP	IP	19
+IN dtp		9
+ID OP rs	OP rs	12
+IN ra	IN dtp	7
+MT	MT	60
+IP	IP ds	84
+NA	NA ne	6
+HI	IN	77
+IN dtp	IP	43
+NA	NA ne	47
+IP	IP ds	48
+OP rv		40
+IN lt	IN lt	88
+IN	MT	86
+IP	IP	74
+IP		91
+IP		59
+OP rv		39
+HI		0
+HI re	HI re	81
+HI		70
+NA ne	NA ne	30
+NA	NA	62
+IP	IP ds	99
+ID		36
