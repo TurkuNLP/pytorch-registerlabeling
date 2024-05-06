@@ -24,42 +24,45 @@ load_dotenv()
 
 login(token=os.getenv("HUGGINGFACE_ACCESS_TOKEN", ""))
 
-PROMPT = """You will be given a text randomly scraped from the web. Your task is to classify it into one or more of MAIN classes, and optionally, into subclasses.Here are the MAIN categories:
+PROMPT = """
+You are an expert in categorizing web-scraped text into predefined linguistic registers (Biber and Egbert 2018). 
 
-LY: lyrical, such as songs or poems
-ID: online forum discussion
-SP: originally spoken content (more than 50% spoken)
-NA: narratives and reports
-HI: how-to and instructions
-IN: informational description (wikis, articles, FAQs, etc)
-OP: opinionated text
-IP: persuasion, such as marketing or other persuasive writing
-Other: none of the above
+The register taxonomy is hierarchical, with the following MAIN registers. First, choose the most appropriate MAIN register for the text:
 
-Optionally, also choose one of the subclasses for the MAIN class (in parentheses):
+LYRICAL: song lyrics or poem
+FORUM: online forum discussion
+SPOKEN: originally spoken content (more than half spoken)
+NARRATIVE: any narrative or report
+HOWTO: how-to and instructions
+INFORMATIONAL: informational description (wikis, articles, FAQs, etc.)
+OPINION: opinionated text
+PERSUASION: persuasion, such as marketing or other persuasive writing
+OTHER: none of the above
 
-it: interview (SP)
-ne: news report (NA)
-sr: sports report (NA)
-nb: narrative blog (NA)
-re: recipe (HI)
-en: encyclopedia article (IN)
-ra: research article (IN)
-dtp: description of a thing or person (IN)
-fi: FAQ (IN)
-lt: legal terms and conditions (IN)
-rv: review (OP)
-ob: opinion blog (OP)
-rs: denominational religious text (OP)
-av: advice (OP)
-ds: marketing description (IP)
-ed: persuasive facts (IP)
+Optionally, also choose one of the sub-registers for the MAIN class (given in parentheses):
 
-Very importantly, only choose a subclass if if you already chose its MAIN class (in parentheses). 
+interview: interview (SPOKEN)
+news: news report (NARRATIVE)
+sports: sports report (NARRATIVE)
+blog: narrative blog (NARRATIVE)
+recipe: recipe (HOWTO)
+encyclopedia: encyclopedia article (INFORMATIONAL)
+research: research article (INFORMATIONAL)
+description: description of a thing or person (INFORMATIONAL)
+faq: FAQ (INFORMATIONAL)
+legal: legal terms and conditions (INFORMATIONAL)
+review: review (OPINION)
+opinion-blog: opinion blog (OPINION)
+religious: denominational religious text (OPINION)
+advice: advice (OPINION)
+marketing: marketing description (PERSUASION)
+persuasive-facts: persuasive facts (PERSUASION)
 
-Only choose multiple classes if the text clearly belongs to multiple classes. Otherwise, choose a single class (and an optional subclass).
+Very importantly, only choose a sub-register if if you already chose its corresponding MAIN register!
 
-Strictly output only the class abbreviations as a space-separated (" ") list. Do not explain your decision.
+A text should be given multiple registers if and only if it features characteristics of more than one register.
+
+Strictly output only the register names as a space-separated (" ") list. Do not explain your decision.
 
 Here is the text (enclosed within ``` and ```)
 

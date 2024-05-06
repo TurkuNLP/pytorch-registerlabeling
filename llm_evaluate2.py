@@ -12,7 +12,7 @@ file_names = ["dev_full_gen_new_prompt.tsv"]
 
 
 def normalize_gen(label):
-    label = list(set(label.split()))
+    label = [x.replace("(", "").replace(")", "") for x in list(set(label.split()))]
 
     return label
 
