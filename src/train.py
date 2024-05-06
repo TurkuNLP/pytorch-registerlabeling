@@ -286,9 +286,7 @@ def run(cfg):
 
         metrics = {
             "f1": f1,
-            "f1_macro": f1_score(
-                true_labels, binary_predictions, average="macro", zero_division=np.nan
-            ),
+            "f1_macro": f1_score(true_labels, binary_predictions, average="macro"),
             "precision": precision,
             "recall": recall,
             "accuracy": accuracy,
