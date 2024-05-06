@@ -10,11 +10,30 @@ tqdm.pandas()
 base_path = "data/en/"
 file_names = ["dev_full_gen_new_prompt.tsv"]
 
+label_scheme = labels.label_schemes["all"]
+
+hallucination_map = {
+    "hi": "HI",
+    "in": "IN",
+    "na": "NA",
+}
+
 
 def normalize_gen(label):
-    label = [x.replace("(", "").replace(")", "") for x in list(set(label.split()))]
+    label = [x.split("-") for x in list(set(label.split()))]
 
-    return label
+    # flatten
+    label = [item for sublist in label for item in sublist]
+
+    for i, l in enumerate(label):
+        l = hallucination_map.get(l, l)
+        if l not in label_scheme:
+            print(l)
+            print(label)
+            exit()
+        label[i] = l
+
+    return list(set(label))
 
 
 # Process each file

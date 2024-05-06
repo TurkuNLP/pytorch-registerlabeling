@@ -25,9 +25,9 @@ load_dotenv()
 login(token=os.getenv("HUGGINGFACE_ACCESS_TOKEN", ""))
 
 PROMPT = """
-You are an expert in categorizing web-scraped text into predefined linguistic registers (Biber and Egbert 2018). 
+You are an expert in categorizing web text into linguistic registers.
 
-Choose from one of the following register classes. If the text fits more than one register, choose all that apply.
+Choose strictly from the following pre-defined linguistic registers:
 
 LY: lyrics (poetic text)
 ID: online forum discussion
@@ -53,6 +53,8 @@ OP-av: advice
 IP: any persuasive writing
 IP-ds: marketing 
 IP-ed: persuasive facts
+
+A text should be given multiple registers if and only if it features characteristics of more than one register.
 
 Strictly output only the register abbreviations as a space-separated (" ") list. Do not explain your decision.
 
