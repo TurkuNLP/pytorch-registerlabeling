@@ -32,6 +32,8 @@ seeds = [42, 43, 44]
 
 def run(cfg):
 
+    average = "" if cfg.average == "micro" else "_macro"
+
     result_str = ""
     all_f1s = []
     all_f1_stds = []
@@ -51,7 +53,7 @@ def run(cfg):
                     encoding="utf-8",
                 )
             )
-            f1s.append(data["f1"] * 100)
+            f1s.append(data[f"f1{average}"] * 100)
 
         f1s = np.array(f1s)
         mean = np.mean(f1s)

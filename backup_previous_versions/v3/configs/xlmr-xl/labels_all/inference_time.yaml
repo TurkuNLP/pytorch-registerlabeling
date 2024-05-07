@@ -1,9 +1,0 @@
-method: predict
-data:
-  test: en-fi-fr-sv-tr
-model:
-  name: facebook/xlm-roberta-xl
-peft:
-  enable: True
-dataloader:
-  test_batch_size: 1
