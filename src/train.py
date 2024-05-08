@@ -320,22 +320,22 @@ def run(cfg):
             predicted_labels_str = decode_binary_labels(binary_predictions, cfg.labels)
             example_indices = [x["row"] for x in test_dataset]
             data = list(zip(true_labels_str, predicted_labels_str, example_indices))
+            if cfg.save_predictions:
+                os.makedirs(results_output_dir, exist_ok=True)
 
-            os.makedirs(results_output_dir, exist_ok=True)
+                with open(
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}.tsv",
+                    "w",
+                    newline="",
+                ) as csvfile:
+                    csv_writer = csv.writer(csvfile, delimiter="\t")
+                    csv_writer.writerows(data)
 
-            with open(
-                f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}.tsv",
-                "w",
-                newline="",
-            ) as csvfile:
-                csv_writer = csv.writer(csvfile, delimiter="\t")
-                csv_writer.writerows(data)
-
-            with open(
-                f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}_metrics.json",
-                "w",
-            ) as f:
-                json.dump(metrics, f)
+                with open(
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}_metrics.json",
+                    "w",
+                ) as f:
+                    json.dump(metrics, f)
 
             print(metrics)
 
@@ -403,7 +403,7 @@ def run(cfg):
         test_dataset = dataset["test"].filter(
             lambda example: example["language"] == language
         )
-       
+
         start_event.record()
         trainer.predict(test_dataset)
         end_event.record()
@@ -412,7 +412,9 @@ def run(cfg):
 
         total_samples = len(test_dataset)
         latency = elapsed_time_ms / total_samples  # Latency per sample in milliseconds
-        throughput = total_samples / (elapsed_time_ms / 1000)  # Throughput in samples per second
+        throughput = total_samples / (
+            elapsed_time_ms / 1000
+        )  # Throughput in samples per second
 
         print(f"Latency per sample: {latency} ms")
         print(f"Throughput: {throughput} samples/sec")
