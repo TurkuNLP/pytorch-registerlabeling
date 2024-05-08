@@ -65,6 +65,11 @@ def run(cfg):
 
     test_language = ""  # Used when predicting
     test_dataset = []  # Used when predicting
+
+    # CUDA events for timing
+    start_event = torch.cuda.Event(enable_timing=True)
+    end_event = torch.cuda.Event(enable_timing=True)
+
     label_scheme = label_schemes[cfg.labels]
     prediction_label_scheme = label_schemes[cfg.predict_labels]
     print(f"Predicting {len(label_scheme)} labels")
@@ -398,4 +403,16 @@ def run(cfg):
         test_dataset = dataset["test"].filter(
             lambda example: example["language"] == language
         )
+       
+        start_event.record()
         trainer.predict(test_dataset)
+        end_event.record()
+        torch.cuda.synchronize()
+        elapsed_time_ms = start_event.elapsed_time(end_event)
+
+        total_samples = len(test_dataset)
+        latency = elapsed_time_ms / total_samples  # Latency per sample in milliseconds
+        throughput = total_samples / (elapsed_time_ms / 1000)  # Throughput in samples per second
+
+        print(f"Latency per sample: {latency} ms")
+        print(f"Throughput: {throughput} samples/sec")

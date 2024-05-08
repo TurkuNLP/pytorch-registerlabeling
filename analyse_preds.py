@@ -124,21 +124,19 @@ def analyse_ig(
 
     def perform_ig(inputs, blank_input_ids, idx, model, tokenizer):
 
-        def predict_f(pred_inputs, attention_mask=None):
-            return model(pred_inputs, attention_mask=attention_mask).logits
+        # def predict_f(pred_inputs, attention_mask=None):
+        #    return model(pred_inputs, attention_mask=attention_mask).logits
 
-        def custom_f(inputs, attention_mask, target_indices):
+        def predict_f(inputs, attention_mask, target_indices):
             outputs = model(
                 inputs, attention_mask
-            ).logits  # Assuming the model returns raw logits
+            ).logits  
             target_outputs = outputs[
                 :, target_indices
-            ]  # Select outputs for target classes
+            ]  
             return torch.mean(target_outputs, dim=1)
 
-        lig = LayerIntegratedGradients(custom_f, model.roberta.embeddings)
-
-        tokens = tokenizer.convert_ids_to_tokens(inputs.input_ids[0])
+        lig = LayerIntegratedGradients(predict_f, model.roberta.embeddings)
 
         attrs = lig.attribute(
             inputs=(inputs.input_ids, inputs.attention_mask),
@@ -151,6 +149,7 @@ def analyse_ig(
 
         attrs_sum = attrs.sum(dim=-1).squeeze(0)
         attrs_sum = attrs_sum / torch.norm(attrs_sum)
+        tokens = tokenizer.convert_ids_to_tokens(inputs.input_ids[0])
         aggregated_tg = aggregate(attrs_sum, tokens, tokenizer.all_special_tokens)
         word_visualizations = visualization.format_word_importances(
             [t for t, _ in aggregated_tg], [a for _, a in aggregated_tg]

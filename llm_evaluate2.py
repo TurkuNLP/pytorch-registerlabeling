@@ -12,28 +12,35 @@ file_names = ["dev_full_gen_new_prompt.tsv"]
 
 label_scheme = labels.label_schemes["all"]
 
-hallucination_map = {
-    "hi": "HI",
-    "in": "IN",
-    "na": "NA",
-}
+hallucination_map = {"hi": "HI", "in": "IN", "na": "NA", "OTHER": "", "dt": "dtp"}
 
 
 def normalize_gen(label):
     label = [x.split("-") for x in list(set(label.split()))]
+
+    #label = [["NA", "ne", "ob"]]
 
     # flatten
     label = [item for sublist in label for item in sublist]
 
     for i, l in enumerate(label):
         l = hallucination_map.get(l, l)
-        if l not in label_scheme:
+        if l and l not in label_scheme:
             print(l)
             print(label)
             exit()
         label[i] = l
+    filtered_items = []
+    print(f"unfilt {label}")
+    for l in label:
+        for k, v in labels.labels_structure.items():
+            if l in v or l == k:
+                if k in label:
+                    filtered_items.append(l)
 
-    return list(set(label))
+    # print(filtered_items)
+
+    return list(set(filtered_items))
 
 
 # Process each file
