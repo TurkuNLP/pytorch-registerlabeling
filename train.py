@@ -33,6 +33,7 @@ if __name__ == "__main__":
     parser.add_argument("--remove_columns", default="")
     parser.add_argument("--mask_alphabets", type=bool, default=False)
     parser.add_argument("--cachedir", default="")
+    parser.add_argument("--save_predictions", type=bool, default=True)
 
     # Trainer
     parser.add_argument("--learning_rate", "-lr", type=float, default=5e-5)
