@@ -264,14 +264,17 @@ def run(cfg):
 
         if cfg.exclude_multilabel:
             # Get row indices for binary representations of multilabel predictions
-            binary_representations_set = {
-                tuple(br) for br in get_binary_representations()
-            }
+            binary_representations = get_binary_representations()
+
+            print(binary_predictions)
+
             exclude_indexes = [
                 index
                 for index, row in enumerate(predictions)
-                if tuple(row) in binary_representations_set
+                if row in binary_representations
             ]
+
+            print(predictions)
 
             true_labels = true_labels[exclude_indexes, :]
             predictions = predictions[exclude_indexes, :]
