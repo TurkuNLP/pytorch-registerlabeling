@@ -272,7 +272,7 @@ def run(cfg):
                 ),
                 axis=1,
             )
-            exclude_indices = np.where(matches)[0]
+            exclude_indexes = np.where(matches)[0]
 
             true_labels = true_labels[:, exclude_indexes]
             predictions = predictions[:, exclude_indexes]
