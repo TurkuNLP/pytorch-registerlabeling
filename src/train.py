@@ -273,8 +273,8 @@ def run(cfg):
                 if tuple(row) in binary_representations_set
             ]
 
-            true_labels = true_labels[:, exclude_indexes]
-            predictions = predictions[:, exclude_indexes]
+            true_labels = true_labels[exclude_indexes, :]
+            predictions = predictions[exclude_indexes, :]
 
         if predict_upper_using_full:
             true_labels = true_labels[:, upper_all_indexes]
