@@ -399,3 +399,28 @@ def flatten_labels(example):
         )
         for x in mapped_simple
     ]
+
+def get_binary_representations():
+    # Mapping labels to indices
+    label_to_index = {label: index for index, label in enumerate(labels_all)}
+
+    # Function to generate binary representation
+    def generate_binary_representation(selected_labels):
+        binary_vector = [0] * len(labels_all)
+        for label in selected_labels:
+            index = label_to_index[label]
+            binary_vector[index] = 1
+        return binary_vector
+
+    # Generate distinct binary representations
+    binary_representations = []
+
+    for main_label, children in labels_structure.items():
+        # Add main label alone
+        binary_representations.append(generate_binary_representation([main_label]))
+        
+        # Add combinations of main label with each child
+        for child in children:
+            binary_representations.append(generate_binary_representation([main_label, child]))
+
+    return binary_representations

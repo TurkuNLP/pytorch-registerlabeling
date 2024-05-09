@@ -37,6 +37,7 @@ from .labels import (
     map_to_xgenre_binary,
     upper_all_indexes,
     upper_all_indexes_en,
+    get_binary_representations,
 )
 
 
@@ -260,6 +261,18 @@ def run(cfg):
                 ) in subcategory_to_parent_index.items():
                     if predictions[i, parent_index] < predictions[i, subcategory_index]:
                         predictions[i, parent_index] = predictions[i, subcategory_index]
+
+        if cfg.exclude_multilabel:
+            # Get row indices for binary representations of multilabel predictions
+            binary_representations = get_binary_representations(cfg.labels)
+            exclude_indexes = [
+                i
+                for i in range(predictions.shape[1])
+                if i not in binary_representations
+            ]
+
+            true_labels = true_labels[:, exclude_indexes]
+            predictions = predictions[:, exclude_indexes]
 
         if predict_upper_using_full:
             true_labels = true_labels[:, upper_all_indexes]
