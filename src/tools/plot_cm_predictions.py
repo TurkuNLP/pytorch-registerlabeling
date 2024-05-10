@@ -21,7 +21,7 @@ def run(cfg):
         data = list(csv_reader)
 
     # Extract true and predicted labels from the data
-    true_labels, predicted_labels = zip(*data)
+    true_labels, predicted_labels, _ = zip(*data)
 
     true_labels_binary = [
         binarize_labels(label.split(), "all") for label in true_labels
@@ -40,7 +40,7 @@ def run(cfg):
         sumT = np.sum(T) or 1
         sumP_ = np.sum(P_) or 1
 
-        if all(T_ == P_):
+        if all(T == P):
             M = np.diag(T)
 
         if all(T_ == 0) and any(P_ == 1):

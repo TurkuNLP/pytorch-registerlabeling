@@ -262,23 +262,6 @@ def run(cfg):
                     if predictions[i, parent_index] < predictions[i, subcategory_index]:
                         predictions[i, parent_index] = predictions[i, subcategory_index]
 
-        if cfg.exclude_multilabel:
-            # Get row indices for binary representations of multilabel predictions
-            binary_representations = get_binary_representations()
-
-            print(binary_predictions)
-
-            exclude_indexes = [
-                index
-                for index, row in enumerate(predictions)
-                if row in binary_representations
-            ]
-
-            print(predictions)
-
-            true_labels = true_labels[exclude_indexes, :]
-            predictions = predictions[exclude_indexes, :]
-
         if predict_upper_using_full:
             true_labels = true_labels[:, upper_all_indexes]
             predictions = predictions[:, upper_all_indexes]
@@ -300,6 +283,21 @@ def run(cfg):
             true_labels, binary_predictions = map_to_xgenre_binary(
                 true_labels, binary_predictions
             )
+
+        if cfg.exclude_multilabel:
+            # Get row indices for binary representations of multilabel predictions
+            binary_representations = np.array(get_binary_representations())
+            # Find rows in pred_labels that match any row in binary_representations
+            matches = np.any(
+                np.all(
+                    predictions[:, np.newaxis, :] == binary_representations, axis=-1
+                ),
+                axis=1,
+            )
+
+            # Filter predictions and true_labels
+            predictions = predictions[matches]
+            true_labels = true_labels[matches]
 
         precision, recall, f1, _ = precision_recall_fscore_support(
             true_labels, binary_predictions, average="micro"
