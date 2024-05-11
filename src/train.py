@@ -26,7 +26,6 @@ from transformers import (
     EarlyStoppingCallback,
     Trainer,
     TrainingArguments,
-    DataCollatorWithPadding,
 )
 
 from .data import balanced_dataloader, get_dataset
@@ -144,57 +143,6 @@ def run(cfg):
                 ),
             )
 
-    if cfg.reft:
-        from pyreft import (
-            get_reft_model,
-            ReftConfig,
-            LoreftIntervention,
-            ReftTrainerForSequenceClassification,
-            ConsreftIntervention,
-            ReftDataCollator,
-        )
-
-        config = AutoConfig.from_pretrained(base_model_path)
-        layers = [l for l in range(config.num_hidden_layers)]
-        model_arch = model.config.architectures[0].lower()
-        model_arch = "robertaformaskedlm"
-        residual_stream_component_mapping = {
-            "robertaformaskedlm": "roberta.encoder.layer[%s].output"
-        }
-
-        reft_config = ReftConfig(
-            representations=[
-                {
-                    "component": residual_stream_component_mapping[model_arch] % l,
-                    "intervention": LoreftIntervention(
-                        embed_dim=config.hidden_size,
-                        low_rank_dimension=1,
-                        dropout=0.05,
-                        dtype=torch_dtype,
-                        act_fn=None,
-                        device=device,
-                        add_bias=False,
-                    ),
-                }
-                for l in layers
-            ],
-            task_type=TaskType.SEQ_CLS,
-        )
-        model = get_reft_model(model, reft_config)
-        model.print_trainable_parameters()
-        dataset = dataset.rename_column("label", "labels")
-        data_collator = ReftDataCollator(
-            data_collator=DataCollatorWithPadding(
-                tokenizer=tokenizer, padding="longest"
-            )
-        )
-
-    # ext_class = (
-    #    Trainer
-    #    if hasattr(cfg, "reft") and cfg.reft
-    #    else ReftTrainerForSequenceClassification
-    # )
-
     class CustomEarlyStoppingCallback(EarlyStoppingCallback):
         def __init__(
             self,
@@ -289,11 +237,11 @@ def run(cfg):
 
         if cfg.exclude_multilabel:
             # Get row indices for binary representations of multilabel predictions
-            binary_representations = get_binary_representations()
+            binary_representations = get_binary_representations(cfg.labels)
             multilabel_prediction_indexes = []
 
             for i, example in enumerate(binary_predictions):
-                if [int(val) for val in example] not in binary_representations:
+                if [int(val) for val in example] in binary_representations:
                     multilabel_prediction_indexes.append(i)
 
             # Filter predictions and true_labels
@@ -396,8 +344,6 @@ def run(cfg):
         eval_dataset=dataset.get("dev", []),
         compute_metrics=compute_metrics,
         callbacks=[early_stopping_callback],
-        data_collator=data_collator if cfg.reft else None,
-        tokenizer=tokenizer if cfg.reft else None,
     )
 
     if not cfg.just_evaluate:

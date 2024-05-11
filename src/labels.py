@@ -1,3 +1,5 @@
+import itertools
+
 import numpy as np
 
 # The full label hierarchy
@@ -400,7 +402,8 @@ def flatten_labels(example):
         for x in mapped_simple
     ]
 
-def get_binary_representations():
+
+def get_binary_representations(label_scheme_name):
     # Mapping labels to indices
     label_to_index = {label: index for index, label in enumerate(labels_all)}
 
@@ -418,9 +421,56 @@ def get_binary_representations():
     for main_label, children in labels_structure.items():
         # Add main label alone
         binary_representations.append(generate_binary_representation([main_label]))
-        
+
         # Add combinations of main label with each child
         for child in children:
-            binary_representations.append(generate_binary_representation([main_label, child]))
+            binary_representations.append(
+                generate_binary_representation([main_label, child])
+            )
+
+    return binary_representations
+
+
+def get_binary_representations(label_scheme_name, allow_combinations=True):
+    # Mapping labels to indices
+    label_to_index = {label: index for index, label in enumerate(labels_all)}
+    # Get the indices corresponding to main labels
+    main_labels = list(labels_structure.keys())
+    main_label_indices = [labels_all.index(label) for label in main_labels]
+
+    # Function to generate binary representation
+    def generate_binary_representation(selected_labels):
+        binary_vector = [0] * len(labels_all)
+        for label in selected_labels:
+            index = label_to_index[label]
+            binary_vector[index] = 1
+        return binary_vector
+
+    # Generate distinct binary representations
+    binary_representations = []
+
+    for main_label, children in labels_structure.items():
+        # Add main label alone
+        binary_representations.append(generate_binary_representation([main_label]))
+
+        # Add combinations of main label with each child
+        for child in children:
+            binary_representations.append(
+                generate_binary_representation([main_label, child])
+            )
+
+        # Optionally add combinations of child labels if enabled
+        if allow_combinations:
+            for r in range(2, len(children) + 1):
+                for combo in itertools.combinations(children, r):
+                    binary_representations.append(
+                        generate_binary_representation([main_label] + list(combo))
+                    )
+
+    # If the label scheme is "upper," slice the binary representations to include only the main labels
+    if label_scheme_name == "upper":
+        binary_representations = [
+            [br[index] for index in main_label_indices] for br in binary_representations
+        ]
 
     return binary_representations
