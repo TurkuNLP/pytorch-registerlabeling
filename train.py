@@ -35,6 +35,7 @@ if __name__ == "__main__":
     parser.add_argument("--cachedir", default="")
     parser.add_argument("--save_predictions", type=bool, default=True)
     parser.add_argument("--exclude_multilabel", action="store_true")
+    parser.add_argument("--sample", type=int, default=0)
 
     # Trainer
     parser.add_argument("--learning_rate", "-lr", type=float, default=5e-5)

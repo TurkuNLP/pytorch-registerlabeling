@@ -56,6 +56,8 @@ def get_linear_modules(model):
 
 def run(cfg):
 
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+
     # Make process deterministic
     torch.manual_seed(cfg.seed)
     np.random.seed(cfg.seed)
@@ -68,8 +70,9 @@ def run(cfg):
     test_dataset = []  # Used when predicting
 
     # CUDA events for timing
-    start_event = torch.cuda.Event(enable_timing=True)
-    end_event = torch.cuda.Event(enable_timing=True)
+    if device == "cuda":
+        start_event = torch.cuda.Event(enable_timing=True)
+        end_event = torch.cuda.Event(enable_timing=True)
 
     label_scheme = label_schemes[cfg.labels]
     prediction_label_scheme = label_schemes[cfg.predict_labels]
@@ -158,7 +161,6 @@ def run(cfg):
             "robertaformaskedlm": "roberta.encoder.layer[%s].output"
         }
 
-        device = "cuda" if torch.cuda.is_available() else "cpu"
         reft_config = ReftConfig(
             representations=[
                 {
@@ -286,18 +288,16 @@ def run(cfg):
 
         if cfg.exclude_multilabel:
             # Get row indices for binary representations of multilabel predictions
-            binary_representations = np.array(get_binary_representations())
-            # Find rows in pred_labels that match any row in binary_representations
-            matches = np.any(
-                np.all(
-                    predictions[:, np.newaxis, :] == binary_representations, axis=-1
-                ),
-                axis=1,
-            )
+            binary_representations = get_binary_representations()
+            multilabel_prediction_indexes = []
+
+            for i, example in enumerate(binary_predictions):
+                if [int(val) for val in example] in binary_representations:
+                    multilabel_prediction_indexes.append(i)
 
             # Filter predictions and true_labels
-            predictions = predictions[matches]
-            true_labels = true_labels[matches]
+            binary_predictions = binary_predictions[multilabel_prediction_indexes]
+            true_labels = true_labels[multilabel_prediction_indexes]
 
         precision, recall, f1, _ = precision_recall_fscore_support(
             true_labels, binary_predictions, average="micro"
@@ -420,17 +420,28 @@ def run(cfg):
             lambda example: example["language"] == language
         )
 
-        start_event.record()
-        trainer.predict(test_dataset)
-        end_event.record()
-        torch.cuda.synchronize()
-        elapsed_time_ms = start_event.elapsed_time(end_event)
+        if cfg.sample:
 
-        total_samples = len(test_dataset)
-        latency = elapsed_time_ms / total_samples  # Latency per sample in milliseconds
-        throughput = total_samples / (
-            elapsed_time_ms / 1000
-        )  # Throughput in samples per second
+            test_dataset = test_dataset.select(range(cfg.sample))
 
-        print(f"Latency per sample: {latency} ms")
-        print(f"Throughput: {throughput} samples/sec")
+        if device == "cuda":
+
+            start_event.record()
+            trainer.predict(test_dataset)
+            end_event.record()
+            torch.cuda.synchronize()
+            elapsed_time_ms = start_event.elapsed_time(end_event)
+
+            total_samples = len(test_dataset)
+            latency = (
+                elapsed_time_ms / total_samples
+            )  # Latency per sample in milliseconds
+            throughput = total_samples / (
+                elapsed_time_ms / 1000
+            )  # Throughput in samples per second
+
+            print(f"Latency per sample: {latency} ms")
+            print(f"Throughput: {throughput} samples/sec")
+
+        else:
+            trainer.predict(test_dataset)
