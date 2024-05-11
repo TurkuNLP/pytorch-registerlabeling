@@ -293,7 +293,7 @@ def run(cfg):
             multilabel_prediction_indexes = []
 
             for i, example in enumerate(binary_predictions):
-                if [int(val) for val in example] in binary_representations:
+                if [int(val) for val in example] not in binary_representations:
                     multilabel_prediction_indexes.append(i)
 
             # Filter predictions and true_labels
