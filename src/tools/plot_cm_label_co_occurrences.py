@@ -14,8 +14,22 @@ from transformers import AutoTokenizer
 from ..data import get_dataset
 from ..labels import map_childless_upper_to_other, map_full_names, labels_structure
 
-palette = sns.color_palette("Blues")
-palette[0] = (1, 1, 1)
+palette = sns.color_palette("Blues", n_colors=100)
+
+# Add white color at the start
+palette.insert(0, (1.0, 1.0, 1.0))  # Adding white (RGB: 1,1,1)
+
+# Define custom non-linear color scale stops for the range 0-100
+custom_stops = [
+    (0.0, palette[0]),
+    (0.01, palette[10]),
+    (0.17, palette[60]),
+    (1.0, palette[99]),
+]
+
+# Convert the custom stops to Plotly-compatible colorscale
+plotly_colorscale = [(stop, mcolors.rgb2hex(color)) for stop, color in custom_stops]
+
 template = "plotly_white"
 
 # Identifying keys with children
@@ -72,7 +86,8 @@ def run(cfg):
         matrix,
         labels=dict(x="Target", y="Source", color="Connection Count"),
         title="Heatmap of Connections",
-        color_continuous_scale=[mcolors.to_hex(color) for color in palette],
+        # color_continuous_scale=[mcolors.to_hex(color) for color in palette],
+        color_continuous_scale=plotly_colorscale,
         template=template,
         text_auto=".0f",
         aspect="auto",
