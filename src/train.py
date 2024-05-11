@@ -68,6 +68,7 @@ def run(cfg):
 
     test_language = ""  # Used when predicting
     test_dataset = []  # Used when predicting
+    multilabel_exclusion_stats = {"multilabel": 0, "singlelabel": 0}
 
     # CUDA events for timing
     if device == "cuda":
@@ -299,6 +300,13 @@ def run(cfg):
             binary_predictions = binary_predictions[multilabel_prediction_indexes]
             true_labels = true_labels[multilabel_prediction_indexes]
 
+            multilabel_exclusion_stats["singlelabel"] += len(
+                multilabel_prediction_indexes
+            )
+            multilabel_exclusion_stats["multilabel"] += len(predictions) - len(
+                multilabel_prediction_indexes
+            )
+
         precision, recall, f1, _ = precision_recall_fscore_support(
             true_labels, binary_predictions, average="micro"
         )
@@ -445,3 +453,8 @@ def run(cfg):
 
         else:
             trainer.predict(test_dataset)
+
+        if cfg.exclude_multilabel:
+            print(
+                f"Excluded {multilabel_exclusion_stats['multilabel']} multilabel examples and kept {multilabel_exclusion_stats['singlelabel']} singlelabel examples"
+            )
