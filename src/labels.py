@@ -32,12 +32,14 @@ map_xgenre = {
     "LY": "Prose/Lyrical",
     ### 3. SPOKEN
     "SP": "Other",
+    "os": "Other",
     # Interview
     "it": "Other",
     ### 4. INTERACTIVE DISCUSSION
     "ID": "Forum",
     ### 5. NARRATIVE
     "NA": "Prose/Lyrical",  # Or Opinion/Argumentation
+    "on": "Prose/Lyrical",
     # News report
     "ne": "News",
     # Sports report
@@ -46,10 +48,12 @@ map_xgenre = {
     "nb": "Opinion/Argumentation",
     ### 6. HOW-TO or INSTRUCTIONS
     "HI": "Instruction",
+    "oh": "Instruction",
     # Recipe
     "re": "Instruction",
     ### 7. INFORMATIONAL DESCRIPTION
     "IN": "Information/Explanation",
+    "oi": "Information/Explanation",
     # Encyclopedia article
     "en": "Information/Explanation",
     # Research article
@@ -62,6 +66,7 @@ map_xgenre = {
     "lt": "Legal",
     ### 8. OPINION
     "OP": "Opinion/Argumentation",
+    "oo": "Opinion/Argumentation",
     # Review
     "rv": "Opinion/Argumentation",
     # Opinion blog
@@ -72,6 +77,7 @@ map_xgenre = {
     "av": "Opinion/Argumentation",  # ??? Or Instruction?
     ### 9. INFORMATIONAL PERSUASION
     "IP": "Promotion",
+    "oe": "Promotion",
     # Description with intent to sell
     "ds": "Promotion",
     # News & opinion blog or editorial
