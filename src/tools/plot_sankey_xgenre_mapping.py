@@ -3,18 +3,20 @@ import plotly.graph_objects as go
 import seaborn as sns
 from datasets import concatenate_datasets
 from transformers import AutoTokenizer
-
 from ..labels import (
     map_full_names,
-    labels_structure,
     map_xgenre,
     map_childless_upper_to_other,
 )
 from ..data import get_dataset
 
 palette = sns.color_palette("Blues", n_colors=12).as_hex()[1:]
-palette2 = sns.color_palette("PuBu", n_colors=12).as_hex()[3:]
+palette2 = sns.color_palette("BuGn", n_colors=12).as_hex()[3:]
 template = "plotly_white"
+
+import plotly.io as pio
+
+pio.kaleido.scope.mathjax = None  # a fix for .pdf files
 
 # Label hierarchy with the "other" categories and self-references
 # This is needed to map the labels to the correct X-GENRE category
@@ -91,7 +93,6 @@ def get_ordered_data(df):
         category_counts[key]["subcategories"] = sorted_subcategories
 
     data = category_counts_sorted
-
     return data
 
 
@@ -125,7 +126,7 @@ def run(cfg):
         for sub_source, sub_details in sub_data["subcategories"].items():
             xgenre = sub_details["xgenre"]
             if xgenre not in rightmost_node_colors:
-                rightmost_node_colors[xgenre] = palette2[color_counter]
+                rightmost_node_colors[xgenre] = palette[color_counter]
                 color_counter += 1
 
     # Initialize a list for link colors
