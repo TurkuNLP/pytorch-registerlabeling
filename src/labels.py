@@ -45,7 +45,7 @@ map_xgenre = {
     # Sports report
     "sr": "News",
     # Narrative blog
-    "nb": "Prose/Lyrical",  # NOTE: this used to be "Opinion/Argumentation",
+    "nb": "Opinion/Argumentation",
     ### 6. HOW-TO or INSTRUCTIONS
     "HI": "Instruction",
     "oh": "Instruction",
