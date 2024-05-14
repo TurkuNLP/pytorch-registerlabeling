@@ -67,7 +67,7 @@ def run(cfg):
 
     test_language = ""  # Used when predicting
     test_dataset = []  # Used when predicting
-    multilabel_exclusion_stats = {"multilabel": 0, "singlelabel": 0}
+    multilabel_exclusion_stats = {"excluded": 0, "included": 0}
 
     # CUDA events for timing
     if device == "cuda":
@@ -235,25 +235,32 @@ def run(cfg):
                 true_labels, binary_predictions
             )
 
-        if cfg.exclude_multilabel:
+        if cfg.multilabel_eval:
             # Get row indices for binary representations of multilabel predictions
             binary_representations = get_binary_representations(cfg.predict_labels)
             multilabel_prediction_indexes = []
 
             for i, example in enumerate(binary_predictions):
-                if [int(val) for val in example] in binary_representations:
+                if cfg.multilabel_eval == "exclude_multilabel":
+                    condition = [int(val) for val in example] in binary_representations
+                elif cfg.multilabel_eval == "exclude_singlelabel":
+                    condition = [
+                        int(val) for val in example
+                    ] not in binary_representations
+
+                if condition:
                     multilabel_prediction_indexes.append(i)
 
-            # Filter predictions and true_labels
-            binary_predictions = binary_predictions[multilabel_prediction_indexes]
-            true_labels = true_labels[multilabel_prediction_indexes]
+                # Filter predictions and true_labels
+                binary_predictions = binary_predictions[multilabel_prediction_indexes]
+                true_labels = true_labels[multilabel_prediction_indexes]
 
-            multilabel_exclusion_stats["singlelabel"] += len(
-                multilabel_prediction_indexes
-            )
-            multilabel_exclusion_stats["multilabel"] += len(predictions) - len(
-                multilabel_prediction_indexes
-            )
+                multilabel_exclusion_stats["included"] += len(
+                    multilabel_prediction_indexes
+                )
+                multilabel_exclusion_stats["excluded"] += len(predictions) - len(
+                    multilabel_prediction_indexes
+                )
 
         precision, recall, f1, _ = precision_recall_fscore_support(
             true_labels, binary_predictions, average="micro"
@@ -296,7 +303,7 @@ def run(cfg):
                 os.makedirs(results_output_dir, exist_ok=True)
 
                 with open(
-                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}.tsv",
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
                     "w",
                     newline="",
                 ) as csvfile:
@@ -304,7 +311,7 @@ def run(cfg):
                     csv_writer.writerows(data)
 
                 with open(
-                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}_metrics.json",
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}_metrics.json",
                     "w",
                 ) as f:
                     json.dump(metrics, f)
@@ -402,5 +409,5 @@ def run(cfg):
 
         if cfg.exclude_multilabel:
             print(
-                f"Excluded {multilabel_exclusion_stats['multilabel']} multilabel examples and kept {multilabel_exclusion_stats['singlelabel']} singlelabel examples"
+                f"Excluded {multilabel_exclusion_stats['excluded']} examples and kept {multilabel_exclusion_stats['included']} examples"
             )
