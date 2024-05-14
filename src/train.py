@@ -297,6 +297,7 @@ def run(cfg):
             predicted_labels_str = decode_binary_labels(binary_predictions, cfg.labels)
             example_indices = [x["row"] for x in test_dataset]
             data = list(zip(true_labels_str, predicted_labels_str, example_indices))
+            trues_and_probs = list(zip(true_labels, np.round(predictions, 4)))
             if cfg.save_predictions:
                 os.makedirs(results_output_dir, exist_ok=True)
 
@@ -307,6 +308,14 @@ def run(cfg):
                 ) as csvfile:
                     csv_writer = csv.writer(csvfile, delimiter="\t")
                     csv_writer.writerows(data)
+
+                with open(
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}_probs_{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
+                    "w",
+                    newline="",
+                ) as csvfile:
+                    csv_writer = csv.writer(csvfile, delimiter="\t")
+                    csv_writer.writerows(trues_and_probs)
 
                 with open(
                     f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}_metrics.json",

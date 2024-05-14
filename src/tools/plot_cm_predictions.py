@@ -68,9 +68,9 @@ def run(cfg):
 
     normalized_confusion_matrix_data = np.nan_to_num(normalized_confusion_matrix)
 
-    normalized_confusion_matrix_data = (normalized_confusion_matrix_data * 100).astype(
-        int
-    )
+    normalized_confusion_matrix_data = np.round(
+        normalized_confusion_matrix_data * 100
+    ).astype(int)
 
     confusion_matrix_fig = px.imshow(
         normalized_confusion_matrix_data,
@@ -97,4 +97,7 @@ def run(cfg):
     )
     confusion_matrix_fig.update_traces(textfont_size=9)
     name = cfg.source_data_path.split("/")[-1].split(".")[0]
-    confusion_matrix_fig.write_image(f"output/heatmap_{name}.png", scale=4)
+    confusion_matrix_fig.write_image(
+        f"output/heatmap_{name}{('_'+cfg.save_path_suffix) if cfg.save_path_suffix else ''}.png",
+        scale=4,
+    )
