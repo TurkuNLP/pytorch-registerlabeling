@@ -297,7 +297,9 @@ def run(cfg):
             predicted_labels_str = decode_binary_labels(binary_predictions, cfg.labels)
             example_indices = [x["row"] for x in test_dataset]
             data = list(zip(true_labels_str, predicted_labels_str, example_indices))
-            trues_and_probs = list(zip(true_labels, np.round(predictions, 4)))
+            trues_and_probs = list(
+                zip(true_labels, np.round(predictions, 4), example_indices)
+            )
             if cfg.save_predictions:
                 os.makedirs(results_output_dir, exist_ok=True)
 
