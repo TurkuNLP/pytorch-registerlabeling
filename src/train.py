@@ -310,7 +310,7 @@ def run(cfg):
                     csv_writer.writerows(data)
 
                 with open(
-                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}_probs_{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}_probs{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
                     "w",
                     newline="",
                 ) as csvfile:
