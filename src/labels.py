@@ -311,7 +311,7 @@ def normalize_labels(labels, label_scheme_name):
         labels = [map_xgenre[label] for label in mapped_simple if label]
 
     elif label_scheme_name == "all_mix":
-        labels_bin = binarize_labels(labels, label_scheme_name)
+        labels_bin = binarize_labels(labels, "all")
         if labels_bin not in get_binary_representations():
             labels = ["MIX"]
 
