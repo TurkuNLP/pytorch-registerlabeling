@@ -416,7 +416,7 @@ def flatten_labels(example):
     ]
 
 
-def get_binary_representations(label_scheme_name="all", allow_combinations=True):
+def get_binary_representations(label_scheme_name="all", allow_combinations=False):
     # Mapping labels to indices
     label_to_index = {label: index for index, label in enumerate(labels_all)}
     # Get the indices corresponding to main labels
