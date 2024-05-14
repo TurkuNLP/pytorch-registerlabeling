@@ -203,7 +203,7 @@ def run(cfg):
             p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
         )
 
-        if cfg.labels == "all":
+        if cfg.labels in ["all", "all_mix"]:
             # Ensure that subcategory has corresponding parent category
             for i in range(predictions.shape[0]):
                 for (

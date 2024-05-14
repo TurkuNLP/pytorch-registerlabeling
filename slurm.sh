@@ -36,6 +36,10 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
     TIME="1:00:00"
     MEM=8
     shift 
+  elif [[ $1 == "2h" ]]; then
+    TIME="2:00:00"
+    MEM=8
+    shift 
   elif [[ $1 == "6h" ]]; then
     TIME="6:00:00"
     MEM=8
