@@ -251,16 +251,14 @@ def run(cfg):
                 if condition:
                     multilabel_prediction_indexes.append(i)
 
-                # Filter predictions and true_labels
-                binary_predictions = binary_predictions[multilabel_prediction_indexes]
-                true_labels = true_labels[multilabel_prediction_indexes]
+            # Filter predictions and true_labels
+            binary_predictions = binary_predictions[multilabel_prediction_indexes]
+            true_labels = true_labels[multilabel_prediction_indexes]
 
-                multilabel_exclusion_stats["included"] += len(
-                    multilabel_prediction_indexes
-                )
-                multilabel_exclusion_stats["excluded"] += len(predictions) - len(
-                    multilabel_prediction_indexes
-                )
+            multilabel_exclusion_stats["included"] += len(multilabel_prediction_indexes)
+            multilabel_exclusion_stats["excluded"] += len(predictions) - len(
+                multilabel_prediction_indexes
+            )
 
         precision, recall, f1, _ = precision_recall_fscore_support(
             true_labels, binary_predictions, average="micro"

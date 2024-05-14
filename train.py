@@ -56,7 +56,6 @@ if __name__ == "__main__":
     parser.add_argument("--lora_rank", type=int, default=128)
     parser.add_argument("--lora_alpha", type=int, default=256)
     parser.add_argument("--target_modules", default="")
-    parser.add_argument("--reft", action="store_true")
     cfg = parser.parse_args()
 
     if not cfg.train:
