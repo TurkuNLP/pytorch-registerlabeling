@@ -405,7 +405,7 @@ def run(cfg):
         else:
             trainer.predict(test_dataset)
 
-        if cfg.exclude_multilabel:
+        if cfg.multilabel_eval:
             print(
                 f"Excluded {multilabel_exclusion_stats['excluded']} examples and kept {multilabel_exclusion_stats['included']} examples"
             )
