@@ -14,6 +14,14 @@ from ..labels import (
 
 pio.kaleido.scope.mathjax = None  # a fix for .pdf files
 
+language_colors = {
+    "en": "#9199FB",
+    "fi": "#F38875",
+    "fr": "#4CDBB5",
+    "sv": "#C491FB",
+    "tr": "#FFBD8B",
+}
+
 
 def run(cfg):
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_path)

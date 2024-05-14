@@ -157,6 +157,7 @@ label_schemes = {
     "xgenre": labels_xgenre,
     "en_all": labels_all[1:],
     "en_upper": labels_upper[1:],
+    "all_mix": labels_all + ["MIX"],
 }
 
 
@@ -249,6 +250,7 @@ map_normalize = {
     "NB": "nb",
     "na": "NA",
     "sp": "SP",
+    "MIX": "MIX",
     "": "",
 }
 
@@ -295,7 +297,7 @@ def normalize_labels(labels, label_scheme_name):
         labels = [x for x in labels if x.isupper()]
 
     # XGENRE labels
-    if label_scheme_name == "xgenre":
+    elif label_scheme_name == "xgenre":
         # First, remove upper category if lower present
         mapped_simple = []
         for label in labels:
@@ -307,6 +309,11 @@ def normalize_labels(labels, label_scheme_name):
 
         # Then, map
         labels = [map_xgenre[label] for label in mapped_simple if label]
+
+    elif label_scheme_name == "all_mix":
+        labels_bin = binarize_labels(labels, label_scheme_name)
+        if labels_bin not in get_binary_representations():
+            labels = ["MIX"]
 
     return sorted(list(set(filter(None, labels))))
 
@@ -409,35 +416,7 @@ def flatten_labels(example):
     ]
 
 
-def get_binary_representations(label_scheme_name):
-    # Mapping labels to indices
-    label_to_index = {label: index for index, label in enumerate(labels_all)}
-
-    # Function to generate binary representation
-    def generate_binary_representation(selected_labels):
-        binary_vector = [0] * len(labels_all)
-        for label in selected_labels:
-            index = label_to_index[label]
-            binary_vector[index] = 1
-        return binary_vector
-
-    # Generate distinct binary representations
-    binary_representations = []
-
-    for main_label, children in labels_structure.items():
-        # Add main label alone
-        binary_representations.append(generate_binary_representation([main_label]))
-
-        # Add combinations of main label with each child
-        for child in children:
-            binary_representations.append(
-                generate_binary_representation([main_label, child])
-            )
-
-    return binary_representations
-
-
-def get_binary_representations(label_scheme_name, allow_combinations=True):
+def get_binary_representations(label_scheme_name="all", allow_combinations=True):
     # Mapping labels to indices
     label_to_index = {label: index for index, label in enumerate(labels_all)}
     # Get the indices corresponding to main labels

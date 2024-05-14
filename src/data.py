@@ -34,28 +34,6 @@ language_names = {
     "zh": "Chinese",
 }
 
-palette = sns.color_palette("husl", len(language_names)).as_hex()
-palette = [
-    "#a48cf4",
-    "#b39b32",
-    "#d673f4",
-    "#f77732",
-    "#97a431",
-    "#6cad31",
-    "#34af8e",
-    "#f77189",
-    "#f66ab5",
-    "#39a7d0",
-    "#36ada4",
-    "#37abb8",
-    "#ce9032",
-    "#32b166",
-    "#5a9ef4",
-    "#f561dd",
-]
-
-language_colors = {lang: palette[idx] for idx, lang in enumerate(language_names)}
-
 
 class BalancedLanguageSampler(Sampler):
     def __init__(self, language_data, size="smallest", lang_cycle="random"):
@@ -161,6 +139,7 @@ def gen(languages, split, label_scheme, use_gz):
                 if not (ro[0] and ro[1]):
                     continue
                 normalized_labels = normalize_labels(ro[0], label_scheme)
+
                 if not normalized_labels:
                     continue
 
@@ -175,7 +154,7 @@ def gen(languages, split, label_scheme, use_gz):
                 }
 
 
-def get_dataset(cfg, tokenizer):
+def get_dataset(cfg, tokenizer=None):
     def generate(split):
         kwargs = {
             "gen_kwargs": {
@@ -195,6 +174,9 @@ def get_dataset(cfg, tokenizer):
         )
 
     splits = {}
+
+    cfg.train = "-".join([s for s in cfg.train.split("-") if s not in small_languages])
+    cfg.dev = "-".join([s for s in cfg.dev.split("-") if s not in small_languages])
 
     if cfg.use_fold:
         data_to_be_folded = list(
