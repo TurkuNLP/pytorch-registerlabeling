@@ -236,29 +236,55 @@ def run(cfg):
             )
 
         if cfg.multilabel_eval:
+            
+            """
+            True    Pred
+            ======  ======
+            Any     Single   
+            Any     Hybrid   
+            Single  Any      
+            Single  Single   
+            Single  Hybrid   
+            Hybrid  Any      
+            Hybrid  Single   
+            Hybrid  Hybrid   
+                        
+            """
+
             # Get row indices for binary representations of multilabel predictions
-            binary_representations = get_binary_representations(cfg.predict_labels)
-            multilabel_prediction_indexes = []
+            non_hybrids = get_binary_representations(cfg.predict_labels)
+            exclude_indexes = []
+
+            # Get the choices as a list
+            true_filter, pred_filter = cfg.multilabel_eval.split("_")
+        
+            for i, example in enumerate(true_labels):
+                if true_filter == "single":
+                    if [int(val) for val in example] not in non_hybrids:
+                        exclude_indexes.append(i)
+                elif true_filter == "hybrid":
+                    if [int(val) for val in example] in non_hybrids:
+                        exclude_indexes.append(i)
 
             for i, example in enumerate(binary_predictions):
-                if cfg.multilabel_eval == "exclude_multilabel":
-                    condition = [int(val) for val in example] in binary_representations
-                elif cfg.multilabel_eval == "exclude_singlelabel":
-                    condition = [
-                        int(val) for val in example
-                    ] not in binary_representations
+                if pred_filter == "single":
+                    if [int(val) for val in example] not in non_hybrids:
+                        exclude_indexes.append(i)
+                elif pred_filter == "hybrid":
+                    if [int(val) for val in example] in non_hybrids:
+                        exclude_indexes.append(i)
 
-                if condition:
-                    multilabel_prediction_indexes.append(i)
+            # Create a mask where only indices not in the list are True
+            mask = np.ones(len(true_labels), dtype=bool)
+            mask[exclude_indexes] = False
 
             # Filter predictions and true_labels
-            binary_predictions = binary_predictions[multilabel_prediction_indexes]
-            true_labels = true_labels[multilabel_prediction_indexes]
+            binary_predictions = binary_predictions[mask]
+            true_labels = true_labels[mask]
 
-            multilabel_exclusion_stats["included"] += len(multilabel_prediction_indexes)
-            multilabel_exclusion_stats["excluded"] += len(predictions) - len(
-                multilabel_prediction_indexes
-            )
+            multilabel_exclusion_stats["included"] += np.sum(mask)
+            multilabel_exclusion_stats["excluded"] += np.sum(~mask)
+        
 
         precision, recall, f1, _ = precision_recall_fscore_support(
             true_labels, binary_predictions, average="micro"
