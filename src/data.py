@@ -204,7 +204,7 @@ def get_dataset(cfg, tokenizer=None):
             splits["dev"] = generate("dev")
         splits["test"] = generate("test")
 
-    if cfg.use_fold:
+    elif cfg.use_fold:
         data_to_be_folded = list(
             concatenate_datasets([generate("train"), generate("dev")]).shuffle(
                 seed=cfg.seed
