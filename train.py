@@ -36,6 +36,7 @@ if __name__ == "__main__":
     parser.add_argument("--save_predictions", type=bool, default=True)
     parser.add_argument("--multilabel_eval", default="")
     parser.add_argument("--sample", type=int, default=0)
+    parser.add_argument("--sample_subset", type=int, default=0)
 
     # Trainer
     parser.add_argument("--learning_rate", "-lr", type=float, default=5e-5)

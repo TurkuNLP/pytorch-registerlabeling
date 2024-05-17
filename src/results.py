@@ -51,6 +51,9 @@ experiments = {
     ],
 }
 
+hybrids = ['any_single', 'any_hybrid', 'single_any', 'single_single', 'single_hybrid', 'hybrid_any', 'hybrid_single', 'hybrid_hybrid']
+
+
 seeds = [42, 43, 44]
 
 import numpy as np
@@ -67,11 +70,14 @@ def colorize(value):
     # Clamp the value between min_val and max_val
 
     index = int(normalize(value, 50, 100))
+
+    text_color = "\\textcolor{white}{" if index >= 69 else ""
+
     
     # Pick the color from the colormap
     hex_color = rgb_to_hex(palette[index])
 
-    return hex_color
+    return f"\\cellcolor[HTML]{{{hex_color}}}{text_color}", "}" if text_color else ""
     
     return f"\\cellcolor[HTML]{{{hex_color[1:]}}}"
 
@@ -87,6 +93,118 @@ def exp_header(experiment_type, predict_labels):
     else:
         return "\\textbf{" + exp_map[experiment_type] + "} \\\\"
     
+
+def make_hybrids():
+
+    for hybrid in hybrids:
+        print(f'\n\n ---{hybrid}--- \n\n')
+        test_lang_data = {k: {'micro': [], 'macro': [], 'support': 0} for k in main_languages}
+        for lang in main_languages:
+         
+            for seed in seeds:
+                file_path = f"predictions/xlm-roberta-large/en-fi-fr-sv-tr_en-fi-fr-sv-tr/seed_{seed}/all_all_{lang}_{hybrid}_metrics.json"
+                try:
+                    data = json.load(
+                        open(
+                            file_path,
+                            "r",
+                            encoding="utf-8",
+                        )
+                    )
+            
+                except:
+                    print(f'No file: {file_path}')
+
+                for avg in ["micro", "macro"]:
+                    test_lang_data[lang][avg].append(data[f"f1{'' if avg == 'micro' else '_macro'}"] * 100)
+                if seed == 42:
+                    support = np.sum([x['support'] for x in data['label_scores'].values()])
+                    test_lang_data[lang]['support'] = support
+
+        results = {}
+        micro_means = []
+        macro_means = []
+        micro_stds = []
+        macro_stds = []
+        support = np.sum([x['support'] for x in test_lang_data.values()])   
+        print(support / 28807 * 100)
+        for key in test_lang_data.keys():
+            
+            micro_values = test_lang_data[key]['micro']
+            macro_values = test_lang_data[key]['macro']
+
+            assert(len(micro_values) == 3)
+            assert(len(macro_values) == 3)
+            
+            micro_mean = np.mean(micro_values)
+            micro_std = np.std(micro_values)
+            
+            macro_mean = np.mean(macro_values)
+            macro_std = np.std(macro_values)
+            
+            results[key] = {
+                'micro_mean': micro_mean,
+                'micro_std': micro_std,
+                'macro_mean': macro_mean,
+                'macro_std': macro_std
+            }
+            
+            micro_means.append(micro_mean)
+            macro_means.append(macro_mean)
+            micro_stds.append(micro_std)
+            macro_stds.append(macro_std)
+
+        # Calculate overall means
+        overall_micro_mean = np.mean(micro_means)
+        overall_macro_mean = np.mean(macro_means)
+
+        # Calculate mean of standard deviations
+        overall_micro_std_mean = np.mean(micro_stds)
+        overall_macro_std_mean = np.mean(macro_stds)
+
+        # LaTeX formatting with color
+        # LaTeX formatting with color
+        # LaTeX formatting with color
+        micro_results = []
+        macro_results = []
+
+        for i, key in enumerate(list(results.keys()) + ["overall"]):
+            if key == "overall":
+                micro_mean = overall_micro_mean
+                micro_std = overall_micro_std_mean
+                macro_mean = overall_macro_mean
+                macro_std = overall_macro_std_mean
+                
+                micro_color = colorize(micro_mean)
+                macro_color = colorize(macro_mean)
+                
+                # Add a thin border around the overall mean using \fcolorbox
+                micro_result = f"{micro_color[0]}{micro_mean:.0f} \\tiny{{({micro_std:.2f})}}{micro_color[1]}"
+                macro_result = f"{macro_color[0]}{macro_mean:.0f} \\tiny{{({macro_std:.2f})}}{macro_color[1]}"
+            else:
+                micro_mean = results[key]['micro_mean']
+                micro_std = results[key]['micro_std']
+                macro_mean = results[key]['macro_mean']
+                macro_std = results[key]['macro_std']
+                
+                micro_color = colorize(micro_mean)
+                macro_color = colorize(macro_mean)
+                
+                micro_result = f"{micro_color[0]}{micro_mean:.0f} \\tiny{{({micro_std:.2f})}}{micro_color[1]}"
+                macro_result = f"{macro_color[0]}{macro_mean:.0f} \\tiny{{({macro_std:.2f})}}{macro_color[1]}"
+
+            micro_results.append(micro_result)
+            macro_results.append(macro_result)
+
+        # Join the results with '&'
+        micro_prefix = f"\indd $\mu$ & "
+        macro_prefix = "\indd $M$ & "
+        micro_results_line = micro_prefix + (" & ".join(micro_results)) + ' \\\\'
+        macro_results_line = macro_prefix + (" & ".join(macro_results)) + ' \\\\'
+
+        # Print the LaTeX formatted results
+        print(micro_results_line)
+        print(macro_results_line)
 
 def make_all():
 
@@ -201,8 +319,8 @@ def make_all():
                             macro_color = colorize(macro_mean)
                             
                             # Add a thin border around the overall mean using \fcolorbox
-                            micro_result = f"\\cellcolor[HTML]{{{micro_color}}}{micro_mean:.0f} \\tiny{{({micro_std:.2f})}}"
-                            macro_result = f"\\cellcolor[HTML]{{{macro_color}}}{macro_mean:.0f} \\tiny{{({macro_std:.2f})}}"
+                            micro_result = f"{micro_color[0]}{micro_mean:.0f} \\tiny{{({micro_std:.2f})}}{micro_color[1]}"
+                            macro_result = f"{macro_color[0]}{macro_mean:.0f} \\tiny{{({macro_std:.2f})}}{macro_color[1]}"
                         else:
                             micro_mean = results[key]['micro_mean']
                             micro_std = results[key]['micro_std']
@@ -212,8 +330,8 @@ def make_all():
                             micro_color = colorize(micro_mean)
                             macro_color = colorize(macro_mean)
                             
-                            micro_result = f"\\cellcolor[HTML]{{{micro_color}}}{micro_mean:.0f} \\tiny{{({micro_std:.2f})}}"
-                            macro_result = f"\\cellcolor[HTML]{{{macro_color}}}{macro_mean:.0f} \\tiny{{({macro_std:.2f})}}"
+                            micro_result = f"{micro_color[0]}{micro_mean:.0f} \\tiny{{({micro_std:.2f})}}{micro_color[1]}"
+                            macro_result = f"{macro_color[0]}{macro_mean:.0f} \\tiny{{({macro_std:.2f})}}{macro_color[1]}"
 
                         micro_results.append(micro_result)
                         macro_results.append(macro_result)
@@ -238,6 +356,10 @@ def run(cfg):
 
     if cfg.all:
         make_all()
+        exit()
+
+    if cfg.hybrids:
+        make_hybrids()
         exit()
 
     average = "" if cfg.average == "micro" else "_macro"

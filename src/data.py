@@ -178,6 +178,33 @@ def get_dataset(cfg, tokenizer=None):
     cfg.train = "-".join([s for s in cfg.train.split("-") if s not in small_languages])
     cfg.dev = "-".join([s for s in cfg.dev.split("-") if s not in small_languages])
 
+    if cfg.sample_subset:
+
+        data_to_be_folded = list(
+            generate("train").shuffle(
+                seed=cfg.seed
+            )
+        )
+
+        y = np.array([x["label"] for x in data_to_be_folded])
+
+        # We take cfg.sample_subset samples per run
+        n_splits = len(data_to_be_folded) // (cfg.sample_subset)
+
+        k_fold_fn = IterativeStratification(n_splits=n_splits, order=1)
+
+        folds = list(k_fold_fn.split(list(range(len(y))), y))
+        print(len(folds))
+        print(len(folds[0]))
+        exit()
+
+        if not cfg.just_evaluate:
+            splits["train"] = Dataset.from_list(
+                [data_to_be_folded[int(i)] for i in train_fold]
+            )
+            splits["dev"] = generate("dev")
+        splits["test"] = generate("test")
+
     if cfg.use_fold:
         data_to_be_folded = list(
             concatenate_datasets([generate("train"), generate("dev")]).shuffle(
