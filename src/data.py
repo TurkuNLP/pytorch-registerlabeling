@@ -188,26 +188,20 @@ def get_dataset(cfg, tokenizer=None):
 
         y = np.array([x["label"] for x in data_to_be_folded])
 
-        # We take cfg.sample_subset samples per run
-        n_splits = len(data_to_be_folded) // (cfg.sample_subset)
-
+        # We take 100 * cfg.sample_subset per run
+        n_splits = len(data_to_be_folded) // 100
         k_fold_fn = IterativeStratification(n_splits=n_splits, order=1)
-
         folds = list(k_fold_fn.split(list(range(len(y))), y))
-        print(len(folds))
-        print(len(folds[0][0]))
-        print(len(folds[0][1]))
-        print(len(folds[1][0]))
-        print(len(folds[1][1]))
-        print(len(folds[2][0]))
-        print(len(folds[2][1]))
-        print(len(folds[3][0]))
-        print(len(folds[3][1]))
+        data_indexes = []
+        for fold_i in range(cfg.sample_subset):
+            for i in folds[fold_i][1]:
+                data_indexes.append(int(i))
+        print(len(data_indexes))
         exit()
 
         if not cfg.just_evaluate:
             splits["train"] = Dataset.from_list(
-                [data_to_be_folded[int(i)] for i in train_fold]
+                [data_to_be_folded[int(i)] for i in data_indexes]
             )
             splits["dev"] = generate("dev")
         splits["test"] = generate("test")
