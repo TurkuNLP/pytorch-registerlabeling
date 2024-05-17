@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument("--path_suffix", default="")
     parser.add_argument("--config", "-c", action=ActionConfigFile)
     parser.add_argument("--just_evaluate", action="store_true")
+    parser.add_argument("--no_save", action="store_true")
 
     # Data
     parser.add_argument("--train", "-t", default="en-fi-fr-sv-tr")

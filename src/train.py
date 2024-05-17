@@ -390,7 +390,8 @@ def run(cfg):
 
     if not cfg.just_evaluate:
         trainer.train()
-        trainer.save_model()
+        if not cfg.no_save:
+            trainer.save_model()
         for dir_path in glob.glob(f"{model_output_dir}/checkpoint*"):
             shutil.rmtree(dir_path, ignore_errors=True)
         shutil.rmtree(f"{model_output_dir}/runs", ignore_errors=True)
