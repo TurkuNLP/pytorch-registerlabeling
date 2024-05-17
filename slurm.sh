@@ -57,9 +57,9 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
   JOB_ID=$(echo "$JOB_SUBMISSION_OUTPUT" | grep -oP 'Submitted batch job \K\d+')
   LOG_FILE="logs/${DYNAMIC_JOBNAME}-${JOB_ID}.log"
   touch $LOG_FILE
-  echo "Tailing log file: $LOG_FILE"
+  echo "Log file: $LOG_FILE"
   # Use tail -f to follow the log file
-  tail -f "$LOG_FILE"
+  #tail -f "$LOG_FILE"
   exit $?
 else
   # Actual job script starts here
