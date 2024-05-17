@@ -196,8 +196,6 @@ def get_dataset(cfg, tokenizer=None):
         for fold_i in range(cfg.sample_subset):
             for i in folds[fold_i][1]:
                 data_indexes.append(int(i))
-        print(len(data_indexes))
-        exit()
 
         if not cfg.just_evaluate:
             splits["train"] = Dataset.from_list(
