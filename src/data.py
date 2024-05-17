@@ -195,7 +195,14 @@ def get_dataset(cfg, tokenizer=None):
 
         folds = list(k_fold_fn.split(list(range(len(y))), y))
         print(len(folds))
-        print(len(folds[0]))
+        print(len(folds[0][0]))
+        print(len(folds[0][1]))
+        print(len(folds[1][0]))
+        print(len(folds[1][1]))
+        print(len(folds[2][0]))
+        print(len(folds[2][1]))
+        print(len(folds[3][0]))
+        print(len(folds[3][1]))
         exit()
 
         if not cfg.just_evaluate:
