@@ -180,11 +180,7 @@ def get_dataset(cfg, tokenizer=None):
 
     if cfg.sample_subset:
 
-        data_to_be_folded = list(
-            generate("train").shuffle(
-                seed=cfg.seed
-            )
-        )
+        data_to_be_folded = list(generate("train").shuffle(seed=cfg.seed))
 
         y = np.array([x["label"] for x in data_to_be_folded])
 
@@ -230,8 +226,10 @@ def get_dataset(cfg, tokenizer=None):
         include_splits = ["train", "dev", "test"] if not cfg.just_evaluate else ["test"]
         for s in include_splits:
             splits[s] = generate(s)
+            if s != "test":
+                splits[s] = splits[s].shuffle(seed=cfg.seed)
 
-    dataset = DatasetDict(splits).shuffle(seed=cfg.seed)
+    dataset = DatasetDict(splits)
 
     if hasattr(cfg, "skip_tokenize") and cfg.skip_tokenize:
         return dataset

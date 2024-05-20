@@ -44,7 +44,7 @@ Choose "OTHER" if the text does not clearly belong to any single of the above re
 Finally, and very importantly, output the chosen register label in a separate line, with JUST the register label in that last line and ABSOLUTELY NOTHING ELSE. The last line should contain exactly one of the following strings: "LY", "SP", "ID", "NA", "HI", "IN", "OP", "IP", "OTHER".
 """
 
-PROMPT_SUFFIX = """ Explain your decision very briefly in one or two sentences.
+PROMPT_SUFFIX = """Explain your decision very briefly in one or two sentences.
 
 Finally, and very importantly, output the chosen register label in a separate line, with JUST the register label in that last line and ABSOLUTELY NOTHING ELSE. The last line should contain exactly one of the following strings:"""
 
