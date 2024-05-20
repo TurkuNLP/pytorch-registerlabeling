@@ -33,7 +33,7 @@ Alternatively, If the text was categorized as WRITTEN, determine if the text can
 
 Choose "OTHER" if the text does not clearly belong to any single of the above registers, or is not clearly either spoken or written, or combines characteristics of multiple registers. Explain your decision very briefly in one or two sentences.
 
-Finally, and very importantly, output the chosen register label in a separate line, with nothing else besides the register label in that last line. The last line should contain exactly one of the following strings: "LY", "SP", "ID", "NA", "HI", "IN", "OP", "IP", "OTHER".
+Finally, and very importantly, output the chosen register label in a separate line, with JUST the register label in that last line and ABSOLUTELY NOTHING ELSE. The last line should contain exactly one of the following strings: "LY", "SP", "ID", "NA", "HI", "IN", "OP", "IP", "OTHER".
 """
 
 PROMPT_SUFFIX = """ Explain your decision very briefly in one or two sentences.
