@@ -77,7 +77,7 @@ If the text is a news report, choose "ne". If the text is a sports report, choos
 PROMPT_HI = """
 Next, please determine if the text you classified as HI is a recipe. A recipe contains step-by-step instructions on how to prepare or cook something, typically food. It include at least the ingredients and/or the actual instructions.
 
-If the text is a recipe, choose "re". If it is not an interview, choose "OTHER". {PROMPT_SUFFIX} "re", "OTHER".
+If the text is a recipe, choose "re". If it is not a recipe, choose "OTHER". {PROMPT_SUFFIX} "re", "OTHER".
 """
 
 PROMPT_IN = """
