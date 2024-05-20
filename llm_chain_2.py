@@ -169,6 +169,9 @@ ed:  News & opinion blog or editorial
 If the text is a description with intent to sell, choose "ds". If the text is a news & opinion blog or editorial, choose "ed". If the text does not belong to any single subregister, choose "OTHER". {PROMPT_SUFFIX} "ds", "ed", "OTHER".
 """
 
+import re
+
+
 import os
 
 import torch
@@ -203,6 +206,42 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto",
 )
 
+main_registers = ["OTHER", "MT", "LY", "ID", "SP", "NA", "HI", "IN", "OP", "IP"]
+subregisters = [
+    "it",
+    "ne",
+    "sr",
+    "nb",
+    "re",
+    "en",
+    "ra",
+    "dtp",
+    "fi",
+    "lt",
+    "rv",
+    "ob",
+    "rs",
+    "av",
+    "ds",
+    "ed",
+    "OTHER",
+]
+
+
+def extract_subregister(text):
+    # Create a regex pattern to match any of the subregisters
+    pattern = (
+        r"\b("
+        + "|".join(re.escape(subregister) for subregister in subregisters)
+        + r")\b"
+    )
+
+    # Search for the pattern in the text
+    match = re.search(pattern, text)
+
+    # Return the matched subregister if found, otherwise return ""
+    return match.group(1) if match else ""
+
 
 def ask(question):
 
@@ -235,7 +274,7 @@ def generate_label(text):
 
     result = ask(f"{PROMPT_1}\n```\n{text}\n```").strip().split("\n")[-1].strip()
     result2 = ""
-    if result not in ["OTHER", "MT", "LY", "ID", "SP", "NA", "HI", "IN", "OP", "IP"]:
+    if result not in main_registers:
         result = "OTHER"
     if result not in ["OTHER", "MT", "LY", "ID"]:
         if result == "SP":
@@ -251,7 +290,7 @@ def generate_label(text):
         elif result == "IP":
             result2 = ask(PROMPT_IP)
 
-    result2 = result2.strip().split("\n")[-1].strip()
+    result2 = extract_subregister(result2.strip().split("\n")[-1].strip())
     final_result = result + (f" {result2}" if result2 else "")
 
     print(f'"{text[:100]}..." -> "{final_result}"')
