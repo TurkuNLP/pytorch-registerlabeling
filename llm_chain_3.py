@@ -15,14 +15,14 @@ model = AutoModelForCausalLM.from_pretrained(
 terminators = [tokenizer.eos_token_id, tokenizer.convert_tokens_to_ids("<|eot_id|>")]
 
 SYSTEM = "System: This AI assistant works as a multilingual text classifier. The assistant will be given a text in any language scraped from the web, and it will categorize the text into a predefined register. A 'register' is a text variety defined by its situational and communicative characteristics.\n\nThe classification proceeds in three steps: 1) determining if the text was originally spoken or written; 2) assigning a register label to the text; 3) In some cases, assigning a sub-register label to the text.\n\n Here is the text to be classified (enclosed within ``` and ```):"
-FIRST_PROMPT = """In the first step, the assistant determines if the text was more likely to be originally SPOKEN or WRITTEN. The assistant explains its decision very briefly in one or two sentences.
+FIRST_PROMPT = """First, please determine if the text is likely to be originally SPOKEN or WRITTEN. Explain your decision very briefly in one or two sentences.
 
-Next, based on the decision in the first step, the assistant gives the text a register label. If the text was categorized as SPOKEN, the assistant classifies the text in one of the following categories:
+Next, based on the decision in the first step, please assign the text a register label. If the text was categorized as SPOKEN, determine if the text can be classified into exactly one of the following categories:
 
 "LY": poetic text, such as song or poem
 "SP": spoken text with the majority of the text spoken (e.g. interview, speech, tv/movie transcript, etc.)
 
-Alternatively, If the text was categorized as WRITTEN, the assistant classifies the text in one of the following categories:
+Alternatively, If the text was categorized as WRITTEN, determine if the text can be classified into exactly one of the following categories:
 
 "ID": interactive discussion written by multiple participants in a discussion format (e.g. forum, comment section, etc.)
 "NA": narratives and reports of events (e.g. news report, sports report, narrative blog, fictional story, magazine article, etc.)
@@ -31,23 +31,23 @@ Alternatively, If the text was categorized as WRITTEN, the assistant classifies 
 "OP": text expressing opinions (e.g. review, opinion blog, religious text, advice, etc.)
 "IP": persuasion, such as marketing or other persuasive writing (e.g. description with intent to sell, news & opinion blog, other marketing texts)
 
-The assistant chooses "OTHER" if the text does not clearly belong to any single of the above registers, or is not clearly either spoken or written, or combines characteristics of multiple registers. The assistant explains its decision very briefly in one or two sentences.
+Choose "OTHER" if the text does not clearly belong to any single of the above registers, or is not clearly either spoken or written, or combines characteristics of multiple registers. Explain your decision very briefly in one or two sentences.
 
-In the last line of the output, the assistant outputs the chosen register label and nothing else. The last line should contain exactly one of the following: "LY", "SP", "ID", "NA", "HI", "IN", "OP", "IP", "OTHER".
+Finally, and very importantly, output the chosen register label in a separate line, with nothing else besides the register label in that last line. The last line should contain exactly one of the following strings: "LY", "SP", "ID", "NA", "HI", "IN", "OP", "IP", "OTHER".
 """
 
-PROMPT_SUFFIX = """Explain your decision very briefly in one or two sentences. 
+PROMPT_SUFFIX = """ Explain your decision very briefly in one or two sentences.
 
-Finally, output the chosen register label as a separate line at the end, with JUST the label on that line and nothing else (do NOT write 'therefore, I choose...' or anything similar. Just output the label!) The last line should contain exactly one label from the following list:"""
+Finally, and very importantly, output the chosen register label in a separate line, with nothing else besides the register label in that last line. The last line should contain exactly one of the following strings:"""
 
 PROMPT_SP = f"""
-Next, determine if the text you classified as SP is an interview. An interview typically has one interviewer and one interviewee, such as a radio show host / journalist and a famous person or an invited expert. Most interviews are dialogic and have a question-answer format.
+Next, please determine if the text you classified as SP is an interview. An interview typically has one interviewer and one interviewee, such as a radio show host / journalist and a famous person or an invited expert. Most interviews are dialogic and have a question-answer format.
 
 If the text is an interview, choose "it". If it is not an interview, choose "OTHER". {PROMPT_SUFFIX} "it", "OTHER".
 """
 
 PROMPT_NA = """
-Next, determine the subregister of the text you classified as NA. Here are the subregisters for NA, followed by bullet points describing each subregister:
+Next, please determine the subregister of the text you classified as NA. Here are the subregisters for NA, followed by bullet points describing each subregister:
 
 ne: News report
 
@@ -75,13 +75,13 @@ If the text is a news report, choose "ne". If the text is a sports report, choos
 """
 
 PROMPT_HI = """
-Next, determine if the text you classified as HI is a recipe. A recipe contains step-by-step instructions on how to prepare or cook something, typically food. It include at least the ingredients and/or the actual instructions.
+Next, please determine if the text you classified as HI is a recipe. A recipe contains step-by-step instructions on how to prepare or cook something, typically food. It include at least the ingredients and/or the actual instructions.
 
 If the text is a recipe, choose "re". If it is not an interview, choose "OTHER". {PROMPT_SUFFIX} "re", "OTHER".
 """
 
 PROMPT_IN = """
-Next, determine the subregister of the text you classified as IN. Here are the subregisters for IN, followed by bullet points describing each subregister:
+Next, please determine the subregister of the text you classified as IN. Here are the subregisters for IN, followed by bullet points describing each subregister:
 
 en: Encyclopedia article
 
@@ -122,7 +122,7 @@ If the text is an encyclopedia article, choose "en". If the text is a research a
 """
 
 PROMPT_OP = """
-Next, determine the subregister of the text you classified as OP. Here are the subregisters for OP, followed by bullet points describing each subregister:
+Next, please determine the subregister of the text you classified as OP. Here are the subregisters for OP, followed by bullet points describing each subregister:
 
 rv: Review 
 
@@ -156,7 +156,7 @@ If the text is a review, choose "rv". If the text is an opinion blog, choose "ob
 """
 
 PROMPT_IP = """
-Next, determine the subregister of the text you classified as IP. Here are the subregisters for IP, followed by bullet points describing each subregister:
+Next, please determine the subregister of the text you classified as IP. Here are the subregisters for IP, followed by bullet points describing each subregister:
 
 ds: Description with intent to sell
 
