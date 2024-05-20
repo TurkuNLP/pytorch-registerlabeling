@@ -34,7 +34,7 @@ Below is the text you will classify, enclosed within ``` and ```.
 
 PROMPT_SUFFIX = """Explain your decision very briefly in one or two sentences. 
 
-Finally, output the chosen register label as a separate line at the end, with nothing else in that final line. The last line should contain exactly one label from the following list:"""
+Finally, output the chosen register label as a separate line at the end, with JUST the label on that line and nothing else (do NOT write 'therefore, I choose...' or anything similar. Just output the label!) The last line should contain exactly one label from the following list:"""
 
 PROMPT_SP = f"""
 Next, determine if the text you classified as SP is an interview. An interview typically has one interviewer and one interviewee, such as a radio show host / journalist and a famous person or an invited expert. Most interviews are dialogic and have a question-answer format.
