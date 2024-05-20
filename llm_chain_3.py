@@ -1,5 +1,10 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
+import os
+
 import torch
+
+os.environ["HF_HOME"] = ".hf/hf_home"
+
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 model_id = "nvidia/Llama3-ChatQA-1.5-8B"
 
