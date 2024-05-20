@@ -219,7 +219,6 @@ def ask(question):
 
     outputs = model.generate(
         input_ids,
-        max_new_tokens=32,
         eos_token_id=terminators,
         do_sample=False,
         temperature=0.0,
@@ -251,8 +250,11 @@ def generate_label(text):
             result2 = ask(PROMPT_IP)
 
     result2 = result2.strip().split("\n")[-1].strip()
+    final_result = result + (f" {result2}" if result2 else "")
 
-    return result + (f" {result2}" if result2 else "")
+    print(f'"{text[:100]}..." -> "{final_result}"')
+
+    return final_result
 
 
 # Define the path to the directories containing the files
