@@ -4,6 +4,14 @@ import torch
 
 os.environ["HF_HOME"] = ".hf/hf_home"
 
+import logging
+import warnings
+
+import pandas as pd
+from tqdm import tqdm
+
+tqdm.pandas()
+
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 model_id = "nvidia/Llama3-ChatQA-1.5-8B"
@@ -173,9 +181,6 @@ ed:  News & opinion blog or editorial
 If the text is a description with intent to sell, choose "ds". If the text is a news & opinion blog or editorial, choose "ed". If the text does not belong to any single subregister, choose "OTHER". {PROMPT_SUFFIX} "ds", "ed", "OTHER".
 """
 
-document = """Review If you need to change a fan belt on a 1994 Fiat, you buy a Chilton's manual, and not a treatise on the joys of high-speed touring. If you need to make a lemon meringue pie, you get a cookbook, and not a memoir on the joys of great French cuisine. Car manuals and recipes are not always great literature by any means, but they are often necessary in helping to get a job done. Susan Rose Blauner's HOW I STAYED ALIVE WHEN MY BRAIN WAS TRYING TO KILL ME is nobody's idea of great, or even good, literature. From a purely literary standpoint, the book is chatty, tiresome and irritating, filled with sentimental rubbish, New Age nonsense, and ghastly psychological claptrap. It has been edited with an over-gentle hand, preserving every little clich and every annoying scrap of poetry and personal reflection. It is a book that very few people will pick up for pleasurable reading, and rightly so. And yet, it will undoubtedly save lives. HOW I STAYED LIVE WHEN MY BRAIN WAS TRYING TO KILL ME is not, as you might think, merely a personal tale of survival from mental illness. It is primarily a manual, a reference book, a resource for people who have suicidal thoughts. Although the book is guided by the author's own experiences with mental illness and suicide attempts, it is written not to chronicle her life but to provide direction and guidance for others in the same situation. And as such, it is an undeniable success. Blauner's book is guided by several hard-won insights. Suicide begins as a thought, driven by negative feelings, and such feelings are temporary and changeable. "Suicidal," Blauner tells us, "is not a feeling." Suicidal thoughts are paired with feelings of anger, guilt, loneliness, and desperation, and it is necessary to separate those feelings from thoughts of suicide. Suicidal thoughts can be addictive, we learn, with romantic notions of one's death and funeral building upon each other. And these suicidal thoughts from one's brain war with one's spirit, which doesn't want to die, creating the conflict in the title. The heart of the book is the "Tips of the Trade," 25 different ideas, strategies, and plans that people with suicidal thoughts can use to help avoid harming themselves. The most invaluable of these is the "Crisis Plan," which is easily the best thing about the book. Blauner details the plan that she, along with her therapist, worked out to help her deal with suicidal thoughts. It begins with "Take a deep breath," and proceeds from there to prayer, activities, exercise, and phone calls to family, friends, and professionals. Applying the principles of strategic planning and crisis management to one's personal life may seem a little unorthodox, but it is undoubtedly effective, and may prove to be so for people with a variety of different needs. The "Tricks" are extremely varied, and more than a little eclectic. (This is to be expected from an author who describes herself as a "Jewish Unitarian Zen-Quakerish earth-loving type.") Not all of the "Tricks" will help everyone, and more than a few of them may seem a little goofy, if not out-and-out weird. Realistically, though, you never can tell what might help someone set aside a suicidal thought. If throwing eggs at trees, or sitting in a chair with a bucket between your knees helps someone, then it's a trick worth sharing, no matter how odd it sounds. HOW I STAYED ALIVE WHEN MY BRAIN WAS TRYING TO KILL ME is not an incredibly well-written book, but it is brave and courageous and helpful, full of resources and tips and ideas and strength for anyone experiencing suicidal thoughts or anyone with a friend or family member with such experiences. More than that, it is a book that is, quite simply, "normal," if not invaluable, in helping people in this situation finish the job of life. """
-document = document[:3000]
-
 main_registers = ["OTHER", "MT", "LY", "ID", "SP", "NA", "HI", "IN", "OP", "IP"]
 subregisters = [
     "it",
@@ -237,45 +242,95 @@ def converse(messages, document):
     return response_str
 
 
-# Stage 1: main register
-registers = []
-messages = [
-    {
-        "role": "user",
-        "content": FIRST_PROMPT,
-    }
-]
+def generate_label(document):
+    document = document[:3000]
 
-first_response = converse(messages, document)
+    # Stage 1: main register
+    registers = []
+    messages = [
+        {
+            "role": "user",
+            "content": FIRST_PROMPT,
+        }
+    ]
 
-messages.append({"role": "assistant", "content": first_response})
+    first_response = converse(messages, document)
+    messages.append({"role": "assistant", "content": first_response})
 
-main_register = first_response.strip().split("\n")[-1].strip().replace('"', "")
-registers.append(main_register)
-sub_register = ""
-if main_register not in main_registers:
-    main_register = "OTHER"
-if main_register not in ["OTHER", "MT", "LY", "ID"]:
-    subregister_prompt = ""
-    if main_register == "SP":
-        subregister_prompt = PROMPT_SP
-    elif main_register == "NA":
-        subregister_prompt = PROMPT_NA
-    elif main_register == "HI":
-        subregister_prompt = PROMPT_HI
-    elif main_register == "IN":
-        subregister_prompt = PROMPT_IN
-    elif main_register == "OP":
-        subregister_prompt = PROMPT_OP
-    elif main_register == "IP":
-        subregister_prompt = PROMPT_IP
+    main_register = first_response.strip().split("\n")[-1].strip().replace('"', "")
+    registers.append(main_register)
 
-    messages.append({"role": "user", "content": subregister_prompt})
+    # Stage 2: subregister
 
-    second_response = converse(messages, document)
+    sub_register = ""
+    if main_register not in main_registers:
+        main_register = "OTHER"
+    if main_register not in ["OTHER", "MT", "LY", "ID"]:
+        subregister_prompt = ""
+        if main_register == "SP":
+            subregister_prompt = PROMPT_SP
+        elif main_register == "NA":
+            subregister_prompt = PROMPT_NA
+        elif main_register == "HI":
+            subregister_prompt = PROMPT_HI
+        elif main_register == "IN":
+            subregister_prompt = PROMPT_IN
+        elif main_register == "OP":
+            subregister_prompt = PROMPT_OP
+        elif main_register == "IP":
+            subregister_prompt = PROMPT_IP
 
-    sub_register = second_response.strip().split("\n")[-1].strip()
-    registers.append(sub_register)
+        messages.append({"role": "user", "content": subregister_prompt})
 
-result = " ".join(registers)
-print(result)
+        second_response = converse(messages, document)
+
+        sub_register = second_response.strip().split("\n")[-1].strip().replace('"', "")
+        registers.append(sub_register)
+
+    result = " ".join(registers)
+
+    print(f'"{document[:100]}..." -> "{result}"')
+
+    return result
+
+
+# Define the path to the directories containing the files
+base_path = "data/en/"
+file_names = ["dev.tsv"]
+
+
+# Process each file
+for file_name in file_names:
+    # Construct the file path
+    file_path = base_path + file_name
+
+    # Read the TSV file into a DataFrame
+    df = pd.read_csv(
+        file_path,
+        sep="\t",
+        header=None,
+        names=["true_labels", "text"],
+        na_values="",  # Don't interpret NA as NaN!
+        keep_default_na=False,
+    )
+
+    # Strip whitespace from strings in the DataFrame
+    df["true_labels"] = df["true_labels"].str.strip()
+    df["text"] = df["text"].str.strip()
+
+    df.dropna(inplace=True)
+
+    # Filter out rows where 'text' is empty
+    df = df[(df["text"] != "")]
+
+    # Apply the generate_label function to the 'text' column and create a new column with progress display
+    df["new_labels"] = df["text"].progress_apply(generate_label)
+
+    # Reorder the columns to the specified order
+    df = df[["true_labels", "new_labels", "text"]]
+
+    # Construct the output file path
+    output_file_path = base_path + file_name.replace(".tsv", "_chain3.tsv")
+
+    # Save the new DataFrame to a TSV file
+    df.to_csv(output_file_path, sep="\t", index=False, header=False)
