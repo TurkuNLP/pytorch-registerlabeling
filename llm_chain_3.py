@@ -38,7 +38,7 @@ Finally, and very importantly, output the chosen register label in a separate li
 
 PROMPT_SUFFIX = """ Explain your decision very briefly in one or two sentences.
 
-Finally, and very importantly, output the chosen register label in a separate line, with nothing else besides the register label in that last line. The last line should contain exactly one of the following strings:"""
+Finally, and very importantly, output the chosen register label in a separate line, with JUST the register label in that last line and ABSOLUTELY NOTHING ELSE. The last line should contain exactly one of the following strings:"""
 
 PROMPT_SP = f"""
 Next, please determine if the text you classified as SP is an interview. An interview typically has one interviewer and one interviewee, such as a radio show host / journalist and a famous person or an invited expert. Most interviews are dialogic and have a question-answer format.
@@ -250,7 +250,7 @@ first_response = converse(messages, document)
 
 messages.append({"role": "assistant", "content": first_response})
 
-main_register = first_response.strip().split("\n")[-1].strip()
+main_register = first_response.strip().split("\n")[-1].strip().replace('"', "")
 registers.append(main_register)
 sub_register = ""
 if main_register not in main_registers:
