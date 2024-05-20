@@ -92,7 +92,30 @@ def exp_header(experiment_type, predict_labels):
         return "\\\\"
     else:
         return "\\textbf{" + exp_map[experiment_type] + "} \\\\"
-    
+
+def make_learning_curve():
+    result = {k: {i: [0, 0, 0] for i in range(100, 1100, 100)} for k in main_languages}
+        
+
+    for lang in main_languages:
+        for i in range(1, 11):
+            for k, seed in enumerate(seeds):
+                file_path = f"predictions/xlm-roberta-large/{lang}_{lang}/seed_{seed}/subset_{i}/all_all_{lang}_metrics.json"
+                try:
+                    data = json.load(
+                        open(
+                            file_path,
+                            "r",
+                            encoding="utf-8",
+                        )
+                    )
+            
+                except:
+                    print(f'No file: {file_path}')
+
+                result[lang][i*100][k] = data[f"f1"] 
+
+    print(result)
 
 def make_hybrids():
 
@@ -360,6 +383,10 @@ def run(cfg):
 
     if cfg.hybrids:
         make_hybrids()
+        exit()
+
+    if cfg.learning_curve:
+        make_learning_curve()
         exit()
 
     average = "" if cfg.average == "micro" else "_macro"
