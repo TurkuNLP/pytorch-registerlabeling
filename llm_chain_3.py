@@ -1,20 +1,23 @@
-PROMPT_1 = """
-You are a multilingual text classifier. You will be given a text in any language scraped from the web, and your task is to categorize it to a predefined register. A "register" is a text variety defined by its situational and communicative characteristics.
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
 
-The classification task consists of three steps: 1) determining if the text was originally spoken or written; 2) assigning a register label to the text; 3) In some cases, assigning a sub-register label to the text. You will proceed in a chain-of-thought way.
+model_id = "nvidia/Llama3-ChatQA-1.5-8B"
 
-# Step 1: Spoken vs. written
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(
+    model_id, torch_dtype=torch.float16, device_map="auto"
+)
+terminators = [tokenizer.eos_token_id, tokenizer.convert_tokens_to_ids("<|eot_id|>")]
 
-In this first step, you must determine if the text was more likely to be originally SPOKEN or WRITTEN. Explain your decision very briefly in one or two sentences.
+SYSTEM = "System: This AI assistant works as a multilingual text classifier. The assistant will be given a text in any language scraped from the web, and it will categorize the text into a predefined register. A 'register' is a text variety defined by its situational and communicative characteristics.\n\nThe classification proceeds in three steps: 1) determining if the text was originally spoken or written; 2) assigning a register label to the text; 3) In some cases, assigning a sub-register label to the text.\n\n Here is the text to be classified (enclosed within ``` and ```):"
+FIRST_PROMPT = """In the first step, the assistant determines if the text was more likely to be originally SPOKEN or WRITTEN. The assistant explains its decision very briefly in one or two sentences.
 
-# Step 2: Register labeling
-
-Next, based on your decision in Step 1, give the text a register label. Was the text more likely to be SPOKEN? If so, does the text clearly belong to one of the following categories:
+Next, based on the decision in the first step, the assistant gives the text a register label. If the text was categorized as SPOKEN, the assistant classifies the text in one of the following categories:
 
 "LY": poetic text, such as song or poem
 "SP": spoken text with the majority of the text spoken (e.g. interview, speech, tv/movie transcript, etc.)
 
-Alternatively, is the text more likely to be WRITTEN? If so, does the text clearly belong to one of the following categories:
+Alternatively, If the text was categorized as WRITTEN, the assistant classifies the text in one of the following categories:
 
 "ID": interactive discussion written by multiple participants in a discussion format (e.g. forum, comment section, etc.)
 "NA": narratives and reports of events (e.g. news report, sports report, narrative blog, fictional story, magazine article, etc.)
@@ -23,13 +26,9 @@ Alternatively, is the text more likely to be WRITTEN? If so, does the text clear
 "OP": text expressing opinions (e.g. review, opinion blog, religious text, advice, etc.)
 "IP": persuasion, such as marketing or other persuasive writing (e.g. description with intent to sell, news & opinion blog, other marketing texts)
 
-Choose "OTHER" if the text does not clearly belong to any single of the above registers, or is not clearly either spoken or written, or combines characteristics of multiple registers. Explain your decision very briefly in one or two sentences.
+The assistant chooses "OTHER" if the text does not clearly belong to any single of the above registers, or is not clearly either spoken or written, or combines characteristics of multiple registers. The assistant explains its decision very briefly in one or two sentences.
 
-In the last line, just output the chosen register label and nothing else. The last line should contain exactly one of the following: "LY", "SP", "ID", "NA", "HI", "IN", "OP", "IP", "OTHER".
-
-
-Below is the text you will classify, enclosed within ``` and ```.
-
+In the last line of the output, the assistant outputs the chosen register label and nothing else. The last line should contain exactly one of the following: "LY", "SP", "ID", "NA", "HI", "IN", "OP", "IP", "OTHER".
 """
 
 PROMPT_SUFFIX = """Explain your decision very briefly in one or two sentences. 
@@ -169,46 +168,8 @@ ed:  News & opinion blog or editorial
 If the text is a description with intent to sell, choose "ds". If the text is a news & opinion blog or editorial, choose "ed". If the text does not belong to any single subregister, choose "OTHER". {PROMPT_SUFFIX} "ds", "ed", "OTHER".
 """
 
-import re
-
-
-import os
-
-import torch
-
-os.environ["HF_HOME"] = ".hf/hf_home"
-
-import logging
-import warnings
-
-import pandas as pd
-from tqdm import tqdm
-
-tqdm.pandas()
-
-from huggingface_hub import login
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-warnings.filterwarnings("ignore")
-logging.basicConfig(level=logging.INFO)
-
-from dotenv import load_dotenv
-
-load_dotenv()
-
-login(token=os.getenv("HUGGINGFACE_ACCESS_TOKEN", ""))
-
-model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-model = AutoModelForCausalLM.from_pretrained(
-    model_id,
-    torch_dtype=torch.bfloat16,
-    device_map="auto",
-)
-terminators = [
-    tokenizer.eos_token_id,
-    tokenizer.convert_tokens_to_ids("<|eot_id|>"),
-]
+document = """Review If you need to change a fan belt on a 1994 Fiat, you buy a Chilton's manual, and not a treatise on the joys of high-speed touring. If you need to make a lemon meringue pie, you get a cookbook, and not a memoir on the joys of great French cuisine. Car manuals and recipes are not always great literature by any means, but they are often necessary in helping to get a job done. Susan Rose Blauner's HOW I STAYED ALIVE WHEN MY BRAIN WAS TRYING TO KILL ME is nobody's idea of great, or even good, literature. From a purely literary standpoint, the book is chatty, tiresome and irritating, filled with sentimental rubbish, New Age nonsense, and ghastly psychological claptrap. It has been edited with an over-gentle hand, preserving every little clich and every annoying scrap of poetry and personal reflection. It is a book that very few people will pick up for pleasurable reading, and rightly so. And yet, it will undoubtedly save lives. HOW I STAYED LIVE WHEN MY BRAIN WAS TRYING TO KILL ME is not, as you might think, merely a personal tale of survival from mental illness. It is primarily a manual, a reference book, a resource for people who have suicidal thoughts. Although the book is guided by the author's own experiences with mental illness and suicide attempts, it is written not to chronicle her life but to provide direction and guidance for others in the same situation. And as such, it is an undeniable success. Blauner's book is guided by several hard-won insights. Suicide begins as a thought, driven by negative feelings, and such feelings are temporary and changeable. "Suicidal," Blauner tells us, "is not a feeling." Suicidal thoughts are paired with feelings of anger, guilt, loneliness, and desperation, and it is necessary to separate those feelings from thoughts of suicide. Suicidal thoughts can be addictive, we learn, with romantic notions of one's death and funeral building upon each other. And these suicidal thoughts from one's brain war with one's spirit, which doesn't want to die, creating the conflict in the title. The heart of the book is the "Tips of the Trade," 25 different ideas, strategies, and plans that people with suicidal thoughts can use to help avoid harming themselves. The most invaluable of these is the "Crisis Plan," which is easily the best thing about the book. Blauner details the plan that she, along with her therapist, worked out to help her deal with suicidal thoughts. It begins with "Take a deep breath," and proceeds from there to prayer, activities, exercise, and phone calls to family, friends, and professionals. Applying the principles of strategic planning and crisis management to one's personal life may seem a little unorthodox, but it is undoubtedly effective, and may prove to be so for people with a variety of different needs. The "Tricks" are extremely varied, and more than a little eclectic. (This is to be expected from an author who describes herself as a "Jewish Unitarian Zen-Quakerish earth-loving type.") Not all of the "Tricks" will help everyone, and more than a few of them may seem a little goofy, if not out-and-out weird. Realistically, though, you never can tell what might help someone set aside a suicidal thought. If throwing eggs at trees, or sitting in a chair with a bucket between your knees helps someone, then it's a trick worth sharing, no matter how odd it sounds. HOW I STAYED ALIVE WHEN MY BRAIN WAS TRYING TO KILL ME is not an incredibly well-written book, but it is brave and courageous and helpful, full of resources and tips and ideas and strength for anyone experiencing suicidal thoughts or anyone with a friend or family member with such experiences. More than that, it is a book that is, quite simply, "normal," if not invaluable, in helping people in this situation finish the job of life. """
+document = document[:3000]
 
 main_registers = ["OTHER", "MT", "LY", "ID", "SP", "NA", "HI", "IN", "OP", "IP"]
 subregisters = [
@@ -232,108 +193,84 @@ subregisters = [
 ]
 
 
-def extract_subregister(text):
-    # Create a regex pattern to match any of the subregisters
-    pattern = (
-        r"\b("
-        + "|".join(re.escape(subregister) for subregister in subregisters)
-        + r")\b"
+def get_formatted_input(messages, context):
+    conversation = (
+        "\n\n".join(
+            [
+                (
+                    "User: " + item["content"]
+                    if item["role"] == "user"
+                    else "Assistant: " + item["content"]
+                )
+                for item in messages
+            ]
+        )
+        + "\n\nAssistant:"
     )
+    formatted_input = SYSTEM + "\n\n```\n" + context + "\n```\n\n" + conversation
 
-    # Search for the pattern in the text
-    match = re.search(pattern, text)
-
-    # Return the matched subregister if found, otherwise return ""
-    return match.group(1) if match else ""
+    return formatted_input
 
 
-def ask(question):
+def converse(messages, document):
 
-    messages = [
-        {"role": "user", "content": question},
-    ]
+    formatted_input = get_formatted_input(messages, document)
 
-    input_ids = tokenizer.apply_chat_template(
-        messages, add_generation_prompt=True, return_tensors="pt"
+    tokenized_prompt = tokenizer(
+        tokenizer.bos_token + formatted_input, return_tensors="pt"
     ).to(model.device)
 
     outputs = model.generate(
-        input_ids,
+        input_ids=tokenized_prompt.input_ids,
+        attention_mask=tokenized_prompt.attention_mask,
+        max_new_tokens=512,
         eos_token_id=terminators,
-        do_sample=False,
-        temperature=0.0,
-    )
-    response = outputs[0][input_ids.shape[-1] :]
-    result = tokenizer.decode(response, skip_special_tokens=True)
-    return result
-
-
-def generate_label(text):
-    text = text[:3000]
-
-    result = ask(f"{PROMPT_1}\n```\n{text}\n```").strip().split("\n")[-1].strip()
-    result2 = ""
-    if result not in main_registers:
-        result = "OTHER"
-    if result not in ["OTHER", "MT", "LY", "ID"]:
-        if result == "SP":
-            result2 = ask(PROMPT_SP)
-        elif result == "NA":
-            result2 = ask(PROMPT_NA)
-        elif result == "HI":
-            result2 = ask(PROMPT_HI)
-        elif result == "IN":
-            result2 = ask(PROMPT_IN)
-        elif result == "OP":
-            result2 = ask(PROMPT_OP)
-        elif result == "IP":
-            result2 = ask(PROMPT_IP)
-
-    result2 = extract_subregister(result2.strip().split("\n")[-1].strip())
-    final_result = result + (f" {result2}" if result2 else "")
-
-    print(f'"{text[:100]}..." -> "{final_result}"')
-
-    return final_result
-
-
-# Define the path to the directories containing the files
-base_path = "data/en/"
-file_names = ["dev.tsv"]
-
-
-# Process each file
-for file_name in file_names:
-    # Construct the file path
-    file_path = base_path + file_name
-
-    # Read the TSV file into a DataFrame
-    df = pd.read_csv(
-        file_path,
-        sep="\t",
-        header=None,
-        names=["true_labels", "text"],
-        na_values="",  # Don't interpret NA as NaN!
-        keep_default_na=False,
     )
 
-    # Strip whitespace from strings in the DataFrame
-    df["true_labels"] = df["true_labels"].str.strip()
-    df["text"] = df["text"].str.strip()
+    response = outputs[0][tokenized_prompt.input_ids.shape[-1] :]
+    response_str = tokenizer.decode(response, skip_special_tokens=True)
+    return response_str
 
-    df.dropna(inplace=True)
 
-    # Filter out rows where either 'true_labels' or 'text' are empty
-    df = df[(df["true_labels"] != "") & (df["text"] != "")]
+# Stage 1: main register
+registers = []
+messages = [
+    {
+        "role": "user",
+        "content": FIRST_PROMPT,
+    }
+]
 
-    # Apply the generate_label function to the 'text' column and create a new column with progress display
-    df["new_labels"] = df["text"].progress_apply(generate_label)
+first_response = converse(messages, document)
 
-    # Reorder the columns to the specified order
-    df = df[["true_labels", "new_labels", "text"]]
+messages.append({"role": "assistant", "content": first_response})
 
-    # Construct the output file path
-    output_file_path = base_path + file_name.replace(".tsv", "_chain2.tsv")
+main_register = first_response.strip().split("\n")[-1].strip()
+registers.append(main_register)
+sub_register = ""
+if main_register not in main_registers:
+    main_register = "OTHER"
+if main_register not in ["OTHER", "MT", "LY", "ID"]:
+    subregister_prompt = ""
+    if main_register == "SP":
+        subregister_prompt = PROMPT_SP
+    elif main_register == "NA":
+        subregister_prompt = PROMPT_NA
+    elif main_register == "HI":
+        subregister_prompt = PROMPT_HI
+    elif main_register == "IN":
+        subregister_prompt = PROMPT_IN
+    elif main_register == "OP":
+        subregister_prompt = PROMPT_OP
+    elif main_register == "IP":
+        subregister_prompt = PROMPT_IP
 
-    # Save the new DataFrame to a TSV file
-    df.to_csv(output_file_path, sep="\t", index=False, header=False)
+    messages.append({"role": "user", "content": subregister_prompt})
+
+    second_response = converse(messages, document)
+
+    sub_register = second_response.strip().split("\n")[-1].strip()
+    registers.append(sub_register)
+
+result = " ".join(registers)
+print(result)
