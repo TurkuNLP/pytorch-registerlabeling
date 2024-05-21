@@ -30,3 +30,5 @@ TMP_*
 test_cache
 .ig_visualizations
 data/en_*
+data/multi_*
+data/cleanlab_*
