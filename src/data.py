@@ -17,6 +17,7 @@ from .labels import binarize_labels, normalize_labels
 
 language_names = {
     "en": "English",
+    "en_new": "English",
     "fi": "Finnish",
     "fr": "French",
     "sv": "Swedish",
@@ -142,6 +143,9 @@ def gen(languages, split, label_scheme, use_gz):
 
                 if not normalized_labels:
                     continue
+
+                if len(ro) > 2:
+                    l = ro[2] # language is third column
 
                 idx += 1
                 yield {

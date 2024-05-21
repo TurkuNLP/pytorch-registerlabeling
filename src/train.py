@@ -187,12 +187,12 @@ def run(cfg):
 
             return (loss, outputs) if return_outputs else loss
 
-        if len(cfg.train.split("-")) > 1 and not cfg.just_evaluate:
+        if (len(cfg.train.split("-")) > 1 or cfg.balanced_dataloader) and not cfg.just_evaluate:
 
             def get_train_dataloader(self):
                 return balanced_dataloader(self, "train", cfg.train_batch_size)
 
-        if len(cfg.dev.split("-")) > 1 and not cfg.just_evaluate:
+        if (len(cfg.dev.split("-")) > 1 or cfg.balanced_dataloader) and not cfg.just_evaluate:
 
             def get_eval_dataloader(self, eval_dataset=None):
                 return balanced_dataloader(self, "eval", cfg.eval_batch_size)
