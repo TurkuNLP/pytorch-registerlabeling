@@ -32,3 +32,4 @@ test_cache
 data/en_*
 data/multi_*
 data/cleanlab_*
+src/llm/*
