@@ -410,7 +410,7 @@ def run(cfg):
 
     print("Predicting..")
     cfg.just_evaluate = True
-    for language in cfg.test.split("-"):
+    for language in (cfg.test.split("-") if "multi" not in cfg.test else ["en", "fi", "fr", "sv", "tr"]):
         print(f"-- {language} --")
         test_language = language
         test_dataset = dataset["test"].filter(
