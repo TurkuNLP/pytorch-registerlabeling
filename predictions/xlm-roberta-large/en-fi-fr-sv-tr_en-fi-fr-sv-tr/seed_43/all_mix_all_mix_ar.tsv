@@ -1,92 +1,92 @@
-MIX	NA sr	79
-NA sr	NA ne sr	76
-NA ne	NA ne	74
-NA ne	NA ne	84
-IP	MT	12
-NA sr	NA sr	89
-MIX	IN lt	34
-MIX		59
-OP rs	OP	69
-MIX	IP ds	10
-MIX	MIX	45
-OP rs	OP	1
-MIX	MT	41
-MIX		32
-IP	IP ds	4
-MIX	NA ne	25
-MIX	IP ds	86
-ID		87
-NA ne	NA ne	23
-OP rs		14
-ID		21
-MIX	ID	55
-NA ne	NA ne	49
-NA sr	NA sr	88
-OP rs		75
-MIX	OP ob	2
-NA ne	NA ne	61
-IN	IN	8
-MIX	IP ds	82
-OP ob		6
-MIX		35
-IN	MIX	33
-MIX		63
-NA sr	NA ne sr	56
-MIX	IN	20
-IN en	IN en	51
-HI re	HI re	38
-OP ob rs	OP rs	19
-IN dtp	IN dtp	62
-NA ne	NA ne	28
-NA ne	NA ne	36
-NA	NA ne	27
-MIX	IP ds	43
-NA ne	NA ne	58
-MIX	IN	22
-MIX		30
-MIX	NA ne	81
-IN dtp	IP ds	15
-OP rv	IN dtp	70
-IN lt	IN	66
-IN ra	IN ra	53
-IP	IP ds	65
-IP	IP ds	24
-IP		13
-IN	IP ds	67
-NA ne	NA sr	7
-OP rv	OP rv	16
-MIX	NA	73
-NA ne	NA ne	71
-NA ne	NA ne	29
-NA sr	NA sr	47
-MIX	IP ds	64
-IP	IP ds	91
-NA ne	NA ne	72
-NA ne	NA ne	31
-MIX	IN lt	78
-ID		52
-NA ne	NA ne	9
-NA ne	NA ne	17
-MIX	IP ds	90
-NA ne	NA ne	80
-OP ob	NA sr	50
-NA ne	NA ne	85
-NA ne	NA ne	5
-IN ra	OP rs	83
-MIX	MT	3
-NA ne	NA ne	37
-OP rv ob	OP ob	44
-MIX	OP rs	77
-NA ne	NA ne	42
 NA ne	NA ne	0
-HI re	HI re	57
+OP rs	OP rs	1
+MIX		2
+MIX	MT	3
+IP	IP ds	4
+NA ne	NA ne	5
+OP ob		6
+NA ne	NA sr	7
+IN	IN	8
+NA ne	NA ne	9
+MIX	MT	10
 IP	IP ds	11
-IN	MIX	40
-IN	IN	39
-NA ne	NA ne	54
-NA	NA	26
-MIX	IN dtp	68
-IN	IP ds	46
-NA ne	IN lt	48
+IP	MT	12
+IP	MT	13
+OP rs		14
+IN dtp	IP ds	15
+OP rv	OP rv	16
+NA ne	NA ne	17
 NA nb	IP	18
+MIX	OP rs	19
+MIX	IN dtp	20
+ID	ID	21
+MIX	IN	22
+NA ne	NA ne	23
+IP	IP ds	24
+MIX	NA ne	25
+NA	NA	26
+NA	NA ne	27
+NA ne	NA ne	28
+NA ne	NA ne	29
+MIX	MT	30
+NA ne	NA ne	31
+MIX	MIX	32
+IN	OP rv MIX	33
+MIX	IN lt	34
+MIX		35
+NA ne	NA ne	36
+NA ne	NA ne	37
+HI re	HI re	38
+IN	IN	39
+IN	MIX	40
+MIX	MT	41
+NA ne	NA ne	42
+MIX	IP ds	43
+MIX	OP	44
+MIX	MIX	45
+IN	IP ds	46
+NA sr	NA sr	47
+NA ne	IN lt	48
+NA ne	NA ne	49
+OP ob	NA	50
+IN en	IN en	51
+ID	IN	52
+IN ra	IN ra	53
+NA ne	NA ne	54
+MIX	ID	55
+NA sr	NA ne	56
+HI re	HI re	57
+NA ne	NA ne	58
+MIX	MIX	59
 NA ne	NA ne	60
+NA ne	NA ne	61
+IN dtp	IN dtp	62
+MIX		63
+MIX	IP ds	64
+IP	IP ds	65
+IN lt	IN lt	66
+IN	MT	67
+MIX	IN dtp	68
+OP rs	MIX	69
+OP rv	IN dtp	70
+NA ne	NA ne	71
+NA ne	NA ne	72
+MIX		73
+NA ne	NA ne	74
+OP rs	HI	75
+NA sr	NA sr	76
+MIX	OP rs	77
+MIX	IN lt	78
+MIX	NA sr	79
+NA ne	NA ne	80
+MIX	NA ne	81
+MIX	IP ds	82
+IN ra		83
+NA ne	NA ne	84
+NA ne	NA ne	85
+MIX	IP ds	86
+ID	ID	87
+NA sr	NA sr	88
+NA sr	NA sr	89
+MIX		90
+IP	MT	91

@@ -1,69 +1,69 @@
-NA ne	NA ne	68
-MIX	IP ds	55
-MIX	IP ds	51
-IN dtp	IP ds	17
-IP ds	IP ds	32
-OP ob	OP ob	49
-MIX	IP ds	56
-HI	HI	63
-NA ne	NA ne	15
-NA ne		67
-NA ne	NA ne	20
-IP ds	IP ds	40
-MIX	IN dtp	38
-NA sr	NA sr	65
-MIX		45
-MIX	IN en	19
-IP ds	OP	57
-NA ne	NA ne	44
-IP ds	IP ds	4
-OP	OP	10
-MIX	IN MIX	11
-HI	HI	33
-IP ds	IP ds	41
-NA sr	NA	21
-MIX	MIX	27
-OP av	MIX	9
-MIX	OP ob	6
-IN lt	IN lt	53
-MIX	NA ne	8
-NA ne sr	NA ne	25
-IP ds	IP ds	50
-NA ne	NA ne	64
-LY	LY	30
-LY	NA nb	1
 IN dtp	IP ds	0
-NA ne	NA ne	61
-MIX	MIX	39
-NA ne	NA ne	28
-IN dtp	IN	13
-MIX	IP ds	12
-IP ed	NA sr	26
-MIX	NA ne	24
-OP av	OP av	3
-OP rv	IP ds	7
-IP ds	IP ds	62
-IP ds	IP ds	37
-MIX	IP ds	66
-MT	MT	36
-IN dtp	IP	22
-IP ed	OP IP	42
-NA ne	NA ne	29
-MIX	NA ne	35
-MIX	MIX	52
-NA ne	NA ne	47
-MIX	IP ds	16
-NA sr	NA	31
-MIX	IP ds	14
-MIX	IP ds	34
-MIX	NA ne	54
-NA ne	NA ne	23
+LY	ID NA nb	1
 MIX	IP ds	2
-MIX	IN IP	48
+OP av	OP av MIX	3
+IP ds	IN	4
+IN en	IN dtp	5
+MIX	OP IP ob ed	6
+OP rv	IP ds	7
+MIX	NA ne	8
+OP av	OP av MIX	9
+OP	OP rs MIX	10
+MIX	IN MIX	11
+MIX	IP ds MIX	12
+IN dtp	IN dtp	13
+MIX	IP ds	14
+NA ne	NA ne	15
+MIX	IP ds	16
+IN dtp	IP ds	17
 MT	NA sr	18
-HI	HI	58
+MIX	IN en	19
+NA ne	NA ne	20
+NA sr	NA ne sr	21
+IN dtp	IN IP dtp MIX	22
+NA ne	NA ne	23
+MIX	NA ne	24
+MIX	NA ne	25
+IP ed	NA sr	26
+MIX	HI MIX	27
+NA ne	NA ne	28
+NA ne	NA ne	29
+LY	LY IP	30
+NA sr	NA ne	31
+IP ds	IP ds	32
+HI	HI MIX	33
+MIX	IP ds	34
+MIX	NA ne	35
+MT	MT	36
+IP ds	IP ds	37
+MIX	IN dtp	38
+MIX	IN dtp MIX	39
+IP ds	IP ds	40
+IP ds	IP ds	41
+IP ed	OP IP ob ed	42
 IP ds	IP ds	43
-IN en	IN	5
+NA ne	NA ne	44
+MIX	IN dtp	45
+IN dtp	IN dtp	46
+NA ne	NA ne	47
+MIX	IN dtp	48
+OP ob	OP IP ob ed	49
+IP ds	IP ds	50
+MIX	IP ds	51
+MIX	MIX	52
+IN lt	IN lt	53
+MIX	NA ne	54
+MIX	IP ds	55
+MIX	IP ds	56
+IP ds	IN MIX	57
+HI	HI	58
 NA ne	NA ne	59
 NA ne	NA ne	60
-IN dtp	IN	46
+NA ne	NA ne	61
+IP ds	IP ds	62
+HI	HI	63
+NA ne	NA ne	64
+NA sr	NA sr	65
+MIX	IP ds	66
+NA ne	NA OP ne ob	67
+NA ne	NA ne	68

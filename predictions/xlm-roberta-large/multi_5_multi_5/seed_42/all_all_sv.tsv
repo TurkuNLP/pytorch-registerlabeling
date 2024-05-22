@@ -1,0 +1,416 @@
+IP ds	IP ds	6324
+ID	ID	6325
+IN en	IN en	6326
+NA nb	NA nb	6327
+IP ds	OP IP ds	6328
+IN	OP av	6329
+IN en	IN en	6330
+NA nb	NA nb	6331
+IN IP lt ds	IP ds	6332
+IN lt	IN lt	6333
+OP	OP ob	6334
+IP ds	IP ds	6335
+IP	ID	6336
+HI IN	OP IP av ds	6337
+NA nb	NA nb	6338
+IN	IN	6339
+NA nb	NA nb	6340
+IP ds	IP ds	6341
+IN en	IN en	6342
+OP ob	OP ob	6343
+IN IP fi ds	IP ds	6344
+IP	IP ds	6345
+MT IN fi	MT IN fi	6346
+NA ne nb	NA IP nb	6347
+NA IN nb dtp	NA IN nb dtp	6348
+MT IP ds	IP ds	6349
+IN en	IN en	6350
+NA nb	NA nb	6351
+NA IP nb ds	IN IP dtp	6352
+OP rv	OP IP rv ds	6353
+HI IP	HI IN IP dtp	6354
+NA OP nb av	NA nb	6355
+NA	NA	6356
+MT IP ds	MT OP IP rv ds	6357
+MT IP ds	IP ds	6358
+IN dtp	IN IP dtp	6359
+MT	MT	6360
+HI IN dtp	IN dtp	6361
+ID	NA nb	6362
+NA ne	NA ne	6363
+NA sr	NA ne sr	6364
+IN en	IN en	6365
+IP	HI OP IP av	6366
+IN lt	IN lt	6367
+OP rv	OP rv	6368
+IP ds	IP ds	6369
+IP ds	IP ds	6370
+NA ne	NA ne	6371
+IN en	IN en	6372
+NA nb	NA nb	6373
+IN lt	IN lt	6374
+NA OP nb rs	OP rs	6375
+IP	IP ds	6376
+ID	ID	6377
+HI	HI	6378
+OP IP ob	IP	6379
+OP ob	NA ne	6380
+NA nb	NA nb	6381
+NA IN nb fi	NA IP nb	6382
+NA nb	NA nb	6383
+IP ds	IP ds	6384
+IP ds	IP ds	6385
+NA nb	NA IP nb	6386
+IN	IN dtp	6387
+IP	NA nb	6388
+IN	HI IN dtp	6389
+MT IN fi	MT IN fi	6390
+IP ds	IP ds	6391
+NA nb	NA nb	6392
+MT IN fi	MT IN fi	6393
+IN en	IN en	6394
+IP ds	IP ds	6395
+NA nb	NA nb	6396
+IP	IN dtp	6397
+NA OP nb rv	NA OP nb rv	6398
+IN IP dtp	IN IP ds	6399
+IN IP fi	IN fi	6400
+NA	SP NA it	6401
+IN	NA OP IP nb av	6402
+HI IN dtp	HI IN dtp	6403
+NA nb	NA nb	6404
+NA ne	NA ne	6405
+IP ds	IP ds	6406
+NA IN nb dtp	IN IP	6407
+IP ds	IN	6408
+IP ds	IP ds	6409
+NA nb	NA nb	6410
+IN en	IN en	6411
+OP ob	OP ob	6412
+IP ds	IP ds	6413
+IN IP lt ds	IP ds	6414
+NA ne	NA ne	6415
+IN en	IN en	6416
+NA nb	NA IP nb ds	6417
+IN dtp	NA nb	6418
+HI IP ds	NA IN IP nb	6419
+IP ds	IP ds	6420
+OP ob	OP ob	6421
+IN en	IN en	6422
+NA nb	NA nb	6423
+HI	HI OP IP av	6424
+NA nb	NA nb	6425
+NA ne	NA ne	6426
+OP ob	NA OP IP	6427
+IP ds	IP ds	6428
+NA IP nb ds	IP ds	6429
+IN en	IN en	6430
+MT IN fi	MT IN fi	6431
+IN en	IN en	6432
+NA ne	NA IP ne	6433
+IP ds	IP ds	6434
+IP ds	IP ds	6435
+IN en	IN en	6436
+NA nb	NA nb	6437
+IP ds	IP ds	6438
+NA HI nb re	NA nb	6439
+OP ob	OP ob	6440
+NA nb	NA nb	6441
+IN en	IN en	6442
+HI IN dtp	IN dtp	6443
+IP ds	IP ds	6444
+OP ob	OP rv	6445
+MT IP ds	IP ds	6446
+NA ne	NA ne	6447
+NA IN ne dtp	NA OP ne rv	6448
+IP ds	IP ds	6449
+IN dtp	IN dtp	6450
+NA nb	NA nb	6451
+IP ds	IP ds	6452
+IN en	IN en	6453
+OP rs	IN OP rs	6454
+MT IP ds	MT IP ds	6455
+NA nb	NA nb	6456
+IN IP ds	IN IP	6457
+MT	MT	6458
+LY	LY NA	6459
+IN en	IN en	6460
+IP ds	IP ds	6461
+OP ob	OP ob	6462
+ID	ID	6463
+IP ds	IP ds	6464
+IN dtp	IN en	6465
+NA nb	NA nb	6466
+IP ds	IP ds	6467
+NA nb	ID	6468
+MT OP rv	MT OP rv	6469
+NA IN dtp	IN dtp	6470
+MT	MT	6471
+IP ds	IP ds	6472
+IN en	IN en	6473
+NA ne	NA ne	6474
+IP ds	IP ds	6475
+NA nb	NA IP nb	6476
+MT IP ds	MT IP ds	6477
+IN dtp	IN dtp	6478
+IP ds	IP ds	6479
+MT OP rv	OP rv av	6480
+IN en	IN en	6481
+IP ds	IP ds	6482
+HI	HI IN dtp	6483
+NA nb	NA nb	6484
+IN en	IN en	6485
+MT	MT	6486
+OP ob	OP ob	6487
+IP	IN IP	6488
+IP ds	IP ds	6489
+ID	ID	6490
+NA nb	IN	6491
+IP ds	IN lt	6492
+NA nb	NA nb	6493
+IN lt	IN lt	6494
+NA	NA IP	6495
+MT IN fi	MT IN fi	6496
+IN en	IN en	6497
+IP ds	IP ds	6498
+HI	HI IN	6499
+IP ds	IP ds	6500
+NA	NA IN	6501
+IN dtp	IN dtp	6502
+OP ob	OP ob	6503
+NA ne	NA ne	6504
+MT IP ds	MT OP IP rv ds	6505
+NA IP nb	NA IP nb	6506
+MT OP rv	MT OP rv	6507
+IN en	IN en	6508
+IN dtp	IN IP dtp ds	6509
+NA nb	NA nb	6510
+NA IP ne	NA IP ne ds	6511
+NA nb	NA nb	6512
+IP ds	IP ds	6513
+NA HI nb	OP av	6514
+IN en	IN en	6515
+IN dtp	IN dtp	6516
+MT IP ds	IP ds	6517
+NA nb	NA nb	6518
+NA nb	NA nb	6519
+IN en	IN en	6520
+IP ds	IP ds	6521
+NA nb	NA nb	6522
+ID	ID	6523
+IN dtp	IN IP dtp	6524
+IP ds	IP ds	6525
+NA nb	NA nb	6526
+OP rv ob	OP IP rv ds	6527
+IN	IN	6528
+NA nb	NA nb	6529
+NA OP nb rv	NA OP rv	6530
+MT IP ds	MT OP IP rv ds	6531
+NA nb	NA nb	6532
+IN dtp	IN dtp	6533
+IP ds	IP ds	6534
+OP IP rv	OP rv	6535
+IN dtp	IN IP dtp	6536
+NA nb	NA nb	6537
+MT IP ds	IN IP ds	6538
+IN dtp	IN IP dtp	6539
+ID	ID	6540
+IP ds	IP ds	6541
+NA nb	NA nb	6542
+IP ds	IP ds	6543
+NA ne	NA ne	6544
+MT IP ds	IP ds	6545
+MT OP rv	MT OP rv	6546
+IN en	IN en	6547
+IN en	IN en	6548
+IP ds	NA IP ds	6549
+NA nb	NA nb	6550
+OP IP rv ds	MT OP IP rv ds	6551
+NA	OP IP av	6552
+IN en	IN en	6553
+OP ob	OP ob	6554
+IP ds	NA IP	6555
+IN en	IN en	6556
+HI IN fi	IN lt	6557
+NA	NA IN OP	6558
+MT OP av	OP av	6559
+OP IP rs ds	IP ds	6560
+IN en	IN en	6561
+NA ne	NA ne	6562
+NA IP ds	HI OP av	6563
+ID	ID	6564
+IN en	IN en	6565
+NA nb	NA nb	6566
+MT IP ds	IP ds	6567
+OP rv	HI	6568
+IP ds	NA IP	6569
+SP NA it ne	SP NA it	6570
+NA HI nb	NA HI nb	6571
+MT OP rv	MT OP rv	6572
+MT IP ds	IP ds	6573
+IN	HI IN	6574
+IP ds	IP ds	6575
+NA IP nb ds	NA IP nb	6576
+NA nb	NA nb	6577
+NA IP ne	NA IP ne	6578
+IN dtp	IN dtp	6579
+NA OP nb rv	NA nb	6580
+IP ds	IN IP dtp ds	6581
+NA ne	NA ne	6582
+IN en	IN en	6583
+NA nb	NA OP nb av	6584
+IP ds	IP ds	6585
+NA IP nb ds	OP IP rv ds	6586
+IN dtp	IN dtp	6587
+MT IP ds	MT IP ds	6588
+IN en	IN en	6589
+NA nb	NA nb	6590
+IP ds	IP ds	6591
+HI	HI	6592
+ID	ID	6593
+NA nb	NA nb	6594
+NA IP nb	NA IP nb	6595
+NA IN	NA IN	6596
+NA nb	NA nb	6597
+NA IP ds	IP ds	6598
+NA ne	NA ne	6599
+OP ob	OP	6600
+IP ds	IP ds	6601
+IN en	IN en	6602
+MT OP rv	MT OP rv	6603
+IP ds	IP ds	6604
+NA nb	NA nb	6605
+MT IP ds	MT IP ds	6606
+IN en	IN en	6607
+NA IP nb ds	NA IP ds	6608
+LY NA nb	NA nb	6609
+NA IP nb	IN dtp	6610
+HI re	HI re	6611
+IN en	IN en	6612
+SP NA it nb	SP NA it	6613
+OP IP rv ds	OP IP rv ds	6614
+IN dtp	IN dtp	6615
+IP ds	IP ds	6616
+HI IN lt	HI IP ds	6617
+OP ob	OP ob	6618
+NA nb	NA nb	6619
+IN OP av	IN dtp	6620
+IP	IP ds	6621
+IN	IP	6622
+NA IP nb	IN IP dtp	6623
+NA ne	NA ne	6624
+IP	IP ds	6625
+ID	NA HI OP nb re rv	6626
+IN dtp	IN en dtp	6627
+MT IP ds	MT IP ds	6628
+NA nb	NA nb	6629
+OP av	OP av	6630
+IN en	IN en	6631
+IP ds	IP ds	6632
+NA IP sr ds	NA IP	6633
+IN en	IN en	6634
+NA nb	NA nb	6635
+NA nb	NA nb	6636
+MT OP av	OP IP rv av	6637
+IN dtp	HI IN dtp	6638
+IN en	IN en	6639
+NA IP	OP IP rv	6640
+IP ds	IP ds	6641
+IN	IN lt	6642
+NA nb	NA IN nb	6643
+ID	ID	6644
+LY	IN dtp	6645
+NA OP nb ob	SP NA it	6646
+MT IP ds	MT IP ds	6647
+NA nb	NA nb	6648
+IP ds	IP ds	6649
+HI IN dtp	MT	6650
+NA nb	NA nb	6651
+IN en	IN en	6652
+MT IP ds	MT IP ds	6653
+NA	NA	6654
+IP ds	IP ds	6655
+IP ds	IP ds	6656
+OP rs	OP rs	6657
+IN en	IN en	6658
+IP	HI IP ds	6659
+OP	OP IP	6660
+IN dtp	ID IN	6661
+NA IP	IN IP dtp ds	6662
+IP ds	IP ds	6663
+HI IN	NA IN IP	6664
+NA nb	NA IN dtp	6665
+ID	ID	6666
+IN en	IN en	6667
+OP rv	MT	6668
+NA nb	NA nb	6669
+IP ds	IP ds	6670
+IP ds	IP ds	6671
+IP ds	IP ds	6672
+IN en	IN dtp	6673
+NA HI nb re	HI re	6674
+NA nb	NA nb	6675
+NA IP nb ds	NA nb	6676
+IN en	IN en	6677
+NA ne	NA ne	6678
+IN dtp	IN dtp	6679
+NA OP nb av	NA OP nb av	6680
+MT OP rv	MT OP rv	6681
+NA nb	ID	6682
+NA IP ne ds	NA ne	6683
+NA nb	NA nb	6684
+IN en	IN en	6685
+IN dtp	IN dtp	6686
+OP ob	NA OP nb ob	6687
+IP ds	IP ds	6688
+NA nb	NA nb	6689
+IP ds	HI OP	6690
+IN	IN dtp	6691
+HI IN lt	IN	6692
+NA nb	NA nb	6693
+IN IP	IP ds	6694
+IP ds	IP ds	6695
+IN dtp	HI IN dtp	6696
+OP rv av	OP rv	6697
+NA nb	NA IP nb	6698
+IP	IN IP	6699
+NA nb	NA HI nb	6700
+IP ds	IP ds	6701
+IN dtp	IN OP	6702
+ID		6703
+HI re	HI re	6704
+NA ne	NA ne	6705
+NA IP nb ds	NA IP nb	6706
+MT OP rv	MT OP rv	6707
+IN dtp	NA IN	6708
+NA	NA ne	6709
+NA ne	NA IP ne	6710
+NA IP nb	NA nb	6711
+IN dtp	IN dtp	6712
+OP IP av ds	IP ds	6713
+IN lt	IP ds	6714
+HI IP re	HI re	6715
+IP ed	IP ed	6716
+IN dtp	IN dtp	6717
+OP ob	OP ob	6718
+IP	IP ds	6719
+HI	IN dtp	6720
+IP ds	IP ds	6721
+MT OP rv	MT OP rv	6722
+HI IN dtp	IN lt	6723
+IP ds	IP ds	6724
+IN en	IN en	6725
+IN IP dtp	IN IP dtp	6726
+IN lt	IN lt	6727
+IN	NA IN ne	6728
+IP	NA HI nb re	6729
+IN dtp	NA IN IP	6730
+OP ob	OP ob	6731
+NA IP nb	IP ds	6732
+IN en	IN en	6733
+IN lt	HI	6734
+OP ob	OP ob	6735
+IP	IP ds	6736
+ID	IN dtp	6737
+IP	HI IN dtp	6738
+HI IN	HI	6739

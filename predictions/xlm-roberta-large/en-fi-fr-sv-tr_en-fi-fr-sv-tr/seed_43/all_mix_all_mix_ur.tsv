@@ -1,160 +1,160 @@
-NA ne	NA ne	54
-IP ed	NA ne	146
-NA ne	NA ne	104
-MIX	OP	105
-NA ne	NA ne	153
-NA ne	NA ne	1
-NA ne	NA ne	77
-NA ne	NA ne	114
-OP rs	MIX	94
-NA ne	NA ne	84
-NA ne	NA ne	89
-NA ne	NA ne	48
-NA ne	NA ne	13
-MIX	MIX	82
-NA ne	NA ne	18
-OP rs		130
-MIX		41
-NA ne	NA ne	147
-NA ne	NA ne	69
-NA ne	NA ne	63
-NA ne	NA ne	88
-OP ob	OP ob	68
-IN en	IN en	65
-NA ne	NA ne	159
-MIX	OP rs	43
-NA ne	NA ne	134
-NA sr	NA sr	145
-OP av	OP	151
-IP ds		85
-IP ed	NA ne	10
-NA ne	NA ne	55
-NA sr	NA sr	142
-NA ne	NA ne	62
-NA	NA ne	86
-NA ne	NA ne	49
-IN lt	MT	72
-NA ne	NA ne	23
-NA ne	NA ne	126
-NA ne	NA ne	152
-NA ne	NA ne	154
-OP ob	OP IP ob	47
-OP rs	OP rs	73
-NA ne	NA ne	158
-NA sr	NA sr	15
-OP	MIX	143
-NA ne	NA ne	127
-NA ne	NA ne	112
-NA ne	NA ne	64
-OP rs	OP rs	139
-IN	IN	136
-NA ne	NA ne	24
-NA ne	NA ne	30
-NA ne	NA ne	67
-OP rs	IN	117
-NA ne	NA ne	52
-NA ne	NA ne	39
-NA ne	NA ne	78
-NA ne	NA ne	5
-NA ne	NA ne	37
-NA ne	NA ne	98
-NA ne	NA ne	40
-MIX	MIX	14
-IN en	IN en	22
-IN dtp		36
-MIX	MIX	25
-NA ne	NA ne	141
-ID	ID	60
-NA ne	NA ne	135
-NA ne	NA ne	123
-OP rs	OP rs	6
-OP rv	OP rs	7
-OP rv	OP rv	132
-MIX	MIX	28
-NA ne	NA ne	9
-NA ne	NA ne	66
-NA ne	NA ne	109
-NA ne	NA ne	11
-NA ne	NA ne	74
-NA ne	NA ne	79
-NA ne	NA ne	144
-NA ne	NA ne	29
-MIX		16
-HI	HI	102
-NA ne	NA ne	87
-NA ne	NA ne	107
-MIX	OP	125
-OP rs	OP rs	96
-OP	OP ob	138
-IN	MIX	99
-NA	NA	53
-MIX	NA	51
-IP ed	OP IP	8
-NA ne	NA ne	140
-MIX	OP	90
-IN dtp	IN	124
-LY		81
-NA ne	NA ne	113
-OP av	NA	80
-NA ne	NA ne	149
-MIX	OP rs	95
-NA ne	NA ne	17
-MIX	ID	57
-IP ds		137
-IN en	IN en	150
-NA ne	NA ne	31
-OP ob	OP ob	59
-NA ne	NA ne	110
-NA ne	NA ne	61
-IP ed	OP ob	38
 IN en	IN en	0
-NA ne	NA ne	118
-NA	NA MIX	115
-NA ne	NA ne	156
-IN en	IN en	46
-NA ne	NA ne	129
-MIX	OP	97
-NA sr	NA sr	45
-NA ne	NA ne	20
-OP rs av	OP av	122
-NA ne	NA ne	93
-NA ne	NA ne	58
-NA ne	NA ne	128
-IP ds	IP ds	119
-NA ne	NA ne	133
-NA ne	NA ne	91
-IN	MT	71
-IP ed	OP IP ob	34
-NA ne	NA ne	3
-MIX	OP rs	21
-NA ne	NA ne	148
-NA ne	NA ne	101
-OP av	OP av	120
-NA ne	NA ne	32
-NA ne	NA ne	19
-OP ob	OP	100
-OP rs	OP rs	116
-NA ne	NA ne	33
-NA ne	NA ne	12
-NA sr	NA ne	44
-MIX	MT	108
-OP rs	OP rs	155
-IP ds	MT	103
+NA ne	NA ne	1
 NA ne	NA ne	2
-IN	IN	92
-MIX	OP	111
-NA ne	NA ne	70
-NA ne	NA ne	131
-NA ne	NA ne	27
-NA	NA nb	42
-NA ne	NA ne	106
+NA ne	NA ne	3
 NA ne	NA ne	4
-NA ne	NA ne	157
-LY	LY	76
-IN en	IN en	121
-MIX	OP rs	35
-NA	IN en	56
-NA nb	NA nb	83
-NA ne	NA ne	75
+NA ne	NA ne	5
+OP rs	OP rs	6
+OP rv	OP	7
+IP ed		8
+NA ne	NA ne	9
+IP ed	NA ne	10
+NA ne	NA	11
+NA ne	NA ne	12
+NA ne	NA ne	13
+MIX	MIX	14
+NA sr	NA sr	15
+MIX		16
+NA ne	NA ne	17
+NA ne	NA ne	18
+NA ne	NA ne	19
+NA ne	NA ne	20
+MIX		21
+IN en	IN en	22
+NA ne	NA ne	23
+NA ne	NA ne	24
+MIX	MIX	25
+OP ob	IP	26
+NA ne	NA ne	27
+MIX	MIX	28
+NA ne	NA ne	29
+NA ne	NA ne	30
+NA ne	NA ne	31
+NA ne	NA ne	32
+NA ne	NA ne	33
+IP ed	IP	34
+MIX		35
+IN dtp	IN	36
+NA ne	NA ne	37
+IP ed	OP	38
+NA ne	NA ne	39
+NA ne	NA ne	40
+MIX	ID	41
+NA	NA nb	42
+MIX	OP	43
+NA sr	NA	44
+NA sr	NA sr	45
+IN en	IN en	46
+OP ob	IP	47
+NA ne	NA ne	48
+NA ne	NA ne	49
 NA ne	NA ne	50
-OP ob	OP IP ob	26
+MIX	NA ne	51
+NA ne	NA ne	52
+NA		53
+NA ne	NA ne	54
+NA ne	NA ne	55
+NA	IN en	56
+MIX		57
+NA ne	NA ne	58
+OP ob		59
+ID	ID	60
+NA ne	NA ne	61
+NA ne	NA ne	62
+NA ne	NA ne	63
+NA ne	NA ne	64
+IN en	IN en	65
+NA ne	NA ne	66
+NA ne	NA ne	67
+OP ob		68
+NA ne	NA ne	69
+NA ne	NA ne	70
+IN	MT	71
+IN lt	MT	72
+OP rs	OP rs	73
+NA ne	NA ne	74
+NA ne	NA ne	75
+LY	LY	76
+NA ne	NA ne	77
+NA ne	NA ne	78
+NA ne	NA ne	79
+OP av		80
+LY	LY	81
+MIX		82
+NA nb	NA nb	83
+NA ne	NA ne	84
+IP ds	NA ne	85
+NA	NA ne	86
+NA ne	NA ne	87
+NA ne	NA ne	88
+NA ne	NA ne	89
+MIX		90
+NA ne	NA ne	91
+IN	IN	92
+NA ne	NA ne	93
+OP rs	MIX	94
+MIX	OP	95
+OP rs	OP rs	96
+MIX		97
+NA ne	NA ne	98
+IN		99
+OP ob		100
+NA ne	NA ne	101
+HI	HI	102
+IP ds	MT	103
+NA ne	NA ne	104
+MIX		105
+NA ne	NA ne	106
+NA ne	NA ne	107
+MIX	MT	108
+NA ne	NA ne	109
+NA ne	NA ne	110
+MIX		111
+NA ne	NA ne	112
+NA ne	NA ne	113
+NA ne	NA ne	114
+NA		115
+OP rs	OP	116
+OP rs	IN	117
+NA ne	NA ne	118
+IP ds	IP ds	119
+OP av	OP	120
+IN en	IN en	121
+MIX	OP	122
+NA ne	NA ne	123
+IN dtp		124
+MIX		125
+NA ne	NA ne	126
+NA ne	NA ne	127
+NA ne	NA ne	128
+NA ne	NA ne	129
+OP rs	MIX	130
+NA ne	NA ne	131
+OP rv	OP rv	132
+NA ne	NA ne	133
+NA ne	NA ne	134
+NA ne	NA ne	135
+IN	IN	136
+IP ds		137
+OP		138
+OP rs		139
+NA ne	NA ne	140
+NA ne	NA ne	141
+NA sr	NA sr	142
+OP		143
+NA ne	NA ne	144
+NA sr	NA sr	145
+IP ed	NA ne	146
+NA ne	NA ne	147
+NA ne	NA ne	148
+NA ne	NA ne	149
+IN en	IN en	150
+OP av		151
+NA ne	NA ne	152
+NA ne	NA ne	153
+NA ne	NA ne	154
+OP rs	OP rs	155
+NA ne	NA ne	156
+NA ne	NA ne	157
+NA ne	NA ne	158
+NA ne	NA ne	159
