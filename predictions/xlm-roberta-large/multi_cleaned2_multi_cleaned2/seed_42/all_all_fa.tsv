@@ -1,68 +1,39 @@
-IN dtp	IP ds	0
-LY	LY NA nb	1
-OP IP ds	IP ds	2
-OP av	OP av	3
-IP ds	IP ds	4
-IN en	IN	5
-OP rv	IP ds	7
-NA OP ne	NA ne	8
-OP av	OP av	9
-OP	OP rs	10
-IN OP dtp av	HI IN	11
-IN IP dtp ds	IN IP dtp	12
-IN dtp	IN dtp	13
-IN IP dtp ds	IP ds	14
-NA ne	NA ne	15
-OP IP av ds	IP ds	16
-IN dtp	IP ds	17
-MT	NA sr	18
-LY IN dtp	IN en	19
-NA ne	NA ne	20
-NA sr	NA sr	21
-IN dtp	IN IP dtp	22
-NA ne	NA ne	23
-NA OP ne sr	NA ne	24
-NA ne sr	NA ne	25
-IP ed	NA sr	26
-OP IP av ds	HI	27
-NA ne	NA ne	28
-NA ne	NA ne	29
-LY	LY	30
-NA sr	NA sr	31
-IP ds	IP ds	32
-HI	HI	33
-IN IP dtp ds	IP ds	34
-NA OP ne	NA ne	35
-MT	MT NA	36
-IP ds	IP ds	37
-HI IP ds	IN dtp	38
-HI IP ds	HI IN dtp	39
-IP ds	IP ds	40
-IP ds	IP ds	41
-IP ed	OP IP ob	42
-IP ds	IP ds	43
-NA ne	NA ne	44
-IN OP av	IN dtp	45
-IN dtp	IN dtp	46
-NA ne	NA ne	47
-IN OP dtp	IN IP ds	48
-OP ob	OP ob	49
-IP ds	IP ds	50
-HI IP ds	IP ds	51
-IN OP dtp av	IN OP av	52
-IN lt	IN lt	53
-SP OP IP ed	NA ne	54
-OP IP ds	IP ds	55
-OP IP ds	IP ds	56
-IP ds	OP rs	57
-HI	HI	58
-NA ne	NA ne	59
-NA ne	NA ne	60
-NA ne	NA ne	61
-IP ds	IP ds	62
-HI	HI	63
-NA ne	NA ne	64
-NA sr	NA sr	65
-IN OP dtp av	IP ds	66
-NA ne	NA ne	67
-NA ne	NA ne	68
+OP av	OP av	147
+IN en	IN	148
+OP av	OP av	150
+IN OP dtp av	IN	151
+IN IP dtp ds	IN IP dtp	152
+IN dtp	IN dtp	153
+NA ne	NA ne	154
+NA ne	NA ne	155
+NA sr	NA sr	156
+NA ne	NA ne	157
+NA ne sr	NA ne	158
+NA ne	NA ne	159
+NA ne	NA ne	160
+LY	LY	161
+NA sr	NA sr	162
+IP ds	IP ds	163
+HI	HI	164
+MT	MT	165
+IP ds	IP ds	166
+IP ds	IP ds	167
+IP ds	IP ds	168
+IP ds	IP ds	169
+NA ne	NA ne	170
+IN dtp	IN dtp	171
+NA ne	NA ne	172
+OP ob	OP ob	173
+IP ds	IP ds	174
+HI IP ds	IP ds	175
+IN lt	IN lt	176
+HI	HI	177
+NA ne	NA ne	178
+NA ne	NA ne	179
+NA ne	NA ne	180
+IP ds	IP ds	181
+HI	HI	182
+NA ne	NA ne	183
+NA sr	NA sr	184
+NA ne	NA	185
+NA ne	NA ne	186
