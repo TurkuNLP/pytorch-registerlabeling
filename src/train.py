@@ -410,7 +410,8 @@ def run(cfg):
 
     print("Predicting..")
     cfg.just_evaluate = True
-    for language in (cfg.test.split("-") if "multi" not in cfg.test else ["en", "fi", "fr", "sv", "tr"]):
+    test_languages = cfg.test.split("-") if "multi" not in cfg.test else list(set(dataset['test']['language']))
+    for language in test_languages:
         print(f"-- {language} --")
         test_language = language
         test_dataset = dataset["test"].filter(
@@ -418,7 +419,6 @@ def run(cfg):
         )
 
         if cfg.sample:
-
             test_dataset = test_dataset.select(range(cfg.sample))
 
         if device == "cuda":
