@@ -68,6 +68,7 @@ def run(cfg):
     test_language = ""  # Used when predicting
     test_dataset = []  # Used when predicting
     multilabel_exclusion_stats = {"excluded": 0, "included": 0}
+    pred_suffix = ("_"+cfg.test) if "multi" in cfg.test else ""
 
     # CUDA events for timing
     if device == "cuda":
@@ -330,7 +331,7 @@ def run(cfg):
                 os.makedirs(results_output_dir, exist_ok=True)
 
                 with open(
-                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{pred_suffix}{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
                     "w",
                     newline="",
                 ) as csvfile:
@@ -338,7 +339,7 @@ def run(cfg):
                     csv_writer.writerows(data)
 
                 with open(
-                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}_probs{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{pred_suffix}_probs{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
                     "w",
                     newline="",
                 ) as csvfile:
@@ -346,7 +347,7 @@ def run(cfg):
                     csv_writer.writerows(trues_and_probs)
 
                 with open(
-                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}_metrics.json",
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{pred_suffix}{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}_metrics.json",
                     "w",
                 ) as f:
                     json.dump(metrics, f)
