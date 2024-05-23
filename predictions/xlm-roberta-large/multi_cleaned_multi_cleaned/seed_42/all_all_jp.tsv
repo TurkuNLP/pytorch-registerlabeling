@@ -1,100 +1,35 @@
-NA ne	NA IP nb	0
-HI	HI IN en	1
-IP	IP ds	2
-NA nb	NA nb	3
-IP	IP ds	4
-IP	IP ds	5
-HI	HI IN	6
-NA nb	NA IN nb	7
-ID	ID	8
-NA nb	OP av	9
-NA nb	OP IP rv ds	10
-IP	IP ds	11
-SP it	SP NA it	12
-NA nb	NA nb	13
-NA ne	IN IP	14
-IP	IP ds	15
-NA nb	IN dtp	16
-NA nb	HI OP av	17
-IP	IP ds	18
-IP	IP ds	19
-IP	IN lt	20
-NA nb	NA IN nb	21
-IP	IN dtp	22
-IN dtp	NA IN sr	23
-IN lt	IN lt	24
-IP	IP ds	25
-NA nb	NA OP nb rv	26
-HI	HI	27
-IN dtp	IN dtp	28
-NA nb	ID	29
-NA nb	NA nb	30
-IP	IP ds	31
-IP	IP ds	32
-NA nb	NA OP nb rv	33
-NA nb	NA nb	34
-NA OP nb av	ID	35
-IN	IN dtp	36
-IP	IP ds	37
-IN dtp	IN dtp	38
-NA nb	NA nb	39
-NA nb	NA OP nb rv	40
-ID	ID	41
-MT HI	HI IN	42
-NA OP nb rv	NA IP nb ds	43
-IP	IP ds	44
-IP	IP ds	45
-OP av	IN OP ob	46
-NA nb	HI IN dtp	47
-IN	IN IP dtp ds	48
-IN	IN dtp lt	49
-NA nb	IN OP dtp av	50
-ID	ID	51
-HI	HI OP av	52
-NA nb	ID NA	53
-IP	IP ds	54
-NA nb	IP ds	55
-NA nb	NA nb	56
-IP	OP IP ds	57
-IP	IP ds	58
-NA nb	IP ds	59
-IP	OP IP av ds	60
-NA nb	IP ds	61
-ID	ID	62
-IN	IN lt	63
-HI	HI	64
-MT IP	IP ds	65
-IP	IP ds	66
-NA OP nb av	OP IP av ds	67
-IP	IP ds	68
-HI	IP ds	69
-IN	IN lt	70
-NA nb	NA nb	71
-IN dtp	IN IP dtp	72
-IP	IP ds	73
-HI	HI	74
-IN dtp	IN dtp	75
-IP	IP ds	76
-IP	NA sr	77
-IP	IP ds	78
-IP	IP ds	79
-NA nb	NA sr	80
-IP	IP ds	81
-NA nb	IN IP ds	82
-IN dtp	IN IP dtp ds	83
-NA nb	NA sr	84
-IP	IP ds	85
-HI	IP ds	86
-NA nb	NA HI nb	87
-MT IN lt	IN lt	88
-NA nb	NA nb	89
-NA ne	SP IN	90
-IP	IP ds	91
-IP	IN IP ds	92
-MT HI	IN	93
-IN dtp	IN dtp	94
-NA nb	IN	95
-IP	IN IP ds	96
-IN dtp	IN	97
-IP	IP ds	98
-NA nb	NA nb	99
+HI	HI IN	834
+NA nb	NA nb	835
+NA nb	NA nb	836
+ID	ID	837
+NA nb	OP av	838
+NA nb	OP IP rv ds	839
+SP it	SP it	840
+NA nb	NA nb	841
+NA nb	NA IN	842
+IN lt	IN lt	843
+IN dtp	IN dtp	844
+NA nb	NA nb	845
+IN	IN	846
+IN dtp	IN dtp	847
+NA nb	NA nb	848
+ID	ID	849
+OP av	IN OP	850
+IN	IN	851
+ID	ID	852
+NA nb	NA nb	853
+ID	ID	854
+IN	IN lt	855
+HI	HI	856
+IN	IN lt	857
+NA nb	NA nb	858
+IN dtp	IN IP dtp	859
+IN dtp	IN dtp	860
+IP	IP	861
+IN dtp	IN IP dtp ds	862
+NA nb	NA nb	863
+MT IN lt	IN lt	864
+NA nb	NA nb	865
+MT HI	IN	866
+IN dtp	IN dtp	867
+NA nb	NA nb	868

@@ -1,160 +1,125 @@
-IN en	IN en	0
-NA ne	NA ne	1
-NA ne	NA ne	2
-NA ne	NA ne	3
-NA ne	NA ne	4
-NA ne	NA ne	5
-OP rs	OP rs	6
-OP rv	OP rs	7
-IP ed	OP ob	8
-NA ne	NA ne	9
-IP ed	NA ne	10
-NA ne	NA sr	11
-NA ne	NA ne	12
-NA ne	NA ne	13
-IN OP dtp av	IN OP	14
-NA sr	NA sr	15
-IN OP fi rs	OP rs	16
-NA ne	NA ne	17
-NA ne	NA ne	18
-NA ne	NA ne	19
-NA ne	NA ne	20
-IN OP dtp rs	OP rs	21
-IN en	IN en	22
-NA ne	NA ne	23
-NA ne	NA ne	24
-NA IN nb dtp	IN OP	25
-OP ob	OP ob	26
-NA ne	NA ne	27
-NA IN nb dtp	NA IN dtp	28
-NA ne	NA ne	29
-NA ne	NA ne	30
-NA ne	NA ne	31
-NA ne	NA ne	32
-NA ne	NA ne	33
-IP ed	OP ob	34
-IN OP dtp rs	OP rs	35
-IN dtp	NA IN	36
-NA ne	NA ne	37
-IP ed	OP ob	38
-NA ne	NA ne	39
-NA ne	NA ne	40
-IN OP fi rs	ID OP rs	41
-NA	NA nb	42
-NA OP rs	OP rs	43
-NA sr	NA sr	44
-NA sr	NA sr	45
-IN en	IN en	46
-OP ob	OP ob	47
-NA ne	NA ne	48
-NA ne	NA ne	49
-NA ne	NA ne	50
-NA OP av	NA	51
-NA ne	NA ne	52
-NA	IN	53
-NA ne	NA ne	54
-NA ne	NA ne	55
-NA	IN en	56
-LY NA nb	LY	57
-NA ne	NA ne	58
-OP ob	OP ob	59
-ID	ID	60
-NA ne	NA ne	61
-NA ne	NA ne	62
-NA ne	NA ne	63
-NA ne	NA ne	64
-IN en	IN en	65
-NA ne	NA ne	66
-NA ne	NA ne	67
-OP ob	OP ob	68
-NA ne	NA ne	69
-NA ne	NA ne	70
-IN	MT	71
-IN lt	MT	72
-OP rs	OP rs	73
-NA ne	NA ne	74
-NA ne	NA ne	75
-LY	LY	76
-NA ne	NA ne	77
-NA ne	NA ne	78
-NA ne	NA ne	79
-OP av	NA OP	80
-LY	LY	81
-OP IP av	OP av	82
-NA nb	NA nb	83
-NA ne	NA ne	84
-IP ds	NA ne	85
-NA	NA ne	86
-NA ne	NA ne	87
-NA ne	NA ne	88
-NA ne	NA ne	89
-IN OP fi rs	OP rs	90
-NA ne	NA ne	91
-IN	IN	92
-NA ne	NA ne	93
-OP rs	OP	94
-OP IP rs ds	OP rs	95
-OP rs	OP rs	96
-HI OP rs	OP rs	97
-NA ne	NA ne	98
-IN	IN dtp	99
-OP ob	IN OP ob	100
-NA ne	NA ne	101
-HI	MT HI	102
-IP ds	MT	103
-NA ne	NA ne	104
-IN OP fi rs av	OP rs	105
-NA ne	NA ne	106
-NA ne	NA ne	107
-MT IP ds	MT	108
-NA ne	NA ne	109
-NA ne	NA ne	110
-IN OP fi rs	OP rs	111
-NA ne	NA ne	112
-NA ne	NA ne	113
-NA ne	NA ne	114
-NA	NA	115
-OP rs	OP rs	116
-OP rs	IN	117
-NA ne	NA ne	118
-IP ds	IP ds	119
-OP av	OP av	120
-IN en	IN en	121
-OP rs av	OP av	122
-NA ne	NA ne	123
-IN dtp	IN dtp	124
-NA IN dtp	OP rs	125
-NA ne	NA ne	126
-NA ne	NA ne	127
-NA ne	NA ne	128
-NA ne	NA ne	129
-OP rs	OP rs	130
-NA ne	NA ne	131
-OP rv	OP rv	132
-NA ne	NA ne	133
-NA ne	NA ne	134
-NA ne	NA ne	135
-IN	IN dtp	136
-IP ds	IP ds	137
-OP	OP ob	138
-OP rs	OP rs	139
-NA ne	NA ne	140
-NA ne	NA ne	141
-NA sr	NA sr	142
-OP	IN dtp	143
-NA ne	NA ne	144
-NA sr	NA sr	145
-IP ed	NA ne	146
-NA ne	NA ne	147
-NA ne	NA ne	148
-NA ne	NA ne	149
-IN en	IN en	150
-OP av	IN OP av	151
-NA ne	NA ne	152
-NA ne	NA ne	153
-NA ne	NA ne	154
-OP rs	OP rs	155
-NA ne	NA ne	156
-NA ne	NA ne	157
-NA ne	NA ne	158
-NA ne	NA ne sr	159
+IN en	IN en	1136
+NA ne	NA ne	1137
+NA ne	NA ne	1138
+NA ne	NA ne	1139
+NA ne	NA ne	1140
+NA ne	NA ne	1141
+OP rs	OP rs	1142
+NA ne	NA ne	1143
+IP ed	NA ne	1144
+NA ne	NA sr	1145
+NA ne	NA ne	1146
+NA ne	NA ne	1147
+IN OP dtp av	IN OP	1148
+NA sr	NA sr	1149
+NA ne	NA ne	1150
+NA ne	NA ne	1151
+NA ne	NA ne	1152
+NA ne	NA ne	1153
+IN en	IN en	1154
+NA ne	NA ne	1155
+NA ne	NA ne	1156
+OP ob	OP ob	1157
+NA ne	NA ne	1158
+NA IN nb dtp	NA IN dtp	1159
+NA ne	NA ne	1160
+NA ne	NA ne	1161
+NA ne	NA ne	1162
+NA ne	NA ne	1163
+NA ne	NA ne	1164
+NA ne	NA ne	1165
+NA ne	NA ne	1166
+NA ne	NA ne	1167
+NA sr	NA sr	1168
+NA sr	NA sr	1169
+IN en	IN en	1170
+OP ob	OP ob	1171
+NA ne	NA ne	1172
+NA ne	NA ne	1173
+NA ne	NA ne	1174
+NA OP av	NA	1175
+NA ne	NA ne	1176
+NA ne	NA ne	1177
+NA ne	NA ne	1178
+NA ne	NA ne	1179
+OP ob	OP ob	1180
+ID	ID	1181
+NA ne	NA ne	1182
+NA ne	NA ne	1183
+NA ne	NA ne	1184
+NA ne	NA ne	1185
+IN en	IN en	1186
+NA ne	NA ne	1187
+NA ne	NA ne	1188
+OP ob	OP ob	1189
+NA ne	NA ne	1190
+NA ne	NA ne	1191
+OP rs	OP rs	1192
+NA ne	NA ne	1193
+NA ne	NA ne	1194
+LY	LY	1195
+NA ne	NA ne	1196
+NA ne	NA ne	1197
+NA ne	NA ne	1198
+LY	LY	1199
+OP IP av	OP av	1200
+NA nb	NA nb	1201
+NA ne	NA ne	1202
+NA ne	NA ne	1203
+NA ne	NA ne	1204
+NA ne	NA ne	1205
+NA ne	NA ne	1206
+IN	IN	1207
+NA ne	NA ne	1208
+OP rs	OP	1209
+OP rs	OP rs	1210
+HI OP rs	OP rs	1211
+NA ne	NA ne	1212
+IN	IN dtp	1213
+OP ob	IN OP ob	1214
+NA ne	NA ne	1215
+NA ne	NA ne	1216
+NA ne	NA ne	1217
+NA ne	NA ne	1218
+NA ne	NA ne	1219
+NA ne	NA ne	1220
+NA ne	NA ne	1221
+NA ne	NA ne	1222
+NA ne	NA ne	1223
+NA	NA	1224
+OP rs	OP rs	1225
+NA ne	NA ne	1226
+IP ds	IP ds	1227
+OP av	OP av	1228
+IN en	IN en	1229
+OP rs av	OP av	1230
+NA ne	NA ne	1231
+IN dtp	IN dtp	1232
+NA ne	NA ne	1233
+NA ne	NA ne	1234
+NA ne	NA ne	1235
+NA ne	NA ne	1236
+OP rs	OP rs	1237
+NA ne	NA ne	1238
+OP rv	OP rv	1239
+NA ne	NA ne	1240
+NA ne	NA ne	1241
+NA ne	NA ne	1242
+OP rs	OP rs	1243
+NA ne	NA ne	1244
+NA ne	NA ne	1245
+NA sr	NA sr	1246
+NA ne	NA ne	1247
+NA sr	NA sr	1248
+NA ne	NA ne	1249
+NA ne	NA ne	1250
+NA ne	NA ne	1251
+IN en	IN en	1252
+NA ne	NA ne	1253
+NA ne	NA ne	1254
+NA ne	NA ne	1255
+OP rs	OP rs	1256
+NA ne	NA ne	1257
+NA ne	NA ne	1258
+NA ne	NA ne	1259
+NA ne	NA ne sr	1260

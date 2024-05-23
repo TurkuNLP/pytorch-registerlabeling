@@ -1,317 +1,206 @@
-HI	HI IN	0
-IN fi	ID	1
-IP ds	IP ds	2
-NA	ID NA	3
-IP	IP ds	4
-IP ds	IP ds	5
-IN dtp	IN dtp	6
-IN	HI IN	7
-OP ob	NA ne	8
-IN	IN dtp	9
-IN lt	IN dtp	10
-NA ne	NA ne	11
-IP	IN ra	12
-IP ds	IP ds	13
-MT	MT	14
-IP ds	IN dtp	15
-IP ds	IP ds	16
-IP ds	IP ds	17
-IP ds	OP rv	18
-IP ds	NA ne	19
-IN dtp	IN dtp	20
-NA ne	NA ne	21
-OP ob	IN	22
-IP ds	IP ds	23
-IP ds	IN IP	24
-NA nb	NA IN dtp	25
-NA	NA	26
-IP ds	OP rv	27
-NA IP ds	NA ne	28
-IP ds	IP ds	29
-IN IP ra	IN ra	30
-IP ds	IP ds	31
-NA nb	NA IN nb	32
-NA HI nb	HI	33
-NA	NA IN dtp	34
-NA nb	SP NA	35
-NA	NA ne	36
-NA	NA	37
-NA	NA	38
-IP ds	IN IP ds	39
-NA	NA nb	40
-IN lt	IN lt	41
-IP ds	IP ds	42
-NA	NA nb	43
-HI	IN dtp	44
-OP rv	NA ne	45
-IP ds	IN IP	46
-IP ds	IP ds	47
-IN	HI IN	48
-IP ds	OP rv	49
-IP	IN IP ds	50
-NA	NA	51
-NA	IN en dtp	52
-IP ds	OP rv	53
-IP ds	IP ds	54
-MT	IP ds	55
-NA ne	NA ne	56
-IN	HI IN	57
-IN dtp	IN dtp	58
-NA ne	NA ne	59
-NA OP	ID OP	60
-NA ne	IN	61
-OP rv	OP rv	62
-IP ds	IP ds	63
-NA	NA	64
-IN dtp	IN	65
-IN lt	IN lt	66
-IP ds	IP ds	67
-OP av	HI OP av	68
-IP ds	IP ds	69
-NA	NA ne	70
-NA ne	NA ne	71
-IN ra	IN ra	72
-IN	IN	73
-IN lt	IN lt	74
-IP ds	IP ds	75
-NA	NA	76
-IN OP IP fi ds	IP ds	77
-IP ds	IN dtp	78
-NA	NA	79
-IP ds	IP ds	80
-HI	HI IN	81
-IN ra	IN ra	82
-NA nb	NA nb	83
-IP	IN dtp	84
-IP ed	NA ne	85
-NA	NA	86
-NA	NA	87
-NA ne	IN	88
-IN dtp	LY IN	89
-IP ds	IN dtp	90
-IP	IN IP dtp	91
-IN	IN ra	92
-IP ds	IP ds	93
-OP av	OP av	94
-ID	ID	95
-NA sr	NA ne sr	96
-ID IN dtp	IN dtp	97
-IN IP lt	IN lt	98
-IN en	IN en	99
-IN ra	IN	100
-OP rv	HI IP ds	101
-NA	NA IN dtp	102
-IP ds	NA ne	103
-ID OP rv	ID	104
-IP ds	NA IP ne	105
-NA	NA	106
-IP ds	IP ds	107
-IP ds	OP ob av	108
-IN dtp	IN dtp	109
-IN dtp	IN lt	110
-HI	IN dtp	111
-IP ds	IP ds	112
-NA	NA IN dtp	113
-NA	NA OP nb ob	114
-NA	NA nb	115
-IN	IN lt	116
-OP IP ds	IN IP dtp	117
-ID IP ds	OP	118
-NA	NA nb	119
-IN	HI IN	120
-IN	IN ra	121
-IP ds	IP ds	122
-NA ne	NA ne	123
-IN	IN IP ds	124
-IP ds	IP ds	125
-IN	IN dtp	126
-IN	IN IP lt ds	127
-OP rv	IP ds	128
-IN dtp	IN lt	129
-IP ds	IP ds	130
-IN	IN lt	131
-IP ds	IP ds	132
-NA ne	NA ne	133
-OP av	HI IN dtp	134
-IP ds	IP ds	135
-NA sr	NA sr	136
-OP av	MT IP ds	137
-NA ne	NA ne	138
-IP ds	IP ds	139
-IP ds	IP ds	140
-OP rv	MT OP rv	141
-IP ds	NA OP ob	142
-IP ds	IP ds	143
-HI	IN	144
-NA sr	NA sr	145
-IN lt	IN lt	146
-IP ds	IP ds	147
-IP	IN IP ds	148
-IP ds	IP ds	149
-NA	NA	150
-IP ds	IN IP dtp ds	151
-MT	MT	152
-IN	IN	153
-OP	IN dtp	154
-NA	NA nb	155
-IP ds	IP ds	156
-NA ne	NA ne	157
-IN fi	HI IN	158
-NA sr	NA ne sr	159
-NA sr	NA sr	160
-LY NA OP	IN	161
-OP rv	IN	162
-NA IP ds	NA	163
-IN lt	IN lt	164
-IN dtp	IN dtp	165
-IP ds	HI IP ds	166
-IP ds	IP ds	167
-OP ob	SP it	168
-NA	NA IN dtp	169
-IP ds	OP IP rv ds	170
-NA		171
-NA	NA IP	172
-IP ds	IP ds	173
-ID	ID	174
-IN lt	IN	175
-NA	NA	176
-LY NA	LY NA OP nb	177
-NA sr	NA sr	178
-NA ne	NA ne	179
-IP	IN dtp	180
-NA	NA	181
-IN OP fi rv	IN IP ds	182
-OP rv	IP ds	183
-NA	NA	184
-IP ds	IP ds	185
-HI IP ds	HI IP ds	186
-IP ds	IP ds	187
-NA	NA	188
-IN	NA IN	189
-NA	LY NA	190
-NA	NA OP ob	191
-NA	NA	192
-OP av	IN	193
-IP ds	IP ds	194
-ID	ID	195
-IN lt	IN lt	196
-IN lt	IN lt	197
-IN dtp	IN dtp	198
-IP ds	IP ds	199
-NA ne	NA ne	200
-NA	NA	201
-IP ds	IP ds	202
-IP ds	IP ds	203
-OP ob		204
-IN IP lt	IN lt	205
-IN dtp	IN lt	206
-IP ds	IP ds	207
-IN ra	IN ra	208
-IN	MT IN	209
-IN	HI IN	210
-OP	OP	211
-IP ds	IP ds	212
-NA IN OP ne dtp av	IN dtp	213
-NA nb	NA nb	214
-NA ne	NA IP ne ds	215
-NA	NA	216
-IN	HI IN	217
-IP ds	IP ds	218
-OP ob	OP ob	219
-IP	IN dtp	220
-IP ds	IP ds	221
-OP rv	OP rv	222
-NA	NA	223
-IN lt	IN lt	224
-IN lt	IN lt	225
-NA nb	MT	226
-IP ds	IP ds	227
-NA IP ds	IN dtp	228
-NA HI IN	IN OP av	229
-OP rv	MT OP IP rv ds	230
-OP rv	ID	231
-MT	ID	232
-IP ds	IP ds	233
-NA	NA nb	234
-IP ds	MT	235
-IN	HI IN	236
-MT		237
-IP	IP ds	238
-NA ne	NA ne	239
-IP ds	IP ds	240
-IP	IN IP ds	241
-IP	IP ds	242
-NA	NA	243
-OP av	HI	244
-LY	LY	245
-NA	MT	246
-NA	NA	247
-IP ds	IP ds	248
-OP	OP	249
-IP ds	OP rv	250
-NA ne	NA ne	251
-OP rv	OP IP rv ds	252
-IP ds	IP ds	253
-NA	MT	254
-HI	IN	255
-IP	IP ds	256
-NA ne	NA IN ne	257
-OP rv	NA nb	258
-IN	IN	259
-NA	NA nb	260
-IP ds	LY NA nb	261
-ID	ID	262
-HI	IN	263
-IN	IN	264
-IN ra	IN ra	265
-IP ds	IP ds	266
-IP ds	IP ds	267
-HI	HI IN	268
-NA sr	NA ne sr	269
-IP ds	IP ds	270
-IN lt	IN lt	271
-IP	IP ds	272
-ID	ID	273
-NA nb	NA nb	274
-IN lt	IN lt	275
-IN dtp	IN dtp	276
-IP ds	IN IP ds	277
-IP ds	IP ds	278
-OP rv	NA IN	279
-IN	IN	280
-IP ed	IN ra	281
-IP ds	OP av	282
-IP ds	NA ne	283
-IP ds	IP ds	284
-NA	LY	285
-IP ds	OP av	286
-SP	SP	287
-IP ds	IP ds	288
-IP ds	OP IP rv ds	289
-NA OP	NA ne	290
-NA	NA	291
-NA OP ne av	IN	292
-IP ds	IP ds	293
-NA ne	IN	294
-NA IN	NA IN ne	295
-IP ds	IP ds	296
-IP ds	HI IP ds	297
-NA	NA	298
-NA nb	IN	299
-NA ne	NA ne	300
-IP ds	IP ds	301
-IP	IP ds	302
-IP ds	IP ds	303
-IP ds	IP ds	304
-IN	IN	305
-IN	IN ra	306
-NA OP ne av	IN	307
-IP ds	IP ds	308
-NA ne	IN IP dtp	309
-IP ds	IN IP dtp ds	310
-IP ds	IP ds	311
-NA	NA	312
-NA nb	NA ne	313
-IN lt	IN lt	314
-NA ne	NA IP ne	315
-HI IN IP fi lt ds	HI IN	316
+IP ds	IP ds	1261
+IP ds	IP ds	1262
+IN dtp	IN dtp	1263
+IN	IN dtp	1264
+IN lt	IN dtp	1265
+NA ne	NA ne	1266
+IP ds	IP ds	1267
+MT	MT	1268
+IP ds	IP ds	1269
+IP ds	IP ds	1270
+IN dtp	IN dtp	1271
+NA ne	NA ne	1272
+OP ob	IN	1273
+IP ds	IP ds	1274
+IP ds	IN IP	1275
+NA	NA	1276
+IP ds	IP ds	1277
+NA HI nb	HI	1278
+NA	NA ne	1279
+NA	NA	1280
+NA	NA	1281
+IP ds	IN IP ds	1282
+IN lt	IN lt	1283
+IP ds	IP ds	1284
+OP rv	NA ne	1285
+IP ds	IN IP	1286
+IP ds	IP ds	1287
+IN	IN	1288
+NA	NA	1289
+IP ds	IP ds	1290
+MT	IP ds	1291
+NA ne	NA ne	1292
+IN	HI IN	1293
+IN dtp	IN dtp	1294
+NA ne	NA ne	1295
+NA ne	IN	1296
+OP rv	OP rv	1297
+IP ds	IP ds	1298
+NA	NA	1299
+IN dtp	IN	1300
+IN lt	IN lt	1301
+IP ds	IP ds	1302
+OP av	HI OP av	1303
+IP ds	IP ds	1304
+NA	NA ne	1305
+NA ne	NA ne	1306
+IN ra	IN ra	1307
+IN	IN	1308
+IN lt	IN lt	1309
+IP ds	IP ds	1310
+NA	NA	1311
+NA	NA	1312
+IP ds	IP ds	1313
+IN ra	IN ra	1314
+NA nb	NA nb	1315
+IP ed	NA ne	1316
+NA	NA	1317
+NA	NA	1318
+IN	IN	1319
+IP ds	IP ds	1320
+OP av	OP av	1321
+ID	ID	1322
+NA sr	NA ne sr	1323
+IN en	IN en	1324
+IN ra	IN	1325
+NA	NA IN dtp	1326
+ID OP rv	ID	1327
+IP ds	IP ds	1328
+IN dtp	IN dtp	1329
+IN dtp	IN lt	1330
+IP ds	IP ds	1331
+IN	IN	1332
+IN	IN ra	1333
+IP ds	IP ds	1334
+NA ne	NA ne	1335
+IN	IN IP ds	1336
+IP ds	IP ds	1337
+IN	IN	1338
+IP ds	IP ds	1339
+IP ds	IP ds	1340
+NA ne	NA ne	1341
+OP av	HI IN	1342
+IP ds	IP ds	1343
+NA sr	NA sr	1344
+NA ne	NA ne	1345
+IP ds	IP ds	1346
+IP ds	IP ds	1347
+IP ds	IP ds	1348
+NA sr	NA sr	1349
+IN lt	IN lt	1350
+IP ds	IP ds	1351
+IP	IN IP ds	1352
+IP ds	IP ds	1353
+NA	NA	1354
+IP ds	IN IP dtp ds	1355
+MT	MT	1356
+IN	IN	1357
+IP ds	IP ds	1358
+NA ne	NA ne	1359
+IN fi	HI IN	1360
+NA sr	NA ne	1361
+NA sr	NA sr	1362
+IN lt	IN lt	1363
+IN dtp	IN dtp	1364
+IP ds	IP ds	1365
+OP ob	SP it	1366
+NA		1367
+NA	NA	1368
+IP ds	IP ds	1369
+ID	ID	1370
+IN lt	IN	1371
+NA	NA	1372
+LY NA	LY NA nb	1373
+NA sr	NA sr	1374
+NA ne	NA ne	1375
+NA	NA	1376
+IN OP fi rv	IN IP ds	1377
+NA	NA	1378
+IP ds	IP ds	1379
+HI IP ds	HI IP ds	1380
+IP ds	IP ds	1381
+NA	NA	1382
+IN	NA IN	1383
+NA	LY	1384
+NA	NA OP ob	1385
+NA	NA	1386
+IP ds	IP ds	1387
+ID	ID	1388
+IN lt	IN lt	1389
+IN lt	IN lt	1390
+IN dtp	IN dtp	1391
+IP ds	IP ds	1392
+NA ne	NA ne	1393
+NA	NA	1394
+IP ds	IP ds	1395
+IP ds	IP ds	1396
+OP ob		1397
+IP ds	IP ds	1398
+IN ra	IN ra	1399
+IN	HI IN	1400
+OP	OP	1401
+IP ds	IP ds	1402
+NA nb	NA nb	1403
+NA ne	NA IP ne ds	1404
+NA	NA	1405
+IN	HI IN	1406
+IP ds	IP ds	1407
+OP ob	OP ob	1408
+IP ds	IP ds	1409
+OP rv	OP rv	1410
+NA	NA	1411
+IN lt	IN lt	1412
+IN lt	IN lt	1413
+IP ds	IP ds	1414
+OP rv	OP IP rv ds	1415
+IP ds	IP ds	1416
+NA	NA nb	1417
+IN	HI IN	1418
+NA ne	NA ne	1419
+IP ds	IP ds	1420
+LY	LY	1421
+NA	NA	1422
+IP ds	IP ds	1423
+OP	OP	1424
+NA ne	NA ne	1425
+OP rv	OP IP rv ds	1426
+IP ds	IP ds	1427
+NA	MT	1428
+HI	IN	1429
+IP	IP ds	1430
+NA ne	NA IN ne	1431
+IN	IN	1432
+ID	ID	1433
+HI	IN	1434
+IN	IN	1435
+IN ra	IN ra	1436
+IP ds	IP ds	1437
+IP ds	IP ds	1438
+NA sr	NA sr	1439
+IP ds	IP ds	1440
+IN lt	IN lt	1441
+ID	ID	1442
+NA nb	NA nb	1443
+IN lt	IN	1444
+IN dtp	IN	1445
+IP ds	IP ds	1446
+OP rv	NA IN	1447
+IN	IN	1448
+IP ds	IP ds	1449
+IP ds	IP ds	1450
+NA	NA	1451
+IP ds	IP ds	1452
+NA ne	IN	1453
+NA IN	NA IN ne	1454
+IP ds	IP ds	1455
+NA	NA	1456
+NA ne	NA ne	1457
+IP ds	IP ds	1458
+IP ds	IP ds	1459
+IP ds	IP ds	1460
+IN	IN	1461
+IN	IN ra	1462
+IP ds	IP ds	1463
+IP ds	IP ds	1464
+NA	NA	1465
+IN lt	IN lt	1466
