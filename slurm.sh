@@ -44,6 +44,10 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
     TIME="6:00:00"
     MEM=8
     shift 
+  elif [[ $1 == "30min" ]]; then
+    TIME="0:30:00"
+    MEM=8
+    shift 
   fi
 
   # Set the dynamic GPU requirement
