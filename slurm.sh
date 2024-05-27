@@ -2,7 +2,7 @@
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=4
-#SBATCH --account=project_2009199
+#SBATCH --account=project_2009056
 #SBATCH --mail-user=pytorchregisterlabeling@gmail.com 
 #SBATCH --mail-type=ALL
 
