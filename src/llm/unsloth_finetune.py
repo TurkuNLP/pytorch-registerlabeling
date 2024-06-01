@@ -65,9 +65,10 @@ def run(cfg):
         texts = []
         for input, output in zip(inputs, outputs):
             text = (
-                prompt_template.format(INSTRUCTION, input, output) + tokenizer.eos_token
+                prompt_template.format(INSTRUCTION, input[:3000], output)
+                + tokenizer.eos_token
             )
-            texts.append(text[:3000])
+            texts.append(text)
         return {
             "text": texts,
         }
