@@ -41,7 +41,7 @@ def run(cfg):
         "other": [],
     }
     for length, language in data:
-        key = language if language in ["NOT"] else "other"
+        key = language if language in ["en", "fi", "fr", "sv", "tr"] else "other"
         text_lengths_by_language[key].append(length)
 
     # Create a box plot for each language
@@ -64,4 +64,5 @@ def run(cfg):
         margin=go.layout.Margin(l=5, r=5, b=5, t=5),
     )
 
-    fig.write_image(f"output/text_lengths_all_concat.pdf")
+    # fig.write_image(f"output/text_lengths_all_concat.pdf")
+    fig.show()
