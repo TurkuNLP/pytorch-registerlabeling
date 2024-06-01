@@ -90,7 +90,7 @@ def run(cfg):
         tokenizer=tokenizer,
         train_dataset=dataset,
         dataset_text_field="text",
-        max_seq_length=max_seq_length,
+        max_seq_length=2048,
         dataset_num_proc=2,
         packing=False,  # Can make training 5x faster for short sequences.
         args=TrainingArguments(
@@ -106,7 +106,7 @@ def run(cfg):
             weight_decay=0.01,
             lr_scheduler_type="linear",
             seed=cfg.seed,
-            output_dir="outputs",
+            output_dir="unsloth_ft/outputs",
         ),
     )
 
@@ -133,5 +133,5 @@ def run(cfg):
     print(f"Peak reserved memory % of max memory = {used_percentage} %.")
     print(f"Peak reserved memory for training % of max memory = {lora_percentage} %.")
 
-    model.save_pretrained("lora_model")  # Local saving
-    tokenizer.save_pretrained("lora_model")
+    model.save_pretrained("unsloth_ft/lora_model")  # Local saving
+    tokenizer.save_pretrained("unsloth_ft/outputs")
