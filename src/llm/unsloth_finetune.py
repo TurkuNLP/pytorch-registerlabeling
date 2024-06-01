@@ -67,16 +67,18 @@ def run(cfg):
             text = (
                 prompt_template.format(INSTRUCTION, input, output) + tokenizer.eos_token
             )
-            texts.append(text)
+            texts.append(text[:3000])
         return {
             "text": texts,
         }
 
     dataset = get_dataset(cfg)
-    dataset = dataset.map(
+    dataset = dataset["train"].map(
         formatting_prompts_func,
         batched=True,
     )
+
+    print(dataset[:3])
 
     exit()
 
