@@ -79,9 +79,7 @@ def run(cfg):
         batched=True,
     )
 
-    print(dataset[:3])
 
-    exit()
 
     from trl import SFTTrainer
     from transformers import TrainingArguments
@@ -134,22 +132,6 @@ def run(cfg):
     print(f"Peak reserved memory for training = {used_memory_for_lora} GB.")
     print(f"Peak reserved memory % of max memory = {used_percentage} %.")
     print(f"Peak reserved memory for training % of max memory = {lora_percentage} %.")
-
-    # alpaca_prompt = Copied from above
-    FastLanguageModel.for_inference(model)  # Enable native 2x faster inference
-    inputs = tokenizer(
-        [
-            prompt_template.format(
-                "Continue the fibonnaci sequence.",  # instruction
-                "1, 1, 2, 3, 5, 8",  # input
-                "",  # output - leave this blank for generation!
-            )
-        ],
-        return_tensors="pt",
-    ).to("cuda")
-
-    outputs = model.generate(**inputs, max_new_tokens=64, use_cache=True)
-    tokenizer.batch_decode(outputs)
 
     model.save_pretrained("lora_model")  # Local saving
     tokenizer.save_pretrained("lora_model")
