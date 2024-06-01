@@ -79,8 +79,6 @@ def run(cfg):
         batched=True,
     )
 
-
-
     from trl import SFTTrainer
     from transformers import TrainingArguments
     from unsloth import is_bfloat16_supported
@@ -134,4 +132,4 @@ def run(cfg):
     print(f"Peak reserved memory for training % of max memory = {lora_percentage} %.")
 
     model.save_pretrained("unsloth_ft/lora_model")  # Local saving
-    tokenizer.save_pretrained("unsloth_ft/outputs")
+    tokenizer.save_pretrained("unsloth_ft/lora_model")
