@@ -18,6 +18,17 @@ IP: The text describes or explains facts with intent to persuade or market (e.g.
 Your output must strictly be just a space-separated (" ") list of the category abbreviations that match the text (MT, LY, SP, ID, NA, HI, IN, OP, IP). Prefer a single label or at most two. Do not explain your choice in any way.
 """
 
+prompt_template = """Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+
+### Instruction:
+{}
+
+### Input:
+{}
+
+### Response:
+{}"""
+
 
 def run(cfg):
 
@@ -46,17 +57,6 @@ def run(cfg):
         use_gradient_checkpointing="unsloth",  #
         random_state=cfg.seed,
     )
-
-    prompt_template = """Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
-
-    ### Instruction:
-    {}
-
-    ### Input:
-    {}
-
-    ### Response:
-    {}"""
 
     def formatting_prompts_func(examples):
 
