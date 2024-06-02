@@ -55,12 +55,15 @@ def evaluate(dataset):
 
     dataset = dataset["test"]
 
+    sample = 1000
+
     predictions = []
     true_labels = [
-        binarize_labels(x.split(), "upper") for x in list(dataset["label_text"])
+        binarize_labels(x.split(), "upper")
+        for x in list(dataset["label_text"][:sample])
     ]
 
-    for example in tqdm(dataset["text"]):
+    for example in tqdm(dataset["text"][:sample]):
 
         inputs = tokenizer(
             [prompt_template.format(INSTRUCTION, example[:3000], "")],
