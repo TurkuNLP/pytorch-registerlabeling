@@ -60,6 +60,10 @@ def evaluate(dataset):
 
     outputs = model.generate(**inputs, max_new_tokens=64, use_cache=True)
     result = tokenizer.batch_decode(outputs)
+    try:
+        pred_label = result.split("<|end_of_text|>")[0].split("Response:\n")[1]
+    except:
+        pred_label = ""
     print(result)
     print(binarize_labels(result.split(), "upper"))
     exit()
