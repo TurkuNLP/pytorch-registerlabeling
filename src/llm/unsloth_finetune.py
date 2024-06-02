@@ -62,7 +62,7 @@ def evaluate(dataset):
     result = tokenizer.batch_decode(outputs)
     try:
         pred_label = (
-            result.split("<|end_of_text|>")[0].split("### Response:")[1].strip()
+            result[0].split("<|end_of_text|>")[0].split("### Response:")[1].strip()
         )
     except:
         pred_label = ""
