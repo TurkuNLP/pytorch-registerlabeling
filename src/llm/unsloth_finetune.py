@@ -139,7 +139,7 @@ def run(cfg):
 
     model = FastLanguageModel.get_peft_model(
         model,
-        r=16,
+        r=64,
         target_modules=[
             "q_proj",
             "k_proj",
@@ -168,8 +168,8 @@ def run(cfg):
             per_device_train_batch_size=2,
             gradient_accumulation_steps=4,
             warmup_steps=5,
-            max_steps=60,
-            learning_rate=2e-4,
+            num_train_epochs=3,
+            learning_rate=1e-5,
             fp16=not is_bfloat16_supported(),
             bf16=is_bfloat16_supported(),
             logging_steps=1,
