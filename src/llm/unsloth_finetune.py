@@ -44,6 +44,8 @@ def evaluate(dataset):
     )
     FastLanguageModel.for_inference(model)
 
+    dataset = dataset["test"]
+
     predictions = []
     true_labels = [
         binarize_labels(x.split(), "upper") for x in list(dataset["label_text"])
