@@ -13,6 +13,7 @@ from sklearn.metrics import (
     f1_score,
     precision_recall_fscore_support,
 )
+from tqdm import tqdm
 import numpy as np
 
 INSTRUCTION = """Your task is to classify web texts into one or more linguistic register categories. The categories are as follows:
@@ -59,7 +60,7 @@ def evaluate(dataset):
         binarize_labels(x.split(), "upper") for x in list(dataset["label_text"])
     ]
 
-    for example in dataset["text"]:
+    for example in tqdm(dataset["text"]):
 
         inputs = tokenizer(
             [prompt_template.format(INSTRUCTION, example[:3000], "")],
