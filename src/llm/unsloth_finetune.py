@@ -45,7 +45,9 @@ def evaluate(dataset):
     FastLanguageModel.for_inference(model)
 
     predictions = []
-    true_labels = [binarize_labels(x.split(), "upper") for x in list(dataset["labels"])]
+    true_labels = [
+        binarize_labels(x.split(), "upper") for x in list(dataset["label_text"])
+    ]
 
     for example in dataset["text"]:
 
