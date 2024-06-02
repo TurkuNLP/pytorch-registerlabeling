@@ -65,7 +65,7 @@ def evaluate(dataset):
     except:
         pred_label = ""
     print(result)
-    print(binarize_labels(result.split(), "upper"))
+    print(binarize_labels(pred_label.split(), "upper"))
     exit()
 
 
