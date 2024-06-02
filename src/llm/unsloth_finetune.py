@@ -54,7 +54,7 @@ def evaluate(dataset):
     for example in dataset["text"]:
 
         inputs = tokenizer(
-            [prompt_template.format(INSTRUCTION, input[:3000], "")],
+            [prompt_template.format(INSTRUCTION, example[:3000], "")],
             return_tensors="pt",
         ).to("cuda")
 
