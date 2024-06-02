@@ -104,6 +104,13 @@ def evaluate(dataset):
 
 def run(cfg):
 
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name="unsloth/llama-3-8b-bnb-4bit",
+        max_seq_length=2048,
+        dtype=None,
+        load_in_4bit=True,
+    )
+
     # Get dataset
     def formatting_prompts_func(examples):
 
@@ -128,13 +135,6 @@ def run(cfg):
     dataset = dataset["train"].map(
         formatting_prompts_func,
         batched=True,
-    )
-
-    model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name="unsloth/llama-3-8b-bnb-4bit",
-        max_seq_length=2048,
-        dtype=None,
-        load_in_4bit=True,
     )
 
     model = FastLanguageModel.get_peft_model(
