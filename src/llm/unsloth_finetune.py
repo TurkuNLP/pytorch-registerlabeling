@@ -167,8 +167,8 @@ def run(cfg):
         args=TrainingArguments(
             per_device_train_batch_size=2,
             gradient_accumulation_steps=4,
-            warmup_steps=5,
-            num_train_epochs=3,
+            warmup_ratio=0.05,
+            num_train_epochs=2,
             learning_rate=1e-5,
             fp16=not is_bfloat16_supported(),
             bf16=is_bfloat16_supported(),
