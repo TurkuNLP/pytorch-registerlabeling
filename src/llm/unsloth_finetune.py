@@ -1,7 +1,11 @@
 from unsloth import FastLanguageModel
 import torch
-from datasets import load_dataset
+
+from trl import SFTTrainer
+from transformers import TrainingArguments
+from unsloth import is_bfloat16_supported
 from ..data import get_dataset
+from ..labels import binarize_labels
 
 INSTRUCTION = """Your task is to classify web texts into one or more linguistic register categories. The categories are as follows:
 
@@ -30,7 +34,60 @@ prompt_template = """Below is an instruction that describes a task, paired with 
 {}"""
 
 
+def evaluate(dataset):
+
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name="unsloth_ft/lora_model",
+        max_seq_length=2048,
+        dtype=None,
+        load_in_4bit=True,
+    )
+    FastLanguageModel.for_inference(model)
+
+    predictions = []
+    true_labels = [binarize_labels(x.split(), "upper") for x in list(dataset["labels"])]
+
+    for example in dataset["text"]:
+
+        inputs = tokenizer(
+            [prompt_template.format(INSTRUCTION, input[:3000], "")],
+            return_tensors="pt",
+        ).to("cuda")
+
+    outputs = model.generate(**inputs, max_new_tokens=64, use_cache=True)
+    result = tokenizer.batch_decode(outputs)
+    print(result)
+    print(binarize_labels(result.split(), "upper"))
+    exit()
+
+
 def run(cfg):
+
+    # Get dataset
+    def formatting_prompts_func(examples):
+
+        inputs = examples["text"]
+        outputs = examples["label_text"]
+        texts = []
+        for input, output in zip(inputs, outputs):
+            text = (
+                prompt_template.format(INSTRUCTION, input[:3000], output)
+                + tokenizer.eos_token
+            )
+            texts.append(text)
+        return {"text": texts, "labels": examples["label_text"]}
+
+    dataset = get_dataset(cfg)
+
+    if cfg.just_evaluate:
+
+        evaluate(dataset)
+        exit()
+
+    dataset = dataset["train"].map(
+        formatting_prompts_func,
+        batched=True,
+    )
 
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_name="unsloth/llama-3-8b-bnb-4bit",
@@ -57,31 +114,6 @@ def run(cfg):
         use_gradient_checkpointing="unsloth",  #
         random_state=cfg.seed,
     )
-
-    def formatting_prompts_func(examples):
-
-        inputs = examples["text"]
-        outputs = examples["label_text"]
-        texts = []
-        for input, output in zip(inputs, outputs):
-            text = (
-                prompt_template.format(INSTRUCTION, input[:3000], output)
-                + tokenizer.eos_token
-            )
-            texts.append(text)
-        return {
-            "text": texts,
-        }
-
-    dataset = get_dataset(cfg)
-    dataset = dataset["train"].map(
-        formatting_prompts_func,
-        batched=True,
-    )
-
-    from trl import SFTTrainer
-    from transformers import TrainingArguments
-    from unsloth import is_bfloat16_supported
 
     trainer = SFTTrainer(
         model=model,
