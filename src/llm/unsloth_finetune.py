@@ -6,6 +6,14 @@ from transformers import TrainingArguments
 from unsloth import is_bfloat16_supported
 from ..data import get_dataset
 from ..labels import binarize_labels
+from sklearn.metrics import (
+    accuracy_score,
+    average_precision_score,
+    classification_report,
+    f1_score,
+    precision_recall_fscore_support,
+)
+import numpy as np
 
 INSTRUCTION = """Your task is to classify web texts into one or more linguistic register categories. The categories are as follows:
 
@@ -58,17 +66,35 @@ def evaluate(dataset):
             return_tensors="pt",
         ).to("cuda")
 
-    outputs = model.generate(**inputs, max_new_tokens=64, use_cache=True)
-    result = tokenizer.batch_decode(outputs)
-    try:
-        pred_label = (
-            result[0].split("<|end_of_text|>")[0].split("### Response:")[1].strip()
-        )
-    except:
-        pred_label = ""
-    print(result)
-    print(pred_label)
-    print(binarize_labels(pred_label.split(), "upper"))
+        outputs = model.generate(**inputs, max_new_tokens=64, use_cache=True)
+        result = tokenizer.batch_decode(outputs)
+        try:
+            pred_label = (
+                result[0].split("<|end_of_text|>")[0].split("### Response:")[1].strip()
+            )
+        except:
+            pred_label = ""
+        predictions.append(binarize_labels(pred_label.split(), "upper"))
+
+    predictions = np.array(predictions)
+    true_labels = np.array(true_labels)
+    precision, recall, f1, _ = precision_recall_fscore_support(
+        true_labels, predictions, average="micro"
+    )
+    accuracy = accuracy_score(true_labels, predictions)
+    # pr_auc = average_precision_score(true_labels, predictions, average="micro")
+
+    metrics = {
+        "f1": f1,
+        "f1_macro": f1_score(
+            true_labels, predictions, average="macro", zero_division=np.nan
+        ),
+        "precision": precision,
+        "recall": recall,
+        "accuracy": accuracy,
+    }
+
+    print(metrics)
     exit()
 
 
