@@ -75,7 +75,7 @@ def evaluate(dataset):
             max_new_tokens=64,
             use_cache=True,
             pad_token_id=tokenizer.eos_token_id,
-            temperature=0.1,
+            temperature=0.0,
         )
         result = tokenizer.batch_decode(outputs)
         try:
