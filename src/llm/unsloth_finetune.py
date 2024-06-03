@@ -75,7 +75,7 @@ def evaluate(dataset):
             max_new_tokens=64,
             use_cache=True,
             pad_token_id=tokenizer.eos_token_id,
-            temperature=0.1
+            temperature=0.1,
         )
         result = tokenizer.batch_decode(outputs)
         try:
@@ -147,7 +147,7 @@ def run(cfg):
 
     model = FastLanguageModel.get_peft_model(
         model,
-        r=64,
+        r=128,
         target_modules=[
             "q_proj",
             "k_proj",
@@ -157,7 +157,7 @@ def run(cfg):
             "up_proj",
             "down_proj",
         ],
-        lora_alpha=16,
+        lora_alpha=128,
         lora_dropout=0,
         bias="none",
         use_gradient_checkpointing="unsloth",  #
@@ -176,7 +176,7 @@ def run(cfg):
             per_device_train_batch_size=2,
             gradient_accumulation_steps=4,
             warmup_ratio=0.05,
-            num_train_epochs=2,
+            num_train_epochs=1,
             learning_rate=1e-5,
             fp16=not is_bfloat16_supported(),
             bf16=is_bfloat16_supported(),
@@ -185,7 +185,7 @@ def run(cfg):
             weight_decay=0.01,
             lr_scheduler_type="linear",
             seed=cfg.seed,
-            output_dir="unsloth_ft/outputs",
+            output_dir="unsloth_ft/outputs2",
         ),
     )
 
@@ -212,5 +212,5 @@ def run(cfg):
     print(f"Peak reserved memory % of max memory = {used_percentage} %.")
     print(f"Peak reserved memory for training % of max memory = {lora_percentage} %.")
 
-    model.save_pretrained("unsloth_ft/lora_model")  # Local saving
-    tokenizer.save_pretrained("unsloth_ft/lora_model")
+    model.save_pretrained("unsloth_ft/lora_model2")  # Local saving
+    tokenizer.save_pretrained("unsloth_ft/lora_model2")
