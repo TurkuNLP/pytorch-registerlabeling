@@ -113,7 +113,7 @@ def evaluate(dataset):
 def run(cfg):
 
     model, tokenizer = FastLanguageModel.from_pretrained(
-        model_name="unsloth/llama-3-8b-bnb-4bit",
+        model_name="unsloth/llama-3-8b-Instruct-bnb-4bit",
         max_seq_length=2048,
         dtype=None,
         load_in_4bit=True,
@@ -147,7 +147,7 @@ def run(cfg):
 
     model = FastLanguageModel.get_peft_model(
         model,
-        r=128,
+        r=64,
         target_modules=[
             "q_proj",
             "k_proj",
@@ -157,10 +157,10 @@ def run(cfg):
             "up_proj",
             "down_proj",
         ],
-        lora_alpha=128,
+        lora_alpha=64,
         lora_dropout=0,
         bias="none",
-        use_gradient_checkpointing="unsloth",  #
+        use_gradient_checkpointing="unsloth",
         random_state=cfg.seed,
     )
 
@@ -185,7 +185,7 @@ def run(cfg):
             weight_decay=0.01,
             lr_scheduler_type="linear",
             seed=cfg.seed,
-            output_dir="unsloth_ft/outputs2",
+            output_dir="unsloth_ft/outputs_instruct",
         ),
     )
 
@@ -212,5 +212,5 @@ def run(cfg):
     print(f"Peak reserved memory % of max memory = {used_percentage} %.")
     print(f"Peak reserved memory for training % of max memory = {lora_percentage} %.")
 
-    model.save_pretrained("unsloth_ft/lora_model2")  # Local saving
-    tokenizer.save_pretrained("unsloth_ft/lora_model2")
+    model.save_pretrained("unsloth_ft/lora_model_instruct")  # Local saving
+    tokenizer.save_pretrained("unsloth_ft/lora_model_instruct")
