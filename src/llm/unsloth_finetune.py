@@ -70,13 +70,21 @@ def evaluate(dataset):
             return_tensors="pt",
         ).to("cuda")
 
-        outputs = model.generate(**inputs, max_new_tokens=64, use_cache=True)
+        outputs = model.generate(
+            **inputs,
+            max_new_tokens=64,
+            use_cache=True,
+            pad_token_id=tokenizer.eos_token_id,
+            temperature=0.1
+        )
         result = tokenizer.batch_decode(outputs)
         try:
             pred_label = (
                 result[0].split("<|end_of_text|>")[0].split("### Response:")[1].strip()
             )
         except:
+            print("ERROR: ")
+            print(result[0])
             pred_label = ""
         predictions.append(binarize_labels(pred_label.split(), "upper"))
 
