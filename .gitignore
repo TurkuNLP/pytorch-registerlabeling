@@ -29,4 +29,4 @@ TMP_*
 .ig_cache
 test_cache
 .ig_visualizations
-mlruns
+mlruns/*
