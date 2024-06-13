@@ -17,6 +17,7 @@ from .labels import binarize_labels, normalize_labels
 
 language_names = {
     "en": "English",
+    "en_new": "English",
     "fi": "Finnish",
     "fr": "French",
     "sv": "Swedish",
@@ -143,6 +144,9 @@ def gen(languages, split, label_scheme, use_gz):
                 if not normalized_labels:
                     continue
 
+                if len(ro) > 2:
+                    l = ro[2] # language is third column
+
                 idx += 1
                 yield {
                     "idx": idx,
@@ -178,7 +182,29 @@ def get_dataset(cfg, tokenizer=None):
     cfg.train = "-".join([s for s in cfg.train.split("-") if s not in small_languages])
     cfg.dev = "-".join([s for s in cfg.dev.split("-") if s not in small_languages])
 
-    if cfg.use_fold:
+    if cfg.sample_subset:
+
+        data_to_be_folded = list(generate("train").shuffle(seed=cfg.seed))
+
+        y = np.array([x["label"] for x in data_to_be_folded])
+
+        # We take 100 * cfg.sample_subset per run
+        n_splits = len(data_to_be_folded) // 100
+        k_fold_fn = IterativeStratification(n_splits=n_splits, order=1)
+        folds = list(k_fold_fn.split(list(range(len(y))), y))
+        data_indexes = []
+        for fold_i in range(cfg.sample_subset):
+            for i in folds[fold_i][1]:
+                data_indexes.append(int(i))
+
+        if not cfg.just_evaluate:
+            splits["train"] = Dataset.from_list(
+                [data_to_be_folded[int(i)] for i in data_indexes]
+            )
+            splits["dev"] = generate("dev")
+        splits["test"] = generate("test")
+
+    elif cfg.use_fold:
         data_to_be_folded = list(
             concatenate_datasets([generate("train"), generate("dev")]).shuffle(
                 seed=cfg.seed
@@ -204,8 +230,10 @@ def get_dataset(cfg, tokenizer=None):
         include_splits = ["train", "dev", "test"] if not cfg.just_evaluate else ["test"]
         for s in include_splits:
             splits[s] = generate(s)
+            if s != "test":
+                splits[s] = splits[s].shuffle(seed=cfg.seed)
 
-    dataset = DatasetDict(splits).shuffle(seed=cfg.seed)
+    dataset = DatasetDict(splits)
 
     if hasattr(cfg, "skip_tokenize") and cfg.skip_tokenize:
         return dataset

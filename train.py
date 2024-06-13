@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument("--path_suffix", default="")
     parser.add_argument("--config", "-c", action=ActionConfigFile)
     parser.add_argument("--just_evaluate", action="store_true")
+    parser.add_argument("--no_save", action="store_true")
 
     # Data
     parser.add_argument("--train", "-t", default="en-fi-fr-sv-tr")
@@ -34,8 +35,9 @@ if __name__ == "__main__":
     parser.add_argument("--mask_alphabets", type=bool, default=False)
     parser.add_argument("--cachedir", default="")
     parser.add_argument("--save_predictions", type=bool, default=True)
-    parser.add_argument("--exclude_multilabel", action="store_true")
+    parser.add_argument("--multilabel_eval", default="")
     parser.add_argument("--sample", type=int, default=0)
+    parser.add_argument("--sample_subset", type=int, default=0)
 
     # Trainer
     parser.add_argument("--learning_rate", "-lr", type=float, default=5e-5)
@@ -50,13 +52,13 @@ if __name__ == "__main__":
     parser.add_argument("--torch_dtype", default="bfloat16")
     parser.add_argument("--fa2", action="store_true")
     parser.add_argument("--nf4", action="store_true")
+    parser.add_argument("--balanced_dataloader", action="store_true")
 
     # Peft
     parser.add_argument("--peft", action="store_true")
     parser.add_argument("--lora_rank", type=int, default=128)
     parser.add_argument("--lora_alpha", type=int, default=256)
     parser.add_argument("--target_modules", default="")
-    parser.add_argument("--reft", action="store_true")
     cfg = parser.parse_args()
 
     if not cfg.train:

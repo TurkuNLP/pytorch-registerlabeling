@@ -1,0 +1,334 @@
+MIX	NA nb	0
+IN dtp	IN IP dtp	1
+IP ds	IP	2
+OP av	MT	3
+OP rv	IP ds	4
+NA	NA nb	5
+IP ds	IP ds	6
+IN en	IN dtp	7
+IP ds	IP ds	8
+OP rv	IP ds	9
+HI	IP ds	10
+HI	HI	11
+NA ne	NA ne	12
+NA ne	NA ne	13
+NA sr	NA ne	14
+IN lt	IN lt	15
+ID	NA ne	16
+NA ne	NA ne	17
+OP av	MT	18
+IP ds	IP ds	19
+IP ds	IP ds	20
+IP ds	IP ds	21
+OP rs	OP rs	22
+IP	IP ds	23
+NA sr	NA sr	24
+NA ne	NA ne	25
+NA ne	NA ne	26
+NA ne	NA ne	27
+IP ds	IP ds	28
+NA ne	NA ne	29
+IN lt	IN lt	30
+MIX	NA sr	31
+IN	IP	32
+OP rv	IP ds	33
+OP rs	MIX	34
+NA ne	NA ne	35
+HI	MIX	36
+OP rs	OP rs	37
+IN	HI	38
+NA ne	NA ne	39
+IP ds	NA	40
+IP ds	IN	41
+IP ds	IP ds	42
+IP ds	IP ds	43
+IP ds	IP ds	44
+MIX	NA ne	45
+HI	IN lt	46
+IP ds	IP ds	47
+NA ne	NA ne	48
+IN	IP ds	49
+HI	MIX	50
+IP ds	IP ds	51
+NA ne	NA nb	52
+IP ds	IN IP	53
+IP ds	IP ds	54
+MIX	OP av	55
+MIX	IP ds	56
+LY	IN ra	57
+NA ne	NA ne	58
+IP ds	IP ds	59
+IN dtp	IN dtp	60
+IP ds	IP ds	61
+HI	IN	62
+IP ds	IP ds	63
+MIX	NA ne MIX	64
+NA	NA ne	65
+HI	ID HI	66
+NA ne	MT NA	67
+IP ds	IP ds	68
+IP ed	OP IP ob ed	69
+MIX	OP IP	70
+IP ds	IN dtp	71
+NA ne	NA ne	72
+HI	OP	73
+NA ne	NA ne	74
+NA nb	NA MIX	75
+IP ds	IP ds	76
+LY	OP rs	77
+IN dtp	IN dtp	78
+IP ds		79
+IP ds	ID	80
+IP ds	MT	81
+NA nb	NA ne	82
+IP ds	IP ds	83
+NA ne	NA ne	84
+NA	NA ne	85
+NA sr	NA sr	86
+NA ne	NA ne	87
+NA nb	MIX	88
+NA ne	IN	89
+MIX	NA ne	90
+MIX	NA ne	91
+IP ds	IN MIX	92
+IP ds	NA ne	93
+NA	NA nb	94
+NA ne	NA ne	95
+IP ds	IP ds	96
+NA ne	NA ne	97
+NA nb	NA	98
+OP		99
+NA ne	NA ne	100
+IP ds	IP ds	101
+IN	NA ne	102
+IP ed	IP ed	103
+IP ds	IP ds	104
+IP ds	IP	105
+IP ds	IP ds	106
+IN dtp	IN	107
+HI	MIX	108
+IP ds	IP ds	109
+ID	ID	110
+NA ne	NA ne	111
+IP ds	IP ds	112
+NA ne	IN	113
+IP ds	IP ds	114
+IP ds	IP ds	115
+IP ds	IP ds	116
+IP ds	IP ds	117
+IN	NA nb	118
+IN ra	NA ne	119
+NA nb	NA nb	120
+NA ne	NA ne	121
+IP ds	IP ds	122
+MIX	MIX	123
+NA ne	NA ne	124
+IP ds	IP ds	125
+IN lt	MIX	126
+OP av	MT	127
+MIX	NA ne	128
+IP ds	IP ds	129
+NA ne	NA ne	130
+NA ne	NA ne	131
+NA ne	NA ne	132
+NA ne		133
+NA ne	NA ne	134
+IP ds	OP ob	135
+IN lt	IN lt	136
+IP ds	IP ds	137
+NA ne	NA ne	138
+ID	MT	139
+IP ds	IP ds	140
+IP ds	IN MIX	141
+IP ds	IP ds	142
+NA ne	NA ne	143
+HI	IN MIX	144
+IP ds	IP ds	145
+IP ds	IP ds	146
+NA	NA ne	147
+NA ne	NA ne	148
+IN	NA ne	149
+NA nb	NA ne	150
+NA ne	NA ne	151
+IN dtp	NA ne	152
+NA ne	NA ne	153
+IP ds	IP ds	154
+HI	HI	155
+IP ds	IP ds	156
+OP rv	MIX	157
+MIX	OP rv	158
+IP ds	ID	159
+IP ds	IP ds	160
+HI re	HI re	161
+NA nb	NA ne	162
+IP ds	MIX	163
+NA ne	NA ne	164
+NA ne	NA ne	165
+OP rs	OP rs	166
+MIX	NA	167
+NA ne	NA ne	168
+OP rs	OP rs	169
+NA	NA nb	170
+MIX	ID HI	171
+NA sr	NA sr	172
+OP rv	OP MIX	173
+IP ds	IP ds	174
+IP ds	IN IP	175
+HI re	HI re	176
+MIX	IN ra	177
+MIX	HI OP av	178
+IN dtp	NA IN ne	179
+NA nb	OP MIX	180
+IN	IN	181
+LY	IP	182
+HI	MIX	183
+NA nb	NA ne	184
+MIX	MIX	185
+IN dtp	IN dtp MIX	186
+MIX	NA ne	187
+OP rs	OP rs	188
+NA nb		189
+IP ds	IP ds	190
+IP ed	IN dtp	191
+IP ds	MIX	192
+IN	NA ne	193
+NA nb	NA nb	194
+NA ne	NA ne	195
+IP ds	IP ds	196
+NA ne	NA ne	197
+NA ne	OP ob	198
+MIX	NA ne	199
+NA nb	NA nb	200
+IN	IP ds	201
+OP rs	NA ne	202
+IN lt	IN lt	203
+MIX	IN lt	204
+NA nb	IN en dtp	205
+IP ds	IP MIX	206
+NA ne	NA ne	207
+HI re	HI re	208
+IN dtp	MIX	209
+NA ne	NA ne	210
+HI re	HI re	211
+NA sr	NA ne	212
+IN	IN dtp	213
+NA ne	NA ne	214
+IP ds	IP ds	215
+OP rs	OP rs	216
+IP ds	IP ds	217
+HI	IP	218
+IP ds	IP	219
+IP ds	IP	220
+IP ds	IP ds	221
+OP rs	OP rs	222
+IP ds	IP	223
+MIX	IN lt	224
+ID	NA nb	225
+NA ne	NA ne	226
+IN	IN dtp	227
+NA ne	NA ne	228
+HI	MIX	229
+IP ds	IP ds	230
+MIX	NA nb	231
+OP rv	IP	232
+IP ds	IP ds	233
+IN	NA ne	234
+NA ne	NA ne	235
+IP ds	IP ds	236
+NA ne	NA ne	237
+IN	NA ne	238
+HI	IP ds	239
+IP ds	IP ds	240
+IN dtp	MIX	241
+IP ds	IP ds	242
+IP ds	IP ds	243
+MIX	MIX	244
+IP ds	IP ds	245
+IN en	IN dtp	246
+IP ds	IP	247
+IP ds	IP ds	248
+IN	NA ne	249
+IP ds	IN	250
+NA ne	NA ne	251
+NA		252
+HI	MIX	253
+NA ne	NA ne	254
+HI	OP av	255
+MIX	IN IP dtp	256
+MIX	NA ne	257
+IP ds	IP ds	258
+OP rv	OP rv MIX	259
+IP ds	IN	260
+IN	NA ne	261
+ID	ID	262
+IP ds	MT	263
+NA ne	NA ne	264
+IP ds	IP ds	265
+NA	IP ds	266
+NA ne	NA ne	267
+NA ne	NA ne	268
+NA	NA ne	269
+IP ds	IP ds	270
+NA	NA nb	271
+MIX	IP ds	272
+IN dtp	NA ne	273
+IN dtp	IN dtp	274
+MIX	NA MIX	275
+ID	ID	276
+MIX	IN lt	277
+IN	IP ds	278
+NA ne	NA ne	279
+IP ds	IP ds	280
+IN	IN	281
+IN dtp	IP	282
+IN	IN dtp	283
+MIX	IP ds	284
+IN dtp	IN dtp MIX	285
+IP ds	NA ne	286
+MIX	NA nb MIX	287
+NA ne	NA ne	288
+NA ne	NA ne	289
+MIX	IP ds	290
+HI	HI OP av	291
+IP ds	IP ds	292
+IN	MIX	293
+NA ne	NA ne	294
+MIX	HI	295
+NA ne	NA ne	296
+OP ob	OP	297
+NA nb	NA MIX	298
+IP	NA ne	299
+HI	IN	300
+NA ne	NA ne	301
+MIX	IP MIX	302
+IN en	IN dtp	303
+IN	IN lt	304
+IP ds	IP ds	305
+NA nb	NA ne	306
+NA ne	NA ne	307
+HI re	HI re	308
+IP ds	IP ds	309
+IN lt	IN lt	310
+MIX	NA	311
+OP ob	OP	312
+IP	NA ne	313
+NA ne	NA ne	314
+IP ds	IP ds	315
+IP ds	IN dtp	316
+IP ds	IN dtp	317
+NA nb	NA nb	318
+IP ds	IP ds	319
+NA ne	NA ne	320
+IP ds	IP ds	321
+IP ds	IP ds	322
+MIX	MT	323
+IN ra	IP ds	324
+IN dtp		325
+NA ne	NA ne	326
+IN	IN dtp	327
+NA nb	NA MIX	328
+IP ds	MT	329
+IP ds	IP ds	330
+OP ob	IN	331
+IP ds	IP	332
+NA ne	NA ne	333

@@ -311,7 +311,7 @@ def normalize_labels(labels, label_scheme_name):
         labels = [map_xgenre[label] for label in mapped_simple if label]
 
     elif label_scheme_name == "all_mix":
-        labels_bin = binarize_labels(labels, label_scheme_name)
+        labels_bin = binarize_labels(labels, "all")
         if labels_bin not in get_binary_representations():
             labels = ["MIX"]
 
@@ -416,7 +416,7 @@ def flatten_labels(example):
     ]
 
 
-def get_binary_representations(label_scheme_name="all", allow_combinations=True):
+def get_binary_representations(label_scheme_name="all", allow_combinations=False):
     # Mapping labels to indices
     label_to_index = {label: index for index, label in enumerate(labels_all)}
     # Get the indices corresponding to main labels

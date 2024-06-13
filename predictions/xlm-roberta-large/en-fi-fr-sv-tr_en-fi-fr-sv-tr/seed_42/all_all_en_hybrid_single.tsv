@@ -1,0 +1,727 @@
+OP rv ob	OP rv	7166
+IN OP rs	OP rs	428
+NA IN dtp	IN dtp	9079
+HI IN	IN	123
+IN OP lt ob	IN	8094
+NA OP	OP	427
+NA OP	OP rs	8750
+IN ra dtp	OP av	5091
+NA ne sr	NA sr	9297
+NA OP ob	NA nb	4362
+NA sr nb	NA	6093
+NA IN ne dtp	NA ne	4304
+NA OP ne rv	IN dtp	7307
+NA IN dtp	NA nb	900
+NA OP ob	NA nb	7202
+NA IN	NA nb	3873
+IN OP	OP av	9590
+OP IP rv ds	IN dtp	6710
+IN OP av	OP av	9589
+NA IN ne	NA ne	9089
+NA IN dtp	IN dtp	4522
+NA IN ne dtp	NA ne	4303
+NA IN ne	NA ne	2166
+ID HI	ID	6335
+NA IN ne dtp	IN dtp	3934
+NA IN ne	NA ne	3164
+LY IN	OP rs	3692
+IN IP dtp ds	IP ds	7042
+NA OP rv	OP rv	5696
+NA IN ne dtp	NA ne	5469
+IN IP dtp ds	IP ds	7615
+NA ne sr	NA sr	1595
+NA IN ne	NA ne	6111
+NA IN ne	NA ne	732
+ID OP av	ID	4961
+ID OP ob	ID	4504
+NA OP rs	OP rs	5157
+ID OP	IN	6879
+HI IN	IN	4282
+NA IN	IN dtp	5925
+HI IN	IN	6198
+IN OP	OP ob	4941
+IN OP rs	OP rs	8417
+IN IP ds	IN dtp	7235
+IN IP dtp ds	IP ds	2547
+IN IP dtp ds	IN dtp	9550
+HI IN	IN dtp	1479
+NA IN ne	NA ne	6761
+IN IP	IN dtp	7435
+SP NA it	SP it	8707
+NA ne sr	NA ne	1376
+NA OP ob	NA sr	2015
+NA IN sr dtp	NA ne	7427
+ID OP rv	OP rv	4557
+IN OP av	IN dtp	2520
+NA OP av	OP av	106
+NA IN ne dtp	NA ne	1010
+OP rv ob	OP rv	6736
+NA ne sr	NA sr	8967
+NA IN	NA ne	646
+SP NA ne	NA ne	1934
+NA ne sr	NA ne	6222
+NA IN ne	SP it	4958
+NA OP nb ob	ID	8738
+NA OP sr ob	NA sr	6551
+NA ne sr	NA sr	2208
+NA OP ne	NA ne	7375
+NA OP nb ob	NA nb	8122
+NA IN ne	IN	1227
+NA IN	NA sr	5740
+NA IN	IN dtp	136
+NA OP ne ob	NA ne	430
+ID OP rv	OP rv	9141
+IN IP	OP ob	2001
+NA OP ob	NA nb	9529
+NA IN dtp	NA ne	1041
+IN OP	IN	4610
+IN OP rv	OP rv	5646
+IN OP	IN dtp	4016
+ID OP rv	OP rv	6642
+HI IN	OP av	8965
+OP ob rs	OP ob	3531
+IN IP	OP ob	308
+NA IN ne ra	NA ne	280
+NA ne sr	NA sr	1181
+NA IN ne	IN dtp	4612
+NA OP ne ob	OP ob	4131
+NA HI sr	NA sr	5281
+HI IP ds	HI	8584
+OP IP ob	OP ob	8390
+NA OP ne ob	IN	6728
+NA IN	NA nb	4885
+SP NA ne	SP	4373
+NA IN ne	NA	7242
+IN dtp fi	IN dtp	634
+IN OP	OP rv	4661
+OP IP ob	OP ob	1643
+IN IP dtp ds	OP rv	6956
+NA IN ne dtp	NA ne	5988
+IN IP ds	IP ds	662
+OP rv ob	OP rv	814
+NA IN ne	NA ne	8351
+NA ne sr	NA ne	3578
+NA OP ne rs	NA ne	2145
+NA OP ob	NA nb	7372
+NA IN ne	NA ne	6758
+NA IN ne dtp	IN dtp	3441
+NA IN	IN lt	3920
+HI IN	IN	8757
+NA IN nb dtp	NA nb	1089
+IN IP ds	IP ds	4921
+NA IN nb dtp	IN dtp	5860
+SP ID it	SP it	2860
+NA IN nb	NA nb	2092
+IN OP	IN	573
+IN OP ob	IN	8214
+NA IN ne	NA ne	3283
+NA IN ne dtp	IN dtp	4519
+IN IP dtp	IN dtp	5913
+NA IN	OP	7940
+NA IN dtp	NA sr	8865
+NA IN ne	NA ne	1134
+NA OP rv	OP rv	2835
+NA IN ne dtp	IN dtp	3309
+IN OP av	IN	2079
+NA IN ne	NA ne	2780
+NA OP ob	NA ne	2250
+NA IN dtp	NA	1984
+NA OP nb ob	OP ob	4097
+IN IP dtp ds	IP ds	3249
+NA IN ne	NA ne	9003
+NA OP nb ob	OP ob	5725
+IN OP ob	OP ob	7866
+NA IN ne	NA ne	8241
+NA IN dtp	NA ne	3387
+NA IN ne dtp	NA ne	855
+IN OP rs	OP rs	7151
+NA IN dtp	NA ne	54
+HI IN	IN dtp	4117
+HI OP	OP	4902
+IN OP	IN dtp	347
+NA OP ne ob	NA ne	2864
+NA OP ne ob	ID	6219
+NA ne sr	NA sr	2978
+HI IN	IN dtp	8437
+NA IN dtp	NA	6423
+IN IP dtp ds	IP ds	2224
+IN OP av	OP ob	581
+OP rv ob	OP rv	5016
+NA IN dtp	NA sr	2701
+IN OP ob	OP ob	8755
+IN OP dtp rv	IN dtp	5821
+NA IN	IN dtp	9183
+NA IN	IN	5387
+HI OP av	OP av	8005
+NA IN ne	NA ne	3879
+NA OP nb	NA nb	9524
+NA IN dtp	NA nb	3729
+NA IN ne dtp	NA ne	3764
+HI OP av	OP	1805
+HI IN fi	IN	7040
+IN dtp fi	IN dtp	6881
+NA OP nb ob	NA nb	8786
+NA OP ne ob	NA ne	4162
+NA OP ne	OP ob	4051
+NA IN ne	NA ne	9204
+NA ne sr	NA sr	5609
+OP IP av ds	IN	9334
+NA IN ne dtp	NA ne	9023
+OP ob av	OP	5148
+NA IN ne	NA ne	5672
+NA OP ob	OP ob	7388
+NA IN nb	IN	3824
+IN OP dtp rv	IN dtp	8102
+NA OP ob	OP ob	8063
+NA IN dtp	IN dtp	3623
+IN OP av	OP av	5392
+NA OP	OP ob	5231
+IN OP av	OP	1744
+NA IN ne dtp	NA ne	7996
+NA IN ne ra	NA ne	9687
+ID OP	OP av	4853
+HI IN	OP av	1350
+NA IN ne	IN dtp	4723
+IN OP av	IN	6231
+IN IP dtp	IN dtp	7380
+NA IN ne	OP ob	4049
+NA IN ne	NA ne	7722
+NA OP ob	NA nb	2034
+SP IN	SP	3409
+SP OP rs	OP rs	145
+NA OP rs	OP rs	8582
+NA OP	NA nb	291
+NA OP ne	NA ne	2460
+IN IP dtp ds	IP ds	7739
+HI OP av	OP av	4413
+NA OP ob	NA sr	1008
+NA IN dtp	NA sr	2406
+NA IN ne	NA ne	4666
+IN IP dtp ds	IP ds	6514
+IN OP	IN	5970
+NA ne sr	NA ne	1009
+HI OP av	OP av	1304
+HI IN	IN	3241
+NA IN ne	NA ne	6162
+IN OP av	OP av	5992
+SP NA	NA	4408
+HI IN fi	IN fi	1111
+HI IN	IN ra	686
+HI IN dtp	IN dtp	309
+IN OP	OP	4651
+NA OP	OP rs	6188
+IN OP rv	OP	4239
+IN OP rs	OP	2033
+NA IN ne	NA ne	8620
+SP IN it	SP it	8990
+IN en dtp	IN dtp	6003
+NA IN nb	NA nb	8373
+NA IN	NA	2121
+NA IN ne ra	IN	2710
+NA OP ne rv	OP rv	3553
+NA IN dtp	NA ne	1962
+NA OP ne ob	NA ne	1085
+HI IN	HI	6836
+IN IP dtp ds	IP ds	9397
+NA IN dtp	NA nb	7869
+IN IP dtp ds	IP ds	1580
+NA IN	NA	2483
+NA IN dtp	IN dtp	3887
+OP IP av	OP av	3809
+NA IN ne fi	IN	4698
+NA OP ne rv	NA ne	2103
+IN OP dtp rv	IN dtp	6951
+NA OP ob	OP ob	6060
+NA OP ne	NA ne	6037
+OP ob rs	OP rs	283
+ID IN	ID	1352
+HI IN	OP	8394
+NA IN	NA sr	8698
+NA OP nb ob	NA nb	3912
+IN IP dtp ds	IN dtp	3137
+NA OP sr ob	NA sr	2040
+NA OP sr ob	NA sr	3536
+NA IN ne	NA ne	150
+OP IP rv	OP rv	4164
+NA OP nb ob	NA	6150
+LY OP rs	OP rs	8612
+NA IN ne dtp	IN dtp	9595
+NA IN ne	NA ne	1107
+NA IN ne	NA ne	2903
+NA IN sr dtp	NA sr	1748
+IN IP dtp ds	IN dtp	5289
+OP IP	IN en	4026
+HI OP	OP av	6316
+NA IN sr dtp	NA	8043
+IN IP dtp ds	IP ds	846
+IN IP dtp ds	IP ds	4550
+IN IP dtp ds	IP ds	8567
+IN OP dtp rv	OP rv	4769
+HI IN	IN	185
+NA OP nb	ID	9268
+NA OP	NA sr	2812
+NA IN ne dtp	NA ne	7382
+IN OP	OP	8641
+NA OP nb ob	NA nb	8250
+NA OP sr	NA sr	3366
+IN OP	OP av	8142
+NA IN ne	NA ne	6378
+NA OP nb ob	OP rs	7677
+NA IN ne dtp	NA	2793
+NA IN ne	NA ne	1329
+NA IN sr dtp	NA sr	6742
+NA IN ne	NA ne	957
+NA ne nb	OP rs	2165
+NA IN	IN	1769
+NA IN dtp	IN dtp	2302
+OP rv ob	OP ob	4514
+NA IN sr	NA sr	6786
+NA IN nb	NA nb	4188
+SP NA it ne	SP it	377
+NA ne sr	NA sr	1447
+NA IN	IN dtp	7203
+HI OP	OP av	7687
+NA IN ne dtp	NA ne	6652
+NA OP ne ob	OP ob	173
+IN OP dtp rv	IN dtp	6334
+IN IP dtp ds	IP ds	7598
+HI IN	IN dtp	1734
+NA IN ne	NA ne	8170
+OP IP ob ed	NA ne	8208
+IN IP	IN	1720
+NA IN dtp	NA nb	6834
+NA IN ne dtp	NA ne	9127
+OP IP rv	OP rv	1496
+NA ne sr	NA sr	9674
+NA IN ne	NA ne	1432
+IN IP dtp ds	IP ds	9002
+NA IN ne dtp	IN dtp	3699
+NA ne sr	NA sr	2309
+NA IN ne dtp	NA ne	8549
+NA ne sr	NA ne	7073
+HI OP av	OP av	3385
+IN OP av	OP	7871
+ID NA nb	NA	5201
+ID OP rv	OP rv	4840
+SP HI	IN	9184
+NA IN ne	OP ob	4032
+NA OP ne ob	IN	8769
+IN OP	OP rs	4606
+NA OP ne rv	NA ne	6945
+NA IN ne	NA ne	3148
+IN dtp fi	IN	8461
+NA OP nb	OP	9251
+NA IN ne	IN	1603
+NA IN ne	NA ne	5781
+IN OP dtp rv	OP rv	4098
+IN OP rv	IN dtp	1975
+NA OP sr ob	NA sr	730
+OP ob av	OP	8550
+ID OP ob	ID	5487
+IN OP dtp ob	OP ob	7384
+IN OP dtp rv	OP rv	9234
+OP ob av	OP av	8605
+IN OP dtp	HI	1200
+OP rv ob	OP ob	8600
+NA IN ne	NA ne	6846
+IN OP ob	OP ob	3871
+NA OP ne	NA ne	3130
+IN OP dtp	IN dtp	1202
+NA OP ne ob	OP ob	5676
+HI IN	IN dtp	3044
+NA OP ne ob	NA ne	7117
+NA IP sr ed	NA sr	863
+NA IN ne ra	NA ne	7894
+NA OP ne ob	NA ne	182
+HI IN	IN dtp	1336
+NA OP ob	NA sr	6105
+NA IN dtp	IN dtp	6622
+HI OP av	OP av	1394
+IN IP dtp ds	IN dtp	3005
+HI OP av	OP	8635
+NA ne sr	NA	4748
+NA IN ra	OP ob	3602
+NA ne nb	NA nb	7573
+NA IN ne dtp	NA ne	2074
+IN IP dtp ds	IP ds	5399
+NA OP nb ob	OP rv	2866
+NA IN ne dtp	NA ne	2902
+NA IN dtp	OP ob	1545
+NA IN ne	NA ne	9501
+NA OP nb ob	NA nb	8238
+NA OP nb ob	NA nb	5331
+OP IP	OP rs	1331
+LY OP rs	OP rs	5569
+IN IP dtp ds	IP ds	117
+IN OP dtp ob	MT	1634
+NA IP ne	OP ob	2184
+NA OP ob	NA ne	1104
+HI IN fi	IN fi	7503
+NA OP	OP rs	619
+NA IN ne dtp	IN dtp	9664
+OP IP ob	OP ob	8112
+HI OP ob	NA nb	1497
+NA OP ne ob	IN	9420
+IN OP dtp av	IN dtp	2697
+IN OP rs	OP rs	3228
+NA IN ne	NA ne	5687
+NA OP	OP ob	414
+NA IN dtp	IN	2839
+IN OP dtp ob	IN dtp	5765
+IN OP	OP	5618
+NA OP sr ob	NA sr	2134
+NA OP nb ob	OP ob	4086
+HI OP av	HI	1998
+NA OP	NA nb	8793
+NA OP sr ob	NA sr	4709
+IN IP dtp ds	IP ds	1617
+IN OP dtp rv	OP rv	4918
+OP rv ob	OP rv	8029
+IN OP dtp rv	OP rv	7407
+IN OP ob	OP ob	9471
+NA IN nb	NA nb	4445
+NA IN ne	OP rv	8123
+IN IP dtp ds	IP ds	3797
+IN OP av	IN	5445
+ID IN dtp	IN	5977
+NA OP ne	NA ne	8928
+OP IP ob ds	OP ob	1226
+ID OP rv	OP rv	9440
+IN OP ob	OP ob	6349
+NA OP ne rs	NA ne	2261
+NA OP ne	NA ne	1716
+ID HI	ID	2097
+NA OP sr ob	NA sr	5896
+NA OP ne ob	OP ob	652
+SP NA it	SP it	6876
+OP IP ob	OP ob	6462
+OP ob rs	OP	2044
+HI IN fi	IN fi	1281
+NA IN ne ra	NA ne	9568
+NA OP ob	NA sr	5980
+HI IN fi	OP ob	510
+IN OP rs	OP rs	6647
+IN OP av	OP av	9112
+ID IN	ID	9374
+OP ob rs	OP rs	988
+IN IP dtp ds	IP ds	290
+NA OP nb ob	NA nb	7494
+NA OP ne ob	NA ne	7164
+ID OP rv	OP rv	4189
+NA IN ne	IN	6164
+NA IN nb dtp	NA nb	1439
+NA IN ne	NA ne	356
+NA IN ne dtp	NA ne	8027
+IN IP ra	IN ra	8626
+NA IN dtp	NA ne	3562
+NA ne nb	NA ne	2194
+IN IP dtp ds	IP ds	5401
+HI IN	OP ob	4633
+IN IP ds	OP rv	6440
+ID IN	IN	8487
+NA OP nb	OP rs	2764
+NA IN	NA ne	9341
+NA IN ne	NA ne	2024
+NA IN ne	NA ne	5155
+LY NA nb	NA nb	3319
+HI IN fi	IN	3168
+IN OP ob	OP ob	8675
+IN IP dtp ds	IN dtp	74
+IN IP dtp ds	IN dtp	6341
+NA OP nb ob	ID	4729
+NA IN	IN dtp	1750
+NA ne sr	NA ne	2391
+NA IN ne dtp	NA sr	8972
+IN IP dtp ds	IN dtp	4654
+NA OP rv	OP rv	3762
+IN OP av	OP av	753
+NA OP nb ob	OP ob	3234
+NA OP ob	NA ne	9443
+NA OP ob	OP rs	3512
+NA IN ne dtp	IN dtp	2135
+IN IP dtp ds	IP ds	7721
+IN OP dtp rv	IN dtp	912
+SP OP it	SP it	6126
+IN OP dtp ob	IN dtp	9185
+NA IN dtp	NA	2405
+NA OP nb ob	OP ob	2300
+IN ra dtp	IN ra	3630
+IN IP dtp ds	IP ds	5173
+NA ne sr	NA sr	7213
+HI IN dtp	IN dtp	9135
+HI IN fi	IN dtp	161
+NA IN ne	NA ne	1488
+NA OP ob	NA nb	4835
+NA IN dtp	IN dtp	5582
+SP IN it	SP it	9265
+NA OP ob	OP ob	5400
+NA OP ne ob	NA ne	5670
+SP ID	SP it	9474
+NA OP sr	NA sr	265
+IN OP dtp	OP rv	8651
+NA IN	IN dtp	8104
+NA OP nb ob	NA nb	6112
+SP NA it ne	NA ne	9587
+NA IN ne dtp	NA ne	8991
+HI IN	IN dtp	6501
+NA IN sr dtp	NA sr	9143
+IN OP ob	IN	5615
+NA IP ne ed	NA ne	4895
+NA IP sr	NA sr	3946
+NA IN ne dtp	NA ne	8601
+NA IN ne	IN	1193
+NA OP ob	NA nb	1215
+NA IN ne dtp	NA ne	5048
+IN dtp lt	IN lt	1976
+HI IN fi	IN dtp	1440
+ID NA ne	NA ne	5872
+NA IN ne	NA ne	2413
+IN ra dtp	IN dtp	4075
+NA OP ne ob	NA ne	1816
+NA HI ne	HI	3624
+NA ne sr	NA sr	4276
+NA IN ne	NA ne	8772
+NA OP nb ob	OP ob	1388
+NA ne sr	NA sr	5313
+NA OP nb	OP ob	8742
+HI IN	IN dtp	3167
+NA ne sr	NA ne	9463
+HI OP av	IN dtp	1219
+HI IN fi	IN	8115
+HI IN	IN dtp	3708
+NA IP ds	NA	3114
+OP ob rs	OP rs	1960
+NA OP nb av	OP	8590
+OP IP rv ds	IP ds	7542
+HI IN	IN dtp	6166
+IN IP dtp ds	IP ds	4934
+IN IP dtp ds	IN	1189
+NA OP ne ob	NA ne	3533
+NA IN ne	NA ne	7424
+NA IN dtp	NA sr	5428
+NA IN dtp	NA ne	2020
+IN OP ob	OP ob	8910
+HI IN	IN dtp	3185
+NA OP ne ob	OP ob	5931
+NA OP nb	NA nb	6548
+IN OP dtp	OP	5345
+NA OP ne ob	NA ne	6969
+HI OP rs	OP rs	2482
+NA IN ne	NA ne	9306
+NA IN	NA	1760
+NA IN dtp	IN dtp	4637
+NA OP nb ob	NA nb	5976
+NA OP nb	NA nb	1046
+HI IN dtp	IN dtp	8036
+NA OP	ID	4394
+IN OP dtp	OP rs	4181
+IN IP ds	IN	6976
+NA IN dtp	NA	3828
+NA OP ne ob	NA	7070
+NA OP ne ob	NA ne	3095
+ID OP ob	OP ob	1622
+NA OP ob	NA sr	1408
+NA IN	IN	1238
+NA IN nb dtp	IN	1457
+NA IN dtp	NA nb	716
+NA ne sr	NA sr	6148
+HI IN	OP av	8272
+NA OP nb ob	NA nb	6519
+NA IN ne dtp	NA ne	9064
+IN OP	OP av	1467
+NA OP nb ob	OP ob	6530
+NA IN dtp	NA ne	3719
+NA ne sr	NA sr	1003
+NA OP ne ob	SP it	5229
+NA OP ne	NA ne	8849
+HI OP av	OP av	6803
+IN OP	IN	6199
+NA ne sr	NA sr	8727
+HI OP av	OP av	7971
+NA OP ne	OP rv	5306
+SP NA nb	SP it	6279
+HI IN	OP	1428
+IN OP dtp rv	OP rv	6835
+NA OP ne	NA ne	9513
+NA IN sr dtp	NA sr	1077
+NA IN ne dtp	NA ne	4808
+ID IN fi	ID	4926
+NA OP ne rs	OP rs	4041
+NA IN ne	NA ne	873
+NA IN ne dtp	NA ne	9494
+NA ne sr	NA sr	7075
+NA OP nb ob	OP ob	1633
+HI OP av	OP av	8335
+IN IP fi ds	IN dtp	6561
+IN IP ds	IN dtp	7233
+NA OP nb ob	NA nb	2900
+NA OP ob	OP	4652
+NA IN	IN	4137
+NA IN ne	NA ne	9298
+HI IN	IN dtp	8349
+HI OP av	OP av	2669
+HI IN	HI	7893
+IN OP dtp rv	OP rv	8255
+NA OP nb	OP ob	750
+NA ne sr	NA sr	7548
+HI IN	OP av	3034
+NA OP ob	NA sr	2106
+IN OP dtp	IN dtp	5815
+IN IP dtp ds	IP ds	7529
+NA IN ne dtp	NA ne	4722
+NA OP ob	NA ne	554
+NA ne sr	NA sr	3340
+NA IN nb dtp	IN	8729
+IN OP av	IN dtp	2115
+OP rv ob	OP rv	1079
+NA ne sr	NA sr	7891
+NA IN nb dtp	NA nb	722
+IN IP dtp ds	IP ds	6738
+IN OP ob	OP ob	4335
+NA IN dtp	NA nb	9449
+SP IN	IN dtp	1682
+NA IN	IN dtp	3377
+NA OP rs	OP ob	2967
+NA IN ra	NA	8150
+NA IN dtp	NA ne	28
+NA IN	NA ne	5704
+NA IN ne dtp	NA ne	3542
+NA OP ne ob	NA ne	5715
+NA IN ne	IN dtp	5242
+NA IN ne dtp	IN dtp	5407
+NA OP nb	NA nb	8032
+SP IN	SP it	3876
+NA OP ob	OP ob	7254
+OP IP ob	OP ob	7446
+NA IN ne	NA ne	3900
+ID NA nb	OP ob	1421
+IN OP ob	OP ob	3298
+NA ne sr	NA ne	5059
+NA OP sr ob	NA sr	5610
+ID OP rs	ID	9381
+NA OP ne ob	OP ob	7828
+HI IN	IN	5197
+NA ne nb	NA nb	6625
+IN IP ds	IN dtp	1776
+IN IP dtp ds	IP ds	3617
+IN OP ob	OP	9142
+NA IN dtp	NA ne	5593
+NA IN nb	NA nb	969
+NA OP nb	OP rs	5526
+NA OP nb	OP ob	8167
+NA OP ne ob	NA	6045
+NA IN	NA nb	8894
+NA IN ne	IN dtp	1567
+NA IN ne	NA ne	7185
+NA IN	IN	5994
+NA IN ne ra	NA ne	8279
+IN ra dtp	IN	1785
+IN OP rv	IN dtp	5115
+NA OP nb ob	NA nb	8776
+ID IN	IP ds	2985
+OP ob av	OP ob	3967
+NA OP nb ob	NA nb	2358
+IN IP	MT	4127
+IN IP	IN	2740
+OP rv ob	OP	8806
+NA OP ne ob	ID	3777
+IN IP ds	IP ds	2342
+NA IN dtp	NA sr	8664
+IN OP ra rv	OP rv	3454
+NA OP nb	OP av	7992
+NA IN dtp	NA sr	6989
+NA IN	IN dtp	9091
+ID NA	ID	4733
+NA IP ne	IN	9647
+NA ne sr	NA sr	2285
+NA OP nb ob	OP ob	16
+NA IN	NA nb	1366
+NA OP ne	NA ne	5784
+NA IN ne	NA ne	5515
+IN dtp fi	IN dtp	1983
+NA OP nb ob	NA nb	2455
+HI IN	IN dtp	8458
+NA OP nb av	OP ob	1437
+NA IN en	NA	3761
+NA OP sr ob	NA sr	4256
+HI IN dtp	IN dtp	4632
+HI OP av	OP av	6912
+NA IN dtp	IN dtp	3378
+HI IN fi	IN fi	1889
+NA ne sr	NA sr	8282
+NA OP ne rv	OP rv	2457
+NA IN dtp	NA sr	8331
+IN OP ob	OP	6718
+NA IN nb	IN dtp	5323
+IN OP dtp	IN dtp	5760
+IN IP dtp	OP ob	5114
+NA OP nb ob	NA nb	4034
+NA OP nb	OP ob	2526
+OP IP	OP ob	8789
+NA IN dtp	NA ne	580
+IN IP dtp ds	IP ds	6362
+NA IN ne dtp	NA ne	4596
+NA IN ne dtp	NA ne	1767
+NA OP sr ob	NA sr	8114
+NA IN dtp	NA ne	4642
+HI IN	IN dtp	2743
+HI IN fi	IN fi	8747
+NA IN ne dtp	NA ne	6772
+NA IN ne	NA ne	6875
+NA IN ne	NA ne	663
+ID IN	IN	2896
+NA OP nb ob	NA nb	8561
+HI IN fi	IN fi	3972
+NA OP ob	NA nb	7803
+IN OP ob	IN dtp	8339
+NA IN ne	NA ne	2645
+NA IN ne ra	IN ra	1151
+NA IN	NA nb	3959
+SP NA it	SP it	3245
+IN OP rv	OP rv	1068
+NA IN nb	NA nb	909
+NA OP	NA ne	6006
+NA IN ne	NA ne	77
+NA ne sr	NA sr	1824
+IN OP	OP	6592
+NA OP ne ob	OP ob	6796
+HI IN	IN fi	5046
+NA IN ne	OP ob	1753
+NA OP nb av	OP	344
+NA IN ne dtp	NA ne	4629
+NA IN dtp	NA nb	4375
+IN IP dtp ds	OP rv	5008
+HI IN	OP	2840
+NA OP nb ob	OP ob	874
+NA IN ne dtp	NA ne	2735
+NA IN ne	OP ob	1589
+NA ne sr	NA sr	8811
+NA OP ob	NA ne	9451
+NA IN ne	IN dtp	5797
+IN OP	OP	1997
+NA OP	OP rs	552
+HI OP	OP av	4754
+NA IN ne dtp	NA ne	907
+NA OP nb ob	NA nb	7511
+NA IN ne	NA ne	7127
+NA OP ne rv	OP rv	6330
+HI IN	HI	8425
+NA IN ne dtp	IN dtp	8090
+NA ne sr	NA nb	4118
+IN OP dtp	IN dtp	3178
+NA IN nb	NA nb	1829
+HI IN	IN dtp	1664
+NA ne sr	NA sr	2204
+NA OP nb	NA nb	3335
+NA IN ne	NA	1614
+NA IN	IN	1073
+HI IN	IN dtp	567
+NA IN ne dtp	NA ne	6103
+NA IN nb	NA nb	8196
+NA IN sr	IN dtp	2579
+NA OP ob	OP rs	5867
+NA OP nb ob	OP ob	6871
+NA IN OP dtp rs	OP rs	4199
+NA OP nb	NA nb	4
+NA OP ne ob	OP ob	5477
+NA IN ne	NA ne	8340

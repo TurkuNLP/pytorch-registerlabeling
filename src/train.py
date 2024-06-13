@@ -72,7 +72,8 @@ def run(cfg):
 
     test_language = ""  # Used when predicting
     test_dataset = []  # Used when predicting
-    multilabel_exclusion_stats = {"multilabel": 0, "singlelabel": 0}
+    multilabel_exclusion_stats = {"excluded": 0, "included": 0}
+    pred_suffix = ("_"+cfg.test) if "multi" in cfg.test else ""
 
     # CUDA events for timing
     if device == "cuda":
@@ -87,8 +88,8 @@ def run(cfg):
         cfg.labels == "en_all" and cfg.predict_labels == "en_upper"
     )
     predict_xgenre_using_full = cfg.labels == "all" and cfg.predict_labels == "xgenre"
-    model_output_dir = f"{cfg.model_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
-    results_output_dir = f"{cfg.predictions_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}"
+    model_output_dir = f"{cfg.model_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}{('/subset_'+str(cfg.sample_subset)) if cfg.sample_subset else ''}"
+    results_output_dir = f"{cfg.predictions_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}{('/subset_'+str(cfg.sample_subset)) if cfg.sample_subset else ''}"
     print(
         f"This run {'saves models to' if not cfg.just_evaluate else 'uses model from'} {model_output_dir}"
     )
@@ -194,12 +195,12 @@ def run(cfg):
 
             return (loss, outputs) if return_outputs else loss
 
-        if len(cfg.train.split("-")) > 1 and not cfg.just_evaluate:
+        if (len(cfg.train.split("-")) > 1 or cfg.balanced_dataloader) and not cfg.just_evaluate:
 
             def get_train_dataloader(self):
                 return balanced_dataloader(self, "train", cfg.train_batch_size)
 
-        if len(cfg.dev.split("-")) > 1 and not cfg.just_evaluate:
+        if (len(cfg.dev.split("-")) > 1 or cfg.balanced_dataloader) and not cfg.just_evaluate:
 
             def get_eval_dataloader(self, eval_dataset=None):
                 return balanced_dataloader(self, "eval", cfg.eval_batch_size)
@@ -242,25 +243,56 @@ def run(cfg):
                 true_labels, binary_predictions
             )
 
-        if cfg.exclude_multilabel:
+        if cfg.multilabel_eval:
+            
+            """
+            True    Pred
+            ======  ======
+            Any     Single   
+            Any     Hybrid   
+            Single  Any      
+            Single  Single   
+            Single  Hybrid   
+            Hybrid  Any      
+            Hybrid  Single   
+            Hybrid  Hybrid   
+                        
+            """
+
             # Get row indices for binary representations of multilabel predictions
-            binary_representations = get_binary_representations(cfg.predict_labels)
-            multilabel_prediction_indexes = []
+            non_hybrids = get_binary_representations(cfg.predict_labels)
+            exclude_indexes = []
+
+            # Get the choices as a list
+            true_filter, pred_filter = cfg.multilabel_eval.split("_")
+        
+            for i, example in enumerate(true_labels):
+                if true_filter == "single":
+                    if [int(val) for val in example] not in non_hybrids:
+                        exclude_indexes.append(i)
+                elif true_filter == "hybrid":
+                    if [int(val) for val in example] in non_hybrids:
+                        exclude_indexes.append(i)
 
             for i, example in enumerate(binary_predictions):
-                if [int(val) for val in example] in binary_representations:
-                    multilabel_prediction_indexes.append(i)
+                if pred_filter == "single":
+                    if [int(val) for val in example] not in non_hybrids:
+                        exclude_indexes.append(i)
+                elif pred_filter == "hybrid":
+                    if [int(val) for val in example] in non_hybrids:
+                        exclude_indexes.append(i)
+
+            # Create a mask where only indices not in the list are True
+            mask = np.ones(len(true_labels), dtype=bool)
+            mask[exclude_indexes] = False
 
             # Filter predictions and true_labels
-            binary_predictions = binary_predictions[multilabel_prediction_indexes]
-            true_labels = true_labels[multilabel_prediction_indexes]
+            binary_predictions = binary_predictions[mask]
+            true_labels = true_labels[mask]
 
-            multilabel_exclusion_stats["singlelabel"] += len(
-                multilabel_prediction_indexes
-            )
-            multilabel_exclusion_stats["multilabel"] += len(predictions) - len(
-                multilabel_prediction_indexes
-            )
+            multilabel_exclusion_stats["included"] += np.sum(mask)
+            multilabel_exclusion_stats["excluded"] += np.sum(~mask)
+        
 
         precision, recall, f1, _ = precision_recall_fscore_support(
             true_labels, binary_predictions, average="micro"
@@ -299,11 +331,14 @@ def run(cfg):
             predicted_labels_str = decode_binary_labels(binary_predictions, cfg.labels)
             example_indices = [x["row"] for x in test_dataset]
             data = list(zip(true_labels_str, predicted_labels_str, example_indices))
+            trues_and_probs = list(
+                zip(true_labels, np.round(predictions, 4), example_indices)
+            )
             if cfg.save_predictions:
                 os.makedirs(results_output_dir, exist_ok=True)
 
                 with open(
-                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}.tsv",
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{pred_suffix}{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
                     "w",
                     newline="",
                 ) as csvfile:
@@ -311,7 +346,15 @@ def run(cfg):
                     csv_writer.writerows(data)
 
                 with open(
-                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}_metrics.json",
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{pred_suffix}_probs{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
+                    "w",
+                    newline="",
+                ) as csvfile:
+                    csv_writer = csv.writer(csvfile, delimiter="\t")
+                    csv_writer.writerows(trues_and_probs)
+
+                with open(
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{pred_suffix}{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}_metrics.json",
                     "w",
                 ) as f:
                     json.dump(metrics, f)
@@ -355,7 +398,8 @@ def run(cfg):
 
     if not cfg.just_evaluate:
         trainer.train()
-        trainer.save_model()
+        if not cfg.no_save:
+            trainer.save_model()
         for dir_path in glob.glob(f"{model_output_dir}/checkpoint*"):
             shutil.rmtree(dir_path, ignore_errors=True)
         shutil.rmtree(f"{model_output_dir}/runs", ignore_errors=True)
@@ -382,7 +426,9 @@ def run(cfg):
     # add torch.compile() because it makes a difference in inference speeds! https://huggingface.co/docs/transformers/perf_torch_compile#a100-batch-size-1
     #model = torch.compile(model)
 
-    for language in cfg.test.split("-"):
+    test_languages = cfg.test.split("-") if "multi" not in cfg.test else list(set(dataset['test']['language']))
+    for language in test_languages:
+
         print(f"-- {language} --")
         test_language = language
         test_dataset = dataset["test"].filter(
@@ -390,7 +436,6 @@ def run(cfg):
         )
 
         if cfg.sample:
-
             test_dataset = test_dataset.select(range(cfg.sample))
 
         if device == "cuda":
@@ -491,9 +536,9 @@ def run(cfg):
         else:
             trainer.predict(test_dataset)
 
-        if cfg.exclude_multilabel:
+        if cfg.multilabel_eval:
             print(
-                f"Excluded {multilabel_exclusion_stats['multilabel']} multilabel examples and kept {multilabel_exclusion_stats['singlelabel']} singlelabel examples"
+                f"Excluded {multilabel_exclusion_stats['excluded']} examples and kept {multilabel_exclusion_stats['included']} examples"
             )
         
         latencies.append(latency2)

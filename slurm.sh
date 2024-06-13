@@ -2,7 +2,7 @@
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=4
-#SBATCH --account=project_2009199
+#SBATCH --account=project_2009056
 #SBATCH --mail-user=pytorchregisterlabeling@gmail.com 
 #SBATCH --mail-type=ALL
 
@@ -44,6 +44,10 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
     TIME="6:00:00"
     MEM=8
     shift 
+  elif [[ $1 == "30min" ]]; then
+    TIME="0:30:00"
+    MEM=8
+    shift 
   fi
 
   # Set the dynamic GPU requirement
@@ -57,9 +61,9 @@ if [[ -z "$SLURM_JOB_ID" ]]; then
   JOB_ID=$(echo "$JOB_SUBMISSION_OUTPUT" | grep -oP 'Submitted batch job \K\d+')
   LOG_FILE="logs/${DYNAMIC_JOBNAME}-${JOB_ID}.log"
   touch $LOG_FILE
-  echo "Tailing log file: $LOG_FILE"
+  echo "Log file: $LOG_FILE"
   # Use tail -f to follow the log file
-  tail -f "$LOG_FILE"
+  #tail -f "$LOG_FILE"
   exit $?
 else
   # Actual job script starts here

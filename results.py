@@ -18,6 +18,10 @@ if __name__ == "__main__":
     parser.add_argument("--predict_labels", default="")
     parser.add_argument("--average", default="micro")
     parser.add_argument("--compute_metrics", action="store_true")
+    parser.add_argument("--all", action="store_true")
+    parser.add_argument("--hybrids", action="store_true")
+    parser.add_argument("--learning_curve", action="store_true")
+
     cfg = parser.parse_args()
 
     cfg.predict_labels = cfg.labels if not cfg.predict_labels else cfg.predict_labels

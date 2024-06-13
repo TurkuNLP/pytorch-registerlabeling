@@ -1,160 +1,160 @@
-IP	IN
-LY	LY
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-LY	OP
-NA ne	NA ne
-IN	IN lt
-LY NA nb	
-IN	IN dtp
-NA nb	OP
-HI IN dtp	IN
-NA ne	NA ne
-LY	LY OP rs
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-IN en	IN en
-NA OP av	OP
-IN dtp	IN
-NA ne	NA ne
-NA	NA
-IN	IN
-NA ne	NA ne
-IN lt	IN lt
-OP av	OP
-NA ne	NA ne
-OP ob	NA ne
-NA ne	NA ne
-SP	OP
-NA ne	NA ne
-IP	IN
-IN dtp	IN dtp
-NA ne	NA ne
-NA ne	NA ne
-NA sr	NA ne sr
-NA	IN
-IN OP av	IN
-NA ne	NA sr
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-LY	LY
-IN en	IN en
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-NA	
-OP rs	OP rs
-NA ne	NA ne
-HI re	HI re
-NA ne	NA ne
-IN dtp	
-NA HI ne	
-NA ne	NA ne
-NA ne	NA ne
-HI IP	
-IN OP dtp av	IN
-IP	HI
-NA ne	NA ne
-NA ne	NA ne
-NA	NA ne
-NA ne	NA ne
-HI IN dtp	HI
-NA ne	NA ne
-NA ne	NA ne
-IP ed	OP
-IN dtp	IN dtp
-NA ne	NA ne
-LY	LY
-IN	OP
-MT	MT
-NA ne	NA ne
-IN en	IN en
-IN dtp	IN dtp
-IN	IN
-NA ne	NA ne
-OP av	OP rs
-LY	LY
-NA ne	NA ne
-NA nb	IN
-SP	OP
-ID	ID
-LY	LY
-HI	MT
-NA ne	NA ne
-NA ne	NA ne
-IP	IN
-IP	IP ds
-NA ne	IN dtp
-NA ne	NA ne
-NA ne	NA ne
-NA	NA ne
-IP ds	OP
-IN	IN
-NA ne	NA ne
-HI	HI
-NA	
-NA ne	NA ne
-NA ne	NA ne
-IN en	IN en
-IN OP dtp av	IN dtp
-LY	LY
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-OP	NA ne
-MT	NA ne
-MT	IN
-HI IP	HI
-LY	LY
-NA ne	NA ne
-IN en	IN en
-NA ne	NA ne
-IP ds	MT
-NA ne	NA ne
-MT	MT
-NA	NA
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-IN dtp	IN dtp
-NA ne	NA ne
-NA ne	IN
-IN dtp	IN
-NA ne	NA ne
-HI IN	IN
-NA ne	NA ne
-NA ne	NA ne
-NA nb	NA nb
-NA ne	NA ne
-IP	NA ne
-IP ed	OP ob
-LY IN dtp	LY
-IN	IN
-NA ne	NA ne
-NA	
-LY	
-NA ne	NA ne
-NA ne	NA ne
-IN OP av	OP av
-IP ds	IN
-NA ne	NA ne
-IN	
-IP	
-IN dtp	IN
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-NA ne	NA ne
-OP av	OP
-MT	MT
-IN	IN
-IN en	IN en
-NA ne	NA ne
-IN	IN
-NA ne	NA ne
-IN dtp	IN
+NA ne	NA ne	0
+NA ne	NA ne	1
+MT	MT	2
+IN OP dtp av	IN	3
+NA HI ne		4
+NA ne	NA ne	5
+NA ne	IN dtp	6
+NA ne	NA ne	7
+NA ne	NA ne	8
+HI IN	IN	9
+OP av	OP	10
+IN dtp	IN	11
+NA ne	NA ne	12
+IN OP dtp av	IN dtp	13
+ID	ID	14
+OP av	OP	15
+IN OP av	IN	16
+NA ne	NA ne	17
+IP	IN	18
+NA ne	NA ne	19
+NA ne	NA ne	20
+NA ne	NA ne	21
+NA ne	NA ne	22
+NA ne	NA ne	23
+SP	OP	24
+NA ne	NA ne	25
+NA ne	NA ne	26
+NA ne	NA ne	27
+LY		28
+NA nb	OP	29
+NA ne	NA ne	30
+IN	IN	31
+NA ne	NA ne	32
+NA ne	NA ne	33
+NA ne	NA ne	34
+IN	IN	35
+IN dtp		36
+IP ds	IN	38
+IN	IN dtp	39
+IP	HI	40
+NA		41
+NA ne	NA ne	42
+IN	IN	43
+LY	LY	44
+NA ne	NA ne	45
+IN en	IN en	46
+IN dtp	IN	47
+NA ne	NA ne	48
+IN en	IN en	49
+SP	OP	50
+NA ne	NA ne	51
+NA ne	NA ne	52
+IP	IN	53
+HI IN dtp	IN	54
+IN en	IN en	55
+HI IN dtp	HI	56
+NA	NA ne	57
+NA ne	NA ne	58
+IP ds	MT	59
+NA ne	NA ne	60
+NA ne	NA ne	61
+NA ne	NA ne	62
+HI IP		63
+IN	IN lt	64
+NA ne	NA ne	65
+IN	OP	66
+IN dtp	IN dtp	67
+NA ne	NA ne	68
+NA ne	NA ne	69
+NA nb	IN	70
+IN	IN	71
+NA		72
+NA ne	NA ne	73
+NA ne	NA ne	74
+IN en	IN en	75
+MT	NA ne	76
+NA ne	NA ne	77
+NA ne	NA ne	78
+NA ne	NA ne	79
+IP	NA ne	80
+IN en	IN en	81
+NA ne	NA ne	82
+NA sr	NA ne sr	83
+HI	MT	84
+NA ne	NA sr	85
+NA ne	NA ne	86
+MT	MT	87
+NA nb	NA nb	88
+LY IN dtp	LY	89
+NA	NA	90
+IN dtp	IN dtp	91
+IN dtp	IN dtp	92
+IN en	IN en	93
+OP av	OP rs	94
+NA ne	NA ne	95
+NA ne	IN	96
+NA ne	NA ne	97
+LY	LY	98
+NA ne	NA ne	99
+NA ne	NA ne	100
+NA ne	NA ne	101
+NA ne	NA ne	102
+NA ne	NA ne	103
+IP	IP ds	104
+OP rs	OP rs	105
+IP ed	OP	106
+LY	OP	107
+NA ne	NA ne	108
+NA ne	NA ne	109
+NA ne	NA ne	110
+NA ne	NA ne	111
+NA ne	NA ne	112
+NA	NA ne	113
+NA ne	NA ne	114
+NA ne	NA ne	115
+IP ed	OP ob	116
+NA OP av	OP	117
+IP		118
+NA ne	NA ne	119
+IP	IN	120
+NA ne	NA ne	121
+NA ne	NA ne	122
+OP ob	NA ne	123
+NA	IN	124
+NA ne	NA ne	125
+OP	NA ne	126
+NA ne	NA ne	127
+IN dtp	IN dtp	128
+HI	HI	129
+NA ne	NA ne	130
+LY	LY	131
+IN OP av	OP av	132
+NA ne	NA ne	133
+NA ne	NA ne	134
+MT	IN	135
+NA ne	NA ne	136
+LY	LY	137
+NA		138
+IN	IN	139
+LY	LY OP rs	140
+LY	LY	141
+HI IP	HI	142
+LY NA nb		143
+NA	NA	144
+LY	LY	145
+NA ne	NA ne	146
+MT	MT	147
+IN lt	IN lt	148
+NA ne	NA ne	149
+NA ne	NA ne	150
+IN		151
+IN dtp	IN	152
+IN dtp	IN	153
+HI re	HI re	154
+IN	IN	155
+NA ne	NA ne	156
+NA ne	NA ne	157
+LY	LY	158
+IP ds	OP	159
+NA ne	NA ne	160

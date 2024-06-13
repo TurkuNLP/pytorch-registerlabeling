@@ -11,7 +11,7 @@ from ..labels import (
 from ..data import get_dataset
 
 palette = sns.color_palette("Blues", n_colors=12).as_hex()[1:]
-palette2 = sns.color_palette("BuGn", n_colors=12).as_hex()[3:]
+palette2 = sns.color_palette("Purples", n_colors=12).as_hex()[1:]
 template = "plotly_white"
 
 import plotly.io as pio
@@ -126,7 +126,7 @@ def run(cfg):
         for sub_source, sub_details in sub_data["subcategories"].items():
             xgenre = sub_details["xgenre"]
             if xgenre not in rightmost_node_colors:
-                rightmost_node_colors[xgenre] = palette[color_counter]
+                rightmost_node_colors[xgenre] = palette2[color_counter]
                 color_counter += 1
 
     # Initialize a list for link colors

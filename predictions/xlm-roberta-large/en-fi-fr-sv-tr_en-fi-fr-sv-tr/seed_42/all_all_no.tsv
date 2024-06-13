@@ -1,133 +1,133 @@
-IN	IP	3
-ID NA nb	NA nb	51
-IN fi	IN dtp	5
-IN dtp	IN dtp	76
-OP rv	IP ds	49
-NA IP ds	IN	101
-NA	NA	128
-MT	IP ds	113
-NA		56
-IN fi	IN fi	97
-NA ne	NA ne	74
-IN IP dtp ds	IN dtp	39
-IN IP dtp ds	IP ds	77
-MT	MT	119
-IN dtp	IN dtp	59
-MT	MT	24
-IP ds	IP ds	105
-NA sr	NA nb	79
-IN IP dtp ds	IP ds	103
-NA nb	NA nb	4
-MT	MT	44
-IN fi	IP ds	130
-MT	IP	10
-HI re	HI	47
-NA sr	NA ne	7
-ID	ID	109
-NA sr	NA sr	121
-NA	IP ds	118
-IN	IN	92
-IP ds	IP ds	71
-IP ds	IP ds	120
-IN IP dtp ds	IP ds	67
-IN	MT	32
-MT	MT	40
-OP av	IN	80
-MT HI	HI	116
+NA sr	NA nb	0
 IN	IN dtp	1
-HI OP av	HI	35
-IP ds	IP ds	55
-IN en	IN en	99
-NA ne	OP IP	33
-IN dtp	IN dtp	36
-IN	IN dtp	25
-HI re	HI re	45
-IP ed	IP ds	53
-NA ne	NA ne	102
-IP ed	NA nb	8
-IN IP dtp ds	IP ds	129
-OP rv	OP rv	37
-HI re		68
-IN dtp	MT IP ds	72
-IN en	IN en	57
-IP ds	IP ds	111
-OP rs	NA nb	66
-IN dtp	NA	23
-IP ds	IP ds	60
-IP ed	NA IN nb	6
-NA nb	NA nb	29
-NA ne	NA ne	95
-MT	MT	78
-IP ds	IP ds	93
-IN IP dtp ds	IP ds	54
-IP ds	IP ds	52
-ID NA sr	NA sr	64
-IN dtp	IN en dtp	98
-IN	IN dtp	73
-OP ob	NA nb	19
-IP ds	OP rv	104
-IN dtp	IP ds	112
-NA nb	NA nb	115
-IN dtp	IP ds	15
-MT	MT	89
-IP ds	IP ds	123
-IN IP dtp ds	IP ds	90
-IP ds	IP ds	107
-NA ne	NA ne	30
-ID	ID	106
-IN fi	HI	83
 IN dtp	IN	2
-IN IP dtp ds	IN IP dtp ds	88
-IN en	IN en	18
-NA ne nb	NA nb	58
-IP ds ed	IP ds	94
-IP ds	IP ds	114
+IN	IP	3
+NA nb	NA nb	4
+IN fi	IN dtp	5
+IP ed	NA IN nb	6
+NA sr	NA ne	7
+IP ed	NA nb	8
+HI	HI IN	9
+MT	IP	10
 IN	IP ds	11
-NA ne	NA ne	34
-IN	IP ds	75
-IN dtp	NA IP	69
-MT	MT	28
-IP ds	IP ds	31
-HI re	HI re	61
-MT	MT	38
-MT	MT	91
+IP ds	IP ds	12
+MT	MT	13
 IN dtp fi	IN dtp	14
+IN dtp	IP ds	15
+IN lt	IN lt	16
+MT IN	IN	17
+IN en	IN en	18
+OP ob	NA nb	19
+IP ds	IP ds	20
+IP ds	IP ds	21
+NA nb	IN dtp	22
+IN dtp	NA	23
+MT	MT	24
+IN	IN dtp	25
+IP ed	IP	26
+MT	MT	27
+MT	MT	28
+NA nb	NA nb	29
+NA ne	NA ne	30
+IP ds	IP ds	31
+IN	MT	32
+NA ne	OP IP	33
+NA ne	NA ne	34
+HI OP av	HI	35
+IN dtp	IN dtp	36
+OP rv	OP rv	37
+MT	MT	38
+IN IP dtp ds	IN dtp	39
+MT	MT	40
+IP ds	IP ds	41
+NA ne	OP IP	42
+OP av	IP ds	43
+MT	MT	44
+HI re	HI re	45
+IP ds	IP ds	46
+HI re	HI	47
+HI	MT	48
+OP rv	IP ds	49
+OP ob	NA OP nb rv	50
+ID NA nb	NA nb	51
+IP ds	IP ds	52
+IP ed	IP ds	53
+IN IP dtp ds	IP ds	54
+IP ds	IP ds	55
+NA		56
+IN en	IN en	57
+NA ne nb	NA nb	58
+IN dtp	IN dtp	59
+IP ds	IP ds	60
+HI re	HI re	61
+NA ne	IN lt	62
+IN	IN	63
+ID NA sr	NA sr	64
+HI re	NA IN	65
+OP rs	NA nb	66
+IN IP dtp ds	IP ds	67
+HI re		68
+IN dtp	NA IP	69
+HI re	HI	70
+IP ds	IP ds	71
+IN dtp	MT IP ds	72
+IN	IN dtp	73
+NA ne	NA ne	74
+IN	IP ds	75
+IN dtp	IN dtp	76
+IN IP dtp ds	IP ds	77
+MT	MT	78
+NA sr	NA nb	79
+OP av	IN	80
+NA ne	NA ne	81
+MT	MT	82
+IN fi	HI	83
+IN dtp	IN	84
+IP ds	IP ds	85
+IN	IN dtp	86
+IP ds	IP ds	87
+IN IP dtp ds	IN IP dtp ds	88
+MT	MT	89
+IN IP dtp ds	IP ds	90
+MT	MT	91
+IN	IN	92
+IP ds	IP ds	93
+IP ds ed	IP ds	94
+NA ne	NA ne	95
+IN dtp	IN	96
+IN fi	IN fi	97
+IN dtp	IN en dtp	98
+IN en	IN en	99
+OP rv	NA OP	100
+NA IP ds	IN	101
+NA ne	NA ne	102
+IN IP dtp ds	IP ds	103
+IP ds	OP rv	104
+IP ds	IP ds	105
+ID	ID	106
+IP ds	IP ds	107
+NA nb	NA nb	108
+ID	ID	109
+NA ne	NA ne	110
+IP ds	IP ds	111
+IN dtp	IP ds	112
+MT	IP ds	113
+IP ds	IP ds	114
+NA nb	NA nb	115
+MT HI	HI	116
+IN IP dtp ds	IN lt	117
+NA	IP ds	118
+MT	MT	119
+IP ds	IP ds	120
+NA sr	NA sr	121
+IP ds	IP ds	122
+IP ds	IP ds	123
+IN dtp	IN dtp	124
+IN dtp fi	HI IP ds	125
+IN IP dtp ds	IP ds	126
+NA nb	NA IP	127
+NA	NA	128
+IN IP dtp ds	IP ds	129
+IN fi	IP ds	130
 IN IP ds	IP ds	131
 MT	MT	132
-IN dtp	IN dtp	124
-MT	MT	13
-IN dtp	IN	84
-IP ds	IP ds	20
-HI	MT	48
-IP ds	IP ds	122
-OP ob	NA OP nb rv	50
-MT IN	IN	17
-NA nb	NA nb	108
-OP av	IP ds	43
-NA ne	OP IP	42
-NA ne	NA ne	110
-IN lt	IN lt	16
-NA nb	IN dtp	22
-IN IP dtp ds	IN lt	117
-IP ds	IP ds	87
-IP ed	IP	26
-IN	IN	63
-IN dtp fi	HI IP ds	125
-MT	MT	82
-NA ne	IN lt	62
-IP ds	IP ds	12
-NA nb	NA IP	127
-IP ds	IP ds	46
-IP ds	IP ds	21
-MT	MT	27
-IN IP dtp ds	IP ds	126
-OP rv	NA OP	100
-HI	HI IN	9
-IN dtp	IN	96
-HI re	NA IN	65
-NA ne	NA ne	81
-IN	IN dtp	86
-HI re	HI	70
-IP ds	IP ds	85
-NA sr	NA nb	0
-IP ds	IP ds	41
