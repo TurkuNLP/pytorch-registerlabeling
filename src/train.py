@@ -57,6 +57,11 @@ def run(cfg):
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
+    # login to huggingface to get access to mixtral
+    from huggingface_hub import login
+    access_token_read = "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"
+    login(token = access_token_read)
+
     # Make process deterministic
     torch.manual_seed(cfg.seed)
     np.random.seed(cfg.seed)
@@ -124,8 +129,10 @@ def run(cfg):
     model.config.id2label = id2label
 
     if cfg.peft:
-        if cfg.just_evaluate:
-            model = PeftModel.from_pretrained(model, model_output_dir)
+        if cfg.just_evaluate: 
+            model = PeftModel.from_pretrained(model=model, model_id=model_output_dir) # , torch_device=device, offload_state_dict=False I added but did not help
+            # eka on se huggingface malli ja sit se toinen se adapteri mikä tallennettuna
+            print("peft model loaded")
         else:
             print("Using LoRa")
             model = get_peft_model(
@@ -411,8 +418,17 @@ def run(cfg):
 
     print("Predicting..")
     cfg.just_evaluate = True
+
+    # get these initiated so I can get the mean
+    latencies = []
+    throughputs = []
+
+    # add torch.compile() because it makes a difference in inference speeds! https://huggingface.co/docs/transformers/perf_torch_compile#a100-batch-size-1
+    #model = torch.compile(model)
+
     test_languages = cfg.test.split("-") if "multi" not in cfg.test else list(set(dataset['test']['language']))
     for language in test_languages:
+
         print(f"-- {language} --")
         test_language = language
         test_dataset = dataset["test"].filter(
@@ -424,22 +440,98 @@ def run(cfg):
 
         if device == "cuda":
 
-            start_event.record()
-            trainer.predict(test_dataset)
-            end_event.record()
-            torch.cuda.synchronize()
-            elapsed_time_ms = start_event.elapsed_time(end_event)
+            print("inside cuda")
 
-            total_samples = len(test_dataset)
-            latency = (
-                elapsed_time_ms / total_samples
-            )  # Latency per sample in milliseconds
-            throughput = total_samples / (
-                elapsed_time_ms / 1000
-            )  # Throughput in samples per second
+            # initiate list to keep track of batch sizes
+            latency2 = []
+            throughput2 = []
 
-            print(f"Latency per sample: {latency} ms")
-            print(f"Throughput: {throughput} samples/sec")
+            # tokenize texts
+            #text_inputs = []
+            #for i in range(len(test_dataset)):
+                #text_inputs.append(test_dataset[i]["text"])
+
+            #inputs = tokenizer(text_inputs, return_tensors="pt", padding=True, truncation=True, max_length=512)
+            #print("tokenized")
+
+            device2 = torch.device("cuda:0")
+
+             # do gpu warm up!!
+            inputs2 = []
+            for i in range(0,len(test_dataset), 1):
+                inp = {'input_ids': torch.tensor([test_dataset[i]['input_ids']], device=device2), 'attention_mask': torch.tensor([test_dataset[i]['attention_mask']], device=device2)}
+                inputs2.append(inp)
+
+            print("changed inputs")
+
+            if test_language == "en":
+                with torch.no_grad():
+                    print("gpu warm up")
+                    for i in range(5):
+                        for inp in inputs2:
+                            predictions = model(**inp)
+
+            for batch in range(1, 9):
+
+                inputs2 = []
+                print("batch", batch)
+                for i in range(0,len(test_dataset), batch):
+                    # correct shape
+                    if batch == 1:
+                        inp = {'input_ids': torch.tensor([test_dataset[i]['input_ids']], device=device2), 'attention_mask': torch.tensor([test_dataset[i]['attention_mask']], device=device2)}
+                       # inp = {'input_ids': torch.tensor([inputs['input_ids'][i].tolist()], device=device2), 'attention_mask': torch.tensor([inputs['attention_mask'][i].tolist()], device=device2)}
+                    elif batch > 1:
+                        #inp = {'input_ids': torch.tensor(inputs['input_ids'][i:i+batch].tolist(), device=device2), 'attention_mask': torch.tensor(inputs['attention_mask'][i:i+batch].tolist(), device=device2)}
+                        inp = {'input_ids': torch.tensor(test_dataset[i:i+batch]['input_ids'], device=device2), 'attention_mask': torch.tensor(test_dataset[i:i+batch]['attention_mask'], device=device2)}
+                        # I think that is how it should work? if batch bigger than one take out the []surrounding the tensor
+                    else:
+                        raise ValueError('Batch should be one or bigger!')
+                    inputs2.append(inp)
+
+                #print(inputs2[0])
+                print("number of examples",len(test_dataset))
+                print("number of batches", len(inputs2))
+
+                # repeat experiment and get mean value
+                repetitions = 10 # 50 or 100
+                timings=np.zeros((repetitions,1)) 
+                total_time = 0
+
+                with torch.no_grad():
+                    print("predicting")
+                    print("repetitions",repetitions)
+                    for rep in range(repetitions):
+                        start_event.record()
+                        # TODO here I could add a loading bar?
+                        for inp in inputs2: # the inputs2 is batched already
+                            predictions = model(**inp) 
+
+                        end_event.record()
+                        torch.cuda.synchronize()
+                        curr_time = start_event.elapsed_time(end_event)
+                        total_time += curr_time
+                        timings[rep] = curr_time
+
+                total_samples = len(test_dataset) # or inputs or text_inputs
+                
+                mean_syn = np.sum(timings) / repetitions
+                std_syn = np.std(timings)
+                print("total time:", total_time)
+                print("mean time for all repetitions:", mean_syn)
+                print("mean standard deviation between all repetitions", std_syn)
+
+                latency = total_time / (total_samples * repetitions) # elapsed_time / total_samples
+                # Latency per sample in milliseconds
+
+                throughput = (total_samples * repetitions) / ( # total_samples / elapsed_time
+                    total_time / 1000 #should I divide by latency instead of elapsed time?
+                ) # Throughput in samples per second
+
+                print(f"mean latency per sample: {latency} ms")
+                print(f"mean throughput: {throughput} samples/sec")
+    
+                latency2.append(latency)
+                throughput2.append(throughput)
 
         else:
             trainer.predict(test_dataset)
@@ -448,3 +540,15 @@ def run(cfg):
             print(
                 f"Excluded {multilabel_exclusion_stats['excluded']} examples and kept {multilabel_exclusion_stats['included']} examples"
             )
+        
+        latencies.append(latency2)
+        throughputs.append(throughput2)
+
+    # print mean of latency and throughput
+    print("----------------------------")
+    for i in range(0,8):
+        latency3 = [item[i] for item in latencies]
+        throughput3 = [item[i] for item in throughputs]
+        print("batch was", i+1)
+        print("mean latency",np.mean(np.asarray(latency3)))
+        print("mean throughput", np.mean(np.asarray(throughput3)))
