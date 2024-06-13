@@ -1,0 +1,15 @@
+artifact_uri: file:///scratch/project_2009199/anni/pytorch-registerlabeling/mlruns/0/8b968a8e9ec84783a4201ce695c9cdc3/artifacts
+end_time: 1715011858293
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 8b968a8e9ec84783a4201ce695c9cdc3
+run_name: models/google/mt5-xl/labels_all/en-fi-fr-sv-tr_en-fi-fr-sv-tr/seed_42
+run_uuid: 8b968a8e9ec84783a4201ce695c9cdc3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1715003012085
+status: 3
+tags: []
+user_id: annieske
