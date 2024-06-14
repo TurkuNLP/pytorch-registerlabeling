@@ -186,7 +186,7 @@ def run(cfg):
         packing=False,  # Can make training 5x faster for short sequences.
         args=TrainingArguments(
             output_dir=f"llm/{model_id}",
-            per_device_train_batch_size=2,
+            per_device_train_batch_size=1,
             per_device_eval_batch_size=1,
             gradient_accumulation_steps=4,
             optim="paged_adamw_32bit",
