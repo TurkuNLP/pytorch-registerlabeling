@@ -130,6 +130,7 @@ def run(cfg):
 
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(
+        model_id,
         quantization_config=bnb_config,
         device_map="auto",
         attn_implementation=attn_implementation,
