@@ -64,7 +64,7 @@ Here is the text you will classify (enclosed within ``` and ```):
 
 
 def format_instruct(text):
-    return f"{INSTRUCTION}\n```\n{text}\n```"
+    return f"{INSTRUCTION}\n```\n{text[:3000]}\n```"
 
 
 def evaluate(model, tokenizer, dataset):
@@ -82,7 +82,7 @@ def evaluate(model, tokenizer, dataset):
     for example in tqdm(dataset["text"][:sample]):
 
         messages = [
-            {"role": "user", "content": format_instruct(example)},
+            {"role": "user", "content": format_instruct(example[:3000])},
         ]
 
         prompt = tokenizer.apply_chat_template(
