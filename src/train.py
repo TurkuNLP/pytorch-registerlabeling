@@ -434,6 +434,7 @@ def run(cfg):
         test_dataset = dataset["test"].filter(
             lambda example: example["language"] == language
         )
+        print('filtered language')
 
         if cfg.sample:
             test_dataset = test_dataset.select(range(cfg.sample))
