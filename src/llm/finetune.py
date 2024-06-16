@@ -97,6 +97,7 @@ def evaluate(model, tokenizer, dataset):
             pad_token_id=tokenizer.eos_token_id,
             temperature=0.01,
         )
+        print(outputs)
         response = outputs[0][inputs.shape[-1] :]
         result = tokenizer.decode(response, skip_special_tokens=True)
         print(result)
