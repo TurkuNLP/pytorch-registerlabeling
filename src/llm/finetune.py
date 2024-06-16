@@ -78,7 +78,30 @@ def evaluate(model, tokenizer, dataset):
         binarize_labels(x.split(), "upper")
         for x in list(dataset["label_text"][:sample])
     ]
+    for example in tqdm(dataset["text"][:sample]):
 
+        row_json = [
+            {"role": "user", "content": format_instruct(example)},
+        ]
+        example = tokenizer.apply_chat_template(row_json, tokenize=False)
+
+        inputs = tokenizer(
+            example,
+            return_tensors="pt",
+        ).to("cuda")
+
+        outputs = model.generate(
+            **inputs,
+            max_new_tokens=64,
+            use_cache=True,
+            pad_token_id=tokenizer.eos_token_id,
+            temperature=0.01,
+        )
+        response = outputs[0][inputs.shape[-1] :]
+        result = tokenizer.decode(response, skip_special_tokens=True)
+        print(result)
+        exit()
+    """
     for example in tqdm(dataset["text"][:sample]):
 
         messages = [
@@ -106,7 +129,7 @@ def evaluate(model, tokenizer, dataset):
         )
         pred_label = outputs[0]["generated_text"]
         predictions.append(binarize_labels(pred_label.split(), "upper"))
-
+    """
     predictions = np.array(predictions)
     true_labels = np.array(true_labels)
     precision, recall, f1, _ = precision_recall_fscore_support(
