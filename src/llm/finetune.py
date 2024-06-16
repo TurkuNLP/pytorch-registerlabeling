@@ -100,8 +100,15 @@ def evaluate(model, tokenizer, dataset):
         print(outputs)
         output = tokenizer.decode(outputs[0])
 
-        print(output)
-        exit()
+        try:
+            result = output.split("<|CHATBOT_TOKEN|>")[-1].split(
+                "<|END_OF_TURN_TOKEN|>"
+            )[0]
+        except:
+            result = ""
+
+        predictions.append(binarize_labels(result.split(), "upper"))
+
     """
     for example in tqdm(dataset["text"][:sample]):
 
