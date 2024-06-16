@@ -38,6 +38,13 @@ attn_implementation = "eager"
 
 model_id = "CohereForAI/aya-23-8B"
 
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_compute_dtype=torch_dtype,
+    bnb_4bit_use_double_quant=True,
+)
+
 INSTRUCTION = """Your task is to classify web texts into one or more linguistic register categories. The categories are as follows:
 
 MT: The text is machine translated or generated from a template.
@@ -87,6 +94,8 @@ def evaluate(model, tokenizer, dataset):
             tokenizer=tokenizer,
             torch_dtype=torch.float16,
             device_map="auto",
+            batch_size=1,
+            model_kwargs={"quantization_config": quantization_config},
         )
 
         outputs = pipe(
@@ -120,13 +129,6 @@ def evaluate(model, tokenizer, dataset):
 
 
 def run(cfg):
-
-    bnb_config = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch_dtype,
-        bnb_4bit_use_double_quant=True,
-    )
 
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(
