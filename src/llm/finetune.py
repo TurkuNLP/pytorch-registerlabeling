@@ -182,7 +182,7 @@ def run(cfg):
     dataset = get_dataset(cfg)
 
     if cfg.just_evaluate:
-        model = PeftModel.from_pretrained(model, f"llm/{model_id}")
+        model = PeftModel.from_pretrained(model, f"llm_multi/{model_id}")
         evaluate(model, tokenizer, dataset)
         exit()
 
@@ -220,7 +220,7 @@ def run(cfg):
         dataset_num_proc=2,
         packing=False,  # Can make training 5x faster for short sequences.
         args=TrainingArguments(
-            output_dir=f"llm/{model_id}",
+            output_dir=f"llm_multi/{model_id}",
             per_device_train_batch_size=1,
             per_device_eval_batch_size=1,
             gradient_accumulation_steps=4,
@@ -258,5 +258,5 @@ def run(cfg):
     print(f"Peak reserved memory % of max memory = {used_percentage} %.")
     print(f"Peak reserved memory for training % of max memory = {lora_percentage} %.")
 
-    model.save_pretrained(f"llm/{model_id}")  # Local saving
-    tokenizer.save_pretrained(f"llm/{model_id}")
+    model.save_pretrained(f"llm_multi/{model_id}")  # Local saving
+    tokenizer.save_pretrained(f"llm_multi/{model_id}")

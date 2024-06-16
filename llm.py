@@ -18,7 +18,7 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--task", default="unsloth_finetune")
     parser.add_argument("--labels", default="upper")
-    parser.add_argument("--train", default="en")
+    parser.add_argument("--train", default="en-fi-fr-sv-tr")
     parser.add_argument("--dev", default="")
     parser.add_argument("--test", default="")
     parser.add_argument("--batch_size", type=int, default=8)
