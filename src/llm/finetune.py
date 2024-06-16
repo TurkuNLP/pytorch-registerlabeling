@@ -45,7 +45,7 @@ bnb_config = BitsAndBytesConfig(
     bnb_4bit_use_double_quant=True,
 )
 
-INSTRUCTION = """Your task is to classify web texts into one or more linguistic register categories. The categories are as follows:
+INSTRUCTION = """Your task is to classify multilingual web texts into one or more linguistic register categories. The categories are as follows:
 
 MT: The text is machine translated or generated from a template.
 LY: The text is lyrical (e.g. songs or poems).
