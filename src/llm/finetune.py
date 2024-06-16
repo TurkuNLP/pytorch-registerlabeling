@@ -98,9 +98,9 @@ def evaluate(model, tokenizer, dataset):
             temperature=0.01,
         )
         print(outputs)
-        response = outputs[0][inputs.shape[-1] :]
-        result = tokenizer.decode(response, skip_special_tokens=True)
-        print(result)
+        output = tokenizer.decode(outputs[0])
+
+        print(output)
         exit()
     """
     for example in tqdm(dataset["text"][:sample]):
