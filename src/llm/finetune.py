@@ -97,7 +97,7 @@ def evaluate(model, tokenizer, dataset):
             pad_token_id=tokenizer.eos_token_id,
             temperature=0.01,
         )
-        print(outputs)
+
         output = tokenizer.decode(outputs[0])
 
         try:
@@ -106,6 +106,8 @@ def evaluate(model, tokenizer, dataset):
             )[0]
         except:
             result = ""
+
+        print(result)
 
         predictions.append(binarize_labels(result.split(), "upper"))
 
