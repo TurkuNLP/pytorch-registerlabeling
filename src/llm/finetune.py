@@ -95,7 +95,7 @@ def evaluate(model, tokenizer, dataset):
             torch_dtype=torch.float16,
             device_map="auto",
             batch_size=1,
-            model_kwargs={"quantization_config": quantization_config},
+            model_kwargs={"quantization_config": bnb_config},
         )
 
         outputs = pipe(
