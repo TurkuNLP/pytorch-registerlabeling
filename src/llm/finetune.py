@@ -154,7 +154,7 @@ def run(cfg):
 
     if cfg.just_evaluate:
         model = PeftModel.from_pretrained(model, f"llm_multi/{model_id}")
-        evaluate(model, tokenizer, dataset, cfg.train)
+        evaluate(model, tokenizer, dataset, cfg.train.split("-"))
         exit()
 
     dataset = dataset["train"].map(
