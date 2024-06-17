@@ -67,97 +67,68 @@ def format_instruct(text):
     return f"{INSTRUCTION}\n```\n{text[:3000]}\n```"
 
 
-def evaluate(model, tokenizer, dataset):
+def evaluate(model, tokenizer, dataset, languages):
 
     dataset = dataset["test"]
 
     sample = 10000000
 
-    predictions = []
-    true_labels = [
-        binarize_labels(x.split(), "upper")
-        for x in list(dataset["label_text"][:sample])
-    ]
-    for example in tqdm(dataset["text"][:sample]):
+    for language in languages:
+        print(f"Evaluating {language}")
+        test_dataset = dataset.filter(lambda example: example["language"] == language)
 
-        row_json = [
-            {"role": "user", "content": format_instruct(example)},
-        ]
-        example = tokenizer.apply_chat_template(row_json, tokenize=False)
+        for example in tqdm(test_dataset["text"][:sample]):
 
-        inputs = tokenizer(
-            example,
-            return_tensors="pt",
-        ).to("cuda")
+            row_json = [
+                {"role": "user", "content": format_instruct(example)},
+            ]
+            example = tokenizer.apply_chat_template(row_json, tokenize=False)
 
-        outputs = model.generate(
-            **inputs,
-            max_new_tokens=64,
-            use_cache=True,
-            pad_token_id=tokenizer.eos_token_id,
-            temperature=0.01,
+            inputs = tokenizer(
+                example,
+                return_tensors="pt",
+            ).to("cuda")
+
+            outputs = model.generate(
+                **inputs,
+                max_new_tokens=64,
+                use_cache=True,
+                pad_token_id=tokenizer.eos_token_id,
+                temperature=0.01,
+            )
+
+            output = tokenizer.decode(outputs[0])
+
+            try:
+                result = output.split("<|CHATBOT_TOKEN|>")[-1].split(
+                    "<|END_OF_TURN_TOKEN|>"
+                )[0]
+            except:
+                result = ""
+
+            print(result)
+
+            predictions.append(binarize_labels(result.split(), "upper"))
+
+        predictions = np.array(predictions)
+        true_labels = np.array(true_labels)
+        precision, recall, f1, _ = precision_recall_fscore_support(
+            true_labels, predictions, average="micro"
         )
+        accuracy = accuracy_score(true_labels, predictions)
 
-        output = tokenizer.decode(outputs[0])
+        metrics = {
+            "f1": f1,
+            "f1_macro": f1_score(
+                true_labels, predictions, average="macro", zero_division=np.nan
+            ),
+            "precision": precision,
+            "recall": recall,
+            "accuracy": accuracy,
+        }
 
-        try:
-            result = output.split("<|CHATBOT_TOKEN|>")[-1].split(
-                "<|END_OF_TURN_TOKEN|>"
-            )[0]
-        except:
-            result = ""
+        print(metrics)
 
-        print(result)
-
-        predictions.append(binarize_labels(result.split(), "upper"))
-
-    """
-    for example in tqdm(dataset["text"][:sample]):
-
-        messages = [
-            {"role": "user", "content": format_instruct(example[:3000])},
-        ]
-
-        prompt = tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True
-        )
-        pipe = pipeline(
-            "text-generation",
-            model=model,
-            tokenizer=tokenizer,
-            torch_dtype=torch.float16,
-            device_map="auto",
-            batch_size=1,
-            model_kwargs={"quantization_config": bnb_config},
-        )
-
-        outputs = pipe(
-            prompt,
-            max_new_tokens=120,
-            do_sample=True,
-            temperature=0.01,
-        )
-        pred_label = outputs[0]["generated_text"]
-        predictions.append(binarize_labels(pred_label.split(), "upper"))
-    """
-    predictions = np.array(predictions)
-    true_labels = np.array(true_labels)
-    precision, recall, f1, _ = precision_recall_fscore_support(
-        true_labels, predictions, average="micro"
-    )
-    accuracy = accuracy_score(true_labels, predictions)
-
-    metrics = {
-        "f1": f1,
-        "f1_macro": f1_score(
-            true_labels, predictions, average="macro", zero_division=np.nan
-        ),
-        "precision": precision,
-        "recall": recall,
-        "accuracy": accuracy,
-    }
-
-    print(metrics)
     exit()
 
 
@@ -182,8 +153,8 @@ def run(cfg):
     dataset = get_dataset(cfg)
 
     if cfg.just_evaluate:
-        # model = PeftModel.from_pretrained(model, f"llm_multi/{model_id}")
-        evaluate(model, tokenizer, dataset)
+        model = PeftModel.from_pretrained(model, f"llm_multi/{model_id}")
+        evaluate(model, tokenizer, dataset, cfg.train)
         exit()
 
     dataset = dataset["train"].map(
