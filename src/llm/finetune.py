@@ -75,8 +75,13 @@ def evaluate(model, tokenizer, dataset, languages):
 
     for language in languages:
         print(f"Evaluating {language}")
-        test_dataset = dataset.filter(lambda example: example["language"] == language)
+        predictions = []
 
+        test_dataset = dataset.filter(lambda example: example["language"] == language)
+        true_labels = [
+            binarize_labels(x.split(), "upper")
+            for x in list(test_dataset["label_text"][:sample])
+        ]
         for example in tqdm(test_dataset["text"][:sample]):
 
             row_json = [
