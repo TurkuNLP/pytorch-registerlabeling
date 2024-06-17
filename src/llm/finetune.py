@@ -71,7 +71,7 @@ def evaluate(model, tokenizer, dataset):
 
     dataset = dataset["test"]
 
-    sample = 1000
+    sample = 10000000
 
     predictions = []
     true_labels = [
