@@ -182,7 +182,7 @@ def run(cfg):
     dataset = get_dataset(cfg)
 
     if cfg.just_evaluate:
-        model = PeftModel.from_pretrained(model, f"llm_multi/{model_id}")
+        # model = PeftModel.from_pretrained(model, f"llm_multi/{model_id}")
         evaluate(model, tokenizer, dataset)
         exit()
 
