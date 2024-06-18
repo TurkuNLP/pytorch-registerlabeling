@@ -432,7 +432,8 @@ def run(cfg):
         print(f"-- {language} --")
         test_language = language
         test_dataset = dataset["test"].filter(
-            lambda example: example["language"] == language
+            lambda example: example["language"] == language,
+            num_proc=None
         )
         print('filtered language')
 
