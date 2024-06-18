@@ -431,10 +431,11 @@ def run(cfg):
 
         print(f"-- {language} --")
         test_language = language
-        test_dataset = dataset["test"].filter(
-            lambda example: example["language"] == language,
-            num_proc=None
-        )
+        #test_dataset = dataset["test"].filter(
+        #    lambda example: example["language"] == language,
+        #    num_proc=None
+        #)
+        test_dataset = dataset 
         print('filtered language')
 
         if cfg.sample:
