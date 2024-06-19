@@ -435,7 +435,7 @@ def run(cfg):
         #    lambda example: example["language"] == language,
         #    num_proc=None
         #)
-        test_dataset = dataset 
+        test_dataset = dataset['test']
         print('filtered language')
 
         if cfg.sample:
