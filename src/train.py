@@ -119,7 +119,7 @@ def run(cfg):
         torch_dtype=torch_dtype,
         use_flash_attention_2=cfg.fa2,
         quantization_config=nf4_config if cfg.nf4 else None,
-        device_map="auto" if "mixtral" in cfg.model_name.lower() else None,
+        device_map="auto" if "mixtrsal" in cfg.model_name.lower() else None,
     )
 
     label2id = {label: id for id, label in enumerate(label_scheme)}
