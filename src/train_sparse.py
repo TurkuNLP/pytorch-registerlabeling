@@ -102,7 +102,6 @@ class SparsePooledRobertaClassificationHead(nn.Module):
         super().__init__()
         self.encoder = nn.Linear(config.hidden_size, 512)
         self.decoder = nn.Linear(512, config.hidden_size)
-        self.pooling = pooling
         classifier_dropout = (
             config.classifier_dropout
             if config.classifier_dropout is not None
@@ -195,7 +194,6 @@ def run(cfg):
         base_model_path,
         torch_dtype=torch_dtype,
         device_map=None,
-        pooling="mean",
         num_labels=len(label_scheme),
     )
 
