@@ -56,6 +56,9 @@ class SparseXLMRoberta(nn.Module):
 
 def run(cfg):
 
+    test_language = ""  # Used when predicting
+    test_dataset = []  # Used when predicting
+
     # Make process deterministic
     torch.manual_seed(cfg.seed)
     np.random.seed(cfg.seed)
@@ -329,10 +332,12 @@ def run(cfg):
 
     for language in cfg.test.split("-"):
 
+        test_language = language
+
         print(f"-- {language} --")
 
-        trainer.predict(
-            dataset["test"].filter(
-                lambda example: example["language"] == language,
-            )
+        test_dataset = dataset["test"].filter(
+            lambda example: example["language"] == language,
         )
+
+        trainer.predict(test_dataset)
