@@ -86,14 +86,16 @@ class SparsePooledRobertaForSequenceClassification(XLMRobertaForSequenceClassifi
         decoded = self.classifier.decoder(encoded)
         logits = self.classifier.classify(encoded)
 
-        return DotDict(
-            {
-                "logits": logits,
-                "encoded": encoded,
-                "decoded": decoded,
-                "hidden_states": outputs.hidden_states,
-                "attentions": outputs.attentions,
-            }
+        ModelOutputs = namedtuple(
+            "ModelOutputs",
+            ["logits", "encoded", "decoded", "hidden_states", "attentions"],
+        )
+        return ModelOutputs(
+            logits=logits,
+            encoded=encoded,
+            decoded=decoded,
+            hidden_states=outputs.hidden_states,
+            attentions=outputs.attentions,
         )
 
 
