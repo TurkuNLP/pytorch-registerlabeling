@@ -42,8 +42,8 @@ class SparseXLMRoberta(nn.Module):
     def __init__(self, base_model, num_labels):
         super(SparseXLMRoberta, self).__init__()
         self.xlm_roberta = base_model
-        self.encoder = nn.Linear(768, 512)  # Example dimensions
-        self.decoder = nn.Linear(512, 768)
+        self.encoder = nn.Linear(1024, 512)  # Example dimensions
+        self.decoder = nn.Linear(512, 1024)
         self.classifier = nn.Linear(512, num_labels)  # Adjust num_labels as necessary
 
     def forward(self, input_ids, attention_mask):
