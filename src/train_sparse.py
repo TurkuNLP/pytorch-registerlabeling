@@ -6,6 +6,8 @@ import random
 import shutil
 from pydoc import locate
 
+from collections import namedtuple
+
 import numpy as np
 import torch
 from torch import nn
@@ -51,7 +53,8 @@ class SparseXLMRoberta(nn.Module):
         encoded = torch.relu(self.encoder(outputs.last_hidden_state))
         decoded = self.decoder(encoded)
         logits = self.classifier(encoded)
-        return logits, encoded, decoded
+        ModelOutputs = namedtuple("ModelOutputs", ["logits", "encoded", "decoded"])
+        return ModelOutputs(logits=logits, encoded=encoded, decoded=decoded)
 
 
 def run(cfg):
