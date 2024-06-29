@@ -14,9 +14,7 @@ if __name__ == "__main__":
     parser.add_argument("--seed", "-s", type=int, default=42)
     parser.add_argument("--method", default="train")
     parser.add_argument("--model_name", default="xlm-roberta-large")
-    parser.add_argument(
-        "--model_output", default="../../pytorch-registerlabeling/models"
-    )  # changed from just models to erik's directory
+    parser.add_argument("--model_output", default="models")
     parser.add_argument("--predictions_output", default="predictions")
     parser.add_argument("--path_suffix", default="")
     parser.add_argument("--config", "-c", action=ActionConfigFile)
