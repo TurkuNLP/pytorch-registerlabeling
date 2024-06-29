@@ -25,6 +25,7 @@ from transformers import (
     AutoTokenizer,
     EarlyStoppingCallback,
     RobertaForSequenceClassification,
+    XLMRobertaForSequenceClassification,
     Trainer,
     TrainingArguments,
 )
@@ -47,7 +48,7 @@ class DotDict(dict):
             return self[key]
 
 
-class SparsePooledRobertaForSequenceClassification(RobertaForSequenceClassification):
+class SparsePooledRobertaForSequenceClassification(XLMRobertaForSequenceClassification):
     def __init__(self, config, pooling):
         super().__init__(config)
         self.classifier = SparsePooledRobertaClassificationHead(config, pooling)
