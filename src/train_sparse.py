@@ -49,9 +49,9 @@ class DotDict(dict):
 
 
 class SparsePooledRobertaForSequenceClassification(XLMRobertaForSequenceClassification):
-    def __init__(self, config, pooling):
+    def __init__(self, config):
         super().__init__(config)
-        self.classifier = SparsePooledRobertaClassificationHead(config, pooling)
+        self.classifier = SparsePooledRobertaClassificationHead(config)
 
     def forward(
         self,
@@ -64,6 +64,7 @@ class SparsePooledRobertaForSequenceClassification(XLMRobertaForSequenceClassifi
         output_attentions=None,
         output_hidden_states=None,
         return_dict=None,
+        labels=None,
     ):
         return_dict = (
             return_dict if return_dict is not None else self.config.use_return_dict
@@ -97,7 +98,7 @@ class SparsePooledRobertaForSequenceClassification(XLMRobertaForSequenceClassifi
 
 
 class SparsePooledRobertaClassificationHead(nn.Module):
-    def __init__(self, config, pooling):
+    def __init__(self, config):
         super().__init__()
         self.encoder = nn.Linear(config.hidden_size, 512)
         self.decoder = nn.Linear(512, config.hidden_size)
@@ -113,10 +114,7 @@ class SparsePooledRobertaClassificationHead(nn.Module):
 
     def forward(self, features, **kwargs):
         encoded = torch.relu(self.encoder(features))
-        if self.pooling == "max":
-            pooled_output, _ = encoded.max(dim=1)
-        else:
-            pooled_output = encoded.mean(dim=1)
+        pooled_output = encoded.mean(dim=1)
         x = self.dropout(pooled_output)
         x = self.dense(x)
         x = torch.tanh(x)
