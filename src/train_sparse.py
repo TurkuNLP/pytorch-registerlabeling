@@ -49,17 +49,23 @@ class SparseXLMRoberta(nn.Module):
         self.classifier = nn.Linear(512, num_labels)  # Adjust num_labels as necessary
 
     def forward(self, input_ids, attention_mask):
-        outputs = self.xlm_roberta(input_ids=input_ids, attention_mask=attention_mask)
-        encoded = torch.relu(self.encoder(outputs.last_hidden_state))
+        base_outputs = self.xlm_roberta(
+            input_ids=input_ids, attention_mask=attention_mask
+        )
+        last_hidden_state = base_outputs.last_hidden_state
+        encoded = torch.relu(self.encoder(last_hidden_state))
         decoded = self.decoder(encoded)
-        # Pooling the encoded output (mean pooling as an example)
-        pooled_output = torch.mean(
-            encoded, dim=1
-        )  # Pooling over the sequence length dimension
+        logits = self.classifier(torch.mean(encoded, dim=1))  # Pooling added
 
-        logits = self.classifier(pooled_output)
-        ModelOutputs = namedtuple("ModelOutputs", ["logits", "encoded", "decoded"])
-        return ModelOutputs(logits=logits, encoded=encoded, decoded=decoded)
+        ModelOutputs = namedtuple(
+            "ModelOutputs", ["logits", "encoded", "decoded", "last_hidden_state"]
+        )
+        return ModelOutputs(
+            logits=logits,
+            encoded=encoded,
+            decoded=decoded,
+            last_hidden_state=last_hidden_state,
+        )
 
 
 def run(cfg):
