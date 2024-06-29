@@ -35,6 +35,7 @@ if __name__ == "__main__":
     parser.add_argument("--save_path_suffix", default="")
     parser.add_argument("--cachedir", default=".ig_cache")
     parser.add_argument("--sample_subset", action="store_true")
+    parser.add_argument("--custom_split")
 
     cfg = parser.parse_args()
 
