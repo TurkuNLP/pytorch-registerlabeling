@@ -52,7 +52,12 @@ class SparseXLMRoberta(nn.Module):
         outputs = self.xlm_roberta(input_ids=input_ids, attention_mask=attention_mask)
         encoded = torch.relu(self.encoder(outputs.last_hidden_state))
         decoded = self.decoder(encoded)
-        logits = self.classifier(encoded)
+        # Pooling the encoded output (mean pooling as an example)
+        pooled_output = torch.mean(
+            encoded, dim=1
+        )  # Pooling over the sequence length dimension
+
+        logits = self.classifier(pooled_output)
         ModelOutputs = namedtuple("ModelOutputs", ["logits", "encoded", "decoded"])
         return ModelOutputs(logits=logits, encoded=encoded, decoded=decoded)
 
