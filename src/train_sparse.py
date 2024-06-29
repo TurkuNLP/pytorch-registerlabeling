@@ -48,7 +48,7 @@ class SparseXLMRoberta(nn.Module):
         self.decoder = nn.Linear(512, 1024)
         self.classifier = nn.Linear(512, num_labels)  # Adjust num_labels as necessary
 
-    def forward(self, input_ids, attention_mask):
+    def forward(self, input_ids, attention_mask, labels=None):
         base_outputs = self.xlm_roberta(
             input_ids=input_ids, attention_mask=attention_mask
         )
