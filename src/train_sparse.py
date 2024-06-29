@@ -164,7 +164,7 @@ def run(cfg):
             sparsity_loss = torch.mean(torch.abs(encoded))
 
             # Combine losses
-            total_loss = loss + self.args.beta * (reconstruction_loss + sparsity_loss)
+            total_loss = loss + 0.01 * (reconstruction_loss + sparsity_loss)
 
             return (total_loss, outputs) if return_outputs else total_loss
 
