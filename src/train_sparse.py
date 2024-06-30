@@ -352,7 +352,7 @@ def run(cfg):
             eval_steps=1,
             save_strategy="steps",
             logging_strategy="steps",
-            gradient_accumulation_steps=cfg.grad_acc_steps,
+            # gradient_accumulation_steps=cfg.grad_acc_steps,
             eval_accumulation_steps=8,
             metric_for_best_model="eval_loss",
             load_best_model_at_end=True,
