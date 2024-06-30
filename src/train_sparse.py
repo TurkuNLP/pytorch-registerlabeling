@@ -92,6 +92,7 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
         decoded_output = self.decoder2(encoded_output)
         print(decoded_output.shape)
         logits = self.classifier(sequence_output)
+        print(logits.shape)
 
         loss = None
         if labels is not None:
