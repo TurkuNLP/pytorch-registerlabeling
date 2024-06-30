@@ -30,6 +30,8 @@ from transformers import (
     TrainingArguments,
 )
 
+from transformers.modeling_outputs import SequenceClassifierOutput
+
 from .data import balanced_dataloader, get_dataset
 from .labels import (
     decode_binary_labels,
@@ -85,13 +87,14 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
         )
 
         sequence_output = outputs[0]
-        # encoded_output = torch.relu(self.encoder(sequence_output))
-        # decoded_output = self.decoder(encoded_output)
+        encoded_output = torch.relu(self.encoder(sequence_output))
+        decoded_output = self.decoder(encoded_output)
         logits = self.classifier(sequence_output)
 
         loss = None
         if labels is not None:
             print("Error! labels")
+            exit()
 
         print(f"Return dict: {return_dict}")
 
@@ -99,15 +102,13 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
             output = (logits,) + outputs[2:]
             return ((loss,) + output) if loss is not None else output
 
-        return DotDict(
-            {
-                "loss": loss,
-                "logits": logits,
-                "hidden_state": outputs.hidden_states,
-                "attentions": outputs.attentions,
-                # "encoded": encoded_output,
-                # "decoded": decoded_output,
-            }
+        return SequenceClassifierOutput(
+            loss=loss,
+            logits=logits,
+            hidden_states=outputs.hidden_states,
+            attentions=outputs.attentions,
+            encoded=encoded_output,
+            decoded=decoded_output,
         )
 
 
@@ -155,7 +156,7 @@ def run(cfg):
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     dataset = get_dataset(cfg, tokenizer)
 
-    model = XLMRobertaForSequenceClassification.from_pretrained(
+    model = SparseXLMRobertaForSequenceClassification.from_pretrained(
         base_model_path,
         torch_dtype=torch_dtype,
         device_map=None,
@@ -193,8 +194,7 @@ def run(cfg):
         def compute_loss(self, model, inputs, return_outputs=False):
             labels = inputs.pop("labels")
             outputs = model(**inputs)
-            # logits, encoded, decoded = outputs.logits, outputs.encoded, outputs.decoded
-            logits = outputs.logits
+            logits, encoded, decoded = outputs.logits, outputs.encoded, outputs.decoded
 
             # Classification loss
             loss_fct = nn.BCEWithLogitsLoss()
