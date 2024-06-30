@@ -198,7 +198,7 @@ def run(cfg):
             loss = loss_fct(logits, labels.float())
 
             # Reconstruction loss
-            reconstruction_loss = torch.mean((outputs.hidden_states[-1] - decoded) ** 2)
+            reconstruction_loss = torch.mean((outputs.hidden_state[-1] - decoded) ** 2)
 
             # Sparsity loss
             sparsity_loss = torch.mean(torch.abs(encoded))
