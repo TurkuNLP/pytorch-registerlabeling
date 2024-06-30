@@ -62,6 +62,7 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
         super().__init__(config)
         self.encoder2 = nn.Linear(config.hidden_size, 512)
         self.decoder2 = nn.Linear(512, config.hidden_size)
+        self.classifier = PoolingXLMRobertaClassificationHead(config)
 
     def forward(
         self,
@@ -115,6 +116,22 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
             encoded=encoded_output,
             decoded=decoded_output,
         )
+
+
+# Copied from transformers.models.roberta.modeling_roberta.RobertaClassificationHead with Roberta->XLMRoberta
+class PoolingXLMRobertaClassificationHead(nn.Module):
+
+    def __init__(self, config):
+        super().__init__()
+
+    def forward(self, features, **kwargs):
+        x = features.mean(dim=1)
+        x = self.dropout(x)
+        x = self.dense(x)
+        x = torch.tanh(x)
+        x = self.dropout(x)
+        x = self.out_proj(x)
+        return x
 
 
 def run(cfg):
