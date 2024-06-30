@@ -51,7 +51,7 @@ from .labels import (
 class SequenceClassifierOutput(ModelOutput):
     loss: torch.FloatTensor = None
     logits: torch.FloatTensor = None
-    hidden_states: torch.FloatTensor = None
+    last_hidden_state: torch.FloatTensor = None
     attentions: torch.FloatTensor = None
     encoded: torch.FloatTensor = None
     decoded: torch.FloatTensor = None
@@ -111,7 +111,7 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
         return SequenceClassifierOutput(
             loss=loss,
             logits=logits,
-            hidden_states=outputs.hidden_states,
+            last_hidden_state=outputs.hidden_states[-1],
             attentions=outputs.attentions,
             encoded=encoded_output,
             decoded=decoded_output,
@@ -230,7 +230,7 @@ def run(cfg):
             loss = loss_fct(logits, labels.float())
 
             # Reconstruction loss
-            reconstruction_loss = torch.mean((outputs.hidden_states[-1] - decoded) ** 2)
+            reconstruction_loss = torch.mean((outputs.last_hidden_state - decoded) ** 2)
 
             # Sparsity loss
             sparsity_loss = torch.mean(torch.abs(encoded))
