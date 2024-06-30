@@ -122,7 +122,7 @@ class PoolingXLMRobertaClassificationHead(nn.Module):
 
     def __init__(self, config):
         super().__init__()
-        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
+        self.dense = nn.Linear(512, 512)
         classifier_dropout = (
             config.classifier_dropout
             if config.classifier_dropout is not None
