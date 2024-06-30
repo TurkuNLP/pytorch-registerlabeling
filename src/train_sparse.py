@@ -155,7 +155,7 @@ def run(cfg):
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     dataset = get_dataset(cfg, tokenizer)
 
-    model = SparseXLMRobertaForSequenceClassification.from_pretrained(
+    model = XLMRobertaForSequenceClassification.from_pretrained(
         base_model_path,
         torch_dtype=torch_dtype,
         device_map=None,
