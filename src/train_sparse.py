@@ -93,6 +93,8 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
         if labels is not None:
             print("Error! labels")
 
+        print(f"Return dict: {return_dict}")
+
         if not return_dict:
             output = (logits,) + outputs[2:]
             return ((loss,) + output) if loss is not None else output
@@ -358,7 +360,7 @@ def run(cfg):
             load_best_model_at_end=True,
             save_total_limit=2,
             tf32=True if torch.cuda.is_available() else False,
-            group_by_length=True,
+            # group_by_length=True,
             report_to=None,
         ),
         train_dataset=dataset.get("train", []),
