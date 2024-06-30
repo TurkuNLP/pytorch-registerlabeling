@@ -63,12 +63,12 @@ class SparsePooledRobertaForSequenceClassification(XLMRobertaForSequenceClassifi
         inputs_embeds=None,
         output_attentions=None,
         output_hidden_states=None,
-        # return_dict=None,
+        return_dict=None,
         labels=None,
     ):
-        # return_dict = (
-        #    return_dict if return_dict is not None else self.config.use_return_dict
-        # )
+        return_dict = (
+            return_dict if return_dict is not None else self.config.use_return_dict
+        )
 
         outputs = self.roberta(
             input_ids,
@@ -79,12 +79,15 @@ class SparsePooledRobertaForSequenceClassification(XLMRobertaForSequenceClassifi
             inputs_embeds=inputs_embeds,
             output_attentions=output_attentions,
             output_hidden_states=True,
-            # return_dict=return_dict,
+            return_dict=return_dict,
         )
 
         encoded = self.classifier.encoder(outputs[0])
         decoded = self.classifier.decoder(encoded)
         logits = self.classifier.classify(encoded)
+
+        if not return_dict:
+            return None, logits, None
 
         return DotDict(
             {
