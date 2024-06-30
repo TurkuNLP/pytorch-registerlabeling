@@ -96,7 +96,7 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
         sequence_output = outputs[0]
         encoded_output = torch.relu(self.encoder2(sequence_output))
         decoded_output = self.decoder2(encoded_output)
-        logits = self.classifier(sequence_output)
+        logits = self.classifier(encoded_output)
 
         loss = None
         if labels is not None:
