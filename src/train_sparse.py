@@ -101,8 +101,7 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
         loss = None
         if labels is not None:
             print("Error! labels")
-
-        print(f"Return dict: {return_dict}")
+            exit()
 
         if not return_dict:
             output = (logits,) + outputs[2:]
