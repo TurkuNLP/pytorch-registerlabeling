@@ -209,15 +209,15 @@ def run(cfg):
             # Classification loss
             loss_fct = nn.BCEWithLogitsLoss()
             loss = loss_fct(logits, labels.float())
-            total_loss = loss
+
             # Reconstruction loss
-            # reconstruction_loss = torch.mean((outputs.hidden_states[-1] - decoded) ** 2)
+            reconstruction_loss = torch.mean((outputs.hidden_states[-1] - decoded) ** 2)
 
             # Sparsity loss
-            # sparsity_loss = torch.mean(torch.abs(encoded))
+            sparsity_loss = torch.mean(torch.abs(encoded))
 
             # Combine losses
-            # total_loss = loss + 0.01 * (reconstruction_loss + sparsity_loss)
+            total_loss = loss + 0.01 * (reconstruction_loss + sparsity_loss)
 
             return (total_loss, outputs) if return_outputs else total_loss
 
