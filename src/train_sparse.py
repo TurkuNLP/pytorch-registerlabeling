@@ -80,7 +80,7 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
             output_attentions=output_attentions,
-            output_hidden_states=output_hidden_states,
+            output_hidden_states=True,
             return_dict=return_dict,
         )
 
