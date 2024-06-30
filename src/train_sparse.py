@@ -59,7 +59,7 @@ class SequenceClassifierOutput(ModelOutput):
 
 class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassification):
     def __init__(self, config):
-        super().__init__(config)
+        super(SparseXLMRobertaForSequenceClassification).__init__(config)
         self.encoder2 = nn.Linear(config.hidden_size, 512)
         self.decoder2 = nn.Linear(512, config.hidden_size)
         self.classifier = PoolingXLMRobertaClassificationHead(config)
@@ -121,7 +121,7 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
 class PoolingXLMRobertaClassificationHead(nn.Module):
 
     def __init__(self, config):
-        super().__init__()
+        super(PoolingXLMRobertaClassificationHead).__init__()
         self.dense = nn.Linear(config.hidden_size, config.hidden_size)
         classifier_dropout = (
             config.classifier_dropout
