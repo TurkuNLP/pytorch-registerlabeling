@@ -129,7 +129,7 @@ class PoolingXLMRobertaClassificationHead(nn.Module):
             else config.hidden_dropout_prob
         )
         self.dropout = nn.Dropout(classifier_dropout)
-        self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
+        self.out_proj = nn.Linear(512, config.num_labels)
 
     def forward(self, features, **kwargs):
         x = features.mean(dim=1)
