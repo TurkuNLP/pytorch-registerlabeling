@@ -193,7 +193,8 @@ def run(cfg):
         def compute_loss(self, model, inputs, return_outputs=False):
             labels = inputs.pop("labels")
             outputs = model(**inputs)
-            logits, encoded, decoded = outputs.logits, outputs.encoded, outputs.decoded
+            # logits, encoded, decoded = outputs.logits, outputs.encoded, outputs.decoded
+            logits = outputs.logits
 
             # Classification loss
             loss_fct = nn.BCEWithLogitsLoss()
