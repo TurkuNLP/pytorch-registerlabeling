@@ -49,12 +49,12 @@ from .labels import (
 
 @dataclass
 class SequenceClassifierOutput(ModelOutput):
-    loss = None
-    logits = None
-    hidden_states = None
-    attentions = None
-    encoded = None
-    decoded = None
+    loss: torch.FloatTensor = None
+    logits: torch.FloatTensor = None
+    hidden_states: torch.FloatTensor = None
+    attentions: torch.FloatTensor = None
+    encoded: torch.FloatTensor = None
+    decoded: torch.FloatTensor = None
 
 
 class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassification):
