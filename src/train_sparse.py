@@ -7,6 +7,10 @@ import shutil
 from collections import namedtuple
 from pydoc import locate
 
+from transformers.modeling_outputs import ModelOutput
+
+from dataclasses import dataclass
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -43,10 +47,14 @@ from .labels import (
 )
 
 
-class DotDict(dict):
-    def __getattr__(self, key):
-        if key in self:
-            return self[key]
+@dataclass
+class SequenceClassifierOutput(ModelOutput):
+    loss = None
+    logits = None
+    hidden_states = None
+    attentions = None
+    encoded = None
+    decoded = None
 
 
 class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassification):
@@ -104,15 +112,13 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
             output = (logits,) + outputs[2:]
             return ((loss,) + output) if loss is not None else output
 
-        return DotDict(
-            {
-                "loss": loss,
-                "logits": logits,
-                "hidden_state": outputs.hidden_states,
-                "attentions": outputs.attentions,
-                "encoded": encoded_output,
-                "decoded": decoded_output,
-            }
+        return SequenceClassifierOutput(
+            loss=loss,
+            logits=logits,
+            hidden_states=outputs.hidden_states,
+            attentions=outputs.attentions,
+            encoded=encoded_output,
+            decoded=decoded_output,
         )
 
 
@@ -205,7 +211,7 @@ def run(cfg):
             loss = loss_fct(logits, labels.float())
             total_loss = loss
             # Reconstruction loss
-            # reconstruction_loss = torch.mean((outputs.hidden_state[-1] - decoded) ** 2)
+            # reconstruction_loss = torch.mean((outputs.hidden_states[-1] - decoded) ** 2)
 
             # Sparsity loss
             # sparsity_loss = torch.mean(torch.abs(encoded))
