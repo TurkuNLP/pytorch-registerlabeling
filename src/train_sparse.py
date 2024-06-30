@@ -48,10 +48,11 @@ class DotDict(dict):
             return self[key]
 
 
-class SparsePooledRobertaForSequenceClassification(XLMRobertaForSequenceClassification):
+class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassification):
     def __init__(self, config):
         super().__init__(config)
-        self.classifier = SparsePooledRobertaClassificationHead(config)
+        self.encoder = nn.Linear(config.hidden_size, 512)
+        self.decoder = nn.Linear(512, config.hidden_size)
 
     def forward(
         self,
@@ -61,11 +62,12 @@ class SparsePooledRobertaForSequenceClassification(XLMRobertaForSequenceClassifi
         position_ids=None,
         head_mask=None,
         inputs_embeds=None,
+        labels=None,
         output_attentions=None,
         output_hidden_states=None,
         return_dict=None,
-        labels=None,
     ):
+
         return_dict = (
             return_dict if return_dict is not None else self.config.use_return_dict
         )
@@ -78,76 +80,33 @@ class SparsePooledRobertaForSequenceClassification(XLMRobertaForSequenceClassifi
             head_mask=head_mask,
             inputs_embeds=inputs_embeds,
             output_attentions=output_attentions,
-            output_hidden_states=True,
+            output_hidden_states=output_hidden_states,
             return_dict=return_dict,
         )
 
-        encoded = self.classifier.encoder(outputs[0])
-        decoded = self.classifier.decoder(encoded)
-        logits = self.classifier.classify(encoded)
+        sequence_output = outputs[0]
+        encoded_output = torch.relu(self.encoder(sequence_output))
+        decoded_output = self.decoder(encoded_output)
+        logits = self.classifier(decoded_output)
+
+        loss = None
+        if labels is not None:
+            print("Error! labels")
 
         if not return_dict:
-            return None, logits, None
+            output = (logits,) + outputs[2:]
+            return ((loss,) + output) if loss is not None else output
 
         return DotDict(
             {
-                "loss": None,
+                "loss": loss,
                 "logits": logits,
-                "encoded": encoded,
-                "decoded": decoded,
-                "hidden_states": outputs.hidden_states,
+                "hidden_state": outputs.hidden_states,
                 "attentions": outputs.attentions,
+                "encoded": encoded_output,
+                "decoded": decoded_output,
             }
         )
-
-
-class SparsePooledRobertaClassificationHead(nn.Module):
-    def __init__(self, config):
-        super().__init__()
-        self.encoder = nn.Linear(config.hidden_size, 512)
-        self.decoder = nn.Linear(512, config.hidden_size)
-        classifier_dropout = (
-            config.classifier_dropout
-            if config.classifier_dropout is not None
-            else config.hidden_dropout_prob
-        )
-        self.dropout = nn.Dropout(classifier_dropout)
-        self.dense = nn.Linear(512, config.hidden_size)
-        self.out_proj = nn.Linear(config.hidden_size, config.num_labels)
-
-    def forward(self, features, **kwargs):
-        encoded = torch.relu(self.encoder(features))
-        pooled_output = encoded.mean(dim=1)
-        x = self.dropout(pooled_output)
-        x = self.dense(x)
-        x = torch.tanh(x)
-        x = self.dropout(x)
-        logits = self.out_proj(x)
-        return logits
-
-    def classify(self, encoded):
-        x = self.dropout(encoded.mean(dim=1))
-        x = self.dense(x)
-        x = torch.tanh(x)
-        x = self.dropout(x)
-        logits = self.out_proj(x)
-        return logits
-
-
-class Cnf:
-    def __init__(self, output_size):
-        self.num_labels = output_size
-
-    def to_dict(self):
-        return vars(self)
-
-    def to_json_string(self):
-        config_dict = self.to_dict()
-        return json.dumps(config_dict, indent=2, sort_keys=True) + "\n"
-
-    def to_json_file(self, json_file_path):
-        with open(json_file_path, "w", encoding="utf-8") as writer:
-            writer.write(self.to_json_string())
 
 
 def run(cfg):
@@ -194,7 +153,7 @@ def run(cfg):
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     dataset = get_dataset(cfg, tokenizer)
 
-    model = SparsePooledRobertaForSequenceClassification.from_pretrained(
+    model = SparseXLMRobertaForSequenceClassification.from_pretrained(
         base_model_path,
         torch_dtype=torch_dtype,
         device_map=None,
