@@ -384,7 +384,7 @@ def run(cfg):
             save_strategy="epoch",
             logging_strategy="epoch",
             gradient_accumulation_steps=cfg.grad_acc_steps,
-            eval_accumulation_steps=8,
+            eval_accumulation_steps=32,
             metric_for_best_model="eval_loss",
             load_best_model_at_end=True,
             save_total_limit=2,
