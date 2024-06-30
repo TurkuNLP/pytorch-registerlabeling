@@ -105,8 +105,8 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
                 "logits": logits,
                 "hidden_state": outputs.hidden_states,
                 "attentions": outputs.attentions,
-                "encoded": encoded_output,
-                "decoded": decoded_output,
+                # "encoded": encoded_output,
+                # "decoded": decoded_output,
             }
         )
 
