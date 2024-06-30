@@ -30,7 +30,6 @@ from transformers import (
     TrainingArguments,
 )
 
-from transformers.modeling_outputs import SequenceClassifierOutput
 
 from .data import balanced_dataloader, get_dataset
 from .labels import (
@@ -53,8 +52,8 @@ class DotDict(dict):
 class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassification):
     def __init__(self, config):
         super().__init__(config)
-        self.encoder = nn.Linear(config.hidden_size, 512)
-        self.decoder = nn.Linear(512, config.hidden_size)
+        self.encoder2 = nn.Linear(config.hidden_size, 512)
+        self.decoder2 = nn.Linear(512, config.hidden_size)
 
     def forward(
         self,
@@ -87,14 +86,13 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
         )
 
         sequence_output = outputs[0]
-        encoded_output = torch.relu(self.encoder(sequence_output))
-        decoded_output = self.decoder(encoded_output)
+        encoded_output = torch.relu(self.encoder2(sequence_output))
+        decoded_output = self.decoder2(encoded_output)
         logits = self.classifier(sequence_output)
 
         loss = None
         if labels is not None:
             print("Error! labels")
-            exit()
 
         print(f"Return dict: {return_dict}")
 
@@ -102,13 +100,15 @@ class SparseXLMRobertaForSequenceClassification(XLMRobertaForSequenceClassificat
             output = (logits,) + outputs[2:]
             return ((loss,) + output) if loss is not None else output
 
-        return SequenceClassifierOutput(
-            loss=loss,
-            logits=logits,
-            hidden_states=outputs.hidden_states,
-            attentions=outputs.attentions,
-            encoded=encoded_output,
-            decoded=decoded_output,
+        return DotDict(
+            {
+                "loss": loss,
+                "logits": logits,
+                "hidden_state": outputs.hidden_states,
+                "attentions": outputs.attentions,
+                "encoded": encoded_output,
+                "decoded": decoded_output,
+            }
         )
 
 
