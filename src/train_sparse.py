@@ -145,6 +145,7 @@ def run(cfg):
 
     test_language = ""  # Used when predicting
     test_dataset = []  # Used when predicting
+    pred_suffix = ("_" + cfg.test) if "multi" in cfg.test else ""
 
     # Make process deterministic
     torch.manual_seed(cfg.seed)
