@@ -423,25 +423,18 @@ def run(cfg):
     latencies = []
     throughputs = []
 
-    # add torch.compile() because it makes a difference in inference speeds! https://huggingface.co/docs/transformers/perf_torch_compile#a100-batch-size-1
-    #model = torch.compile(model)
-
     test_languages = cfg.test.split("-") if "multi" not in cfg.test else list(set(dataset['test']['language']))
     for language in test_languages:
 
         print(f"-- {language} --")
         test_language = language
-        #test_dataset = dataset["test"].filter(
-        #    lambda example: example["language"] == language,
-        #    num_proc=None
-        #)
         test_dataset = dataset['test']
-        print('filtered language')
+
 
         if cfg.sample:
             test_dataset = test_dataset.select(range(cfg.sample))
 
-        if device == "cuda":
+        if cfg.speedtest:
 
             print("inside cuda")
 
@@ -537,6 +530,10 @@ def run(cfg):
                 throughput2.append(throughput)
 
         else:
+            test_language = language
+            test_dataset = dataset["test"].filter(
+                lambda example: example["language"] == language
+            )
             trainer.predict(test_dataset)
 
         if cfg.multilabel_eval:
