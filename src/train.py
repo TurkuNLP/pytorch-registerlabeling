@@ -528,6 +528,8 @@ def run(cfg):
     
                 latency2.append(latency)
                 throughput2.append(throughput)
+            latencies.append(latency2)
+            throughputs.append(throughput2)
 
         else:
             test_language = language
@@ -541,14 +543,13 @@ def run(cfg):
                 f"Excluded {multilabel_exclusion_stats['excluded']} examples and kept {multilabel_exclusion_stats['included']} examples"
             )
         
-        latencies.append(latency2)
-        throughputs.append(throughput2)
-
-    # print mean of latency and throughput
-    print("----------------------------")
-    for i in range(0,8):
-        latency3 = [item[i] for item in latencies]
-        throughput3 = [item[i] for item in throughputs]
-        print("batch was", i+1)
-        print("mean latency",np.mean(np.asarray(latency3)))
-        print("mean throughput", np.mean(np.asarray(throughput3)))
+        
+    if cfg.speedtest:
+        # print mean of latency and throughput
+        print("----------------------------")
+        for i in range(0,8):
+            latency3 = [item[i] for item in latencies]
+            throughput3 = [item[i] for item in throughputs]
+            print("batch was", i+1)
+            print("mean latency",np.mean(np.asarray(latency3)))
+            print("mean throughput", np.mean(np.asarray(throughput3)))
