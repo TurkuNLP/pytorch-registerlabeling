@@ -59,8 +59,9 @@ def run(cfg):
 
     # login to huggingface to get access to mixtral
     from huggingface_hub import login
+
     access_token_read = "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"
-    login(token = access_token_read)
+    login(token=access_token_read)
 
     # Make process deterministic
     torch.manual_seed(cfg.seed)
@@ -73,7 +74,7 @@ def run(cfg):
     test_language = ""  # Used when predicting
     test_dataset = []  # Used when predicting
     multilabel_exclusion_stats = {"excluded": 0, "included": 0}
-    pred_suffix = ("_"+cfg.test) if "multi" in cfg.test else ""
+    pred_suffix = ("_" + cfg.test) if "multi" in cfg.test else ""
 
     # CUDA events for timing
     if device == "cuda":
@@ -129,8 +130,10 @@ def run(cfg):
     model.config.id2label = id2label
 
     if cfg.peft:
-        if cfg.just_evaluate: 
-            model = PeftModel.from_pretrained(model=model, model_id=model_output_dir) # , torch_device=device, offload_state_dict=False I added but did not help
+        if cfg.just_evaluate:
+            model = PeftModel.from_pretrained(
+                model=model, model_id=model_output_dir
+            )  # , torch_device=device, offload_state_dict=False I added but did not help
             # eka on se huggingface malli ja sit se toinen se adapteri mikä tallennettuna
             print("peft model loaded")
         else:
@@ -181,8 +184,15 @@ def run(cfg):
             labels = inputs.pop("labels")
             outputs = model(**inputs)
             logits = outputs.logits
+            # Smoothing factor, e.g., 0.1
+            alpha = 0.1
+
+            # Smooth labels
+            smoothed_labels = labels.float() * (1 - alpha) + 0.5 * alpha
+
+            # Compute binary cross-entropy with smoothed labels
             BCE_loss = F.binary_cross_entropy_with_logits(
-                logits, labels.float(), reduction="none"
+                logits, smoothed_labels, reduction="none"
             )
             pt = torch.exp(-BCE_loss)
             loss = cfg.loss_alpha * (1 - pt) ** cfg.loss_gamma * BCE_loss
@@ -195,12 +205,16 @@ def run(cfg):
 
             return (loss, outputs) if return_outputs else loss
 
-        if (len(cfg.train.split("-")) > 1 or cfg.balanced_dataloader) and not cfg.just_evaluate:
+        if (
+            len(cfg.train.split("-")) > 1 or cfg.balanced_dataloader
+        ) and not cfg.just_evaluate:
 
             def get_train_dataloader(self):
                 return balanced_dataloader(self, "train", cfg.train_batch_size)
 
-        if (len(cfg.dev.split("-")) > 1 or cfg.balanced_dataloader) and not cfg.just_evaluate:
+        if (
+            len(cfg.dev.split("-")) > 1 or cfg.balanced_dataloader
+        ) and not cfg.just_evaluate:
 
             def get_eval_dataloader(self, eval_dataset=None):
                 return balanced_dataloader(self, "eval", cfg.eval_batch_size)
@@ -244,19 +258,19 @@ def run(cfg):
             )
 
         if cfg.multilabel_eval:
-            
+
             """
             True    Pred
             ======  ======
-            Any     Single   
-            Any     Hybrid   
-            Single  Any      
-            Single  Single   
-            Single  Hybrid   
-            Hybrid  Any      
-            Hybrid  Single   
-            Hybrid  Hybrid   
-                        
+            Any     Single
+            Any     Hybrid
+            Single  Any
+            Single  Single
+            Single  Hybrid
+            Hybrid  Any
+            Hybrid  Single
+            Hybrid  Hybrid
+
             """
 
             # Get row indices for binary representations of multilabel predictions
@@ -265,7 +279,7 @@ def run(cfg):
 
             # Get the choices as a list
             true_filter, pred_filter = cfg.multilabel_eval.split("_")
-        
+
             for i, example in enumerate(true_labels):
                 if true_filter == "single":
                     if [int(val) for val in example] not in non_hybrids:
@@ -292,7 +306,6 @@ def run(cfg):
 
             multilabel_exclusion_stats["included"] += np.sum(mask)
             multilabel_exclusion_stats["excluded"] += np.sum(~mask)
-        
 
         precision, recall, f1, _ = precision_recall_fscore_support(
             true_labels, binary_predictions, average="micro"
@@ -375,8 +388,8 @@ def run(cfg):
             num_train_epochs=30,
             per_device_train_batch_size=cfg.train_batch_size,
             per_device_eval_batch_size=cfg.eval_batch_size,
-            warmup_ratio=0.05,
-            weight_decay=0.01,
+            warmup_ratio=0.00,
+            weight_decay=0.00,
             learning_rate=cfg.learning_rate,
             evaluation_strategy="epoch",
             save_strategy="epoch",
@@ -423,13 +436,16 @@ def run(cfg):
     latencies = []
     throughputs = []
 
-    test_languages = cfg.test.split("-") if "multi" not in cfg.test else list(set(dataset['test']['language']))
+    test_languages = (
+        cfg.test.split("-")
+        if "multi" not in cfg.test
+        else list(set(dataset["test"]["language"]))
+    )
     for language in test_languages:
 
         print(f"-- {language} --")
         test_language = language
-        test_dataset = dataset['test']
-
+        test_dataset = dataset["test"]
 
         if cfg.sample:
             test_dataset = test_dataset.select(range(cfg.sample))
@@ -443,19 +459,26 @@ def run(cfg):
             throughput2 = []
 
             # tokenize texts
-            #text_inputs = []
-            #for i in range(len(test_dataset)):
-                #text_inputs.append(test_dataset[i]["text"])
+            # text_inputs = []
+            # for i in range(len(test_dataset)):
+            # text_inputs.append(test_dataset[i]["text"])
 
-            #inputs = tokenizer(text_inputs, return_tensors="pt", padding=True, truncation=True, max_length=512)
-            #print("tokenized")
+            # inputs = tokenizer(text_inputs, return_tensors="pt", padding=True, truncation=True, max_length=512)
+            # print("tokenized")
 
             device2 = torch.device("cuda:0")
 
-             # do gpu warm up!!
+            # do gpu warm up!!
             inputs2 = []
-            for i in range(0,len(test_dataset), 1):
-                inp = {'input_ids': torch.tensor([test_dataset[i]['input_ids']], device=device2), 'attention_mask': torch.tensor([test_dataset[i]['attention_mask']], device=device2)}
+            for i in range(0, len(test_dataset), 1):
+                inp = {
+                    "input_ids": torch.tensor(
+                        [test_dataset[i]["input_ids"]], device=device2
+                    ),
+                    "attention_mask": torch.tensor(
+                        [test_dataset[i]["attention_mask"]], device=device2
+                    ),
+                }
                 inputs2.append(inp)
 
             print("changed inputs")
@@ -471,36 +494,51 @@ def run(cfg):
 
                 inputs2 = []
                 print("batch", batch)
-                for i in range(0,len(test_dataset), batch):
+                for i in range(0, len(test_dataset), batch):
                     # correct shape
                     if batch == 1:
-                        inp = {'input_ids': torch.tensor([test_dataset[i]['input_ids']], device=device2), 'attention_mask': torch.tensor([test_dataset[i]['attention_mask']], device=device2)}
-                       # inp = {'input_ids': torch.tensor([inputs['input_ids'][i].tolist()], device=device2), 'attention_mask': torch.tensor([inputs['attention_mask'][i].tolist()], device=device2)}
+                        inp = {
+                            "input_ids": torch.tensor(
+                                [test_dataset[i]["input_ids"]], device=device2
+                            ),
+                            "attention_mask": torch.tensor(
+                                [test_dataset[i]["attention_mask"]], device=device2
+                            ),
+                        }
+                    # inp = {'input_ids': torch.tensor([inputs['input_ids'][i].tolist()], device=device2), 'attention_mask': torch.tensor([inputs['attention_mask'][i].tolist()], device=device2)}
                     elif batch > 1:
-                        #inp = {'input_ids': torch.tensor(inputs['input_ids'][i:i+batch].tolist(), device=device2), 'attention_mask': torch.tensor(inputs['attention_mask'][i:i+batch].tolist(), device=device2)}
-                        inp = {'input_ids': torch.tensor(test_dataset[i:i+batch]['input_ids'], device=device2), 'attention_mask': torch.tensor(test_dataset[i:i+batch]['attention_mask'], device=device2)}
+                        # inp = {'input_ids': torch.tensor(inputs['input_ids'][i:i+batch].tolist(), device=device2), 'attention_mask': torch.tensor(inputs['attention_mask'][i:i+batch].tolist(), device=device2)}
+                        inp = {
+                            "input_ids": torch.tensor(
+                                test_dataset[i : i + batch]["input_ids"], device=device2
+                            ),
+                            "attention_mask": torch.tensor(
+                                test_dataset[i : i + batch]["attention_mask"],
+                                device=device2,
+                            ),
+                        }
                         # I think that is how it should work? if batch bigger than one take out the []surrounding the tensor
                     else:
-                        raise ValueError('Batch should be one or bigger!')
+                        raise ValueError("Batch should be one or bigger!")
                     inputs2.append(inp)
 
-                #print(inputs2[0])
-                print("number of examples",len(test_dataset))
+                # print(inputs2[0])
+                print("number of examples", len(test_dataset))
                 print("number of batches", len(inputs2))
 
                 # repeat experiment and get mean value
-                repetitions = 10 # 50 or 100
-                timings=np.zeros((repetitions,1)) 
+                repetitions = 10  # 50 or 100
+                timings = np.zeros((repetitions, 1))
                 total_time = 0
 
                 with torch.no_grad():
                     print("predicting")
-                    print("repetitions",repetitions)
+                    print("repetitions", repetitions)
                     for rep in range(repetitions):
                         start_event.record()
                         # TODO here I could add a loading bar?
-                        for inp in inputs2: # the inputs2 is batched already
-                            predictions = model(**inp) 
+                        for inp in inputs2:  # the inputs2 is batched already
+                            predictions = model(**inp)
 
                         end_event.record()
                         torch.cuda.synchronize()
@@ -508,24 +546,29 @@ def run(cfg):
                         total_time += curr_time
                         timings[rep] = curr_time
 
-                total_samples = len(test_dataset) # or inputs or text_inputs
-                
+                total_samples = len(test_dataset)  # or inputs or text_inputs
+
                 mean_syn = np.sum(timings) / repetitions
                 std_syn = np.std(timings)
                 print("total time:", total_time)
                 print("mean time for all repetitions:", mean_syn)
                 print("mean standard deviation between all repetitions", std_syn)
 
-                latency = total_time / (total_samples * repetitions) # elapsed_time / total_samples
+                latency = total_time / (
+                    total_samples * repetitions
+                )  # elapsed_time / total_samples
                 # Latency per sample in milliseconds
 
-                throughput = (total_samples * repetitions) / ( # total_samples / elapsed_time
-                    total_time / 1000 #should I divide by latency instead of elapsed time?
-                ) # Throughput in samples per second
+                throughput = (
+                    total_samples * repetitions
+                ) / (  # total_samples / elapsed_time
+                    total_time
+                    / 1000  # should I divide by latency instead of elapsed time?
+                )  # Throughput in samples per second
 
                 print(f"mean latency per sample: {latency} ms")
                 print(f"mean throughput: {throughput} samples/sec")
-    
+
                 latency2.append(latency)
                 throughput2.append(throughput)
             latencies.append(latency2)
@@ -542,14 +585,13 @@ def run(cfg):
             print(
                 f"Excluded {multilabel_exclusion_stats['excluded']} examples and kept {multilabel_exclusion_stats['included']} examples"
             )
-        
-        
+
     if cfg.speedtest:
         # print mean of latency and throughput
         print("----------------------------")
-        for i in range(0,8):
+        for i in range(0, 8):
             latency3 = [item[i] for item in latencies]
             throughput3 = [item[i] for item in throughputs]
-            print("batch was", i+1)
-            print("mean latency",np.mean(np.asarray(latency3)))
+            print("batch was", i + 1)
+            print("mean latency", np.mean(np.asarray(latency3)))
             print("mean throughput", np.mean(np.asarray(throughput3)))
