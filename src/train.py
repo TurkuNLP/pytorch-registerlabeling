@@ -184,15 +184,8 @@ def run(cfg):
             labels = inputs.pop("labels")
             outputs = model(**inputs)
             logits = outputs.logits
-            # Smoothing factor, e.g., 0.1
-            alpha = 0.1
-
-            # Smooth labels
-            smoothed_labels = labels.float() * (1 - alpha) + 0.5 * alpha
-
-            # Compute binary cross-entropy with smoothed labels
             BCE_loss = F.binary_cross_entropy_with_logits(
-                logits, smoothed_labels, reduction="none"
+                logits, labels.float(), reduction="none"
             )
             pt = torch.exp(-BCE_loss)
             loss = cfg.loss_alpha * (1 - pt) ** cfg.loss_gamma * BCE_loss
@@ -388,8 +381,8 @@ def run(cfg):
             num_train_epochs=30,
             per_device_train_batch_size=cfg.train_batch_size,
             per_device_eval_batch_size=cfg.eval_batch_size,
-            warmup_ratio=0.00,
-            weight_decay=0.00,
+            warmup_ratio=0.05,
+            weight_decay=0.01,
             learning_rate=cfg.learning_rate,
             evaluation_strategy="epoch",
             save_strategy="epoch",
