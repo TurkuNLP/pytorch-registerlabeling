@@ -184,17 +184,12 @@ def run(cfg):
             labels = inputs.pop("labels")
             outputs = model(**inputs)
             logits = outputs.logits
-            BCE_loss = F.binary_cross_entropy_with_logits(
-                logits, labels.float(), reduction="none"
-            )
-            pt = torch.exp(-BCE_loss)
-            loss = cfg.loss_alpha * (1 - pt) ** cfg.loss_gamma * BCE_loss
 
-            # Class balancing
-            loss = loss * (
-                labels * cfg.loss_alpha + (1 - labels) * (1 - cfg.loss_alpha)
+            criterion = torch.nn.BCEWithLogitsLoss(
+                label_smoothing=0.1, reduction="mean"
             )
-            loss = loss.mean()
+
+            loss = criterion(logits, labels.float())
 
             return (loss, outputs) if return_outputs else loss
 
@@ -393,6 +388,7 @@ def run(cfg):
             load_best_model_at_end=True,
             save_total_limit=2,
             tf32=True if torch.cuda.is_available() else False,
+            bf16=True if torch.cuda.is_available() else False,
             group_by_length=True,
             report_to=None,
         ),
