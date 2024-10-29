@@ -176,6 +176,17 @@ def run(cfg):
             else:
                 self.early_stopping_patience_counter += 1
 
+    class MultilabelLabelSmoothing(torch.nn.Module):
+        def __init__(self, smoothing=0.1):
+            super().__init__()
+            self.smoothing = smoothing
+            self.criterion = torch.nn.BCEWithLogitsLoss(reduction="mean")
+
+        def forward(self, pred, target):
+            # Apply label smoothing: (1 - smoothing) * target + smoothing * 0.5
+            smooth_target = target * (1 - self.smoothing) + self.smoothing * 0.5
+            return self.criterion(pred, smooth_target)
+
     class MultiLabelTrainer(Trainer):
         def __init__(self, *args, **kwargs):
             super(MultiLabelTrainer, self).__init__(*args, **kwargs)
@@ -185,10 +196,7 @@ def run(cfg):
             outputs = model(**inputs)
             logits = outputs.logits
 
-            criterion = torch.nn.BCEWithLogitsLoss(
-                label_smoothing=0.1, reduction="mean"
-            )
-
+            criterion = MultilabelLabelSmoothing(smoothing=0.1)
             loss = criterion(logits, labels.float())
 
             return (loss, outputs) if return_outputs else loss
