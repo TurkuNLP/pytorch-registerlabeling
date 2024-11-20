@@ -198,7 +198,7 @@ def run(cfg):
             outputs = model(**inputs)
             logits = outputs.logits
 
-            criterion = MultilabelLabelSmoothing(smoothing=0.1)
+            criterion = MultilabelLabelSmoothing(smoothing=0)
             loss = criterion(logits, labels.float())
 
             return (loss, outputs) if return_outputs else loss
