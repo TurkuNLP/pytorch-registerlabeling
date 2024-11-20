@@ -191,12 +191,14 @@ def run(cfg):
         def __init__(self, *args, **kwargs):
             super(MultiLabelTrainer, self).__init__(*args, **kwargs)
 
-        def compute_loss(self, model, inputs, return_outputs=False):
+        def compute_loss(
+            self, model, inputs, return_outputs=False, num_items_in_batch=None
+        ):
             labels = inputs.pop("labels")
             outputs = model(**inputs)
             logits = outputs.logits
 
-            criterion = MultilabelLabelSmoothing(smoothing=0.2)
+            criterion = MultilabelLabelSmoothing(smoothing=0.1)
             loss = criterion(logits, labels.float())
 
             return (loss, outputs) if return_outputs else loss
