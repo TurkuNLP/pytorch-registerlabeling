@@ -6,6 +6,9 @@ import random
 import shutil
 from pydoc import locate
 
+from transformers import AutoModel
+import torch.nn as nn
+
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -38,6 +41,90 @@ from .labels import (
     upper_all_indexes_en,
     get_binary_representations,
 )
+
+
+from transformers import AutoModel, PretrainedConfig
+import torch.nn as nn
+
+
+class MeanPoolingConfig(PretrainedConfig):
+    def __init__(
+        self, base_model_config, num_labels, label2id=None, id2label=None, **kwargs
+    ):
+        super().__init__(**kwargs)
+        # Copy all attributes from base model config
+        for key, value in base_model_config.__dict__.items():
+            if not key.startswith("__"):
+                setattr(self, key, value)
+
+        self.num_labels = num_labels
+        self.label2id = (
+            label2id if label2id is not None else {i: i for i in range(num_labels)}
+        )
+        self.id2label = (
+            id2label if id2label is not None else {i: i for i in range(num_labels)}
+        )
+
+
+class MeanPoolingClassifier(nn.Module):
+    def __init__(
+        self,
+        model_name,
+        num_labels,
+        torch_dtype=None,
+        label2id=None,
+        id2label=None,
+        **kwargs,
+    ):
+        super().__init__()
+        self.num_labels = num_labels
+
+        # Load base model without classification head
+        self.base_model = AutoModel.from_pretrained(
+            model_name, torch_dtype=torch_dtype, **kwargs
+        )
+
+        # Create custom config that includes both base model config and classification specifics
+        self.config = MeanPoolingConfig(
+            self.base_model.config,
+            num_labels=num_labels,
+            label2id=label2id,
+            id2label=id2label,
+        )
+
+        # Add custom classification head
+        hidden_size = self.base_model.config.hidden_size
+        self.classifier = nn.Linear(hidden_size, num_labels)
+
+    def forward(self, input_ids, attention_mask, labels=None):
+        # Get base model outputs
+        outputs = self.base_model(
+            input_ids=input_ids, attention_mask=attention_mask, return_dict=True
+        )
+
+        # Apply mean pooling
+        token_embeddings = outputs.last_hidden_state
+        input_mask_expanded = (
+            attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+        )
+        sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, 1)
+        sum_mask = input_mask_expanded.sum(1)
+        sum_mask = torch.clamp(sum_mask, min=1e-9)
+        mean_embeddings = sum_embeddings / sum_mask
+
+        # Get logits through classification head
+        logits = self.classifier(mean_embeddings)
+
+        # Prepare output structure similar to AutoModelForSequenceClassification
+        if labels is not None:
+            loss_fct = nn.BCEWithLogitsLoss()
+            loss = loss_fct(
+                logits.view(-1, self.num_labels),
+                labels.float().view(-1, self.num_labels),
+            )
+            return type("Output", (), {"loss": loss, "logits": logits})()
+
+        return type("Output", (), {"logits": logits})()
 
 
 def get_linear_modules(model):
@@ -113,15 +200,25 @@ def run(cfg):
         bnb_4bit_use_double_quant=True,
         bnb_4bit_compute_dtype=torch_dtype,
     )
-
-    model = AutoModelForSequenceClassification.from_pretrained(
-        base_model_path,
-        num_labels=len(label_scheme),
-        torch_dtype=torch_dtype,
-        use_flash_attention_2=cfg.fa2,
-        quantization_config=nf4_config if cfg.nf4 else None,
-        device_map="auto" if "mixtral" in cfg.model_name.lower() else None,
-    )
+    if cfg.mean_pooling:
+        # With:
+        model = MeanPoolingClassifier(
+            base_model_path,
+            num_labels=len(label_scheme),
+            torch_dtype=torch_dtype,
+            use_flash_attention_2=cfg.fa2,
+            quantization_config=nf4_config if cfg.nf4 else None,
+            device_map="auto" if "mixtral" in cfg.model_name.lower() else None,
+        )
+    else:
+        model = AutoModelForSequenceClassification.from_pretrained(
+            base_model_path,
+            num_labels=len(label_scheme),
+            torch_dtype=torch_dtype,
+            use_flash_attention_2=cfg.fa2,
+            quantization_config=nf4_config if cfg.nf4 else None,
+            device_map="auto" if "mixtral" in cfg.model_name.lower() else None,
+        )
 
     label2id = {label: id for id, label in enumerate(label_scheme)}
     id2label = {id: label for label, id in label2id.items()}
