@@ -383,7 +383,7 @@ def run(cfg):
         args=TrainingArguments(
             output_dir=model_output_dir,
             overwrite_output_dir=True,
-            num_train_epochs=30,
+            num_train_epochs=cfg.epochs,
             per_device_train_batch_size=cfg.train_batch_size,
             per_device_eval_batch_size=cfg.eval_batch_size,
             warmup_ratio=0.05,
@@ -405,7 +405,7 @@ def run(cfg):
         train_dataset=dataset.get("train", []),
         eval_dataset=dataset.get("dev", []),
         compute_metrics=compute_metrics,
-        callbacks=[early_stopping_callback],
+        callbacks=[early_stopping_callback] if cfg.patience else None,
     )
 
     if not cfg.just_evaluate:
