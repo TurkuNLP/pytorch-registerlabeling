@@ -113,6 +113,7 @@ class MeanPoolingClassifier(nn.Module):
         logits = self.classifier(mean_embeddings)
 
         loss = None
+        print(labels)
         if labels is not None:
             loss_fct = nn.BCEWithLogitsLoss()
             loss = loss_fct(
@@ -277,11 +278,41 @@ def run(cfg):
             else:
                 self.early_stopping_patience_counter += 1
 
+    class MultilabelFocalLoss(torch.nn.Module):
+        def __init__(self, alpha, gamma):
+            super().__init__()
+            self.alpha = alpha
+            self.gamma = gamma
+
+        def forward(self, pred, target):
+            # Compute sigmoid separately to avoid applying it twice
+            sigmoid_pred = torch.sigmoid(pred)
+
+            # Calculate BCE loss
+            bce_loss = F.binary_cross_entropy_with_logits(
+                pred, target, reduction="none"
+            )
+
+            # Apply focal loss formula
+            pt = torch.where(target == 1, sigmoid_pred, 1 - sigmoid_pred)
+            focal_weight = torch.pow(1 - pt, self.gamma)
+
+            if self.alpha != 1:
+                alpha_weight = torch.where(target == 1, self.alpha, 1)
+                focal_weight = focal_weight * alpha_weight
+
+            focal_loss = focal_weight * bce_loss
+            return focal_loss.mean()
+
     class MultilabelLabelSmoothing(torch.nn.Module):
-        def __init__(self, smoothing=0.1):
+        def __init__(self, smoothing=0.1, alpha=0, gamma=0):
             super().__init__()
             self.smoothing = smoothing
-            self.criterion = torch.nn.BCEWithLogitsLoss(reduction="mean")
+            self.criterion = (
+                MultilabelFocalLoss(alpha, gamma)
+                if alpha or gamma
+                else torch.nn.BCEWithLogitsLoss(reduction="mean")
+            )
 
         def forward(self, pred, target):
             # Apply label smoothing: (1 - smoothing) * target + smoothing * 0.5
@@ -292,6 +323,8 @@ def run(cfg):
         def __init__(self, *args, **kwargs):
             super(MultiLabelTrainer, self).__init__(*args, **kwargs)
             self.smoothing = cfg.label_smoothing
+            self.gamma = cfg.loss_gamma
+            self.alpha = cfg.loss_alpha
 
         def compute_loss(
             self, model, inputs, return_outputs=False, num_items_in_batch=None
@@ -300,7 +333,9 @@ def run(cfg):
             outputs = model(**inputs)
             logits = outputs.logits
 
-            criterion = MultilabelLabelSmoothing(smoothing=self.smoothing)
+            criterion = MultilabelLabelSmoothing(
+                smoothing=self.smoothing, alpha=self.alpha, gamma=self.gamma
+            )
             loss = criterion(logits, labels.float())
 
             return (loss, outputs) if return_outputs else loss
