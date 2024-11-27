@@ -113,7 +113,7 @@ class MeanPoolingClassifier(nn.Module):
         logits = self.classifier(mean_embeddings)
 
         loss = None
-        print(labels)
+
         if labels is not None:
             loss_fct = nn.BCEWithLogitsLoss()
             loss = loss_fct(
