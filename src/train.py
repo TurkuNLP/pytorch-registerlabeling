@@ -97,12 +97,10 @@ class MeanPoolingClassifier(nn.Module):
         self.classifier = nn.Linear(hidden_size, num_labels)
 
     def forward(self, input_ids, attention_mask, labels=None):
-        # Get base model outputs
         outputs = self.base_model(
             input_ids=input_ids, attention_mask=attention_mask, return_dict=True
         )
 
-        # Apply mean pooling
         token_embeddings = outputs.last_hidden_state
         input_mask_expanded = (
             attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
@@ -112,19 +110,25 @@ class MeanPoolingClassifier(nn.Module):
         sum_mask = torch.clamp(sum_mask, min=1e-9)
         mean_embeddings = sum_embeddings / sum_mask
 
-        # Get logits through classification head
         logits = self.classifier(mean_embeddings)
 
-        # Prepare output structure similar to AutoModelForSequenceClassification
+        loss = None
         if labels is not None:
             loss_fct = nn.BCEWithLogitsLoss()
             loss = loss_fct(
                 logits.view(-1, self.num_labels),
                 labels.float().view(-1, self.num_labels),
             )
-            return type("Output", (), {"loss": loss, "logits": logits})()
 
-        return type("Output", (), {"logits": logits})()
+        return type(
+            "Output",
+            (),
+            {
+                "loss": loss,
+                "logits": logits,
+                "__getitem__": lambda self, idx: (self.loss, self.logits)[idx],
+            },
+        )()
 
 
 def get_linear_modules(model):
