@@ -81,7 +81,7 @@ class MeanPoolingClassifier(nn.Module):
 
         # Load base model without classification head
         self.base_model = AutoModel.from_pretrained(
-            model_name, torch_dtype=torch_dtype, **kwargs
+            model_name, torch_dtype=torch_dtype, trust_remote_code=True, **kwargs
         )
 
         # Create custom config that includes both base model config and classification specifics
