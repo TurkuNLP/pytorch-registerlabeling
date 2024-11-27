@@ -58,6 +58,8 @@ if __name__ == "__main__":
     parser.add_argument("--balanced_dataloader", action="store_true")
     parser.add_argument("--mean_pooling", action="store_true")
     parser.add_argument("--label_smoothing", type=float, default=0)
+    parser.add_argument("--warmup_ratio", type=float, default=0)
+    parser.add_argument("--weight_decay", type=float, default=0)
 
     # Peft
     parser.add_argument("--peft", action="store_true")
