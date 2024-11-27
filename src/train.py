@@ -287,6 +287,7 @@ def run(cfg):
     class MultiLabelTrainer(Trainer):
         def __init__(self, *args, **kwargs):
             super(MultiLabelTrainer, self).__init__(*args, **kwargs)
+            self.smoothing = cfg.label_smoothing
 
         def compute_loss(
             self, model, inputs, return_outputs=False, num_items_in_batch=None
@@ -295,7 +296,7 @@ def run(cfg):
             outputs = model(**inputs)
             logits = outputs.logits
 
-            criterion = MultilabelLabelSmoothing(smoothing=0)
+            criterion = MultilabelLabelSmoothing(smoothing=self.smoothing)
             loss = criterion(logits, labels.float())
 
             return (loss, outputs) if return_outputs else loss
@@ -419,6 +420,15 @@ def run(cfg):
             # "pr_auc": pr_auc,
             "threshold": best_threshold,
         }
+
+        print(
+            classification_report(
+                true_labels,
+                binary_predictions,
+                target_names=label_schemes[cfg.predict_labels],
+                digits=4,
+            )
+        )
 
         if cfg.just_evaluate:
 
