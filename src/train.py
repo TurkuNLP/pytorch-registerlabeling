@@ -6,11 +6,9 @@ import random
 import shutil
 from pydoc import locate
 
-from transformers import AutoModel
-import torch.nn as nn
-
 import numpy as np
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 from peft import LoraConfig, PeftModel, TaskType, get_peft_model
 from scipy.special import expit as sigmoid
@@ -23,10 +21,12 @@ from sklearn.metrics import (
 )
 from transformers import (
     AutoConfig,
+    AutoModel,
     AutoModelForSequenceClassification,
     AutoTokenizer,
     BitsAndBytesConfig,
     EarlyStoppingCallback,
+    PretrainedConfig,
     Trainer,
     TrainingArguments,
 )
@@ -34,17 +34,13 @@ from transformers import (
 from .data import balanced_dataloader, get_dataset
 from .labels import (
     decode_binary_labels,
+    get_binary_representations,
     label_schemes,
-    subcategory_to_parent_index,
     map_to_xgenre_binary,
+    subcategory_to_parent_index,
     upper_all_indexes,
     upper_all_indexes_en,
-    get_binary_representations,
 )
-
-
-from transformers import AutoModel, PretrainedConfig
-import torch.nn as nn
 
 
 class MeanPoolingConfig(PretrainedConfig):
@@ -133,7 +129,6 @@ class MeanPoolingClassifier(nn.Module):
 
 
 def get_linear_modules(model):
-
     linear_modules = set()
 
     for name, module in model.named_modules():
@@ -146,7 +141,6 @@ def get_linear_modules(model):
 
 
 def run(cfg):
-
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     # login to huggingface to get access to mixtral
@@ -178,11 +172,11 @@ def run(cfg):
     print(f"Predicting {len(label_scheme)} labels")
     predict_upper_using_full = cfg.labels == "all" and cfg.predict_labels == "upper"
     predict_upper_en_using_full_en = (
-        cfg.labels == "en_all" and cfg.predict_labels == "en_upper"
+        cfg.labels in ["en_all", "all"] and cfg.predict_labels == "en_upper"
     )
     predict_xgenre_using_full = cfg.labels == "all" and cfg.predict_labels == "xgenre"
-    model_output_dir = f"{cfg.model_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}{('/subset_'+str(cfg.sample_subset)) if cfg.sample_subset else ''}"
-    results_output_dir = f"{cfg.predictions_output}/{cfg.model_name}{('_'+cfg.path_suffix) if cfg.path_suffix else ''}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_'+str(cfg.use_fold)) if cfg.use_fold else ''}{('/subset_'+str(cfg.sample_subset)) if cfg.sample_subset else ''}"
+    model_output_dir = f"{cfg.model_output}/{cfg.model_name}{('_' + cfg.path_suffix) if cfg.path_suffix else ''}/labels_{cfg.labels}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_' + str(cfg.use_fold)) if cfg.use_fold else ''}{('/subset_' + str(cfg.sample_subset)) if cfg.sample_subset else ''}"
+    results_output_dir = f"{cfg.predictions_output}/{cfg.model_name}{('_' + cfg.path_suffix) if cfg.path_suffix else ''}/{cfg.train}_{cfg.dev}/seed_{cfg.seed}{('/fold_' + str(cfg.use_fold)) if cfg.use_fold else ''}{('/subset_' + str(cfg.sample_subset)) if cfg.sample_subset else ''}"
     print(
         f"This run {'saves models to' if not cfg.just_evaluate else 'uses model from'} {model_output_dir}"
     )
@@ -393,7 +387,6 @@ def run(cfg):
             )
 
         if cfg.multilabel_eval:
-
             """
             True    Pred
             ======  ======
@@ -470,7 +463,6 @@ def run(cfg):
         )
 
         if cfg.just_evaluate:
-
             cl_report_dict = classification_report(
                 true_labels,
                 binary_predictions,
@@ -495,7 +487,7 @@ def run(cfg):
                 os.makedirs(results_output_dir, exist_ok=True)
 
                 with open(
-                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{pred_suffix}{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{pred_suffix}{('_' + cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
                     "w",
                     newline="",
                 ) as csvfile:
@@ -503,7 +495,7 @@ def run(cfg):
                     csv_writer.writerows(data)
 
                 with open(
-                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{pred_suffix}_probs{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{pred_suffix}_probs{('_' + cfg.multilabel_eval) if cfg.multilabel_eval else ''}.tsv",
                     "w",
                     newline="",
                 ) as csvfile:
@@ -511,7 +503,7 @@ def run(cfg):
                     csv_writer.writerows(trues_and_probs)
 
                 with open(
-                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{pred_suffix}{('_'+cfg.multilabel_eval) if cfg.multilabel_eval else ''}_metrics.json",
+                    f"{results_output_dir}/{cfg.labels}_{cfg.predict_labels}_{test_language}{pred_suffix}{('_' + cfg.multilabel_eval) if cfg.multilabel_eval else ''}_metrics.json",
                     "w",
                 ) as f:
                     json.dump(metrics, f)
@@ -587,7 +579,6 @@ def run(cfg):
         else list(set(dataset["test"]["language"]))
     )
     for language in test_languages:
-
         print(f"-- {language} --")
         test_language = language
         test_dataset = dataset["test"]
@@ -596,7 +587,6 @@ def run(cfg):
             test_dataset = test_dataset.select(range(cfg.sample))
 
         if cfg.speedtest:
-
             print("inside cuda")
 
             # initiate list to keep track of batch sizes
@@ -636,7 +626,6 @@ def run(cfg):
                             predictions = model(**inp)
 
             for batch in range(1, 9):
-
                 inputs2 = []
                 print("batch", batch)
                 for i in range(0, len(test_dataset), batch):
