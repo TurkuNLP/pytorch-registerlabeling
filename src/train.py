@@ -334,9 +334,7 @@ def run(cfg):
 
             return (loss, outputs) if return_outputs else loss
 
-        if (
-            len(cfg.train.split("-")) > 1 or cfg.balanced_dataloader
-        ) and not cfg.just_evaluate:
+        if (cfg.balanced_dataloader) and not cfg.just_evaluate:
 
             def get_train_dataloader(self):
                 return balanced_dataloader(self, "train", cfg.train_batch_size)
