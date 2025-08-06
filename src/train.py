@@ -144,9 +144,14 @@ def run(cfg):
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     # login to huggingface to get access to mixtral
+    import os
+
+    # read access token from .env file using dotenv
+    from dotenv import load_dotenv
     from huggingface_hub import login
 
-    access_token_read = "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"
+    load_dotenv()
+    access_token_read = os.getenv("HUGGINGFACE_ACCESS_TOKEN")
     login(token=access_token_read)
 
     # Make process deterministic
