@@ -530,7 +530,7 @@ def run(cfg):
             warmup_ratio=cfg.warmup_ratio,  # 0.05,
             weight_decay=cfg.weight_decay,  # 0.01,
             learning_rate=cfg.learning_rate,
-            evaluation_strategy="epoch",
+            eval_strategy="epoch",
             save_strategy="epoch",
             logging_strategy="epoch",
             gradient_accumulation_steps=cfg.grad_acc_steps,
