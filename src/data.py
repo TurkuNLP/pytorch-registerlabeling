@@ -109,7 +109,6 @@ small_languages = [
     "ar",
     "ca",
     "es",
-    "fa",
     "hi",
     "id",
     "jp",
@@ -145,7 +144,7 @@ def gen(languages, split, label_scheme, use_gz):
                     continue
 
                 if len(ro) > 2:
-                    l = ro[2] # language is third column
+                    l = ro[2]  # language is third column
 
                 idx += 1
                 yield {
@@ -162,7 +161,11 @@ def get_dataset(cfg, tokenizer=None):
     def generate(split):
         kwargs = {
             "gen_kwargs": {
-                "languages": dict(cfg)[split].split("-"),
+                "languages": (
+                    dict(cfg)[split].split("-")
+                    if not (hasattr(cfg, "custom_split") and cfg.custom_split)
+                    else cfg.train.split("-")
+                ),
                 "split": split,
                 "label_scheme": cfg.labels,
                 "use_gz": cfg.use_gz,
@@ -225,6 +228,10 @@ def get_dataset(cfg, tokenizer=None):
                 [data_to_be_folded[int(i)] for i in dev_fold]
             )
         splits["test"] = generate("test")
+
+    elif hasattr(cfg, "custom_split") and cfg.custom_split:
+        for s in cfg.custom_split.split(","):
+            splits[s] = generate(s)
 
     else:
         include_splits = ["train", "dev", "test"] if not cfg.just_evaluate else ["test"]
