@@ -1,12 +1,14 @@
 import csv
+import gzip
 import string
 import sys
-import gzip
+
 import seaborn as sns
 
 csv.field_size_limit(sys.maxsize)
-from itertools import cycle
 import random
+from itertools import cycle
+
 import numpy as np
 from datasets import Dataset, DatasetDict, concatenate_datasets
 from skmultilearn.model_selection import IterativeStratification
@@ -109,6 +111,7 @@ small_languages = [
     "ar",
     "ca",
     "es",
+    "fa",
     "hi",
     "id",
     "jp",
@@ -127,7 +130,6 @@ file_opener = lambda file_path, use_gz: (
 
 def gen(languages, split, label_scheme, use_gz):
     for l in languages:
-
         with file_opener(
             f"data/{l}/{split if l not in small_languages else l}.tsv", use_gz
         ) as c:
@@ -186,7 +188,6 @@ def get_dataset(cfg, tokenizer=None):
     cfg.dev = "-".join([s for s in cfg.dev.split("-") if s not in small_languages])
 
     if cfg.sample_subset:
-
         data_to_be_folded = list(generate("train").shuffle(seed=cfg.seed))
 
         y = np.array([x["label"] for x in data_to_be_folded])
