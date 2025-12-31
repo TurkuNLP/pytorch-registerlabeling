@@ -111,7 +111,6 @@ small_languages = [
     "ar",
     "ca",
     "es",
-    "fa",
     "hi",
     "id",
     "jp",
